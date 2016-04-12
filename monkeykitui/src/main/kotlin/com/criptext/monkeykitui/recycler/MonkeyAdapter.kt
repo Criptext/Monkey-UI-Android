@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
+import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyTextHolder
 import com.criptext.monkeykitui.util.Utils
 import com.innovative.circularaudioview.CircularAudioView
+import java.io.File
 import java.util.*
 
 /**
@@ -83,6 +85,14 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             MonkeyItem.MonkeyItemType.text -> {
                 val textHolder = holder as MonkeyTextHolder
                 textHolder.messageTextView!!.text = item.getMessageText()
+            }
+            MonkeyItem.MonkeyItemType.audio -> {
+                val audioHolder = holder as MonkeyAudioHolder
+                val target = File(chatActivity.getFilePath(position, item))
+                if(target.exists()){
+                    audioHolder.setReadyForPlayback()
+                }
+
             }
         }
 

@@ -31,4 +31,8 @@ class MonkeyAudioHolder: MonkeyHolder {
         circularAudioView = amv.circularAudioView
         playButtonView = amv.playButtonView
     }
+
+    fun setReadyForPlayback(){
+
+    }
 }
