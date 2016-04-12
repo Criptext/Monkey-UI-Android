@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tap_messages"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/mk_bubble_incoming"
+    android:longClickable="true"
+    android:minHeight="45dp"
+    android:minWidth="90dp"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:visibility="gone" >
+
+    <TextView
+        android:id="@+id/text_private"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="10dp"
+        android:paddingTop="5dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="left|center_vertical"
+        android:maxLines="1"
+        android:textColor="@color/mk_bar_status_azul"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/datetime_private"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="left|center_vertical"
+        android:maxLines="1"
+        android:text="datetime"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/mk_grey_letters"
+        android:textSize="12sp" />
+
+</LinearLayout>
+

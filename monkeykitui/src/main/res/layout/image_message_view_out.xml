@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- VIEW IMAGES OUT-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:background="@android:color/white"
+    android:paddingBottom="5dp"
+    android:gravity="right"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/content_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:longClickable="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="5dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <include layout="@layout/include_photo_progress" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="right|center_vertical"
+                android:layout_alignBottom="@+id/image_view"
+                android:layout_alignLeft="@+id/image_view"
+                android:layout_alignRight="@+id/image_view"
+                android:background="#000000"
+                android:alpha="0.60">
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:id="@+id/sendingWheel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/imageViewCheckmark"
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/mk_checkmark_sent"
+                    android:layout_marginRight="2dp"/>
+
+                <TextView
+                    android:id="@+id/datetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="datetime"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/white"
+                    android:padding="0dp"
+                    android:textSize="12sp"
+                    android:layout_margin="5dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageViewChecked"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/mk_contact_checked"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="-22dp"/>
+
+    <ImageView
+        android:id="@+id/tail"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="bottom"
+        android:layout_marginRight="2dp"
+        android:visibility="invisible"
+        android:src="@drawable/mk_piko_der" />
+
+    <include layout="@layout/include_net_error" />
+
+
+</LinearLayout>

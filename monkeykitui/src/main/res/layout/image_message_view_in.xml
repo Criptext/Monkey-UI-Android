@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- VIEW IMAGE IN-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_messages_thread"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:paddingBottom="5dp"
+    android:gravity="left"
+    android:orientation="vertical" >
+
+    <include layout="@layout/include_member_name" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:gravity="left"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/tail"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="bottom"
+            android:visibility="invisible"
+            android:src="@drawable/mk_piko_izq" />
+
+        <include layout="@layout/include_privacy_cover" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/content_message"
+                android:minWidth="100dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:longClickable="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/include_photo_progress" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/image_view"
+                        android:layout_alignLeft="@+id/image_view"
+                        android:layout_alignRight="@+id/image_view"
+                        android:background="#000000"
+                        android:alpha="0.60">
+
+                        <TextView
+                            android:id="@+id/datetime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:gravity="left|center_vertical"
+                            android:maxLines="1"
+                            android:text="datetime"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="@android:color/white"
+                            android:padding="0dp"
+                            android:textSize="12sp"
+                            android:layout_margin="5dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutRetryDownload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/mk_retry_download"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_centerInParent="true"
+                        android:alpha="0.60"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/mk_file_download"
+                            android:layout_margin="10dp"/>
+
+                        <TextView
+                            android:id="@+id/textViewTamano"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="67 KB"
+                            android:layout_marginRight="10dp"
+                            android:textColor="@android:color/white"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageViewChecked"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/mk_contact_checked"
+                android:layout_toRightOf="@+id/content_row_messages_in"
+                android:layout_marginLeft="-22dp"/>
+
+        </RelativeLayout>
+
+   </LinearLayout>
+
+</LinearLayout>

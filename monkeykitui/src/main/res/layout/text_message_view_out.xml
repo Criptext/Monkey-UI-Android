@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- VIEW TEXTOS OUT-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:background="@android:color/white"
+    android:layout_marginBottom="5dp"
+    android:orientation="horizontal"
+    android:paddingLeft="50dp">
+
+   <include layout="@layout/item_message_text_out_child1" />
+   <include layout="@layout/item_message_text_out_child2" />
+   <include layout="@layout/item_message_text_out_child3" />
+
+   <include layout="@layout/include_net_error" />
+
+</LinearLayout>
+

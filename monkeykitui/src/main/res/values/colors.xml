@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mk_grey_letters">#909d9e</color>
+    <color name="mk_bubble_outgoing">#abe1fa</color>
+    <color name="mk_bubble_incoming">#e1f4fd</color>
+    <color name="mk_blue">#0a85ad</color>
+    <color name="mk_bar_status_azul">#29baef</color>
+    <color name="mk_black_ochenta_cuatro">#80000000</color>
+</resources>
