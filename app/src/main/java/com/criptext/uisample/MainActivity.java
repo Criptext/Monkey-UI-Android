@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                         getCacheDir() + "/mrbean.jpg", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
                 item.setCoverBitmap(BitmapFactory.decodeResource(getResources(),R.raw.mrbean_blur));
+
             }
             else {
                 //text

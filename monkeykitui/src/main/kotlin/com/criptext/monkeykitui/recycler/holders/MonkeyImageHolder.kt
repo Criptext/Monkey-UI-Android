@@ -1,5 +1,7 @@
 package com.criptext.monkeykitui.recycler.holders
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.ImageView
@@ -9,6 +11,7 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.ImageMessageView
 import com.criptext.monkeykitui.bubble.MonkeyView
+import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import java.io.File
@@ -63,6 +66,16 @@ class MonkeyImageHolder : MonkeyHolder {
         retryDownloadLayout!!.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 chatActivity.onFileDownloadRequested(position, item)
+            }
+        })
+    }
+
+    fun setClickListener(chatActivity: ChatActivity, item : MonkeyItem){
+        photoImageView!!.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                var intent = Intent(chatActivity as Context,PhotoViewActivity::class.java)
+                intent!!.putExtra("data_path",item.getFilePath())
+                chatActivity.startActivity(intent)
             }
         })
     }

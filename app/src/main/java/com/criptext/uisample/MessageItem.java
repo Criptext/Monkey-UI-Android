@@ -1,6 +1,7 @@
 package com.criptext.uisample;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
@@ -110,4 +111,8 @@ public class MessageItem  implements MonkeyItem {
         return duration;
     }
 
+    @Override
+    public View.OnClickListener getItemClickListener() {
+        return null;
+    }
 }

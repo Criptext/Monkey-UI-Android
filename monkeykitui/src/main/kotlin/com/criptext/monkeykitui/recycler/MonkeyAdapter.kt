@@ -159,6 +159,13 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     imageHolder.setNotDownloadedImage(item)
                     chatActivity.onFileDownloadRequested(position, item)
                 }
+
+                if(item.getItemClickListener()!=null){
+                    imageHolder!!.photoImageView!!.setOnClickListener(item.getItemClickListener())
+                }
+                else{
+                    imageHolder!!.setClickListener(chatActivity, item)
+                }
             }
         }
 
