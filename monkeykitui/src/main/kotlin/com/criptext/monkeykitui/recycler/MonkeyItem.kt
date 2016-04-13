@@ -38,6 +38,10 @@ interface MonkeyItem {
 
     fun getFileSize() : Long
 
+    /* AUDIO */
+
+    fun getAudioDuration() : String
+
     /*CONTACT */
 
     fun getContactSessionId() : String
