@@ -1,5 +1,7 @@
 package com.criptext.monkeykitui.recycler
 
+import android.graphics.Bitmap
+
 /**
  * Created by gesuwall on 4/4/16.
  */
@@ -24,9 +26,17 @@ interface MonkeyItem {
 
     fun  getMessageText() : String
 
+    /*PHOTO*/
+
+    fun getImageBitmap() : Bitmap
+
+    fun getImageCoverBitmap() : Bitmap
+
     /*AUDIO, PHOTO, FILE */
 
     fun getFilePath() : String
+
+    fun getFileSize() : Long
 
     /*CONTACT */
 

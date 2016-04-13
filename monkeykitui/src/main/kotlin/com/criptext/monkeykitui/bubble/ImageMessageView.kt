@@ -14,6 +14,7 @@ import com.criptext.monkeykitui.*
  */
 
 class ImageMessageView : MonkeyView {
+
     override val inLayoutId = R.layout.image_message_view_in
     override val outLayoutId = R.layout.image_message_view_out
 

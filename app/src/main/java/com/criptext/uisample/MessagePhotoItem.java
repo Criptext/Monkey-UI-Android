@@ -1,6 +1,8 @@
 package com.criptext.uisample;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
@@ -9,23 +11,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by gesuwall on 4/7/16.
  */
-public class MessageItem  implements MonkeyItem {
+public class MessagePhotoItem implements MonkeyItem {
 
-    private String senderSessionId, messageId, messageContent;
+    private String senderSessionId, messageId;
     private long timestamp;
     private boolean isIncoming;
-    private OutgoingMessageStatus status;
+    private Context context;
 
-    public MessageItem(String senderId, String messageId, String messageContent, long timestamp, boolean isIncoming){
+    public MessagePhotoItem(Context context, String senderId, String messageId, long timestamp, boolean isIncoming){
         senderSessionId = senderId;
         this.messageId = messageId;
-        this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.isIncoming = isIncoming;
-    }
-
-    public void setStatus (OutgoingMessageStatus status){
-        this.status = status;
+        this.context = context;
     }
 
     @NotNull
@@ -58,7 +56,7 @@ public class MessageItem  implements MonkeyItem {
 
     @Override
     public int getMessageType() {
-        return MonkeyItemType.text.ordinal();
+        return MonkeyItemType.photo.ordinal();
     }
 
     @NotNull
@@ -70,25 +68,25 @@ public class MessageItem  implements MonkeyItem {
     @NotNull
     @Override
     public String getMessageText() {
-        return messageContent;
+        return "";
     }
 
     @NotNull
     @Override
     public String getFilePath() {
-        return messageContent;
+        return "";
     }
 
     @NotNull
     @Override
     public Bitmap getImageBitmap() {
-        return null;
+        return BitmapFactory.decodeResource(context.getResources(),R.drawable.mrbean);
     }
 
     @NotNull
     @Override
     public Bitmap getImageCoverBitmap() {
-        return null;
+        return BitmapFactory.decodeResource(context.getResources(),R.drawable.mrbean_blur);
     }
 
     @Override

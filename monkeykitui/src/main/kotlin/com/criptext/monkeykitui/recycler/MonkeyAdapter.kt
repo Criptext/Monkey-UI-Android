@@ -12,6 +12,7 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
+import com.criptext.monkeykitui.recycler.holders.MonkeyImageHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyTextHolder
 import com.criptext.monkeykitui.util.Utils
 import com.innovative.circularaudioview.CircularAudioView
@@ -92,7 +93,19 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                 if(target.exists()){
                     audioHolder.setReadyForPlayback()
                 }
-
+            }
+            MonkeyItem.MonkeyItemType.photo -> {
+                val imageHolder = holder as MonkeyImageHolder
+                val target = File(chatActivity.getFilePath(position, item))
+                if(target.exists()){
+                    imageHolder.setDownloadedImage(item)
+                    if(target.length() < item.getFileSize())
+                        imageHolder.setRetryDownloadButton(position, item, chatActivity)
+                }
+                else{
+                    imageHolder.setNotDownloadedImage(item)
+                    chatActivity.onFileDownloadRequested(position, item)
+                }
             }
         }
 
@@ -105,22 +118,26 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         val truetype = viewtype%MonkeyItem.MonkeyItemType.values().size
         when(MonkeyItem.MonkeyItemType.values()[truetype]){
             MonkeyItem.MonkeyItemType.text -> {
-            if (incoming) {
-                mView = LayoutInflater.from(mContext).inflate(R.layout.text_message_view_in, null)
-            } else {
-                mView = LayoutInflater.from(mContext).inflate(R.layout.text_message_view_out, null)
-            }
+                if (incoming) {
+                    mView = LayoutInflater.from(mContext).inflate(R.layout.text_message_view_in, null)
+                } else {
+                    mView = LayoutInflater.from(mContext).inflate(R.layout.text_message_view_out, null)
+                }
                 return MonkeyTextHolder(mView)
             }
+            MonkeyItem.MonkeyItemType.photo -> {
+                if (incoming) {
+                    mView = LayoutInflater.from(mContext).inflate(R.layout.image_message_view_in, null)
+                } else {
+                    mView = LayoutInflater.from(mContext).inflate(R.layout.image_message_view_out, null)
+                }
+                return MonkeyImageHolder(mView)
+            }
             MonkeyItem.MonkeyItemType.audio -> view = AudioMessageView(mContext, incoming)
-            MonkeyItem.MonkeyItemType.photo -> view = ImageMessageView(mContext, incoming)
             MonkeyItem.MonkeyItemType.file -> view = FileMessageView(mContext, incoming)
             MonkeyItem.MonkeyItemType.contact -> view = ContactMessageView(mContext, incoming)
-            }
-        return MonkeyHolder(view, truetype)
-
         }
-
-
+        return MonkeyHolder(view, truetype)
+    }
 
 }
