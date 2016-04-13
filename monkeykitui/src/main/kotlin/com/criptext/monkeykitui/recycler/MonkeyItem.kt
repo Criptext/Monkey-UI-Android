@@ -28,6 +28,9 @@ interface MonkeyItem {
 
     fun getFilePath() : String
 
+    /* AUDIO */
+
+    fun getAudioDuration() : String
     /*CONTACT */
 
     fun getContactSessionId() : String

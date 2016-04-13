@@ -13,19 +13,27 @@ public class MessageItem  implements MonkeyItem {
     private long timestamp;
     private boolean isIncoming;
     private OutgoingMessageStatus status;
+    private MonkeyItemType itemType;
 
-    public MessageItem(String senderId, String messageId, String messageContent, long timestamp, boolean isIncoming){
+    private String duration;
+
+    public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
+                       boolean isIncoming, MonkeyItemType itemType){
         senderSessionId = senderId;
         this.messageId = messageId;
         this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.isIncoming = isIncoming;
+        this.itemType = itemType;
     }
 
     public void setStatus (OutgoingMessageStatus status){
         this.status = status;
     }
 
+    public void setDuration(String durationText) {
+        this.duration = durationText;
+    }
     @NotNull
     @Override
     public String getContactSessionId() {
@@ -56,7 +64,7 @@ public class MessageItem  implements MonkeyItem {
 
     @Override
     public int getMessageType() {
-        return MonkeyItemType.text.ordinal();
+        return itemType.ordinal();
     }
 
     @NotNull
@@ -75,5 +83,10 @@ public class MessageItem  implements MonkeyItem {
     @Override
     public String getFilePath() {
         return messageContent;
+    }
+
+    @Override
+    public String getAudioDuration() {
+        return duration;
     }
 }

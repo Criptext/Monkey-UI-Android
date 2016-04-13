@@ -191,19 +191,18 @@ open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline
         open fun updateSelectedStatus(isSelected: Boolean){
             if(isSelected) {
                 selectedImageView!!.visibility = View.VISIBLE
-                bubbleLayout!!.alpha = 0.5f
-                if(tailImageView != null) tailImageView!!.alpha = 0.5f
+                bubbleLayout?.alpha = 0.5f
+                tailImageView?.alpha = 0.5f
             } else{
                 selectedImageView!!.visibility = View.INVISIBLE
-                bubbleLayout!!.alpha = 1f
-                if(tailImageView!=null) tailImageView!!.alpha = 1f
+                bubbleLayout?.alpha = 1f
+                tailImageView?.alpha = 1f
             }
         }
 
     companion object {
         fun getViewWithRecyclerLayoutParams(view: View) : View{
             val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            //params.bottomMargin = fromDP(5)
             view.layoutParams = RecyclerView.LayoutParams(params)
             return view
         }

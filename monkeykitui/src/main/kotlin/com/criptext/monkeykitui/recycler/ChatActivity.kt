@@ -11,11 +11,20 @@ interface ChatActivity {
 
     fun isGroupChat() : Boolean
 
-    fun onMessageLongClicked(position : Int, item: MonkeyItem)
-
     fun onFileDownloadRequested(position: Int, item: MonkeyItem)
 
-    fun getFilePath(position: Int, item: MonkeyItem) : String
-
     fun isOnline() : Boolean
+    /* AUDIO */
+
+    fun getPlayingAudio() : MonkeyItem?
+
+    fun setPlayingAudio(item: MonkeyItem)
+
+    fun getPlayingAudioProgress(): Int
+
+    fun getPlayingAudioProgressText(): String
+
+    fun isAudioPlaybackPaused() : Boolean
+
+
 }
