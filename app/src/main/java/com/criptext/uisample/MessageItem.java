@@ -16,8 +16,10 @@ public class MessageItem  implements MonkeyItem {
     private boolean isIncoming;
     private OutgoingMessageStatus status;
     private MonkeyItemType itemType;
-
+    /*AUDIO*/
     private String duration;
+    /*PHOTO*/
+    private Bitmap coverBitmap;
 
     public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
                        boolean isIncoming, MonkeyItemType itemType){
@@ -36,6 +38,11 @@ public class MessageItem  implements MonkeyItem {
     public void setDuration(String durationText) {
         this.duration = durationText;
     }
+
+    public void setCoverBitmap(Bitmap coverBitmap) {
+        this.coverBitmap = coverBitmap;
+    }
+
     @NotNull
     @Override
     public String getContactSessionId() {
@@ -89,14 +96,8 @@ public class MessageItem  implements MonkeyItem {
 
     @NotNull
     @Override
-    public Bitmap getImageBitmap() {
-        return null;
-    }
-
-    @NotNull
-    @Override
     public Bitmap getImageCoverBitmap() {
-        return null;
+        return coverBitmap;
     }
 
     @Override

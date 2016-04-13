@@ -70,6 +70,33 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/layoutRetryDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mk_retry_download"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:alpha="0.60"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/mk_file_download"
+                    android:layout_margin="10dp"/>
+
+                <TextView
+                    android:id="@+id/textViewTamano"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="67 KB"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@android:color/white"/>
+
+            </LinearLayout>
+
         </RelativeLayout>
 
     </LinearLayout>

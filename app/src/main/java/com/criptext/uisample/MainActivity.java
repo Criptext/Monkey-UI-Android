@@ -1,5 +1,6 @@
 package com.criptext.uisample;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         createAudioFile();
+        createImageFile();
         ArrayList<MonkeyItem> messages =generateRandomMessages();
         MonkeyAdapter adapter = new MonkeyAdapter(this, messages);
         RecyclerView recycler = (RecyclerView) findViewById(R.id.recycler);
@@ -54,7 +56,15 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                         getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration("00:10");
-            } else {
+            }
+            else if(i%8 == 1){
+                //photo
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
+                        getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                        MonkeyItem.MonkeyItemType.photo);
+                item.setCoverBitmap(BitmapFactory.decodeResource(getResources(),R.raw.mrbean_blur));
+            }
+            else {
                 //text
                 String message = messages[r.nextInt(messages.length)];
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, message, timestamp, incoming,
@@ -63,11 +73,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             timestamp += r.nextInt(1000 * 60 * 10);
             arrayList.add(item);
         }
-
-        //ADD A SAMPLE IMAGE
-        Random r = new Random();
-        timestamp += r.nextInt(1000 * 60 * 10);
-        arrayList.add(new MessagePhotoItem(this,"1","1",timestamp,true));
 
         return arrayList;
     }
@@ -95,6 +100,31 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
         }
     }
+
+    /**
+     * Si no tengo archivos creo uno nuevo.
+     */
+    private void createImageFile(){
+        File file = new File(getCacheDir() + "/mrbean.jpg");
+        if(!file.exists()){
+            try {
+                InputStream ins = getResources().openRawResource(R.raw.mrbean);
+                FileOutputStream outputStream = new FileOutputStream(file.getPath());
+
+                byte buf[] = new byte[1024];
+                int len;
+
+                while ((len = ins.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.close();
+                ins.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public int getMemberColor(@NotNull String sessionId) {
         return Color.WHITE;
@@ -123,11 +153,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     }
 
     @Override
-    public void onFileDownloadRequested(int position, @NotNull MonkeyItem item) {
-
-    }
-
-    @Override
     public void setPlayingAudio(@NotNull MonkeyItem item) {
 
     }
@@ -153,9 +178,4 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     }
 
-    @NotNull
-    @Override
-    public String getFilePath(int position, @NotNull MonkeyItem item) {
-        return "";
-    }
 }

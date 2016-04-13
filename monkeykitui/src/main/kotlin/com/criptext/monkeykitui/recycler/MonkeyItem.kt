@@ -28,8 +28,6 @@ interface MonkeyItem {
 
     /*PHOTO*/
 
-    fun getImageBitmap() : Bitmap
-
     fun getImageCoverBitmap() : Bitmap
 
     /*AUDIO, PHOTO, FILE */

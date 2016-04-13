@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.recycler.holders
 
+import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -8,9 +9,9 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.ImageMessageView
 import com.criptext.monkeykitui.bubble.MonkeyView
-import com.criptext.monkeykitui.bubble.TextMessageView
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import java.io.File
 
 /**
  * Created by daniel on 4/12/16.
@@ -46,8 +47,8 @@ class MonkeyImageHolder : MonkeyHolder {
         photoImageView = tmv.photoImageView
     }
 
-    fun setDownloadedImage(item : MonkeyItem){
-        photoImageView!!.setImageBitmap(item.getImageBitmap())
+    fun setDownloadedImage(file : File){
+        photoImageView!!.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()))
         photoLoadingView!!.visibility = View.GONE
     }
 
