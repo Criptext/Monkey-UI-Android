@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.recycler
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -63,6 +64,28 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
 
+    fun updateAudioSeekbar(recycler: RecyclerView, position: Int){
+        fun getVisibleItemView(): View?{
+            if(recycler.childCount > 0){
+                val manager = recycler.layoutManager as LinearLayoutManager
+                val start = manager.findFirstVisibleItemPosition()
+                val end = manager.findLastVisibleItemPosition()
+                if(position < start || position > end)
+                    return null
+                return recycler.getChildAt(position - start)
+            }
+            return null
+        }
+
+        val itemView = getVisibleItemView()
+        if(itemView != null){
+            val holder = recycler.getChildViewHolder(itemView) as? MonkeyAudioHolder
+            holder?.updateAudioProgress(chatActivity.getPlayingAudioProgress(),
+                                chatActivity.getPlayingAudioProgressText())
+
+        }
+
+    }
 
 
 
@@ -132,7 +155,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                 } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is playing
                     audioHolder.setReadyForPlayback()
                     if(chatActivity.isAudioPlaybackPaused()){
-                        Log.d("MonkeyAdapter", "set play button")
                         audioHolder.updatePlayPauseButton(false)
                         audioHolder.setAudioActions(playAction)
                     } else {
@@ -155,7 +177,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                         }
                     })
                 } else {
-                    Log.d("MonkeyAdapter", "set play button reset")
                     audioHolder.setReadyForPlayback()
                     audioHolder.updatePlayPauseButton(false)
                     audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)

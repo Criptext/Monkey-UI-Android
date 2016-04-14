@@ -4,9 +4,11 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Adapter;
 
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     MonkeyAdapter adapter;
     RecyclerView recycler;
 
+    Handler handler;
     MediaPlayer player;
     MonkeyItem playingItem = null;
     int playingItemPosition = -1;
@@ -41,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         @Override
         public void run() {
             if(playingAudio){
-                adapter.notifyItemChanged(playingItemPosition);
-                recycler.postDelayed(this, 500);
+                adapter.updateAudioSeekbar(recycler, playingItemPosition);
+                handler.postDelayed(this, 67);
             }
         }
     };
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         ArrayList<MonkeyItem> messages =generateRandomMessages();
         adapter = new MonkeyAdapter(this, messages);
 
+        handler = new Handler();
         player = new MediaPlayer();
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -70,20 +74,25 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 notifyPlaybackStopped();
+                Log.d("MainActivity", "Playback Complete");
 
             }
         });
         adapter.setAudioListener(new AudioListener() {
             @Override
             public void onPlayButtonClicked(int position, @NotNull MonkeyItem item) {
+                Log.d("MainActivity", "Play");
                 if (playingItem != null && item.getMessageId().equals(playingItem.getMessageId())) {
                     player.start();
-                    adapter.notifyItemChanged(position);
+                    playingAudio = true;
+                    playerRunnable.run();
+                    adapter.notifyDataSetChanged();
                     return;
                 } else {
                     player.reset();
                     playingItem = item;
-                    adapter.notifyItemChanged(playingItemPosition);
+                    playingAudio = true;
+                    adapter.notifyDataSetChanged();
                     playingItemPosition = position;
                     try {
                         player.setDataSource(MainActivity.this, Uri.fromFile(new File(item.getFilePath())));
@@ -99,9 +108,11 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
             @Override
             public void onPauseButtonClicked(int position, @NotNull MonkeyItem item) {
+                Log.d("MainActivity", "Pause");
+                handler.removeCallbacks(playerRunnable);
                 player.pause();
                 playingAudio = false;
-                adapter.notifyItemChanged(position);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -110,47 +121,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
         });
         recycler = (RecyclerView) findViewById(R.id.recycler);
-        recycler.setItemAnimator(new RecyclerView.ItemAnimator() {
-            @Override
-            public void runPendingAnimations() {
-
-            }
-
-            @Override
-            public boolean animateRemove(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateAdd(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-                return false;
-            }
-
-            @Override
-            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
-                return false;
-            }
-
-            @Override
-            public void endAnimation(RecyclerView.ViewHolder item) {
-
-            }
-
-            @Override
-            public void endAnimations() {
-
-            }
-
-            @Override
-            public boolean isRunning() {
-                return false;
-            }
-        });
         recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
 
@@ -181,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         playingAudio = false;
         playingItem = null;
         playingItemPosition= -1;
-        adapter.notifyItemChanged(oldPosition);
+        adapter.notifyDataSetChanged();
     }
 
     private ArrayList<MonkeyItem> generateRandomMessages(){
