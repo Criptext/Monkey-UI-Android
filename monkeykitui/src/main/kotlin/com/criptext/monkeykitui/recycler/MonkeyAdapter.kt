@@ -151,7 +151,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                 val imageHolder = holder as MonkeyImageHolder
                 val target = File(item.getFilePath())
                 if(target.exists()){
-                    imageHolder.setDownloadedImage(target)
+                    imageHolder.setDownloadedImage(target, chatActivity as Context)
                     if(target.length() < item.getFileSize())
                         imageHolder.setRetryDownloadButton(position, item, chatActivity)
                 }

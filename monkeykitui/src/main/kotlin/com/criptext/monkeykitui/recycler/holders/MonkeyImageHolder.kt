@@ -14,6 +14,7 @@ import com.criptext.monkeykitui.bubble.MonkeyView
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import com.squareup.picasso.Picasso
 import java.io.File
 
 /**
@@ -50,8 +51,8 @@ class MonkeyImageHolder : MonkeyHolder {
         photoImageView = tmv.photoImageView
     }
 
-    fun setDownloadedImage(file : File){
-        photoImageView!!.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()))
+    fun setDownloadedImage(file : File, context : Context){
+        Picasso.with(context).load(file).into(photoImageView)
         photoLoadingView!!.visibility = View.GONE
     }
 
