@@ -129,19 +129,36 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     chatActivity.onFileDownloadRequested(position, item)
                     audioHolder.updatePlayPauseButton(false)
                     audioHolder.setWaitingForDownload()
-                } else if(playingAudio?.getMessageId() == item.getMessageId()){// Message is playing
+                } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is playing
                     audioHolder.setReadyForPlayback()
                     if(chatActivity.isAudioPlaybackPaused()){
+                        Log.d("MonkeyAdapter", "set play button")
                         audioHolder.updatePlayPauseButton(false)
                         audioHolder.setAudioActions(playAction)
                     } else {
+                        Log.d("MonkeyAdapter", "set pause button")
+                        audioHolder.updatePlayPauseButton(true)
                         audioHolder.updateAudioProgress(chatActivity.getPlayingAudioProgress(),
                                 chatActivity.getPlayingAudioProgressText())
                         audioHolder.setAudioActions(pauseAction)
                     }
+                    audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
+                        override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
+                        }
+
+                        override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
+                        }
+
+                        override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
+                            if(fromUser)
+                                audioListener?.onProgressManuallyChanged(position, item, progress)
+                        }
+                    })
                 } else {
+                    Log.d("MonkeyAdapter", "set play button reset")
                     audioHolder.setReadyForPlayback()
                     audioHolder.updatePlayPauseButton(false)
+                    audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
                     audioHolder.setAudioDurationText(item.getAudioDuration())
                     audioHolder.setAudioActions(playAction)
                 }

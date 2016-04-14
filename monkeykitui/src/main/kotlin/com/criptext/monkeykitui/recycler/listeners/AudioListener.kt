@@ -11,5 +11,5 @@ abstract interface AudioListener {
 
     abstract fun onPauseButtonClicked(position: Int, item: MonkeyItem)
 
-    abstract fun onProgressManuallyChanged(position: Int, item: MonkeyItem, newPosition: Long)
+    abstract fun onProgressManuallyChanged(position: Int, item: MonkeyItem, newProgress: Int)
 }

@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.SeekBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.AudioMessageView
@@ -63,7 +64,6 @@ class MonkeyAudioHolder: MonkeyHolder {
     }
 
     fun updateAudioProgress(progress: Int, textProgress: String){
-        updatePlayPauseButton(true)
         circularAudioView!!.progress = if(progress > 100) 100 else progress
         durationTextView!!.text = textProgress
 
@@ -71,6 +71,10 @@ class MonkeyAudioHolder: MonkeyHolder {
 
     fun setAudioDurationText(textDuration : String){
         durationTextView!!.text = textDuration
+    }
+
+    fun setOnSeekBarChangeListener(listener: CircularAudioView.OnCircularAudioViewChangeListener){
+        circularAudioView!!.setOnSeekBarChangeListener(listener)
     }
 
 }
