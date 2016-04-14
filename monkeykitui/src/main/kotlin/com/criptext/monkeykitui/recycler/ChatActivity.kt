@@ -18,8 +18,6 @@ interface ChatActivity {
 
     fun getPlayingAudio() : MonkeyItem?
 
-    fun setPlayingAudio(item: MonkeyItem)
-
     fun getPlayingAudioProgress(): Int
 
     fun getPlayingAudioProgressText(): String
