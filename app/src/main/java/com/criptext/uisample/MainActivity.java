@@ -1,5 +1,6 @@
 package com.criptext.uisample;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements ChatActivity {
+
     String[] messages = { "Hello", "'sup", "How are you doing", "Is everything OK?", "I'm at work", "I'm at school",
     "The weather is terrible", "I'm not feeling very well", "Today is my lucky day", "I hate when that happens",
     "I'm fine", "What are you doing this weekend?", "Sorry, I have plans", "I'm free", "Everything is going according to plan",
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         createAudioFile();
+        createImageFile();
         ArrayList<MonkeyItem> messages =generateRandomMessages();
         adapter = new MonkeyAdapter(this, messages);
 
@@ -123,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
-
     }
 
     @Override
@@ -168,7 +170,16 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                         getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration("00:10");
-            } else {
+            }
+            else if(i%8 == 1){
+                //photo
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
+                        getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                        MonkeyItem.MonkeyItemType.photo);
+                item.setCoverBitmap(BitmapFactory.decodeResource(getResources(),R.raw.mrbean_blur));
+
+            }
+            else {
                 //text
                 String message = messages[r.nextInt(messages.length)];
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, message, timestamp, incoming,
@@ -176,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
             timestamp += r.nextInt(1000 * 60 * 10);
             arrayList.add(item);
-
         }
 
         return arrayList;
@@ -205,6 +215,31 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
         }
     }
+
+    /**
+     * Si no tengo archivos creo uno nuevo.
+     */
+    private void createImageFile(){
+        File file = new File(getCacheDir() + "/mrbean.jpg");
+        if(!file.exists()){
+            try {
+                InputStream ins = getResources().openRawResource(R.raw.mrbean);
+                FileOutputStream outputStream = new FileOutputStream(file.getPath());
+
+                byte buf[] = new byte[1024];
+                int len;
+
+                while ((len = ins.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.close();
+                ins.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public int getMemberColor(@NotNull String sessionId) {
         return Color.WHITE;
@@ -233,11 +268,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     }
 
     @Override
-    public void onFileDownloadRequested(int position, @NotNull MonkeyItem item) {
-
-    }
-
-    @Override
     public int getPlayingAudioProgress() {
         return 100 * player.getCurrentPosition() / player.getDuration();
     }
@@ -256,4 +286,10 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     public boolean isAudioPlaybackPaused() {
         return !playingAudio;
     }
+
+    @Override
+    public void onFileDownloadRequested(int position, @NotNull MonkeyItem item) {
+
+    }
+
 }

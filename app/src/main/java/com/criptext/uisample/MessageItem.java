@@ -1,5 +1,8 @@
 package com.criptext.uisample;
 
+import android.graphics.Bitmap;
+import android.view.View;
+
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +17,10 @@ public class MessageItem  implements MonkeyItem {
     private boolean isIncoming;
     private OutgoingMessageStatus status;
     private MonkeyItemType itemType;
-
+    /*AUDIO*/
     private String duration;
+    /*PHOTO*/
+    private Bitmap coverBitmap;
 
     public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
                        boolean isIncoming, MonkeyItemType itemType){
@@ -34,6 +39,11 @@ public class MessageItem  implements MonkeyItem {
     public void setDuration(String durationText) {
         this.duration = durationText;
     }
+
+    public void setCoverBitmap(Bitmap coverBitmap) {
+        this.coverBitmap = coverBitmap;
+    }
+
     @NotNull
     @Override
     public String getContactSessionId() {
@@ -85,8 +95,24 @@ public class MessageItem  implements MonkeyItem {
         return messageContent;
     }
 
+    @NotNull
+    @Override
+    public Bitmap getImageCoverBitmap() {
+        return coverBitmap;
+    }
+
+    @Override
+    public long getFileSize() {
+        return 0;
+    }
+
     @Override
     public String getAudioDuration() {
         return duration;
+    }
+
+    @Override
+    public View.OnClickListener getItemClickListener() {
+        return null;
     }
 }
