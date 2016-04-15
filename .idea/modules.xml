@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MonkeyUIAndroid.iml" filepath="$PROJECT_DIR$/MonkeyUIAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UISample.iml" filepath="$PROJECT_DIR$/UISample.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/circularAudioView/circularAudioView.iml" filepath="$PROJECT_DIR$/circularAudioView/circularAudioView.iml" />
       <module fileurl="file://$PROJECT_DIR$/monkeykitui/monkeykitui.iml" filepath="$PROJECT_DIR$/monkeykitui/monkeykitui.iml" />

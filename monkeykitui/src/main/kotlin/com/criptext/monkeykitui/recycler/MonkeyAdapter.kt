@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
+import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyImageHolder
@@ -42,7 +44,14 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         datalist = list
         selectedMessage = null
         audioListener = null
-        imageListener = null
+        imageListener = object : ImageListener {
+            override fun onImageClicked(position: Int, item: MonkeyItem) {
+                val intent = Intent(mContext, PhotoViewActivity::class.java)
+                intent.putExtra(PhotoViewActivity.IMAGE_DATA_PATH, item.getFilePath())
+                mContext.startActivity(intent)
+            }
+
+        }
         onLongClickListener = null
 
     }
@@ -198,12 +207,12 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     chatActivity.onFileDownloadRequested(position, item)
                 }
 
-                if(item.getItemClickListener()!=null){
-                    imageHolder!!.photoImageView!!.setOnClickListener(item.getItemClickListener())
-                }
-                else{
-                    imageHolder!!.setClickListener(chatActivity, item)
-                }
+                imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+                imageHolder.setOnLongClickListener(View.OnLongClickListener {
+                    onLongClickListener?.onLongClick(position, item)
+                    true
+                })
+
             }
         }
 

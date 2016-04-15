@@ -110,9 +110,4 @@ public class MessageItem  implements MonkeyItem {
     public String getAudioDuration() {
         return duration;
     }
-
-    @Override
-    public View.OnClickListener getItemClickListener() {
-        return null;
-    }
 }

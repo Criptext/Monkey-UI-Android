@@ -31,8 +31,6 @@ interface MonkeyItem {
 
     fun getImageCoverBitmap() : Bitmap
 
-    fun getItemClickListener() : View.OnClickListener
-
     /*AUDIO, PHOTO, FILE */
 
     fun getFilePath() : String

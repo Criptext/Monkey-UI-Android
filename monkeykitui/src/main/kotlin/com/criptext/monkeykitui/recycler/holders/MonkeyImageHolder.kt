@@ -71,13 +71,11 @@ class MonkeyImageHolder : MonkeyHolder {
         })
     }
 
-    fun setClickListener(chatActivity: ChatActivity, item : MonkeyItem){
-        photoImageView!!.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                var intent = Intent(chatActivity as Context,PhotoViewActivity::class.java)
-                intent!!.putExtra("data_path",item.getFilePath())
-                chatActivity.startActivity(intent)
-            }
-        })
+    fun setOnClickListener(listener : View.OnClickListener){
+        photoImageView!!.setOnClickListener(listener)
+    }
+
+    override fun setOnLongClickListener(listener: View.OnLongClickListener){
+        photoImageView!!.setOnLongClickListener(listener)
     }
 }
