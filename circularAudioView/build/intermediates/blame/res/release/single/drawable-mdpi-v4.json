@@ -2,9 +2,5 @@
     {
         "merged": "/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/intermediates/res/merged/release/drawable-mdpi-v4/ic_launcher.png",
         "source": "/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/drawable-mdpi/ic_launcher.png"
-    },
-    {
-        "merged": "/home/gesuwall/droid-projects/UISample/circularAudioView/build/intermediates/res/merged/release/drawable-mdpi-v4/ic_launcher.png",
-        "source": "/home/gesuwall/droid-projects/UISample/circularAudioView/src/main/res/drawable-mdpi/ic_launcher.png"
     }
 ]

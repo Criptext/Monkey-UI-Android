@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Adapter;
 
+import com.criptext.monkeykitui.input.InputView;
+import com.criptext.monkeykitui.input.RecordingListeners;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -156,6 +158,26 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         });
         recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
+
+        ((InputView)findViewById(R.id.inputView)).setOnRecordListener(new RecordingListeners(){
+            @Override
+            public void onStartRecording() {
+                super.onStartRecording();
+                System.out.println("Grabando!");
+            }
+
+            @Override
+            public void onStopRecording() {
+                super.onStopRecording();
+                System.out.println("Fin grabacion!");
+            }
+
+            @Override
+            public void onCancelRecording() {
+                super.onCancelRecording();
+                System.out.println("cancelo!");
+            }
+        });
     }
 
     @Override
