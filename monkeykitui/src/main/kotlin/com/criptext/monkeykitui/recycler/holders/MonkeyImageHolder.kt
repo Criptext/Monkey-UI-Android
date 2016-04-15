@@ -25,7 +25,7 @@ class MonkeyImageHolder : MonkeyHolder {
 
     var photoSizeTextView : TextView? = null
 
-    var photoCoverImageView : ImageView? = null
+    var placeholderImageView: ImageView? = null
 
     var photoLoadingView : ProgressBar? = null
 
@@ -36,7 +36,7 @@ class MonkeyImageHolder : MonkeyHolder {
     constructor(view : View) : super(view) {
 
         photoSizeTextView = view.findViewById(R.id.textViewTamano) as TextView
-        photoCoverImageView = view.findViewById(R.id.image_loading) as ImageView
+        placeholderImageView = view.findViewById(R.id.image_placeholder) as ImageView
         photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar
         retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout
         photoImageView = view.findViewById(R.id.image_view) as ImageView
@@ -45,7 +45,7 @@ class MonkeyImageHolder : MonkeyHolder {
     constructor(view : MonkeyView, type : Int) : super(view, type) {
         val tmv = view as ImageMessageView
         photoSizeTextView = tmv.photoSizeTextView
-        photoCoverImageView = tmv.photoCoverImageView
+        placeholderImageView = tmv.photoCoverImageView
         photoLoadingView = tmv.photoLoadingView
         retryDownloadLayout = tmv.retryDownloadLayout
         photoImageView = tmv.photoImageView
@@ -56,8 +56,10 @@ class MonkeyImageHolder : MonkeyHolder {
         photoLoadingView!!.visibility = View.GONE
     }
 
-    fun setNotDownloadedImage(item : MonkeyItem){
-        photoCoverImageView!!.setImageBitmap(item.getImageCoverBitmap())
+    fun setNotDownloadedImage(item : MonkeyItem, context: Context){
+        val filePlaceholder = File(item.getPlaceholderFilePath())
+        if(filePlaceholder.exists())
+            Picasso.with(context).load(filePlaceholder).into(placeholderImageView)
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout!!.visibility = View.GONE
     }

@@ -206,8 +206,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
                         getCacheDir() + "/mrbean.jpg", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
-                item.setCoverBitmap(BitmapFactory.decodeResource(getResources(),R.raw.mrbean_blur));
-
+                item.setPlaceHolderFilePath(getCacheDir() + "/mrbean_blur.jpg");
             }
             else {
                 //text
@@ -254,6 +253,24 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         if(!file.exists()){
             try {
                 InputStream ins = getResources().openRawResource(R.raw.mrbean);
+                FileOutputStream outputStream = new FileOutputStream(file.getPath());
+
+                byte buf[] = new byte[1024];
+                int len;
+
+                while ((len = ins.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.close();
+                ins.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        file = new File(getCacheDir() + "/mrbean_blur.jpg");
+        if(!file.exists()){
+            try {
+                InputStream ins = getResources().openRawResource(R.raw.mrbean_blur);
                 FileOutputStream outputStream = new FileOutputStream(file.getPath());
 
                 byte buf[] = new byte[1024];
