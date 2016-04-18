@@ -1,15 +1,14 @@
 package com.criptext.uisample;
 
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Adapter;
 
 import com.criptext.monkeykitui.input.ButtonsListeners;
 import com.criptext.monkeykitui.input.InputView;
@@ -22,7 +21,6 @@ import com.criptext.monkeykitui.recycler.listeners.AudioListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     MediaPlayer player;
     MonkeyItem playingItem = null;
+
+    String mAudioFileName = null;
+    MediaRecorder mRecorder = null;
 
     int playingItemPosition = -1;
     boolean playingAudio = false;
@@ -171,19 +172,20 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             @Override
             public void onStartRecording() {
                 super.onStartRecording();
-                System.out.println("Grabando!");
+                startRecording();
             }
 
             @Override
             public void onStopRecording() {
                 super.onStopRecording();
-                System.out.println("Fin grabacion!");
+                stopRecording();
+                sendAudioFile();
             }
 
             @Override
             public void onCancelRecording() {
                 super.onCancelRecording();
-                System.out.println("cancelo!");
+                cancelRecording();
             }
         });
 
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             public void onSendButtonClicked(String text) {
                 super.onSendButtonClicked(text);
                 long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
-                MonkeyItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
+                MessageItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
                         MonkeyItem.MonkeyItemType.text);
                 monkeyMessages.add(item);
                 adapter.notifyDataSetChanged();
@@ -334,6 +336,72 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /***AUDIO RECORD STUFFS****/
+
+    private void startRecording(){
+
+        try {
+            mAudioFileName = getCacheDir().toString() + "/" + (System.currentTimeMillis() / 1000) + "record.3gp";
+            mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setOutputFile(mAudioFileName);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            //TO MAKE AUDIO LOW QUALITY
+            mRecorder.setAudioSamplingRate(22050);//8khz-92khz
+            mRecorder.setAudioEncodingBitRate(22050);//8000
+            mRecorder.prepare();
+            mRecorder.start();
+            mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
+
+                @Override
+                public void onError(MediaRecorder mr, int what, int extra) {
+                    if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+                        mr.release();
+                    }
+                }
+            });
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void stopRecording() {
+        try{
+            if(mRecorder!=null){
+                mRecorder.stop();
+                mRecorder.release();
+                mRecorder = null;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void cancelRecording() {
+        stopRecording();
+        File file = new File(mAudioFileName);
+        if(file.exists())
+            file.delete();
+    }
+
+    private void sendAudioFile(){
+
+        File file = new File(mAudioFileName);
+        if(file.exists()) {
+            long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
+            MessageItem item = new MessageItem("0", "" + timestamp,
+                    mAudioFileName, timestamp, false,
+                    MonkeyItem.MonkeyItemType.audio);
+            item.setDuration("00:10");
+            monkeyMessages.add(item);
+            adapter.notifyDataSetChanged();
+            recycler.scrollToPosition(monkeyMessages.size()-1);
         }
     }
 
