@@ -67,7 +67,7 @@ class MonkeyAudioHolder: MonkeyHolder {
     fun updateAudioProgress(progress: Int, textProgress: String){
         circularAudioView!!.progress = if(progress > 100) 100 else progress
         durationTextView!!.text = textProgress
-        Log.d("Holder", "update seekbar with $progress")
+        //Log.d("Holder", "update seekbar with $progress")
 
     }
 

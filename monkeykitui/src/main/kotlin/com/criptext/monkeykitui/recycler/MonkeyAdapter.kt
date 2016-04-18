@@ -41,13 +41,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     var imageListener : ImageListener?
     var onLongClickListener : OnLongClickMonkeyListener?
 
-    var cachedAudioHolder : MonkeyAudioHolder? = null
-    set(value) {
-        field?.setIsRecyclable(false)
-        value?.setIsRecyclable(true)
-        field = value
-    }
-
     init{
         mContext = ctx
         datalist = list
@@ -162,7 +155,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                         audioHolder.updatePlayPauseButton(false)
                         audioHolder.setAudioActions(playAction)
                     }
-                    cachedAudioHolder = audioHolder
                     audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
                         override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
                             Log.d("Seekbar", "start tracking")

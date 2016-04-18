@@ -28,8 +28,15 @@ class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Recycler
     private set
     var adapter : MonkeyAdapter
     private set
-    var playingAudio : Boolean
-    private set
+    val playingAudio : Boolean
+    get() {
+        try {
+            return player.isPlaying
+        } catch (ex : IllegalStateException){
+            return false
+        }
+    }
+
     var updateProgressEnabled : Boolean
 
 
@@ -49,7 +56,6 @@ class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Recycler
 
     init {
         currentlyPlayingItem = null
-        playingAudio = false
         recycler = recyclerView
         this.adapter = monkeyAdapter
         adapter.audioHandler = this
@@ -58,10 +64,9 @@ class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Recycler
         handler = Handler()
         playerRunnable = object : Runnable {
             override fun run() {
-                val playingItem = currentlyPlayingItem
-                if (playingAudio && playingItem != null) {
+                if (playingAudio) {
                     if(updateProgressEnabled) updateAudioSeekbar(recycler,
-                            playingItem.position, playbackProgress, playbackProgressText)
+                            playbackProgress, playbackProgressText)
                     handler.postDelayed(this, 67)
                 }
             }
@@ -69,36 +74,28 @@ class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Recycler
 
         player = MediaPlayer()
         player.setOnPreparedListener {
-            player.start();
-            playingAudio = true;
-            playerRunnable.run();
+            startAudioHolderPlayer()
         }
 
         player.setOnCompletionListener {
-            adapter.cachedAudioHolder = null
             notifyPlaybackStopped()
         }
 
         adapter.audioListener = (object : AudioListener {
             override fun onPauseButtonClicked(position: Int, item: MonkeyItem) {
-                handler.removeCallbacks(playerRunnable);
+                //handler.removeCallbacks(playerRunnable);
+                Log.d("AudioPlayback", "pause clicked")
                 player.pause();
-                playingAudio = false;
                 adapter.notifyDataSetChanged();
             }
 
             override fun onPlayButtonClicked(position: Int, item: MonkeyItem) {
+                Log.d("AudioPlayback", "play clicked")
                 if ( currentlyPlayingItem?.item?.getMessageId().equals(item.getMessageId())) {//Resume playback
-                    player.start();
-                    playingAudio = true;
-                    playerRunnable.run();
-                    adapter.notifyDataSetChanged();
+                    startAudioHolderPlayer()
                 } else {//Start from beggining
-                    adapter.cachedAudioHolder = null
                     player.reset();
                     currentlyPlayingItem = PlayingItem(position, item)
-                    playingAudio = true;
-                    adapter.notifyDataSetChanged();
                     try {
                         player.setDataSource(adapter.mContext, Uri.fromFile(File(item.getFilePath())));
                         player.prepareAsync();
@@ -115,40 +112,25 @@ class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Recycler
         });
     }
 
-    fun updateAudioSeekbar(recycler: RecyclerView, position: Int, progress: Int, progressText: String){
-        fun getVisibleItemView(): View?{
-            if(recycler.childCount > 0){
-                val manager = recycler.layoutManager as LinearLayoutManager
-                val start = manager.findFirstVisibleItemPosition()
-                val end = manager.findLastVisibleItemPosition()
-                if(position < start || position > end)
-                    return null
-                return recycler.getChildAt(position - start)
-            }
-            return null
-        }
+    fun startAudioHolderPlayer(){
+        player.start()
+        playerRunnable.run()
+        adapter.notifyDataSetChanged()
+    }
 
-        val itemView = getVisibleItemView()
-        val audioHolder = adapter.cachedAudioHolder
-        if(audioHolder != null){
-            audioHolder.updateAudioProgress(progress, progressText)
-        } else if(itemView != null){
-            Log.d("Seekbar", "update at $position with $progress")
-            val holder = recycler.getChildViewHolder(itemView) as? MonkeyAudioHolder
-            holder?.updateAudioProgress(progress, progressText)
-            adapter.cachedAudioHolder = holder
-        } //else cachedAudioHolder = null
-
+    fun updateAudioSeekbar(recycler: RecyclerView, progress: Int, progressText: String){
+        val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
+        audioHolder?.updateAudioProgress(progress, progressText)
     }
     private fun notifyPlaybackStopped(){
-        playingAudio = false;
-        currentlyPlayingItem = null
-        adapter.notifyDataSetChanged();
+        if(!playingAudio) {
+            currentlyPlayingItem = null
+            adapter.notifyDataSetChanged();
+        }
     }
 
     fun releasePlayer(){
         try{
-            adapter.cachedAudioHolder = null
             if(playingAudio) {
                 player.release();
                 recycler.removeCallbacks(playerRunnable);
