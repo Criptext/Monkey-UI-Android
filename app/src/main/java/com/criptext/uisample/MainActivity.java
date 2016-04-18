@@ -29,6 +29,7 @@ import com.criptext.monkeykitui.input.RecordingListeners;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
+import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
 import com.criptext.monkeykitui.recycler.listeners.AudioListener;
 import com.soundcloud.android.crop.Crop;
 
@@ -55,9 +56,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     RecyclerView recycler;
     InputView inputView;
     ArrayList<MonkeyItem> monkeyMessages;
-
-    MediaPlayer player;
-    MonkeyItem playingItem = null;
+    AudioPlaybackHandler audioHandler;
 
     String mAudioFileName = null;
     String mPhotoFileName = null;
@@ -102,97 +101,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
         monkeyMessages = generateRandomMessages();
         adapter = new MonkeyAdapter(this, monkeyMessages);
-
-        player = new MediaPlayer();
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                player.start();
-                playingAudio = true;
-                playerRunnable.run();
-            }
-        });
-
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                notifyPlaybackStopped();
-
-            }
-        });
-
-        adapter.setAudioListener(new AudioListener() {
-            @Override
-            public void onPlayButtonClicked(int position, @NotNull MonkeyItem item) {
-                if (playingItem != null && item.getMessageId().equals(playingItem.getMessageId())) {
-                    player.start();
-                    adapter.notifyItemChanged(position);
-                    return;
-                } else {
-                    player.reset();
-                    playingItem = item;
-                    adapter.notifyItemChanged(playingItemPosition);
-                    playingItemPosition = position;
-                    try {
-                        player.setDataSource(MainActivity.this, Uri.fromFile(new File(item.getFilePath())));
-                        player.prepareAsync();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onPauseButtonClicked(int position, @NotNull MonkeyItem item) {
-                player.pause();
-                playingAudio = false;
-                adapter.notifyItemChanged(position);
-            }
-
-            @Override
-            public void onProgressManuallyChanged(int position, @NotNull MonkeyItem item, int newProgress) {
-                player.seekTo(newProgress * player.getDuration() / 100);
-            }
-        });
-
-        recycler.setItemAnimator(new RecyclerView.ItemAnimator() {
-            @Override
-            public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @android.support.annotation.Nullable ItemHolderInfo postLayoutInfo) {
-                return false;
-            }
-
-            @Override
-            public boolean animateAppearance(@NonNull RecyclerView.ViewHolder viewHolder, @android.support.annotation.Nullable ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
-                return false;
-            }
-
-            @Override
-            public boolean animatePersistence(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
-                return false;
-            }
-
-            @Override
-            public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
-                return false;
-            }
-
-            @Override
-            public void runPendingAnimations() {
-            }
-
-            @Override
-            public void endAnimation(RecyclerView.ViewHolder item) {
-            }
-
-            @Override
-            public void endAnimations() {
-            }
-
-            @Override
-            public boolean isRunning() {
-                return false;
-            }
-        });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -239,34 +147,20 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 recycler.scrollToPosition(monkeyMessages.size()-1);
             }
         });
+
+        audioHandler = new AudioPlaybackHandler(adapter, recycler);
+
     }
 
     @Override
     protected void onStop() {
-        try{
-            if(playingAudio) {
-                player.release();
-                recycler.removeCallbacks(playerRunnable);
-                notifyPlaybackStopped();
-            }
-        }catch (IllegalStateException ex){
-            ex.printStackTrace();
-        }
+        audioHandler.releasePlayer();
         super.onStop();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-    }
-
-    public void notifyPlaybackStopped(){
-        int oldPosition = playingItemPosition;
-        playingAudio = false;
-        playingItem = null;
-        playingItemPosition= -1;
-        adapter.notifyItemChanged(oldPosition);
     }
 
     private ArrayList<MonkeyItem> generateRandomMessages(){
@@ -617,32 +511,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     @Override
     public boolean isOnline() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public MonkeyItem getPlayingAudio() {
-        return playingItem;
-    }
-
-    @Override
-    public int getPlayingAudioProgress() {
-        return 100 * player.getCurrentPosition() / player.getDuration();
-    }
-
-    @NotNull
-    @Override
-    public String getPlayingAudioProgressText() {
-        int progress = player.getCurrentPosition() / 1000;
-        String res = "00:";
-        if(progress < 10)
-            res += "0";
-        return res + progress;
-    }
-
-    @Override
-    public boolean isAudioPlaybackPaused() {
-        return !playingAudio;
     }
 
     @Override

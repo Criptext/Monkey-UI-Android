@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.content.DialogInterface
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -66,6 +67,7 @@ class MonkeyAudioHolder: MonkeyHolder {
     fun updateAudioProgress(progress: Int, textProgress: String){
         circularAudioView!!.progress = if(progress > 100) 100 else progress
         durationTextView!!.text = textProgress
+        Log.d("Holder", "update seekbar with $progress")
 
     }
 

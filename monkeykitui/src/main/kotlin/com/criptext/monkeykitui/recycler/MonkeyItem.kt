@@ -31,8 +31,6 @@ interface MonkeyItem {
 
     fun getPlaceholderFilePath() : String
 
-    fun getItemClickListener() : View.OnClickListener
-
     /*AUDIO, PHOTO, FILE */
 
     fun getFilePath() : String

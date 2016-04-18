@@ -1,7 +1,9 @@
 package com.criptext.monkeykitui.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
+import com.criptext.monkeykitui.photoview.PhotoViewActivity
+import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyImageHolder
@@ -28,20 +32,36 @@ import java.util.*
  */
 
 class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
-    private val mContext : Context
+    val mContext : Context
     private val datalist : ArrayList<MonkeyItem>
     private var selectedMessage : MonkeyItem?
 
     var audioListener : AudioListener?
+    var audioHandler : AudioPlaybackHandler?
     var imageListener : ImageListener?
     var onLongClickListener : OnLongClickMonkeyListener?
+
+    var cachedAudioHolder : MonkeyAudioHolder? = null
+    set(value) {
+        field?.setIsRecyclable(false)
+        value?.setIsRecyclable(true)
+        field = value
+    }
 
     init{
         mContext = ctx
         datalist = list
         selectedMessage = null
         audioListener = null
-        imageListener = null
+        audioHandler = null
+        imageListener = object : ImageListener {
+            override fun onImageClicked(position: Int, item: MonkeyItem) {
+                val intent = Intent(mContext, PhotoViewActivity::class.java)
+                intent.putExtra(PhotoViewActivity.IMAGE_DATA_PATH, item.getFilePath())
+                mContext.startActivity(intent)
+            }
+
+        }
         onLongClickListener = null
 
     }
@@ -101,7 +121,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             MonkeyItem.MonkeyItemType.audio -> {
                 val audioHolder = holder as MonkeyAudioHolder
                 val target = File(item.getFilePath())
-                val playingAudio = chatActivity.getPlayingAudio()
+                val playingAudio = audioHandler?.currentlyPlayingItem?.item
 
                 val playAction = object : AudioActions() {
                             override fun onActionClicked() {
@@ -132,31 +152,34 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     audioHolder.setWaitingForDownload()
                 } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is playing
                     audioHolder.setReadyForPlayback()
-                    if(chatActivity.isAudioPlaybackPaused()){
-                        Log.d("MonkeyAdapter", "set play button")
-                        audioHolder.updatePlayPauseButton(false)
-                        audioHolder.setAudioActions(playAction)
-                    } else {
+                    if(audioHandler?.playingAudio ?: false){
                         Log.d("MonkeyAdapter", "set pause button")
                         audioHolder.updatePlayPauseButton(true)
-                        audioHolder.updateAudioProgress(chatActivity.getPlayingAudioProgress(),
-                                chatActivity.getPlayingAudioProgressText())
+                        audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
+                                audioHandler?.playbackProgressText ?: MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
                         audioHolder.setAudioActions(pauseAction)
+                    } else {
+                        audioHolder.updatePlayPauseButton(false)
+                        audioHolder.setAudioActions(playAction)
                     }
+                    cachedAudioHolder = audioHolder
                     audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
                         override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
+                            Log.d("Seekbar", "start tracking")
+                            audioHandler?.updateProgressEnabled = false
                         }
 
                         override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
+                            Log.d("Seekbar", "stop tracking")
+                            audioHandler?.updateProgressEnabled = true
                         }
 
                         override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                            if(fromUser)
+                            if(fromUser && progress > -1 && progress < 100)
                                 audioListener?.onProgressManuallyChanged(position, item, progress)
                         }
                     })
                 } else {
-                    Log.d("MonkeyAdapter", "set play button reset")
                     audioHolder.setReadyForPlayback()
                     audioHolder.updatePlayPauseButton(false)
                     audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
@@ -177,12 +200,12 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     chatActivity.onFileDownloadRequested(position, item)
                 }
 
-                if(item.getItemClickListener()!=null){
-                    imageHolder!!.photoImageView!!.setOnClickListener(item.getItemClickListener())
-                }
-                else{
-                    imageHolder!!.setClickListener(chatActivity, item)
-                }
+                imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+                imageHolder.setOnLongClickListener(View.OnLongClickListener {
+                    onLongClickListener?.onLongClick(position, item)
+                    true
+                })
+
             }
         }
 
