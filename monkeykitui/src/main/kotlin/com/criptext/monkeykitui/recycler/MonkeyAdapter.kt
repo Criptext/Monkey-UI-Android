@@ -13,6 +13,7 @@ import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
+import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
 import com.criptext.monkeykitui.recycler.holders.MonkeyImageHolder
@@ -31,19 +32,28 @@ import java.util.*
  */
 
 class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
-    private val mContext : Context
+    val mContext : Context
     private val datalist : ArrayList<MonkeyItem>
     private var selectedMessage : MonkeyItem?
 
     var audioListener : AudioListener?
+    var audioHandler : AudioPlaybackHandler?
     var imageListener : ImageListener?
     var onLongClickListener : OnLongClickMonkeyListener?
+
+    var cachedAudioHolder : MonkeyAudioHolder? = null
+    set(value) {
+        field?.setIsRecyclable(false)
+        value?.setIsRecyclable(true)
+        field = value
+    }
 
     init{
         mContext = ctx
         datalist = list
         selectedMessage = null
         audioListener = null
+        audioHandler = null
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
                 val intent = Intent(mContext, PhotoViewActivity::class.java)
@@ -74,28 +84,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
 
-    fun updateAudioSeekbar(recycler: RecyclerView, position: Int){
-        fun getVisibleItemView(): View?{
-            if(recycler.childCount > 0){
-                val manager = recycler.layoutManager as LinearLayoutManager
-                val start = manager.findFirstVisibleItemPosition()
-                val end = manager.findLastVisibleItemPosition()
-                if(position < start || position > end)
-                    return null
-                return recycler.getChildAt(position - start)
-            }
-            return null
-        }
-
-        val itemView = getVisibleItemView()
-        if(itemView != null){
-            val holder = recycler.getChildViewHolder(itemView) as? MonkeyAudioHolder
-            holder?.updateAudioProgress(chatActivity.getPlayingAudioProgress(),
-                                chatActivity.getPlayingAudioProgressText())
-
-        }
-
-    }
 
 
 
@@ -133,7 +121,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             MonkeyItem.MonkeyItemType.audio -> {
                 val audioHolder = holder as MonkeyAudioHolder
                 val target = File(item.getFilePath())
-                val playingAudio = chatActivity.getPlayingAudio()
+                val playingAudio = audioHandler?.currentlyPlayingItem?.item
 
                 val playAction = object : AudioActions() {
                             override fun onActionClicked() {
@@ -164,25 +152,30 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                     audioHolder.setWaitingForDownload()
                 } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is playing
                     audioHolder.setReadyForPlayback()
-                    if(chatActivity.isAudioPlaybackPaused()){
-                        audioHolder.updatePlayPauseButton(false)
-                        audioHolder.setAudioActions(playAction)
-                    } else {
+                    if(audioHandler?.playingAudio ?: false){
                         Log.d("MonkeyAdapter", "set pause button")
                         audioHolder.updatePlayPauseButton(true)
-                        audioHolder.updateAudioProgress(chatActivity.getPlayingAudioProgress(),
-                                chatActivity.getPlayingAudioProgressText())
+                        audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
+                                audioHandler?.playbackProgressText ?: MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
                         audioHolder.setAudioActions(pauseAction)
+                    } else {
+                        audioHolder.updatePlayPauseButton(false)
+                        audioHolder.setAudioActions(playAction)
                     }
+                    cachedAudioHolder = audioHolder
                     audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
                         override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
+                            Log.d("Seekbar", "start tracking")
+                            audioHandler?.updateProgressEnabled = false
                         }
 
                         override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
+                            Log.d("Seekbar", "stop tracking")
+                            audioHandler?.updateProgressEnabled = true
                         }
 
                         override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                            if(fromUser)
+                            if(fromUser && progress > -1 && progress < 100)
                                 audioListener?.onProgressManuallyChanged(position, item, progress)
                         }
                     })

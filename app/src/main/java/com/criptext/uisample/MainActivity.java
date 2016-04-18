@@ -15,6 +15,7 @@ import android.widget.Adapter;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
+import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
 import com.criptext.monkeykitui.recycler.listeners.AudioListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,21 +37,8 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     "Here's my credit card number: 1111 2222 3333 4444"};
     MonkeyAdapter adapter;
     RecyclerView recycler;
+    AudioPlaybackHandler audioHandler;
 
-    Handler handler;
-    MediaPlayer player;
-    MonkeyItem playingItem = null;
-    int playingItemPosition = -1;
-    boolean playingAudio = false;
-    Runnable playerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(playingAudio){
-                adapter.updateAudioSeekbar(recycler, playingItemPosition);
-                handler.postDelayed(this, 67);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,84 +49,15 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         ArrayList<MonkeyItem> messages =generateRandomMessages();
         adapter = new MonkeyAdapter(this, messages);
 
-        handler = new Handler();
-        player = new MediaPlayer();
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                player.start();
-                playingAudio = true;
-                playerRunnable.run();
-
-            }
-        });
-
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                notifyPlaybackStopped();
-                Log.d("MainActivity", "Playback Complete");
-
-            }
-        });
-        adapter.setAudioListener(new AudioListener() {
-            @Override
-            public void onPlayButtonClicked(int position, @NotNull MonkeyItem item) {
-                Log.d("MainActivity", "Play");
-                if (playingItem != null && item.getMessageId().equals(playingItem.getMessageId())) {
-                    player.start();
-                    playingAudio = true;
-                    playerRunnable.run();
-                    adapter.notifyDataSetChanged();
-                    return;
-                } else {
-                    player.reset();
-                    playingItem = item;
-                    playingAudio = true;
-                    adapter.notifyDataSetChanged();
-                    playingItemPosition = position;
-                    try {
-                        player.setDataSource(MainActivity.this, Uri.fromFile(new File(item.getFilePath())));
-                        player.prepareAsync();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-
-                }
-
-
-            }
-
-            @Override
-            public void onPauseButtonClicked(int position, @NotNull MonkeyItem item) {
-                Log.d("MainActivity", "Pause");
-                handler.removeCallbacks(playerRunnable);
-                player.pause();
-                playingAudio = false;
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onProgressManuallyChanged(int position, @NotNull MonkeyItem item, int newProgress) {
-                player.seekTo(newProgress * player.getDuration() / 100);
-            }
-        });
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
+        audioHandler = new AudioPlaybackHandler(adapter, recycler);
     }
 
     @Override
     protected void onStop() {
-        try{
-            if(playingAudio) {
-                player.release();
-                recycler.removeCallbacks(playerRunnable);
-                notifyPlaybackStopped();
-            }
-        }catch (IllegalStateException ex){
-            ex.printStackTrace();
-        }
+        audioHandler.releasePlayer();
         super.onStop();
     }
 
@@ -148,13 +67,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     }
 
-    public void notifyPlaybackStopped(){
-        int oldPosition = playingItemPosition;
-        playingAudio = false;
-        playingItem = null;
-        playingItemPosition= -1;
-        adapter.notifyDataSetChanged();
-    }
+
 
     private ArrayList<MonkeyItem> generateRandomMessages(){
         ArrayList<MonkeyItem> arrayList = new ArrayList<MonkeyItem>();
@@ -259,32 +172,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     @Override
     public boolean isOnline() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public MonkeyItem getPlayingAudio() {
-        return playingItem;
-    }
-
-    @Override
-    public int getPlayingAudioProgress() {
-        return 100 * player.getCurrentPosition() / player.getDuration();
-    }
-
-    @NotNull
-    @Override
-    public String getPlayingAudioProgressText() {
-        int progress = player.getCurrentPosition() / 1000;
-        String res = "00:";
-        if(progress < 10)
-            res += "0";
-        return res + progress;
-    }
-
-    @Override
-    public boolean isAudioPlaybackPaused() {
-        return !playingAudio;
     }
 
     @Override

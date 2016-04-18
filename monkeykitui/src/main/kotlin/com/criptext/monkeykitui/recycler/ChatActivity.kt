@@ -14,15 +14,5 @@ interface ChatActivity {
     fun onFileDownloadRequested(position: Int, item: MonkeyItem)
 
     fun isOnline() : Boolean
-    /* AUDIO */
-
-    fun getPlayingAudio() : MonkeyItem?
-
-    fun getPlayingAudioProgress(): Int
-
-    fun getPlayingAudioProgressText(): String
-
-    fun isAudioPlaybackPaused() : Boolean
-
 
 }
