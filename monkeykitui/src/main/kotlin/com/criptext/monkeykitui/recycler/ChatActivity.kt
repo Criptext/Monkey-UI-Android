@@ -11,11 +11,8 @@ interface ChatActivity {
 
     fun isGroupChat() : Boolean
 
-    fun onMessageLongClicked(position : Int, item: MonkeyItem)
-
     fun onFileDownloadRequested(position: Int, item: MonkeyItem)
 
-    fun getFilePath(position: Int, item: MonkeyItem) : String
-
     fun isOnline() : Boolean
+
 }

@@ -10,4 +10,9 @@
         <attr name="datetimeColor" format="integer" />
         <attr name="datetimeSize" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="InputView">
+        <attr name="attachmentButton" format="reference" />
+        <attr name="sendButton" format="reference" />
+        <attr name="micButton" format="reference" />
+    </declare-styleable>
 </resources>

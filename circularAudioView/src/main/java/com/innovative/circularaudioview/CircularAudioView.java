@@ -867,6 +867,9 @@ public class CircularAudioView extends View {
 			//mPointerHaloPaint.setAlpha(mPointerAlpha);
 			//mPointerHaloPaint.setColor(mPointerHaloColor);
 			lastPress = -1;
+				if (mUserIsMovingPointer && mOnCircularAudioViewChangeListener != null) {
+					mOnCircularAudioViewChangeListener.onStopTrackingTouch(this);
+				}
 			mUserIsMovingPointer = false;
 			invalidate();
 			break;

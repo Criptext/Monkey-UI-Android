@@ -14,6 +14,7 @@ import com.criptext.monkeykitui.*
  */
 
 class ImageMessageView : MonkeyView {
+
     override val inLayoutId = R.layout.image_message_view_in
     override val outLayoutId = R.layout.image_message_view_out
 
@@ -41,7 +42,7 @@ class ImageMessageView : MonkeyView {
         get() = findViewById(R.id.textViewTamano) as TextView
 
     val photoCoverImageView : ImageView
-        get() = findViewById(R.id.image_loading) as ImageView
+        get() = findViewById(R.id.image_placeholder) as ImageView
 
     val photoLoadingView : ProgressBar
         get() = findViewById(R.id.progressBarImage) as ProgressBar

@@ -128,7 +128,26 @@
                     android:layout_marginTop="25dp"
                     android:layout_height="wrap_content"/>
 
+                <ProgressBar
+                    android:id="@+id/progress_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignTop="@id/seek_bar"
+                    android:layout_marginTop="34dp"
+                    android:indeterminateTint="#014766"/>
+
         </RelativeLayout>
+
+        <ImageView
+        android:id="@+id/imageViewChecked"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/mk_contact_checked"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="-27.3dp"
+        android:layout_marginRight="5dp"
+        android:visibility="visible"/>
 
    </LinearLayout>
 

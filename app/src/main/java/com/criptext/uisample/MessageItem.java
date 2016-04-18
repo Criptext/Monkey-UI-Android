@@ -1,5 +1,8 @@
 package com.criptext.uisample;
 
+import android.graphics.Bitmap;
+import android.view.View;
+
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,17 +16,34 @@ public class MessageItem  implements MonkeyItem {
     private long timestamp;
     private boolean isIncoming;
     private OutgoingMessageStatus status;
+    private MonkeyItemType itemType;
+    /*AUDIO*/
+    private String duration;
+    /*PHOTO*/
+    private String placeHolderFilePath;
 
-    public MessageItem(String senderId, String messageId, String messageContent, long timestamp, boolean isIncoming){
+    public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
+                       boolean isIncoming, MonkeyItemType itemType){
         senderSessionId = senderId;
         this.messageId = messageId;
         this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.isIncoming = isIncoming;
+        this.itemType = itemType;
+        this.placeHolderFilePath = "";
+        this.duration = "0";
     }
 
     public void setStatus (OutgoingMessageStatus status){
         this.status = status;
+    }
+
+    public void setDuration(String durationText) {
+        this.duration = durationText;
+    }
+
+    public void setPlaceHolderFilePath(String placeHolderFilePath) {
+        this.placeHolderFilePath = placeHolderFilePath;
     }
 
     @NotNull
@@ -56,7 +76,7 @@ public class MessageItem  implements MonkeyItem {
 
     @Override
     public int getMessageType() {
-        return MonkeyItemType.text.ordinal();
+        return itemType.ordinal();
     }
 
     @NotNull
@@ -75,5 +95,21 @@ public class MessageItem  implements MonkeyItem {
     @Override
     public String getFilePath() {
         return messageContent;
+    }
+
+    @NotNull
+    @Override
+    public String getPlaceholderFilePath() {
+        return placeHolderFilePath;
+    }
+
+    @Override
+    public long getFileSize() {
+        return 0;
+    }
+
+    @Override
+    public String getAudioDuration() {
+        return duration;
     }
 }
