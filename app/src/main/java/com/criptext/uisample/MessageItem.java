@@ -30,6 +30,8 @@ public class MessageItem  implements MonkeyItem {
         this.timestamp = timestamp;
         this.isIncoming = isIncoming;
         this.itemType = itemType;
+        this.placeHolderFilePath = "";
+        this.duration = "0";
     }
 
     public void setStatus (OutgoingMessageStatus status){
