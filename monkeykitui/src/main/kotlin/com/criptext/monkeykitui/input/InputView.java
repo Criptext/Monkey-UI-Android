@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -14,12 +17,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.criptext.monkeykitui.R;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 /**
  * Created by daniel on 4/15/16.
  */
 
 public class InputView extends LinearLayout {
+
+    private static String LOG = "Monkey-InputView";
 
     private ImageView button_mic;
     private ImageView button_send;
@@ -29,7 +36,10 @@ public class InputView extends LinearLayout {
     private TextView textViewTimeRecorging;
     private EditText editText;
     private RecordingListeners recordingListeners;
+    private ButtonsListeners buttonsListeners;
+    private int typing = -1;
 
+    //AUDIO STUFFS
     private float startX = 0, startY = 0;
     private boolean isLeft = false, isUp = false, mClockRunning = false;
     private long timeStamp, startTime;
@@ -71,7 +81,7 @@ public class InputView extends LinearLayout {
         try {
 
             button_mic = (ImageView)findViewById(R.id.button_mic);
-            button_send = (ImageView)findViewById(R.id.button_attchments);
+            button_send = (ImageView)findViewById(R.id.button_send);
             button_attachments = (ImageView)findViewById(R.id.button_attchments);
             layoutRecording = (LinearLayout)findViewById(R.id.layoutRecording);
             layoutSwipeCancel = (LinearLayout)findViewById(R.id.layoutSwipeCancel);
@@ -85,21 +95,104 @@ public class InputView extends LinearLayout {
             viewRightMarginBackup=lParams.rightMargin;
 
             if(a.getDrawable(R.styleable.InputView_attachmentButton)!=null)
-                button_send.setImageDrawable(a.getDrawable(R.styleable.InputView_attachmentButton));
+                button_attachments.setImageDrawable(a.getDrawable(R.styleable.InputView_attachmentButton));
+
+            if(a.getDrawable(R.styleable.InputView_sendButton)!=null)
+                button_send.setImageDrawable(a.getDrawable(R.styleable.InputView_sendButton));
+
             if(a.getDrawable(R.styleable.InputView_micButton)!=null)
                 button_mic.setImageDrawable(a.getDrawable(R.styleable.InputView_micButton));
-            else{
-                setLongClickListener();
-            }
+
+            setTextChangeListener();
+
         } finally {
             a.recycle();
         }
     }
 
-    private void setLongClickListener(){
+    public void setOnRecordListener(RecordingListeners recordListener){
+        this.recordingListeners = recordListener;
+        setAudioLongClickListener();
+    }
 
-        if(recordingListeners!=null)
-            return;
+    public void setOnButtonsClickedListener(ButtonsListeners buttonsListeners){
+        this.buttonsListeners = buttonsListeners;
+        setAttachmentClickListener();
+        setSendClickListener();
+    }
+
+    private void setTextChangeListener(){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (typing == -1 && s.length() > 0) {
+                    typing = 0;
+                    entrarSend();
+                } else if (typing == -1 && s.length() == 0) {
+                    typing = -1;
+                } else if (typing == 0 && s.length() > 0) {
+                    //NO hacer nada
+                } else if (typing == 0 && s.length() == 0) {
+                    typing = -1;
+                    entrarMicro();
+                }
+            }
+        });
+    }
+
+    private void entrarMicro(){
+        button_send.setVisibility(View.GONE);
+        button_mic.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.FadeIn)
+                .duration(700)
+                .playOn(button_mic);
+    }
+
+    private void entrarSend() {
+        button_send.setVisibility(View.VISIBLE);
+        button_mic.setVisibility(View.GONE);
+        YoYo.with(Techniques.FadeIn)
+                .duration(700)
+                .playOn(button_send);
+    }
+
+    private void setSendClickListener(){
+        button_send.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(buttonsListeners!=null) {
+                    buttonsListeners.onSendButtonClicked(editText.getText().toString());
+                    editText.setText("");
+                }
+                else
+                    Log.e(LOG,"No ButtonsListeners configured. Use method: setOnButtonsClickedListener");
+            }
+        });
+    }
+
+    private void setAttachmentClickListener(){
+        button_attachments.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(buttonsListeners!=null)
+                    buttonsListeners.onAttachmentButtonClicked();
+                else
+                    Log.e(LOG,"No ButtonsListeners configured. Use method: setOnButtonsClickedListener");
+            }
+        });
+    }
+
+    private void setAudioLongClickListener(){
 
         timeStamp = System.nanoTime() - 1800000000L;
         button_mic.setOnTouchListener(new OnTouchListener() {
@@ -125,7 +218,10 @@ public class InputView extends LinearLayout {
                         startX = event.getRawX();
                         startY = event.getRawY();
 
-                        recordingListeners.onStartRecording();
+                        if(recordingListeners!=null)
+                            recordingListeners.onStartRecording();
+                        else
+                            Log.e(LOG,"No RecordingListeners configured. Use method: setOnRecordListener");
                         startRecording();
                         vibrate();
 
@@ -154,23 +250,33 @@ public class InputView extends LinearLayout {
                         float dx = event.getRawX() - startX;
 
                         timeStamp = System.nanoTime();
+                        boolean cancel=false,stop=false;
 
                         if(dx < -maxLength*1.4){
-                            recordingListeners.onCancelRecording();
+                            cancel=true;
                             finishOrCancelRecording();
                         }
                         else if(dy < -maxLength*1.4){
-                            recordingListeners.onCancelRecording();
+                            cancel=true;
                             finishOrCancelRecording();
                         }
                         else if(dy > maxLength){
-                            recordingListeners.onCancelRecording();
+                            cancel=true;
                             finishOrCancelRecording();
                         }
                         else {
-                            recordingListeners.onStopRecording();
+                            stop=true;
                             finishOrCancelRecording();
                         }
+
+                        if(recordingListeners!=null){
+                            if(cancel)
+                                recordingListeners.onCancelRecording();
+                            if(stop)
+                                recordingListeners.onStopRecording();
+                        }
+                        else
+                            Log.e(LOG,"No RecordingListeners configured. Use method: setOnRecordListener");
 
                     }else if (event.getAction() == MotionEvent.ACTION_MOVE){
 
@@ -205,9 +311,12 @@ public class InputView extends LinearLayout {
                         layoutParams.bottomMargin = viewBottomMargin;
                         layoutSwipeCancel.setLayoutParams(layoutParams);
 
-                        System.out.println(dx+" vs "+(InputView.this.getWidth()/4));
+                        //System.out.println(dx+" vs "+(InputView.this.getWidth()/4));
                         if(Math.abs(dx) > InputView.this.getWidth()/4){
-                            recordingListeners.onCancelRecording();
+                            if(recordingListeners!=null)
+                                recordingListeners.onCancelRecording();
+                            else
+                                Log.e(LOG,"No RecordingListeners configured. Use method: setOnRecordListener");
                             finishOrCancelRecording();
                             blocked=true;
                         }
@@ -217,10 +326,6 @@ public class InputView extends LinearLayout {
                 return true;
             }
         });
-    }
-
-    public void setOnRecordListener(RecordingListeners recordListener){
-        this.recordingListeners = recordListener;
     }
 
     private void vibrate(){
@@ -256,8 +361,8 @@ public class InputView extends LinearLayout {
                             @Override
                             public void run() {
                                 counter++;
-                                int minutos=0;
-                                int segundos=0;
+                                int minutos;
+                                int segundos;
                                 minutos=counter/60;
                                 if(minutos>0)
                                     segundos=counter%60;

@@ -5,11 +5,13 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Adapter;
 
+import com.criptext.monkeykitui.input.ButtonsListeners;
 import com.criptext.monkeykitui.input.InputView;
 import com.criptext.monkeykitui.input.RecordingListeners;
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -34,11 +36,15 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     "The weather is terrible", "I'm not feeling very well", "Today is my lucky day", "I hate when that happens",
     "I'm fine", "What are you doing this weekend?", "Sorry, I have plans", "I'm free", "Everything is going according to plan",
     "Here's my credit card number: 1111 2222 3333 4444"};
+
     MonkeyAdapter adapter;
     RecyclerView recycler;
+    InputView inputView;
+    ArrayList<MonkeyItem> monkeyMessages;
 
     MediaPlayer player;
     MonkeyItem playingItem = null;
+
     int playingItemPosition = -1;
     boolean playingAudio = false;
     Runnable playerRunnable = new Runnable() {
@@ -57,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         setContentView(R.layout.activity_main);
         createAudioFile();
         createImageFile();
-        ArrayList<MonkeyItem> messages =generateRandomMessages();
-        adapter = new MonkeyAdapter(this, messages);
+        monkeyMessages = generateRandomMessages();
+        adapter = new MonkeyAdapter(this, monkeyMessages);
 
         player = new MediaPlayer();
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -67,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 player.start();
                 playingAudio = true;
                 playerRunnable.run();
-
             }
         });
 
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
             }
         });
+
         adapter.setAudioListener(new AudioListener() {
             @Override
             public void onPlayButtonClicked(int position, @NotNull MonkeyItem item) {
@@ -96,10 +102,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-
                 }
-
-
             }
 
             @Override
@@ -114,41 +117,39 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 player.seekTo(newProgress * player.getDuration() / 100);
             }
         });
+
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setItemAnimator(new RecyclerView.ItemAnimator() {
             @Override
+            public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @android.support.annotation.Nullable ItemHolderInfo postLayoutInfo) {
+                return false;
+            }
+
+            @Override
+            public boolean animateAppearance(@NonNull RecyclerView.ViewHolder viewHolder, @android.support.annotation.Nullable ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+                return false;
+            }
+
+            @Override
+            public boolean animatePersistence(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+                return false;
+            }
+
+            @Override
+            public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preLayoutInfo, @NonNull ItemHolderInfo postLayoutInfo) {
+                return false;
+            }
+
+            @Override
             public void runPendingAnimations() {
-
-            }
-
-            @Override
-            public boolean animateRemove(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateAdd(RecyclerView.ViewHolder holder) {
-                return false;
-            }
-
-            @Override
-            public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-                return false;
-            }
-
-            @Override
-            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromLeft, int fromTop, int toLeft, int toTop) {
-                return false;
             }
 
             @Override
             public void endAnimation(RecyclerView.ViewHolder item) {
-
             }
 
             @Override
             public void endAnimations() {
-
             }
 
             @Override
@@ -156,10 +157,12 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 return false;
             }
         });
+
         recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recycler.setAdapter(adapter);
 
-        ((InputView)findViewById(R.id.inputView)).setOnRecordListener(new RecordingListeners(){
+        inputView = (InputView)findViewById(R.id.inputView);
+        inputView.setOnRecordListener(new RecordingListeners(){
             @Override
             public void onStartRecording() {
                 super.onStartRecording();
@@ -176,6 +179,26 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             public void onCancelRecording() {
                 super.onCancelRecording();
                 System.out.println("cancelo!");
+            }
+        });
+
+        inputView.setOnButtonsClickedListener(new ButtonsListeners(){
+
+            @Override
+            public void onAttachmentButtonClicked() {
+                super.onAttachmentButtonClicked();
+                System.out.println("Attachment Clicked!");
+            }
+
+            @Override
+            public void onSendButtonClicked(String text) {
+                super.onSendButtonClicked(text);
+                long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
+                MonkeyItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
+                        MonkeyItem.MonkeyItemType.text);
+                monkeyMessages.add(item);
+                adapter.notifyDataSetChanged();
+                recycler.scrollToPosition(monkeyMessages.size()-1);
             }
         });
     }
