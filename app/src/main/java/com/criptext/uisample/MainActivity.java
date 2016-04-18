@@ -61,8 +61,13 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         createAudioFile();
         createImageFile();
+
+        inputView = (InputView)findViewById(R.id.inputView);
+        recycler = (RecyclerView) findViewById(R.id.recycler);
+
         monkeyMessages = generateRandomMessages();
         adapter = new MonkeyAdapter(this, monkeyMessages);
 
@@ -118,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
         });
 
-        recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setItemAnimator(new RecyclerView.ItemAnimator() {
             @Override
             public boolean animateDisappearance(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull ItemHolderInfo preLayoutInfo, @android.support.annotation.Nullable ItemHolderInfo postLayoutInfo) {
@@ -158,10 +162,11 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             }
         });
 
-        recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setStackFromEnd(true);
+        recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
-        inputView = (InputView)findViewById(R.id.inputView);
         inputView.setOnRecordListener(new RecordingListeners(){
             @Override
             public void onStartRecording() {

@@ -11,11 +11,17 @@
     android:orientation="horizontal"
     android:paddingLeft="50dp">
 
-   <include layout="@layout/item_message_text_out_child1" />
-   <include layout="@layout/item_message_text_out_child2" />
-   <include layout="@layout/item_message_text_out_child3" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-   <include layout="@layout/include_net_error" />
+        <include layout="@layout/item_message_text_out_child1" />
+        <include layout="@layout/item_message_text_out_child2" />
+        <include layout="@layout/item_message_text_out_child3" />
+        <include layout="@layout/include_net_error" />
+
+    </LinearLayout>
 
 </LinearLayout>
 

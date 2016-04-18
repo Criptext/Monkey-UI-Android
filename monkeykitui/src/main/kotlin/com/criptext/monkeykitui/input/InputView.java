@@ -335,16 +335,12 @@ public class InputView extends LinearLayout {
 
     private void startRecording(){
         layoutRecording.setVisibility(View.VISIBLE);
-        editText.setVisibility(View.GONE);
-        button_attachments.setVisibility(View.GONE);
         mClockRunning=true;
         myThreadTimerRecorder();
     }
 
     private void finishOrCancelRecording(){
         layoutRecording.setVisibility(View.GONE);
-        editText.setVisibility(View.VISIBLE);
-        button_attachments.setVisibility(View.VISIBLE);
         mClockRunning=false;
     }
 

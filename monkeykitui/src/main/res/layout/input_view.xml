@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,55 +11,6 @@
         android:layout_gravity="bottom"
         android:focusableInTouchMode="true"
         android:orientation="horizontal" >
-
-        <LinearLayout
-            android:id="@+id/layoutRecording"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/btn_mic_red"
-                android:layout_marginLeft="10dp"/>
-
-            <TextView
-                android:id="@+id/textViewTimeRecording"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:layout_marginLeft="10dp"/>
-
-            <LinearLayout
-                android:id="@+id/layoutSwipeCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@android:color/white">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/left_arrow"
-                    android:layout_marginLeft="15dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_message_write_slidecancel"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/darker_gray"
-                    android:textStyle="italic"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
 
         <ImageView
             android:id="@+id/button_attchments"
@@ -110,4 +60,54 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutRecording"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:layout_marginRight="50dp"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_mic_red"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/textViewTimeRecording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/layoutSwipeCancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@android:color/white">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/left_arrow"
+                android:layout_marginLeft="15dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_message_write_slidecancel"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:textStyle="italic"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
