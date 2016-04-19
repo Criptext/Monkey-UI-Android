@@ -3,10 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MonkeyUIAndroid.iml" filepath="$PROJECT_DIR$/MonkeyUIAndroid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/UISample.iml" filepath="$PROJECT_DIR$/UISample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidanimation2/androidanimation2.iml" filepath="$PROJECT_DIR$/androidanimation2/androidanimation2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/circularAudioView/circularAudioView.iml" filepath="$PROJECT_DIR$/circularAudioView/circularAudioView.iml" />
       <module fileurl="file://$PROJECT_DIR$/monkeykitui/monkeykitui.iml" filepath="$PROJECT_DIR$/monkeykitui/monkeykitui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/viewAnimation/viewAnimation.iml" filepath="$PROJECT_DIR$/viewAnimation/viewAnimation.iml" />
     </modules>
   </component>
 </project>

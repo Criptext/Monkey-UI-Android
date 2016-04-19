@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="22.2.0$Generated" generated="true"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/res"/></dataSet><dataSet config="main$Generated" generated="true"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res"/><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/generated/res/rs/release"/><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/generated/res/resValues/release"/></dataSet><dataSet config="release$Generated" generated="true"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/release/res"/></dataSet><dataSet config="22.2.0" from-dependency="true" generated-set="22.2.0$Generated"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/res"/></dataSet><dataSet config="main" generated-set="main$Generated"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res"><file name="ic_launcher" path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/drawable-hdpi/ic_launcher.png" qualifiers="hdpi-v4" type="drawable"/><file name="ic_launcher" path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/drawable-mdpi/ic_launcher.png" qualifiers="mdpi-v4" type="drawable"/><file name="ic_launcher" path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/drawable-xhdpi/ic_launcher.png" qualifiers="xhdpi-v4" type="drawable"/><file name="ic_launcher" path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/drawable-xxhdpi/ic_launcher.png" qualifiers="xxhdpi-v4" type="drawable"/><file path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/values/attrs.xml" qualifiers=""><declare-styleable name="CircularAudioView">
+        <attr format="integer" name="progress"/>
+        <attr format="integer" name="max"/>
+        <attr format="boolean" name="move_outside_circle"/>
+        <attr format="boolean" name="maintain_equal_circle"/>
+        <attr format="boolean" name="use_custom_radii"/>
+        <attr format="boolean" name="lock_enabled"/>
+        <attr format="float" name="circle_x_radius"/>
+        <attr format="float" name="circle_y_radius"/>
+        <attr format="float" name="circle_stroke_width"/>
+        <attr format="float" name="pointer_radius"/>
+        <attr format="float" name="pointer_halo_width"/>
+        <attr format="float" name="pointer_halo_border_width"/>
+        <attr format="string" name="circle_color"/>
+        <attr format="string" name="circle_progress_color"/>
+        <attr format="string" name="pointer_color"/>
+        <attr format="string" name="pointer_halo_color"/>
+        <attr format="string" name="pointer_halo_color_ontouch"/>
+        <attr format="integer" name="pointer_alpha_ontouch"/>
+        <attr format="float" name="start_angle"/>
+        <attr format="float" name="end_angle"/>
+        <attr format="float" name="inner_tolerance"/>
+        <attr format="string" name="circle_fill"/>
+    </declare-styleable></file><file path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/values/strings.xml" qualifiers=""><string name="app_name">CircularAudioView</string></file><file path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/values/styles.xml" qualifiers=""><style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style><style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style></file><file path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/values-v11/styles.xml" qualifiers="v11"><style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 11 theme customizations can go here. -->
+    </style></file><file path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/main/res/values-v14/styles.xml" qualifiers="v14"><style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!-- API 14 theme customizations can go here. -->
+    </style></file></source><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/generated/res/rs/release"/><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/build/generated/res/resValues/release"/></dataSet><dataSet config="release" generated-set="release$Generated"><source path="/Users/jigl/Documents/MonkeyUIAndroid/circularAudioView/src/release/res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="CircularAudioView"><attr format="integer" name="progress"/><attr format="integer" name="max"/><attr format="boolean" name="move_outside_circle"/><attr format="boolean" name="maintain_equal_circle"/><attr format="boolean" name="use_custom_radii"/><attr format="boolean" name="lock_enabled"/><attr format="float" name="circle_x_radius"/><attr format="float" name="circle_y_radius"/><attr format="float" name="circle_stroke_width"/><attr format="float" name="pointer_radius"/><attr format="float" name="pointer_halo_width"/><attr format="float" name="pointer_halo_border_width"/><attr format="string" name="circle_color"/><attr format="string" name="circle_progress_color"/><attr format="string" name="pointer_color"/><attr format="string" name="pointer_halo_color"/><attr format="string" name="pointer_halo_color_ontouch"/><attr format="integer" name="pointer_alpha_ontouch"/><attr format="float" name="start_angle"/><attr format="float" name="end_angle"/><attr format="float" name="inner_tolerance"/><attr format="string" name="circle_fill"/></declare-styleable></configuration></mergedItems></merger>
