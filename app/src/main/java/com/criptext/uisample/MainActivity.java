@@ -1,9 +1,11 @@
 package com.criptext.uisample;
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Adapter;
+import android.widget.LinearLayout;
 
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
@@ -26,18 +29,43 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements ChatActivity {
 
-    String[] messages = { "Hello", "'sup", "How are you doing", "Is everything OK?", "I'm at work", "I'm at school",
+    final static String[] messages = { "Hello", "'sup", "How are you doing", "Is everything OK?", "I'm at work", "I'm at school",
     "The weather is terrible", "I'm not feeling very well", "Today is my lucky day", "I hate when that happens",
     "I'm fine", "What are you doing this weekend?", "Sorry, I have plans", "I'm free", "Everything is going according to plan",
     "Here's my credit card number: 1111 2222 3333 4444"};
+    final static int MAX_MESSAGES = 150;
     MonkeyAdapter adapter;
     RecyclerView recycler;
     AudioPlaybackHandler audioHandler;
+
+    final static class SlowMessageLoader extends AsyncTask<WeakReference<MainActivity>, Void, ArrayList<MonkeyItem>>{
+        WeakReference<MainActivity> activityWeakReference;
+        @Override
+        protected void onPostExecute(ArrayList<MonkeyItem> newData) {
+            MainActivity act = activityWeakReference.get();
+            if(act != null && newData != null){
+                act.adapter.smoothlyAddNewData(newData, act.recycler, act.adapter.getItemCount() + newData.size() > MAX_MESSAGES);
+            }
+        }
+
+
+        @Override
+        protected ArrayList<MonkeyItem> doInBackground(WeakReference<MainActivity>... params) {
+            activityWeakReference = params[0];
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException ex){
+
+            }
+            return generateRandomMessages(activityWeakReference.get());
+        }
+    }
 
 
     @Override
@@ -46,11 +74,15 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         setContentView(R.layout.activity_main);
         createAudioFile();
         createImageFile();
-        ArrayList<MonkeyItem> messages =generateRandomMessages();
+        ArrayList<MonkeyItem> messages =generateRandomMessages(this);
         adapter = new MonkeyAdapter(this, messages);
+        adapter.setHasReachedEnd(false);
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
-        recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
+        recycler.setLayoutManager(layoutManager);
+
         recycler.setAdapter(adapter);
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
     }
@@ -69,10 +101,13 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
 
 
-    private ArrayList<MonkeyItem> generateRandomMessages(){
+    private static ArrayList<MonkeyItem> generateRandomMessages(Context ctx){
+        if(ctx == null)
+            return null;
+
         ArrayList<MonkeyItem> arrayList = new ArrayList<MonkeyItem>();
         long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
-        for(int i = 0; i < 100; i++){
+        for(int i = 0; i < 26; i++){
             Random r = new Random();
             boolean incoming = r.nextBoolean();
             MessageItem item;
@@ -80,16 +115,16 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             if(i%6 == 1){
                 //audio
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        getCacheDir() + "/barney.aac", timestamp, incoming,
+                        ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration("00:10");
             }
             else if(i%8 == 1){
                 //photo
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
-                item.setCoverBitmap(BitmapFactory.decodeResource(getResources(),R.raw.mrbean_blur));
+                item.setCoverBitmap(BitmapFactory.decodeResource(ctx.getResources(),R.raw.mrbean_blur));
 
             }
             else {
@@ -179,4 +214,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     }
 
+    @Override
+    public void onLoadMoreData(int loadedItems) {
+        SlowMessageLoader loader = new SlowMessageLoader();
+        loader.execute(new WeakReference<>(this));
+    }
 }
