@@ -7,6 +7,10 @@ import android.graphics.Bitmap
  */
 
 class EndItem : MonkeyItem {
+    override fun getPlaceholderFilePath(): String {
+        throw UnsupportedOperationException()
+    }
+
     override fun getAudioDuration(): String {
         throw UnsupportedOperationException()
     }
@@ -26,10 +30,6 @@ class EndItem : MonkeyItem {
     }
 
     override fun getMessageId(): String = "0"
-
-    override fun getImageCoverBitmap(): Bitmap {
-        throw UnsupportedOperationException()
-    }
 
     override fun getFileSize(): Long {
         throw UnsupportedOperationException()

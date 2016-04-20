@@ -20,7 +20,7 @@ public class MessageItem  implements MonkeyItem {
     /*AUDIO*/
     private String duration;
     /*PHOTO*/
-    private Bitmap coverBitmap;
+    private String placeHolderFilePath;
 
     public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
                        boolean isIncoming, MonkeyItemType itemType){
@@ -30,6 +30,8 @@ public class MessageItem  implements MonkeyItem {
         this.timestamp = timestamp;
         this.isIncoming = isIncoming;
         this.itemType = itemType;
+        this.placeHolderFilePath = "";
+        this.duration = "0";
     }
 
     public void setStatus (OutgoingMessageStatus status){
@@ -40,8 +42,8 @@ public class MessageItem  implements MonkeyItem {
         this.duration = durationText;
     }
 
-    public void setCoverBitmap(Bitmap coverBitmap) {
-        this.coverBitmap = coverBitmap;
+    public void setPlaceHolderFilePath(String placeHolderFilePath) {
+        this.placeHolderFilePath = placeHolderFilePath;
     }
 
     @NotNull
@@ -97,8 +99,8 @@ public class MessageItem  implements MonkeyItem {
 
     @NotNull
     @Override
-    public Bitmap getImageCoverBitmap() {
-        return coverBitmap;
+    public String getPlaceholderFilePath() {
+        return placeHolderFilePath;
     }
 
     @Override

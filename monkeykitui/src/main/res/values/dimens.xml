@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="max_Height">50dp</dimen>
+    <dimen name="bubble_corner_radius">5dp</dimen>
+    <dimen name="bubble_button">1dp</dimen>
+</resources>

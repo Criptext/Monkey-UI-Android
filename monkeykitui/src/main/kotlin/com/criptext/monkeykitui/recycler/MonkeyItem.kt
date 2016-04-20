@@ -29,7 +29,7 @@ interface MonkeyItem {
 
     /*PHOTO*/
 
-    fun getImageCoverBitmap() : Bitmap
+    fun getPlaceholderFilePath() : String
 
     /*AUDIO, PHOTO, FILE */
 

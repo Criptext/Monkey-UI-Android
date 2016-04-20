@@ -210,14 +210,14 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             }
             MonkeyItem.MonkeyItemType.photo -> {
                 val imageHolder = holder as MonkeyImageHolder
-                val target = File(item.getFilePath())
-                if(target.exists()){
-                    imageHolder.setDownloadedImage(target, chatActivity as Context)
-                    if(target.length() < item.getFileSize())
+                val file = File(item.getFilePath())
+                if(file.exists()){
+                    imageHolder.setDownloadedImage(file, chatActivity as Context)
+                    if(file.length() < item.getFileSize())
                         imageHolder.setRetryDownloadButton(position, item, chatActivity)
                 }
                 else{
-                    imageHolder.setNotDownloadedImage(item)
+                    imageHolder.setNotDownloadedImage(item, chatActivity as Context)
                     chatActivity.onFileDownloadRequested(position, item)
                 }
 
