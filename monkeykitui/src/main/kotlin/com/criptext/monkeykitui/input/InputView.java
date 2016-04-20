@@ -17,8 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.criptext.monkeykitui.R;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 
 /**
  * Created by daniel on 4/15/16.
@@ -153,17 +151,13 @@ public class InputView extends LinearLayout {
     private void entrarMicro(){
         button_send.setVisibility(View.GONE);
         button_mic.setVisibility(View.VISIBLE);
-        YoYo.with(Techniques.FadeIn)
-                .duration(700)
-                .playOn(button_mic);
+        //TODO MAKE ANIMATION
     }
 
     private void entrarSend() {
         button_send.setVisibility(View.VISIBLE);
         button_mic.setVisibility(View.GONE);
-        YoYo.with(Techniques.FadeIn)
-                .duration(700)
-                .playOn(button_send);
+        //TODO MAKE ANIMATION
     }
 
     private void setSendClickListener(){

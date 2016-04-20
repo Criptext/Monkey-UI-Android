@@ -15,4 +15,6 @@ interface ChatActivity {
 
     fun isOnline() : Boolean
 
+    fun onLoadMoreData(loadedItems : Int)
+
 }

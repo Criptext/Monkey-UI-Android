@@ -1,1 +1,1 @@
-include ':app', ':monkeykitui', ':circularAudioView', ':viewAnimation', ':androidanimation2'
+include ':app', ':monkeykitui', ':circularAudioView'

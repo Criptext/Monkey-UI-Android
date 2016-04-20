@@ -50,7 +50,7 @@ interface MonkeyItem {
     }
 
     enum class MonkeyItemType() {
-        text, audio, photo, contact, file
+        text, audio, photo, contact, file, MoreMessages
     }
 
 

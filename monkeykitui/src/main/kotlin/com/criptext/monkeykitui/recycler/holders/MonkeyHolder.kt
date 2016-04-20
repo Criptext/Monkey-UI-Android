@@ -186,11 +186,11 @@ open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline
          */
         open fun updateSelectedStatus(isSelected: Boolean){
             if(isSelected) {
-                selectedImageView!!.visibility = View.VISIBLE
+                selectedImageView?.visibility = View.VISIBLE
                 bubbleLayout?.alpha = 0.5f
                 tailImageView?.alpha = 0.5f
             } else{
-                selectedImageView!!.visibility = View.INVISIBLE
+                selectedImageView?.visibility = View.INVISIBLE
                 bubbleLayout?.alpha = 1f
                 tailImageView?.alpha = 1f
             }

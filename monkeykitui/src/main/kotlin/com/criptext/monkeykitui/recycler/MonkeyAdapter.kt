@@ -14,10 +14,7 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
-import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
-import com.criptext.monkeykitui.recycler.holders.MonkeyHolder
-import com.criptext.monkeykitui.recycler.holders.MonkeyImageHolder
-import com.criptext.monkeykitui.recycler.holders.MonkeyTextHolder
+import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.AudioListener
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.recycler.listeners.OnLongClickMonkeyListener
@@ -34,6 +31,20 @@ import java.util.*
 class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
     val mContext : Context
     private val datalist : ArrayList<MonkeyItem>
+/*    set(value) {
+        if(!hasReachedEnd)
+            datalist.add(EndItem())
+        field = value
+    } */
+    var hasReachedEnd : Boolean = true
+    set(value) {
+        if(!value && field != value) {
+            datalist.add(0, EndItem())
+            notifyItemInserted(0)
+        }
+        field = value
+    }
+
     private var selectedMessage : MonkeyItem?
 
     var audioListener : AudioListener?
@@ -67,22 +78,40 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
     fun getViewTypes() : Int{
-        return 10
+        return 7
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = datalist[position]
         //incoming messages have viewtypes/2 higher type
-        return item.getMessageType() + (if(item.isIncomingMessage()) 5 else 0)
+        if(item.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal)
+            return item.getMessageType()
+
+        return item.getMessageType() + (if(item.isIncomingMessage()) 6 else 0)
     }
 
 
-
+    override fun onViewAttachedToWindow(holder: MonkeyHolder?) {
+        super.onViewAttachedToWindow(holder)
+        val endHolder = holder as? MonkeyEndHolder
+        if(endHolder != null) {
+            endHolder.setOnClickListener {  }
+            chatActivity.onLoadMoreData(datalist.size)
+        }
+    }
 
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
         //set Dates
         val item = datalist[position]
+
+        if(holder is MonkeyEndHolder) {
+            holder.setOnClickListener({
+                chatActivity.onLoadMoreData(datalist.size)
+            })
+            return
+        }
+
         holder.setMessageDate(item.getMessageTimestamp())
         //long click
         holder.setOnLongClickListener(View.OnLongClickListener {
@@ -139,7 +168,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                                 onLongClickListener?.onLongClick(position, item)
                             }
                         }
-                if(!item.isIncomingMessage() && !target.exists()){
+                if(!target.exists()){
                     chatActivity.onFileDownloadRequested(position, item)
                     audioHolder.updatePlayPauseButton(false)
                     audioHolder.setWaitingForDownload()
@@ -209,6 +238,23 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         return LayoutInflater.from(mContext).inflate(outLayout, null)
     }
 
+    protected fun removeEndOfRecyclerView(){
+        val lastItem = datalist[0]
+        if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
+            datalist.remove(lastItem)
+            notifyItemRemoved(0)
+            hasReachedEnd = true
+            Log.d("adapter", "remove end")
+        }
+
+    }
+
+    fun addNewData(newData : ArrayList<MonkeyItem>){
+        removeEndOfRecyclerView()
+        datalist.addAll(0, newData)
+        notifyItemRangeInserted(0, newData.size)
+    }
+
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
         var view : MonkeyView
         var mView : View
@@ -229,8 +275,22 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             }
             MonkeyItem.MonkeyItemType.file -> view = FileMessageView(mContext, incoming)
             MonkeyItem.MonkeyItemType.contact -> view = ContactMessageView(mContext, incoming)
+            MonkeyItem.MonkeyItemType.MoreMessages ->  {
+                mView = LayoutInflater.from(mContext).inflate(R.layout.end_of_recycler_view, null)
+                return MonkeyEndHolder(mView)
+            }
         }
-        return MonkeyHolder(view, truetype)
+        return null
+    }
+
+
+    fun smoothlyAddNewData(newData: ArrayList<MonkeyItem>, recyclerView: RecyclerView, reachedEnd: Boolean){
+            addNewData(newData);
+            recyclerView.smoothScrollToPosition(newData.size - (if(reachedEnd) 1 else 0) );
+            hasReachedEnd = reachedEnd
+        }
+    companion object {
+
     }
 
 }
