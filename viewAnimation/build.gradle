@@ -1,4 +1,9 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.criptext.viewanimation'
+version = '1.0.0'
 
 android {
     compileSdkVersion 21
@@ -15,6 +20,68 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        url 'https://dl.bintray.com/criptext/maven'
+    }
+}
+
 dependencies {
     compile project(':androidanimation2')
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+task copyLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    failOnError = false
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+bintray {
+    user = 'criptext'
+    key = '093138d874366bedf1953c28e317439845586a08'
+    pkg {
+        repo = 'maven'
+        name = 'com.criptext.viewanimation'
+
+        version {
+            name = '1.0.0'
+            desc = 'ViewAnimation'
+            released = new Date()
+            vcsTag = '1.0.1'
+        }
+
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Criptext/MonkeyUIAndroid'
+        websiteUrl = 'http://criptext.com'
+    }
+    configurations = ['archives']
 }

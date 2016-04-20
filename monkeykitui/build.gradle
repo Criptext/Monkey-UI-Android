@@ -1,5 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.criptext.monkeykitui'
+version = '1.2'
 
 android {
     compileSdkVersion 23
@@ -20,6 +25,20 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        url 'https://dl.bintray.com/criptext/maven'
+    }
 }
 
 dependencies {
@@ -29,10 +48,57 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile project(':circularAudioView')
-    compile project(path: ':viewAnimation')
+    compile ('com.criptext.viewanimation:viewAnimation:1.0.0@aar') {
+        transitive = true;
+    }
+    compile ('com.criptext.circularaudioview:circularAudioView:1.0.0@aar') {
+        transitive = true;
+    }
 }
 
-repositories {
-    mavenCentral()
+task copyLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    failOnError = false
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+bintray {
+    user = 'criptext'
+    key = '093138d874366bedf1953c28e317439845586a08'
+    pkg {
+        repo = 'maven'
+        name = 'com.criptext.monkeykitui'
+
+        version {
+            name = '1.2'
+            desc = 'MonkeyKitUIKit'
+            released = new Date()
+            vcsTag = '1.0.1'
+        }
+
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Criptext/MonkeyUIAndroid'
+        websiteUrl = 'http://criptext.com'
+    }
+    configurations = ['archives']
 }
