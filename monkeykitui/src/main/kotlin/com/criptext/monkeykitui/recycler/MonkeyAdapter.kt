@@ -91,7 +91,14 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
 
-
+    override fun onViewAttachedToWindow(holder: MonkeyHolder?) {
+        super.onViewAttachedToWindow(holder)
+        val endHolder = holder as? MonkeyEndHolder
+        if(endHolder != null) {
+            endHolder.setOnClickListener {  }
+            chatActivity.onLoadMoreData(datalist.size)
+        }
+    }
 
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
@@ -161,7 +168,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                                 onLongClickListener?.onLongClick(position, item)
                             }
                         }
-                if(!item.isIncomingMessage() && !target.exists()){
+                if(!target.exists()){
                     chatActivity.onFileDownloadRequested(position, item)
                     audioHolder.updatePlayPauseButton(false)
                     audioHolder.setWaitingForDownload()
