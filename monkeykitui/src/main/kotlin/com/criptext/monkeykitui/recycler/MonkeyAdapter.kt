@@ -30,17 +30,14 @@ import java.util.*
 
 class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
     val mContext : Context
-    private val datalist : ArrayList<MonkeyItem>
-/*    set(value) {
-        if(!hasReachedEnd)
-            datalist.add(EndItem())
-        field = value
-    } */
+    val messagesList: ArrayList<MonkeyItem>
+
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
-            datalist.add(0, EndItem())
+            messagesList.add(0, EndItem())
             notifyItemInserted(0)
+            //Log.d("MonkeyAdapter", "End item added")
         }
         field = value
     }
@@ -48,13 +45,14 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     private var selectedMessage : MonkeyItem?
 
     var audioListener : AudioListener?
+
     var audioHandler : AudioPlaybackHandler?
     var imageListener : ImageListener?
     var onLongClickListener : OnLongClickMonkeyListener?
 
     init{
         mContext = ctx
-        datalist = list
+        messagesList = list
         selectedMessage = null
         audioListener = null
         audioHandler = null
@@ -74,7 +72,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         get() = mContext as ChatActivity
 
     override fun getItemCount(): Int {
-        return datalist.size
+        return messagesList.size
     }
 
     fun getViewTypes() : Int{
@@ -82,8 +80,9 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = datalist[position]
+        val item = messagesList[position]
         //incoming messages have viewtypes/2 higher type
+        //Log.d("MonkeyAdapter", "position: $position/${messagesList.size - 1} type: ${item.getMessageType()}" )
         if(item.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal)
             return item.getMessageType()
 
@@ -96,22 +95,22 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         val endHolder = holder as? MonkeyEndHolder
         if(endHolder != null) {
             endHolder.setOnClickListener {  }
-            chatActivity.onLoadMoreData(datalist.size)
+            chatActivity.onLoadMoreData(messagesList.size)
         }
     }
 
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
-        //set Dates
-        val item = datalist[position]
+
+        val item = messagesList[position]
 
         if(holder is MonkeyEndHolder) {
             holder.setOnClickListener({
-                chatActivity.onLoadMoreData(datalist.size)
+                chatActivity.onLoadMoreData(messagesList.size)
             })
             return
         }
-
+        //set message date
         holder.setMessageDate(item.getMessageTimestamp())
         //long click
         holder.setOnLongClickListener(View.OnLongClickListener {
@@ -196,7 +195,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
                         }
 
                         override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                            if(fromUser && progress > -1 && progress < 100)
+                            if(fromUser && progress > -1 && progress < 100 && playingAudio?.getMessageId().equals(item.getMessageId()))
                                 audioListener?.onProgressManuallyChanged(position, item, progress)
                         }
                     })
@@ -239,19 +238,19 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     }
 
     protected fun removeEndOfRecyclerView(){
-        val lastItem = datalist[0]
+        val lastItem = messagesList[0]
         if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
-            datalist.remove(lastItem)
+            messagesList.remove(lastItem)
             notifyItemRemoved(0)
             hasReachedEnd = true
-            Log.d("adapter", "remove end")
+            //Log.d("adapter", "remove end")
         }
 
     }
 
     fun addNewData(newData : ArrayList<MonkeyItem>){
         removeEndOfRecyclerView()
-        datalist.addAll(0, newData)
+        messagesList.addAll(0, newData)
         notifyItemRangeInserted(0, newData.size)
     }
 
@@ -289,8 +288,5 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             recyclerView.smoothScrollToPosition(newData.size - (if(reachedEnd) 1 else 0) );
             hasReachedEnd = reachedEnd
         }
-    companion object {
-
-    }
 
 }

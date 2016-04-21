@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     MonkeyAdapter adapter;
     RecyclerView recycler;
     InputView inputView;
-    ArrayList<MonkeyItem> monkeyMessages;
     AudioPlaybackHandler audioHandler;
 
     String mAudioFileName = null;
@@ -94,6 +93,15 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         }
     }
 
+    private void initTemporaryPhotoFile() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            mPhotoFile = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
+        } else {
+            mPhotoFile = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,15 +116,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         inputView = (InputView)findViewById(R.id.inputView);
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            mPhotoFile = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
-        } else {
-            mPhotoFile = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
-        }
-
-        monkeyMessages = generateRandomMessages(this);
-        adapter = new MonkeyAdapter(this, monkeyMessages);
+        initTemporaryPhotoFile();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -158,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
                 MessageItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
                         MonkeyItem.MonkeyItemType.text);
-                monkeyMessages.add(item);
+                adapter.getMessagesList().add(item);
                 adapter.notifyDataSetChanged();
-                recycler.scrollToPosition(monkeyMessages.size()-1);
+                recycler.scrollToPosition(adapter.getMessagesList().size()-1);
             }
         });
 
@@ -343,9 +343,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                     mAudioFileName, timestamp, false,
                     MonkeyItem.MonkeyItemType.audio);
             item.setDuration("00:10");
-            monkeyMessages.add(item);
+            adapter.getMessagesList().add(item);
             adapter.notifyDataSetChanged();
-            recycler.scrollToPosition(monkeyMessages.size()-1);
+            recycler.scrollToPosition(adapter.getMessagesList().size()-1);
         }
     }
 
@@ -500,9 +500,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 MessageItem item = new MessageItem("0", "" + timestamp,
                         getTempFile().getAbsolutePath(), timestamp, false,
                         MonkeyItem.MonkeyItemType.photo);
-                monkeyMessages.add(item);
+                adapter.getMessagesList().add(item);
                 adapter.notifyDataSetChanged();
-                recycler.scrollToPosition(monkeyMessages.size()-1);
+                recycler.scrollToPosition(adapter.getMessagesList().size()-1);
 
                 break;
             }
