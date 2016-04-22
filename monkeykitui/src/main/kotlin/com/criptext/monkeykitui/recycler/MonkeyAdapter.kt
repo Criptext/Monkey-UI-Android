@@ -289,4 +289,15 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             hasReachedEnd = reachedEnd
         }
 
+    fun smoothlyAddNewItem(item : MonkeyItem, recyclerView: RecyclerView){
+
+        val manager = recyclerView.layoutManager as LinearLayoutManager
+        val last = manager.findLastVisibleItemPosition()
+        messagesList.add(item);
+        notifyItemInserted(messagesList.size);
+        if(last >= messagesList.size - 2) {
+            recyclerView.scrollToPosition(messagesList.size - 1);
+        }
+    }
+
 }

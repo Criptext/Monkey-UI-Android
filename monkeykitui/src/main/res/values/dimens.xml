@@ -3,4 +3,6 @@
     <dimen name="max_Height">50dp</dimen>
     <dimen name="bubble_corner_radius">5dp</dimen>
     <dimen name="bubble_button">1dp</dimen>
+
+    <dimen name="circle_button_diameter">50dp</dimen>
 </resources>

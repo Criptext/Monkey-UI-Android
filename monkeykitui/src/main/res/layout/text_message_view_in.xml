@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <com.criptext.monkeykitui.util.BubbleTextIn
+            <com.criptext.monkeykitui.bubble.BubbleTextIn
                 android:id="@+id/content_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     android:textColor="@color/mk_grey_letters"
                     android:layout_marginBottom="4dp"
                     android:textSize="12sp" />
-            </com.criptext.monkeykitui.util.BubbleTextIn>
+            </com.criptext.monkeykitui.bubble.BubbleTextIn>
 
             <ImageView
                 android:id="@+id/imageViewChecked"
