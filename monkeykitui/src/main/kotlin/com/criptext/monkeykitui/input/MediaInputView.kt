@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -14,6 +15,7 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
+import com.criptext.monkeykitui.util.Utils
 
 /**
  * Created by daniel on 4/22/16.
@@ -75,12 +77,15 @@ class MediaInputView : BaseInputView {
                 val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
                 val builder = AlertDialog.Builder(context)
 
-                builder.setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
+                builder.setNegativeButton(getResources().getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
                 builder.setAdapter(adapter) { dialog, item ->
                     onAttachmentButtonClickListener?.onAttachmentButtonClickListener(item)
                     dialog.dismiss()
                 }.show()
 
+            }
+            else{
+                Log.e(Utils.TAG, "Please set your action strings via the following method: setActionString")
             }
 
         })

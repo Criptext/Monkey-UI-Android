@@ -43,7 +43,7 @@ open class BaseInputView : FrameLayout {
         editText.setEms(10)
         editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.gravity = Gravity.BOTTOM
+        params.gravity = Gravity.CENTER_VERTICAL
 
         editText.layoutParams = params
         addView(editText)
