@@ -27,8 +27,10 @@ import android.widget.ArrayAdapter;
 
 import com.criptext.monkeykitui.input.ButtonsListeners;
 import com.criptext.monkeykitui.input.InputView;
+import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.RecordingListeners;
 import com.criptext.monkeykitui.input.TextInputView;
+import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
@@ -126,18 +128,49 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
-        //InputView solo texto
+        //INPUTVIEW SOLO TEXTO
+        /*
         final TextInputView inputTextView = (TextInputView) findViewById(R.id.inputView);
-        if(inputTextView != null)
-            inputTextView.setOnSendButtonClickListener( new OnSendButtonClickListener(){
+        if(inputTextView != null) {
+            inputTextView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
                 @Override
-                public void onSendButtonClick(String text){
+                public void onSendButtonClick(String text) {
                     addTextMessageToConversation(text);
                 }
             });
+        }
+        */
 
-/*
-        INPUTVIEW COMPLETO
+        //INPUTVIEW CON ATTACHMENT & AUDIO
+        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        if(mediaInputView != null) {
+            //SEND BUTTON
+            mediaInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+                @Override
+                public void onSendButtonClick(String text) {
+                    addTextMessageToConversation(text);
+                }
+            });
+            //ATTACHMENT BUTTON
+            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
+            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+                @Override
+                public void onAttachmentButtonClickListener(int item) {
+                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
+                    switch (item){
+                        case 0:
+                            takePicture();
+                            break;
+                        case 1:
+                            Crop.pickImage(MainActivity.this);
+                            break;
+                    }
+                }
+            });
+        }
+
+        //INPUTVIEW COMPLETO
+        /*
         inputView = (InputView)findViewById(R.id.inputView);
         inputView.setOnRecordListener(new RecordingListeners(){
             @Override
@@ -179,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 recycler.scrollToPosition(adapter.getMessagesList().size()-1);
             }
         });
-*/
+        */
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
 
     }
@@ -377,33 +410,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     /***IMAGE RECORD STUFFS****/
 
-    private void selectImage(){
-
-        mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
-
-        final String [] items			= new String [] {"Take a Photo", "Choose Photo"};
-        ArrayAdapter<String> adapter	= new ArrayAdapter<String> (this, android.R.layout.select_dialog_item,items);
-        AlertDialog.Builder builder		= new AlertDialog.Builder(this);
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setAdapter( adapter, new DialogInterface.OnClickListener() {
-            public void onClick( DialogInterface dialog, int item ) {
-                if (item == 0) {
-                    takePicture();
-                } else if(item == 1){
-                    Crop.pickImage(MainActivity.this);
-                }
-                dialog.dismiss();
-            }
-        } ).show();
-
-    }
-
     public void takePicture() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -411,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             Uri mImageCaptureUri;
             String state = Environment.getExternalStorageState();
             if (Environment.MEDIA_MOUNTED.equals(state)) {
-                mImageCaptureUri = Uri.fromFile(getTempFile());
+                mImageCaptureUri = Uri.fromFile(mPhotoFile);
             }
             else {
 				/*
@@ -430,6 +436,10 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     public File getTempFile(){
 
         String state = Environment.getExternalStorageState();
+
+        if(mPhotoFileName==null)
+            mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
+
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return new File(Environment.getExternalStorageDirectory(), mPhotoFileName);
         }
@@ -451,8 +461,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         if (requestCode == Crop.REQUEST_CROP)
             requestCode = RequestType.cropPhoto.ordinal();
 
-        Uri destination = Uri.fromFile(getTempFile());
-
         switch (RequestType.values()[requestCode]) {
             case openGallery: {
                 try {
@@ -461,17 +469,18 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 } catch (IOException e) {
                     Log.e("error", "Exif error");
                 }
-                Crop.of(data.getData(), destination).start(this);
+                Crop.of(data.getData(), Uri.fromFile(getTempFile())).start(this);
                 break;
             }
             case takePicture: {
                 try {
-                    ExifInterface ei = new ExifInterface(getTempFile().getAbsolutePath());
+                    ExifInterface ei = new ExifInterface(mPhotoFile.getAbsolutePath());
                     orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
                 } catch (IOException e) {
                     Log.e("error", "Exif error");
                 }
-                Crop.of(destination, destination).start(this);
+
+                Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getTempFile())).start(this);
                 break;
             }
             case cropPhoto: {
