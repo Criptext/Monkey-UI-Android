@@ -22,11 +22,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.criptext.monkeykitui.input.ButtonsListeners;
 import com.criptext.monkeykitui.input.InputView;
 import com.criptext.monkeykitui.input.RecordingListeners;
+import com.criptext.monkeykitui.input.TextInputView;
+import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -113,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         adapter = new MonkeyAdapter(this, messages);
         adapter.setHasReachedEnd(false);
 
-        inputView = (InputView)findViewById(R.id.inputView);
+        //
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
         initTemporaryPhotoFile();
@@ -123,6 +126,19 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
+        //InputView solo texto
+        final TextInputView inputTextView = (TextInputView) findViewById(R.id.inputView);
+        if(inputTextView != null)
+            inputTextView.setOnSendButtonClickListener( new OnSendButtonClickListener(){
+                @Override
+                public void onSendButtonClick(String text){
+                    addTextMessageToConversation(text);
+                }
+            });
+
+/*
+        INPUTVIEW COMPLETO
+        inputView = (InputView)findViewById(R.id.inputView);
         inputView.setOnRecordListener(new RecordingListeners(){
             @Override
             public void onStartRecording() {
@@ -163,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 recycler.scrollToPosition(adapter.getMessagesList().size()-1);
             }
         });
-
+*/
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
 
     }
@@ -177,6 +193,16 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    public void addTextMessageToConversation(String text){
+        long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
+        MessageItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
+                MonkeyItem.MonkeyItemType.text);
+        adapter.smoothlyAddNewItem(item, recycler);
+        /*adapter.getMessagesList().add(item);
+        adapter.notifyDataSetChanged();
+        recycler.scrollToPosition(adapter.getMessagesList().size()-1);*/
     }
 
     private static ArrayList<MonkeyItem> generateRandomMessages(Context ctx){
