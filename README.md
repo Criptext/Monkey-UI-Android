@@ -16,7 +16,7 @@ repositories {
 Then add the following to your app's build.gradle file dependencies block:
 ```
 dependencies {
-    compile ('comcom.criptext:monkeyKit:1.2.2@aar') {
+    compile ('com.criptext.monkeykitui:monkeykitui:1.3@aar') {
         transitive = true;
     }
 }
@@ -33,3 +33,35 @@ Monkey UIKit use a photoviewer to show the photos that you send and receive. If 
     ...
 </application>
 ```
+## Components
+Monkey UIKIT use several components:
+- MonkeyAdapter (RecyclerView)
+- MonkeyHolder (RecyclerView.ViewHolder)
+- MonkeyView (Bubbles)
+- MonkeyItem 
+- ChatActivity
+- BaseInputView
+
+### BaseInputView
+Monkey UIKIT provides you with differents InputView: 
+- **TextInputView:** View that implements an editText and a send button
+- **AttachmentInputView:** View that implements the TextInputView and an attachment button with custom options
+- **AudioInputView:** View that implements the TextInputView and an audio button that implements methods to record audio
+- **MediaInputView:** View that implements all the InputViews
+
+In order to create your own InputView you need to create a Class that extends the Class BaseInputView and override two optional methods: **setRightButton** and **setLeftButton**. These methods help you to implement your own buttons inside the InputView.
+
+To add your InputView inside your layout just add these lines:
+```
+<com.criptext.monkeykitui.input.TextInputView
+        android:id="@+id/inputView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"/>
+```
+
+
+
+
+
+
