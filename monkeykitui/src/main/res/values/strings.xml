@@ -2,4 +2,5 @@
     <string name="app_name">MonkeyKit UI</string>
     <string name="text_message_write_hint">Send message</string>
     <string name="text_message_write_slidecancel">Slide left to cancel</string>
+    <string name="text_cancel">Cancel</string>
 </resources>

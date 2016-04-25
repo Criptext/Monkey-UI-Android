@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat
 
 class Utils {
     companion object {
+        val TAG = "MONKEY-UI-KIT"
         fun getHoraVerdadera(timestamp: Long) : String{
             val fechaPaelUser = SimpleDateFormat("h:mm a").format(timestamp).toUpperCase()
             return fechaPaelUser.replace("P.M.".toRegex(), "PM").replace("A.M.".toRegex(), "AM")

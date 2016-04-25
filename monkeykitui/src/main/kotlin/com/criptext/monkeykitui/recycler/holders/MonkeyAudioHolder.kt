@@ -48,12 +48,12 @@ class MonkeyAudioHolder: MonkeyHolder {
     }
 
     fun setReadyForPlayback(){
-        circularAudioView!!.visibility = View.VISIBLE
+        playButtonView!!.visibility = View.VISIBLE
         downloadProgressView?.visibility = View.GONE
     }
 
     fun setWaitingForDownload(){
-        circularAudioView!!.visibility = View.INVISIBLE
+        playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
     }
 

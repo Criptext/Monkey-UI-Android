@@ -43,7 +43,7 @@ open class BaseInputView : FrameLayout {
         editText.setEms(10)
         editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.gravity = Gravity.BOTTOM
+        params.gravity = Gravity.CENTER_VERTICAL
 
         editText.layoutParams = params
         addView(editText)
@@ -51,7 +51,7 @@ open class BaseInputView : FrameLayout {
         val leftBtn = setLeftButton()
         if(leftBtn != null) {
             params.leftMargin = leftBtn.visibleWidth
-            (leftBtn.button.layoutParams as LayoutParams).gravity = left or bottom
+            (leftBtn.button.layoutParams as LayoutParams).gravity = Gravity.LEFT or Gravity.BOTTOM
             addView(leftBtn.button)
         }
 
