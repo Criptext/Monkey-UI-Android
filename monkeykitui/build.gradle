@@ -50,9 +50,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile ('com.criptext.viewanimation:viewAnimation:1.0.0@aar') {
-        transitive = true;
-    }
     compile ('com.criptext.circularaudioview:circularAudioView:1.0.0@aar') {
         transitive = true;
     }
