@@ -1,10 +1,8 @@
 package com.criptext.uisample;
 
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,25 +20,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
 
-import com.criptext.monkeykitui.input.ButtonsListeners;
 import com.criptext.monkeykitui.input.InputView;
-import com.criptext.monkeykitui.input.MediaInputView;
-import com.criptext.monkeykitui.input.RecordingListeners;
-import com.criptext.monkeykitui.input.TextInputView;
+import com.criptext.monkeykitui.input.AttachmentInputView;
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
-import com.criptext.monkeykitui.recycler.listeners.AudioListener;
 import com.soundcloud.android.crop.Crop;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements ChatActivity {
@@ -142,18 +132,18 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         */
 
         //INPUTVIEW CON ATTACHMENT & AUDIO
-        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
-        if(mediaInputView != null) {
+        final AttachmentInputView attachmentInputView = (AttachmentInputView) findViewById(R.id.inputView);
+        if(attachmentInputView != null) {
             //SEND BUTTON
-            mediaInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+            attachmentInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
                 @Override
                 public void onSendButtonClick(String text) {
                     addTextMessageToConversation(text);
                 }
             });
             //ATTACHMENT BUTTON
-            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
-            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+            attachmentInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
+            attachmentInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
                 @Override
                 public void onAttachmentButtonClickListener(int item) {
                     mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;

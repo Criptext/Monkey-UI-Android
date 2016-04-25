@@ -15,7 +15,7 @@ import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
  * Created by gesuwall on 4/21/16.
  */
 
-class TextInputView : BaseInputView {
+open class TextInputView : BaseInputView {
     var onSendButtonClickListener : OnSendButtonClickListener? = null
 
     constructor(context: Context?) : super(context)

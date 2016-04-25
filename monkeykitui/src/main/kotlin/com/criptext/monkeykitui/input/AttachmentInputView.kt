@@ -21,9 +21,7 @@ import com.criptext.monkeykitui.util.Utils
  * Created by daniel on 4/22/16.
  */
 
-class MediaInputView : BaseInputView {
-
-    var onSendButtonClickListener : OnSendButtonClickListener? = null
+open class AttachmentInputView : TextInputView {
 
     var onAttachmentButtonClickListener : OnAttachmentButtonClickListener? = null
 
@@ -37,26 +35,6 @@ class MediaInputView : BaseInputView {
 
     fun setActionString(actionStrings : Array<String>){
         this.actionStrings=actionStrings
-    }
-
-    override fun setRightButton() : SideButton{
-        val btn = ImageView(context)
-        btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
-
-        val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
-        val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
-        params.rightMargin = dpToPx(4)
-
-        btn.layoutParams = params
-        btn.setOnClickListener({
-            val inputText = editText.text.trim()
-            if(!inputText.isEmpty()) {
-                onSendButtonClickListener?.onSendButtonClick(inputText.toString())
-                clearText()
-            }
-        })
-        return SideButton(btn, diameter.toInt())
     }
 
     override fun setLeftButton() : SideButton{
