@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         */
 
         //INPUTVIEW CON ATTACHMENT & AUDIO
+        /*
         final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
         if(mediaInputView != null) {
             //SEND BUTTON
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 }
             });
         }
-
+        */
         //INPUTVIEW COMPLETO
         /*
         inputView = (InputView)findViewById(R.id.inputView);

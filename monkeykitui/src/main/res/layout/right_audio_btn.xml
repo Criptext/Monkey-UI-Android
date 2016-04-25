@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutRecording"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/btn_mic_red"
+        android:alpha="0"
+        android:background="@android:color/white"
+        android:paddingLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/textViewTimeRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="00:00"
+        android:textColor="@android:color/black"
+        android:gravity="center_vertical|left"
+        android:layout_weight="1"
+        android:alpha="0"
+        android:textSize="16sp"
+        android:background="@android:color/white"
+        android:paddingLeft="10dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/layoutSwipeCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:alpha="0"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/left_arrow"
+            android:layout_marginLeft="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_message_write_slidecancel"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="italic"/>
+
+    </LinearLayout>
+    <ImageView
+            android:id="@+id/button_mic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|right"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/btn_mic"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/button_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|right"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/ic_action_send_now"
+            android:visibility="gone"/>
+
+
+</LinearLayout>
