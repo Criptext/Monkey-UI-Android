@@ -4,7 +4,9 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.criptext.monkeykitui'
-version = '1.2'
+version = '1.'
+//group = 'com.criptext.monkeykitui-v22'
+//version = '1.0'
 
 android {
     compileSdkVersion 23
