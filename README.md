@@ -23,7 +23,7 @@ dependencies {
 ```
 
 ## Edit your Manifest.xml
-Monkey UIKit use a photoviewer to show the photos that you send and receive. If you want to use it you need declare PhotoViewActivity in your manifest:
+Monkey UIKit uses a photoviewer to show the photos that you send and receive. If you want to use it you need declare PhotoViewActivity in your manifest:
 ```
 <application
     ...
@@ -34,7 +34,7 @@ Monkey UIKit use a photoviewer to show the photos that you send and receive. If 
 </application>
 ```
 ## Components
-Monkey UIKIT use several components:
+Monkey UIKIT uses several components:
 - MonkeyAdapter (RecyclerView)
 - MonkeyHolder (RecyclerView.ViewHolder)
 - MonkeyView (Bubbles)
@@ -59,7 +59,6 @@ To add your InputView inside your layout just add these lines:
         android:layout_height="wrap_content"
         android:background="@android:color/white"/>
 ```
-
 
 
 
