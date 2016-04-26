@@ -33,11 +33,13 @@ class TextInputView : BaseInputView {
 
     fun newCirclularSendButton(diameter: Float): ImageView{
         val btn = ImageView(context)
+        val dp5 = dpToPx(5, context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
+        btn.setPadding(dp5, 0, dp5, 0)
 
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
-        params.rightMargin = dpToPx(4)
+        val dp4 = dpToPx(4, context)
+        params.rightMargin = dp4
 
         btn.layoutParams = params
         btn.setOnClickListener({

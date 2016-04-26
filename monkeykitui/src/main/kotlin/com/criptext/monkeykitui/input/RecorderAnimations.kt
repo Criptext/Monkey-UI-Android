@@ -5,15 +5,10 @@ package com.criptext.monkeykitui.input
  */
 
 
-class RecorderAnimations {
+interface RecorderAnimations {
 
-    fun revealRecorder(){
+    fun revealRecorder()
 
-    }
-
-    fun hideRecorder(cancelled: Boolean){
-
-    }
-
+    fun hideRecorder(cancelled: Boolean)
 
 }

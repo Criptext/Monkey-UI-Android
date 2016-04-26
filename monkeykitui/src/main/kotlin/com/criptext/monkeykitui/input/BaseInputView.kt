@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.text.InputType
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,7 @@ open class BaseInputView : FrameLayout {
         editText.setEms(10)
         editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.gravity = Gravity.CENTER_VERTICAL
+        params.gravity = Gravity.BOTTOM
 
         editText.layoutParams = params
         addView(editText)
@@ -67,11 +68,13 @@ open class BaseInputView : FrameLayout {
     open protected fun setLeftButton() : SideButton? = null
     open protected fun setRightButton() : SideButton? = null
 
-    public fun View.dpToPx(dp : Int) : Int{
-        val displayMetrics = context.resources.displayMetrics;
-        val px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+    companion object {
+        fun dpToPx(dp: Int, context: Context): Int {
+            val displayMetrics = context.resources.displayMetrics;
+            val px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+            return px;
 
+        }
     }
 
     fun clearText(){

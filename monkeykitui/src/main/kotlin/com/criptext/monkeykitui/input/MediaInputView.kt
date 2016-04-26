@@ -42,11 +42,13 @@ class MediaInputView : BaseInputView {
     override fun setRightButton() : SideButton{
         val btn = ImageView(context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
+        val dp5 = dpToPx(5, context)
+        btn.setPadding(dp5, 0, dp5, 0)
 
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
-        params.rightMargin = dpToPx(4)
+        val dp4 = dpToPx(4, context)
+        params.rightMargin = dp4
 
         btn.layoutParams = params
         btn.setOnClickListener({
@@ -62,7 +64,8 @@ class MediaInputView : BaseInputView {
     override fun setLeftButton() : SideButton{
         val btn = ImageView(context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
+        val dp5 = dpToPx(5, context)
+        btn.setPadding(dp5, 0, dp5, 0)
 
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
@@ -77,7 +80,7 @@ class MediaInputView : BaseInputView {
                 val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
                 val builder = AlertDialog.Builder(context)
 
-                builder.setNegativeButton(getResources().getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
+                builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
                 builder.setAdapter(adapter) { dialog, item ->
                     onAttachmentButtonClickListener?.onAttachmentButtonClickListener(item)
                     dialog.dismiss()
