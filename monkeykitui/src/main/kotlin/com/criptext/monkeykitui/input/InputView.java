@@ -13,10 +13,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.criptext.monkeykitui.R;
+import com.criptext.monkeykitui.input.listeners.RecordingListener;
 
 /**
  * Created by daniel on 4/15/16.
@@ -33,7 +33,7 @@ public class InputView extends LinearLayout {
     private LinearLayout layoutSwipeCancel;
     private TextView textViewTimeRecorging;
     private EditText editText;
-    private RecordingListeners recordingListeners;
+    private RecordingListener recordingListeners;
     private ButtonsListeners buttonsListeners;
     private int typing = -1;
 
@@ -108,7 +108,7 @@ public class InputView extends LinearLayout {
         }
     }
 
-    public void setOnRecordListener(RecordingListeners recordListener){
+    public void setOnRecordListener(RecordingListener recordListener){
         this.recordingListeners = recordListener;
         setAudioLongClickListener();
     }

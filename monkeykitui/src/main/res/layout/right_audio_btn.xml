@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layoutRecording"
+        android:layout_width="match_parent"
+        android:clipChildren="false"
+        android:layout_height="match_parent" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:src="@drawable/btn_mic_red"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/redMic"
+        android:alpha="0"
+        android:background="@android:color/white"
+        android:paddingLeft="10dp"/>
+
+    <TextView
+        android:id="@+id/textViewTimeRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="00:00"
+        android:alpha="0"
+        android:textColor="@android:color/black"
+        android:gravity="center_vertical|left"
+        android:layout_toRightOf="@id/redMic"
+        android:layout_alignParentBottom="true"
+        android:textSize="16sp"
+        android:background="@android:color/white"
+        android:paddingLeft="10dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/layoutSwipeCancel"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="50dp"
+        android:alpha="0"
+        android:layout_toRightOf="@id/textViewTimeRecording"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/left_arrow"
+            android:layout_marginLeft="15dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_message_write_slidecancel"
+            android:textSize="16sp"
+            android:layout_alignParentBottom="true"
+            android:paddingRight="20dp"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="italic"/>
+
+    </LinearLayout>
+    <ImageView
+            android:id="@+id/button_mic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/btn_mic"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/button_send"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|right"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_action_send_now"
+            android:visibility="gone"/>
+
+
+</RelativeLayout>
+
+
+

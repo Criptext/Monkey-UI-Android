@@ -36,11 +36,12 @@ open class AttachmentInputView : TextInputView {
     fun setActionString(actionStrings : Array<String>){
         this.actionStrings=actionStrings
     }
-
+    
     override fun setLeftButton() : SideButton{
         val btn = ImageView(context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
+        val dp5 = dpToPx(5, context)
+        btn.setPadding(dp5, 0, dp5, 0)
 
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
@@ -55,7 +56,7 @@ open class AttachmentInputView : TextInputView {
                 val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
                 val builder = AlertDialog.Builder(context)
 
-                builder.setNegativeButton(getResources().getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
+                builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
                 builder.setAdapter(adapter) { dialog, item ->
                     onAttachmentButtonClickListener?.onAttachmentButtonClickListener(item)
                     dialog.dismiss()

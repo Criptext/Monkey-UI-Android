@@ -22,9 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.criptext.monkeykitui.input.InputView;
-import com.criptext.monkeykitui.input.AttachmentInputView;
-import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
-import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -132,8 +129,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         */
 
         //INPUTVIEW CON ATTACHMENT & AUDIO
-        final AttachmentInputView attachmentInputView = (AttachmentInputView) findViewById(R.id.inputView);
-        if(attachmentInputView != null) {
+        /*
+        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        if(mediaInputView != null) {
             //SEND BUTTON
             attachmentInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
                 @Override
@@ -158,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 }
             });
         }
-
+        */
         //INPUTVIEW COMPLETO
         /*
         inputView = (InputView)findViewById(R.id.inputView);

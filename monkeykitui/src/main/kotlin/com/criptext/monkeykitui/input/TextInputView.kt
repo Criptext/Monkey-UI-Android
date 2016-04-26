@@ -25,13 +25,21 @@ open class TextInputView : BaseInputView {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun setRightButton() : SideButton{
-        val btn = ImageView(context)
-        btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
-        btn.setPadding(dpToPx(5), 0, dpToPx(5), 0)
-
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
+        val btn = newCirclularSendButton(diameter)
+
+        return SideButton(btn, diameter.toInt())
+    }
+
+    fun newCirclularSendButton(diameter: Float): ImageView{
+        val btn = ImageView(context)
+        val dp5 = dpToPx(5, context)
+        btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
+        btn.setPadding(dp5, 0, dp5, 0)
+
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
-        params.rightMargin = dpToPx(4)
+        val dp4 = dpToPx(4, context)
+        params.rightMargin = dp4
 
         btn.layoutParams = params
         btn.setOnClickListener({
@@ -41,7 +49,8 @@ open class TextInputView : BaseInputView {
                 clearText()
             }
         })
-        return SideButton(btn, diameter.toInt())
+
+        return btn
     }
 
 
