@@ -11,7 +11,7 @@ import android.widget.RelativeLayout
 open class ViewDragger(view: View) {
     var view : View
     val limit : Int
-    var startX : Float
+    private var startX : Float
 
     val originalRightMargin: Int
 

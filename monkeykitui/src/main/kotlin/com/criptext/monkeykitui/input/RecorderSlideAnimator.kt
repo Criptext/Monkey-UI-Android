@@ -34,6 +34,8 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     var playingConcealAnim = false
     var currentSet: AnimatorSet? = null
 
+    var dragger : ViewDraggerFadeOut? = null
+
     init{
         this.redMic = redMic
         this.timer = timer
@@ -147,6 +149,8 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
             override fun onAnimationEnd(animation: Animator?) {
                 playingRevealAnim = false
+                dragger?.fadeView = slideMsg
+                dragger?.textStartX = slideMsgStartX
             }
 
             override fun onAnimationRepeat(animation: Animator?) {
