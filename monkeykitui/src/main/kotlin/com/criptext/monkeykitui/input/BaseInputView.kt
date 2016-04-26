@@ -67,7 +67,7 @@ open class BaseInputView : FrameLayout {
     open protected fun setLeftButton() : SideButton? = null
     open protected fun setRightButton() : SideButton? = null
 
-    fun View.dpToPx(dp : Int) : Int{
+    public fun View.dpToPx(dp : Int) : Int{
         val displayMetrics = context.resources.displayMetrics;
         val px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;

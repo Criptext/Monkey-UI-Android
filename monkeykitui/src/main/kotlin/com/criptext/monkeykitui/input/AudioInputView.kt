@@ -21,6 +21,8 @@ class AudioInputView : BaseInputView {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         view.layoutParams = params
+        val btn = view.findViewById(R.id.button_mic)
+        btn.setOnTouchListener(RecorderTouchListener())
         return SideButton(view, dpToPx(50))
 
     }
