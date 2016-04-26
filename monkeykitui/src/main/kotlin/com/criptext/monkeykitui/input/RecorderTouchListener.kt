@@ -12,14 +12,14 @@ import com.criptext.monkeykitui.input.listeners.RecordingListener
  * Created by gesuwall on 4/25/16.
  */
 
-class RecorderTouchListener : View.OnTouchListener{
+open class RecorderTouchListener : View.OnTouchListener{
     var blocked : Boolean = false
     var lastHit : Long = 0L
     var startTime : Long = 0L
 
-    var startX : Float = 0F
+    var startX : Float = -1f
 
-    var recordingAnimations : RecorderAnimations? = null
+    var recordingAnimations : RecorderSlideAnimator? = null
 
     val maxLength = 80
 
@@ -29,6 +29,8 @@ class RecorderTouchListener : View.OnTouchListener{
         val vibrator = ctx.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(50)
     }
+
+    open fun createDragger(v: View) = ViewDragger(v)
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (event.pointerCount > 1 || blocked)
@@ -40,24 +42,32 @@ class RecorderTouchListener : View.OnTouchListener{
                 startX = event.rawX
 
 
-                dragger = ViewDragger(v, 100)
+                dragger = createDragger(v)
+                val started = recordingAnimations?.revealRecorder() ?: true
+                if (!started){
+                    startX = -1f
+                    return true
+                }
                 vibrate(v.context)
-                recordingAnimations?.revealRecorder()
 
             }
             MotionEvent.ACTION_UP -> {
+                if(startX == -1f)
+                    return true
 
-                dragger.reset()
-                lastHit = System.nanoTime()
                 recordingAnimations?.hideRecorder(false)
 
 
             }
             MotionEvent.ACTION_MOVE -> {
+                if(startX == -1f)
+                    return true
 
                 val reachedEnd = dragger.drag((startX - event.rawX).toInt())
-                if (reachedEnd)
+                if (reachedEnd) {
                     recordingAnimations?.hideRecorder(true)
+                    startX = -1f
+                }
 
 
             }

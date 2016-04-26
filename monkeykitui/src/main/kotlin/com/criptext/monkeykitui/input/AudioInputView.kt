@@ -31,7 +31,13 @@ class AudioInputView : BaseInputView {
         val slide = view.findViewById(R.id.layoutSwipeCancel)
         val anim = RecorderSlideAnimator(mic, timer, slide, btn)
         anim.textInput = editText
-        val touchListener = RecorderTouchListener()
+        val touchListener = object : RecorderTouchListener(){
+            override fun createDragger(v: View): ViewDragger {
+                val dragger = ViewDraggerFadeOut(v)
+                dragger.fadeView = slide
+                return dragger
+            }
+        }
         touchListener.recordingAnimations = anim
         btn.setOnTouchListener(touchListener)
 
