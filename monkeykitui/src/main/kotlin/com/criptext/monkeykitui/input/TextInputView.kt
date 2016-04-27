@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.input
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -24,14 +25,14 @@ open class TextInputView : BaseInputView {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    override fun setRightButton() : SideButton{
+    override fun setRightButton() : SideButton? {
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
         val btn = newCirclularSendButton(diameter)
 
         return SideButton(btn, diameter.toInt())
     }
 
-    fun newCirclularSendButton(diameter: Float): ImageView{
+    private fun newCirclularSendButton(diameter: Float): ImageView{
         val btn = ImageView(context)
         val dp5 = dpToPx(5, context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
@@ -42,6 +43,12 @@ open class TextInputView : BaseInputView {
         params.rightMargin = dp4
 
         btn.layoutParams = params
+
+
+        return btn
+    }
+
+    protected fun initSendTextButton(btn: View){
         btn.setOnClickListener({
             val inputText = editText.text.trim()
             if(!inputText.isEmpty()) {
@@ -49,8 +56,6 @@ open class TextInputView : BaseInputView {
                 clearText()
             }
         })
-
-        return btn
     }
 
 

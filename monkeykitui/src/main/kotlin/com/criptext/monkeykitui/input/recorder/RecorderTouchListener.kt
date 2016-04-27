@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.content.Context
 import android.os.Vibrator
@@ -12,7 +12,7 @@ import com.criptext.monkeykitui.input.listeners.RecordingListener
  * Created by gesuwall on 4/25/16.
  */
 
-open class RecorderTouchListener : View.OnTouchListener{
+open class RecorderTouchListener : View.OnTouchListener {
     var blocked : Boolean = false
     var lastHit : Long = 0L
     var startTime : Long = 0L
@@ -23,14 +23,12 @@ open class RecorderTouchListener : View.OnTouchListener{
 
     val maxLength = 80
 
-    lateinit var dragger : ViewDragger
+    lateinit var dragger : ViewDraggerFadeOut
 
     fun vibrate(ctx: Context){
         val vibrator = ctx.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(50)
     }
-
-    open fun createDragger(v: View) = ViewDragger(v)
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (event.pointerCount > 1 || blocked)
@@ -42,7 +40,8 @@ open class RecorderTouchListener : View.OnTouchListener{
                 startX = event.rawX
 
 
-                dragger = createDragger(v)
+                dragger = ViewDraggerFadeOut(v)
+                recordingAnimations?.dragger = dragger
                 val started = recordingAnimations?.revealRecorder() ?: true
                 if (!started){
                     startX = -1f

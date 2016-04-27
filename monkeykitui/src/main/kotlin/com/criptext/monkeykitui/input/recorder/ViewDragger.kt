@@ -1,8 +1,9 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
+import com.criptext.monkeykitui.input.BaseInputView
 
 /**
  * Created by gesuwall on 4/25/16.
@@ -11,7 +12,7 @@ import android.widget.RelativeLayout
 open class ViewDragger(view: View) {
     var view : View
     val limit : Int
-    var startX : Float
+    private var startX : Float
 
     val originalRightMargin: Int
 

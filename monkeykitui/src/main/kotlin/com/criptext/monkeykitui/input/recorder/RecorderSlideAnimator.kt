@@ -1,14 +1,17 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.input.BaseInputView
+import com.criptext.monkeykitui.input.listeners.RecordingListener
+import com.criptext.monkeykitui.util.MonkeyAnimatorListener
 
 /**
  * Created by gesuwall on 4/25/16.
@@ -34,6 +37,10 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     var playingConcealAnim = false
     var currentSet: AnimatorSet? = null
 
+    var dragger : ViewDraggerFadeOut? = null
+    var recordingAnimation : RecordingAnimation? = null
+    var recordingListener : RecordingListener? = null
+
     init{
         this.redMic = redMic
         this.timer = timer
@@ -43,8 +50,10 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     fun hideRecorder(cancelled: Boolean): Boolean {
         if(playingConcealAnim)
             return false
-        else if(playingRevealAnim)
+        else if(playingRevealAnim) {
             currentSet?.cancel()
+            return false
+        }
 
         val buttonXAnimator = ObjectAnimator.ofFloat(button, "scaleX", button.scaleX, 1f)
         val buttonYAnimator = ObjectAnimator.ofFloat(button, "scaleY", button.scaleY, 1f)
@@ -69,37 +78,50 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         set.playTogether(buttonXAnimator, buttonYAnimator, revealMic, moveMic, revealSlideMsg,
                 moveSlideMsg, revealTimer, moveTimer, buttonSlideAnimator)
         set.duration = 300
-        set.addListener(object : Animator.AnimatorListener{
-            fun resetAnimation(){
+        set.addListener(object : MonkeyAnimatorListener() {
+
+
+            override fun onAnimationCancel() {
                 playingConcealAnim = false
-
-                textInput?.visibility = View.VISIBLE
-
-                redMic.x = redMicStartX
-                timer.x = timerStartX
-                slideMsg.x = slideMsgStartX
-                button.x = buttonStartX
-
-            }
-            override fun onAnimationCancel(animation: Animator?) {
                 resetAnimation()
+                recordingListener?.onCancelRecording()
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd() {
+                playingConcealAnim = false
                 resetAnimation()
+                if(cancelled)
+                    recordingListener?.onCancelRecording()
+                else
+                    recordingListener?.onStopRecording()
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
-
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart() {
                 playingConcealAnim = true
+                recordingAnimation?.cancel()
             }
 
         })
+        currentSet = set
         set.start()
         return true
+
+    }
+
+    fun resetAnimation(){
+        textInput?.visibility = View.VISIBLE
+
+        redMic.x = redMicStartX
+        timer.x = timerStartX
+        slideMsg.x = slideMsgStartX
+        button.x = buttonStartX
+
+        redMic.alpha = 0f
+        timer.alpha = 0f
+        slideMsg.alpha = 0f
+
+        button.scaleY = 1f
+        button.scaleX = 1f
 
     }
 
@@ -140,25 +162,28 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         set.playTogether(buttonXAnimator, buttonYAnimator, revealMic, moveMic, revealSlideMsg,
                 moveSlideMsg, revealTimer, moveTimer)
         set.duration = 300
-        set.addListener(object : Animator.AnimatorListener{
-            override fun onAnimationCancel(animation: Animator?) {
+        set.addListener(object : MonkeyAnimatorListener() {
+            override fun onAnimationCancel() {
                 playingRevealAnim = false
+                resetAnimation()
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd() {
                 playingRevealAnim = false
+                dragger?.fadeView = slideMsg
+                dragger?.textStartX = slideMsgStartX
+
+                recordingAnimation?.start()
+                recordingListener?.onStartRecording()
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
-
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart() {
                 playingRevealAnim = true
                 textInput?.visibility = View.INVISIBLE
             }
 
         })
+        currentSet = set
         set.start()
         return true
 
