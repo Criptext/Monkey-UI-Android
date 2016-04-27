@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.content.Context
 import android.os.Vibrator
@@ -12,7 +12,7 @@ import com.criptext.monkeykitui.input.listeners.RecordingListener
  * Created by gesuwall on 4/25/16.
  */
 
-open class RecorderTouchListener : View.OnTouchListener{
+open class RecorderTouchListener : View.OnTouchListener {
     var blocked : Boolean = false
     var lastHit : Long = 0L
     var startTime : Long = 0L

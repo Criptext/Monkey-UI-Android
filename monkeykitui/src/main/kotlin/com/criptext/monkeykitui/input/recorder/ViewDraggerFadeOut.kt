@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.util.Log
 import android.view.View

@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 /**
  * Created by gesuwall on 4/25/16.

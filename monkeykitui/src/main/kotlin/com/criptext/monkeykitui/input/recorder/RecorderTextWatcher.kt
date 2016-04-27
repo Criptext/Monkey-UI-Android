@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -45,7 +45,7 @@ class RecorderTextWatcher(textBtn: View, recordBtn: View) : TextWatcher {
         val animY = ObjectAnimator.ofFloat(view, "scaleY", start, end)
         val set = AnimatorSet()
         set.playTogether(animX, animY)
-        set.addListener(object: Animator.AnimatorListener{
+        set.addListener(object: Animator.AnimatorListener {
             override fun onAnimationCancel(animation: Animator?) {
             }
 
@@ -68,7 +68,7 @@ class RecorderTextWatcher(textBtn: View, recordBtn: View) : TextWatcher {
         return set
     }
 
-    private fun changeButtons(viewIn: View, viewOut: View ){
+    private fun changeButtons(viewIn: View, viewOut: View){
         val animator1 = createBtnAnimator(viewOut, false)
         val animator2 = createBtnAnimator(viewIn, true)
 

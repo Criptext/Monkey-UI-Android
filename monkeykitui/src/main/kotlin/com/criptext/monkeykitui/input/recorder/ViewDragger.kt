@@ -1,8 +1,9 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
+import com.criptext.monkeykitui.input.BaseInputView
 
 /**
  * Created by gesuwall on 4/25/16.

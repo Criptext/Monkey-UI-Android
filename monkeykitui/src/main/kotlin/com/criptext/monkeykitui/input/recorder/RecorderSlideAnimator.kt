@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.recorder
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -74,7 +74,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         set.playTogether(buttonXAnimator, buttonYAnimator, revealMic, moveMic, revealSlideMsg,
                 moveSlideMsg, revealTimer, moveTimer, buttonSlideAnimator)
         set.duration = 300
-        set.addListener(object : Animator.AnimatorListener{
+        set.addListener(object : Animator.AnimatorListener {
             fun resetAnimation(){
                 playingConcealAnim = false
 
@@ -151,7 +151,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         set.playTogether(buttonXAnimator, buttonYAnimator, revealMic, moveMic, revealSlideMsg,
                 moveSlideMsg, revealTimer, moveTimer)
         set.duration = 300
-        set.addListener(object : Animator.AnimatorListener{
+        set.addListener(object : Animator.AnimatorListener {
             override fun onAnimationCancel(animation: Animator?) {
                 playingRevealAnim = false
             }

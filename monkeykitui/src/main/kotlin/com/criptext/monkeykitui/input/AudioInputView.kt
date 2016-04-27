@@ -11,6 +11,10 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
 import com.criptext.monkeykitui.input.listeners.RecordingListener
+import com.criptext.monkeykitui.input.recorder.RecorderSlideAnimator
+import com.criptext.monkeykitui.input.recorder.RecorderTextWatcher
+import com.criptext.monkeykitui.input.recorder.RecorderTouchListener
+import com.criptext.monkeykitui.input.recorder.RecordingAnimation
 
 /**
  * Created by gesuwall on 4/25/16.
