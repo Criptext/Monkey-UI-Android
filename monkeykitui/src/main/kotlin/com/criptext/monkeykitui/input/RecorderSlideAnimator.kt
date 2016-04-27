@@ -9,6 +9,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.input.BaseInputView
+import com.criptext.monkeykitui.input.listeners.RecordingListener
 
 /**
  * Created by gesuwall on 4/25/16.
@@ -36,6 +37,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
     var dragger : ViewDraggerFadeOut? = null
     var recordingAnimation : RecordingAnimation? = null
+    var recordingListener : RecordingListener? = null
 
     init{
         this.redMic = redMic
@@ -86,10 +88,15 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             }
             override fun onAnimationCancel(animation: Animator?) {
                 resetAnimation()
+                recordingListener?.onCancelRecording()
             }
 
             override fun onAnimationEnd(animation: Animator?) {
                 resetAnimation()
+                if(cancelled)
+                    recordingListener?.onCancelRecording()
+                else
+                    recordingListener?.onStopRecording()
             }
 
             override fun onAnimationRepeat(animation: Animator?) {
@@ -155,6 +162,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
                 dragger?.textStartX = slideMsgStartX
 
                 recordingAnimation?.start()
+                recordingListener?.onStartRecording()
             }
 
             override fun onAnimationRepeat(animation: Animator?) {

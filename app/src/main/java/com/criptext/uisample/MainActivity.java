@@ -16,12 +16,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.criptext.monkeykitui.input.AudioInputView;
 import com.criptext.monkeykitui.input.InputView;
+import com.criptext.monkeykitui.input.listeners.RecordingListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -114,6 +117,27 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         linearLayoutManager.setStackFromEnd(true);
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
+
+        final AudioInputView audioView = (AudioInputView) findViewById(R.id.inputView);
+        audioView.setRecordingListener(new RecordingListener() {
+            @Override
+            public void onStartRecording() {
+                Log.d("MainActivity", "start record");
+                startRecording();
+            }
+
+            @Override
+            public void onStopRecording() {
+                Log.d("MainActivity", "stop record");
+                stopRecording();
+                sendAudioFile();
+            }
+
+            @Override
+            public void onCancelRecording() {
+                cancelRecording();
+            }
+        });
 
         //INPUTVIEW SOLO TEXTO
         /*

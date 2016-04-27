@@ -3,17 +3,25 @@ package com.criptext.monkeykitui.input
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
+import com.criptext.monkeykitui.input.listeners.RecordingListener
 
 /**
  * Created by gesuwall on 4/25/16.
  */
 
 class AudioInputView : BaseInputView {
+    private lateinit var slideAnimator : RecorderSlideAnimator
+
+    var recordingListener : RecordingListener? = null
+    set (value){
+        slideAnimator.recordingListener = value
+    }
 
     constructor(context: Context?) : super(context)
 
@@ -34,11 +42,11 @@ class AudioInputView : BaseInputView {
         mic.bringToFront()
         timer.bringToFront()
         val recordingAnim = RecordingAnimation(mic, timer as TextView)
-        val anim = RecorderSlideAnimator(mic, timer, slide, btn)
-        anim.recordingAnimation = recordingAnim
-        anim.textInput = editText
+        slideAnimator = RecorderSlideAnimator(mic, timer, slide, btn)
+        slideAnimator.recordingAnimation = recordingAnim
+        slideAnimator.textInput = editText
         val touchListener = RecorderTouchListener()
-        touchListener.recordingAnimations = anim
+        touchListener.recordingAnimations = slideAnimator
         btn.setOnTouchListener(touchListener)
 
         return SideButton(view, dpToPx(50, context))
