@@ -24,6 +24,8 @@ import android.util.Log;
 
 import com.criptext.monkeykitui.input.AudioInputView;
 import com.criptext.monkeykitui.input.InputView;
+import com.criptext.monkeykitui.input.MediaInputView;
+import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.RecordingListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -119,59 +121,35 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
-        final AudioInputView audioView = (AudioInputView) findViewById(R.id.inputView);
-        audioView.setRecordingListener(new RecordingListener() {
-            @Override
-            public void onStartRecording() {
-                Log.d("MainActivity", "start record");
-                startRecording();
-            }
-
-            @Override
-            public void onStopRecording() {
-                Log.d("MainActivity", "stop record");
-                stopRecording();
-                sendAudioFile();
-            }
-
-            @Override
-            public void onCancelRecording() {
-                cancelRecording();
-            }
-        });
-
-        audioView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
-            @Override
-            public void onSendButtonClick(String text) {
-                addTextMessageToConversation(text);
-            }
-        });
-
-        //INPUTVIEW SOLO TEXTO
-        /*
-        final TextInputView inputTextView = (TextInputView) findViewById(R.id.inputView);
-        if(inputTextView != null) {
-            inputTextView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        if(mediaInputView!=null) {
+            mediaInputView.setRecordingListener(new RecordingListener() {
                 @Override
-                public void onSendButtonClick(String text) {
-                    addTextMessageToConversation(text);
+                public void onStartRecording() {
+                    Log.d("MainActivity", "start record");
+                    startRecording();
+                }
+
+                @Override
+                public void onStopRecording() {
+                    Log.d("MainActivity", "stop record");
+                    stopRecording();
+                    sendAudioFile();
+                }
+
+                @Override
+                public void onCancelRecording() {
+                    cancelRecording();
                 }
             });
-        }
-        */
 
-        //INPUTVIEW CON ATTACHMENT & AUDIO
-        /*
-        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
-        if(mediaInputView != null) {
-            //SEND BUTTON
             mediaInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
                 @Override
                 public void onSendButtonClick(String text) {
                     addTextMessageToConversation(text);
                 }
             });
-            //ATTACHMENT BUTTON
+
             mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
             mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
                 @Override
@@ -188,51 +166,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 }
             });
         }
-        */
-        //INPUTVIEW COMPLETO
-        /*
-        inputView = (InputView)findViewById(R.id.inputView);
-        inputView.setOnRecordListener(new RecordingListeners(){
-            @Override
-            public void onStartRecording() {
-                super.onStartRecording();
-                startRecording();
-            }
 
-            @Override
-            public void onStopRecording() {
-                super.onStopRecording();
-                stopRecording();
-                sendAudioFile();
-            }
-
-            @Override
-            public void onCancelRecording() {
-                super.onCancelRecording();
-                cancelRecording();
-            }
-        });
-
-        inputView.setOnButtonsClickedListener(new ButtonsListeners(){
-
-            @Override
-            public void onAttachmentButtonClicked() {
-                super.onAttachmentButtonClicked();
-                selectImage();
-            }
-
-            @Override
-            public void onSendButtonClicked(String text) {
-                super.onSendButtonClicked(text);
-                long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
-                MessageItem item = new MessageItem("0", "" + timestamp, text, timestamp, false,
-                        MonkeyItem.MonkeyItemType.text);
-                adapter.getMessagesList().add(item);
-                adapter.notifyDataSetChanged();
-                recycler.scrollToPosition(adapter.getMessagesList().size()-1);
-            }
-        });
-        */
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
 
     }

@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.input
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.text.InputType
 import android.util.AttributeSet
@@ -22,21 +23,25 @@ import com.criptext.monkeykitui.input.children.SideButton
  */
 
 open class BaseInputView : FrameLayout {
+
     protected lateinit var editText : EditText
+    protected lateinit var leftButtonView : View
 
     constructor(context: Context?) : super(context){
-        init()
+        init(null)
     }
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){
-        init()
+        val a = context?.theme?.obtainStyledAttributes(attrs, R.styleable.InputView, 0, 0)
+        init(a)
     }
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr){
-        init()
+        val a = context?.theme?.obtainStyledAttributes(attrs, R.styleable.InputView, 0, 0)
+        init(a)
     }
 
-    open protected fun init(){
+    open protected fun init(a : TypedArray?){
         editText = EditText(context);
         editText.maxLines = 4
         editText.hint = context.resources.getString(R.string.text_message_write_hint)
@@ -45,18 +50,20 @@ open class BaseInputView : FrameLayout {
         editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         params.gravity = Gravity.BOTTOM
+        params.bottomMargin = dpToPx(5, context)
 
         editText.layoutParams = params
         addView(editText)
 
-        val leftBtn = setLeftButton()
+        val leftBtn = setLeftButton(a)
         if(leftBtn != null) {
+            leftButtonView = leftBtn.button
             params.leftMargin = leftBtn.visibleWidth
             (leftBtn.button.layoutParams as LayoutParams).gravity = Gravity.LEFT or Gravity.BOTTOM
             addView(leftBtn.button)
         }
 
-        val rightBtn = setRightButton()
+        val rightBtn = setRightButton(a)
         if(rightBtn != null) {
             params.rightMargin = rightBtn.visibleWidth
             (rightBtn.button.layoutParams as LayoutParams).gravity = Gravity.RIGHT or Gravity.BOTTOM
@@ -65,8 +72,8 @@ open class BaseInputView : FrameLayout {
 
     }
 
-    open protected fun setLeftButton() : SideButton? = null
-    open protected fun setRightButton() : SideButton? = null
+    open protected fun setLeftButton(a : TypedArray?) : SideButton? = null
+    open protected fun setRightButton(a : TypedArray?) : SideButton? = null
 
     companion object {
         fun dpToPx(dp: Int, context: Context): Int {
@@ -79,8 +86,6 @@ open class BaseInputView : FrameLayout {
 
     fun clearText(){
         editText.text.clear()
-        //val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        //imm.hideSoftInputFromWindow(editText.windowToken, 0);
     }
 
 
