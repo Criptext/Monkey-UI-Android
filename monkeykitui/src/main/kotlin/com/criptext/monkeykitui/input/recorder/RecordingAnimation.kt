@@ -18,11 +18,10 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
     val watch : TextView
     val handler : Handler
     val updateRunnable : Runnable
+    var cancel = false
 
     var counter : Long
     val currentTime : String
-
-
     get() {
         val totalSeconds = counter/1000L
         val minutes = totalSeconds/60L
@@ -41,8 +40,10 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
         counter = 0L
 
         updateRunnable = Runnable {
-            counter += PERIOD
-            updateUI()
+            if (!cancel) {
+                counter += PERIOD
+                updateUI()
+            }
         }
     }
 
@@ -58,10 +59,12 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
         counter = 0L
         watch.text = "00:00"
         recordingMic.alpha = 1f
+        cancel = false
         updateRunnable.run()
     }
 
     fun cancel(){
+        cancel = true
         handler.removeCallbacks(updateRunnable)
         watch.text = "00:00"
     }
