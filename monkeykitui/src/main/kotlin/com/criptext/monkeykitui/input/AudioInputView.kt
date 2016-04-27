@@ -9,20 +9,20 @@ import android.view.View
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
+import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
 import com.criptext.monkeykitui.input.listeners.RecordingListener
 
 /**
  * Created by gesuwall on 4/25/16.
  */
 
-class AudioInputView : BaseInputView {
+class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
 
     var recordingListener : RecordingListener? = null
     set (value){
         slideAnimator.recordingListener = value
     }
-
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -43,12 +43,16 @@ class AudioInputView : BaseInputView {
         mic.bringToFront()
         timer.bringToFront()
 
-        editText.addTextChangedListener(RecorderTextWatcher(txtBtn, recBtn))
-        val recordingAnim = RecordingAnimation(mic, timer as TextView)
-        slideAnimator = RecorderSlideAnimator(mic, timer, slide, recBtn)
+        initSendTextButton(txtBtn) //enable txtBtn to send text messages
+
+        editText.addTextChangedListener(RecorderTextWatcher(txtBtn, recBtn)) //toggle between audio and text buttons
+        val recordingAnim = RecordingAnimation(mic, timer as TextView)       //controls animation that plays during recording
+
+        slideAnimator = RecorderSlideAnimator(mic, timer, slide, recBtn)     //controls animation shows/hides recorder
         slideAnimator.recordingAnimation = recordingAnim
         slideAnimator.textInput = editText
-        val touchListener = RecorderTouchListener()
+
+        val touchListener = RecorderTouchListener()                          //starts animations depending on touch gestures
         touchListener.recordingAnimations = slideAnimator
         recBtn.setOnTouchListener(touchListener)
 

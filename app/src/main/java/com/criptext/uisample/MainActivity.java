@@ -24,6 +24,7 @@ import android.util.Log;
 
 import com.criptext.monkeykitui.input.AudioInputView;
 import com.criptext.monkeykitui.input.InputView;
+import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.RecordingListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
@@ -136,6 +137,13 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             @Override
             public void onCancelRecording() {
                 cancelRecording();
+            }
+        });
+
+        audioView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+            @Override
+            public void onSendButtonClick(String text) {
+                addTextMessageToConversation(text);
             }
         });
 
