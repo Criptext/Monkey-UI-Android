@@ -34,20 +34,23 @@ class AudioInputView : BaseInputView {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val params = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(100, context))
         view.layoutParams = params
-        val btn = view.findViewById(R.id.button_mic)
+        val txtBtn = view.findViewById(R.id.button_send)
+        val recBtn = view.findViewById(R.id.button_mic)
         val mic = view.findViewById(R.id.redMic)
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)
 
         mic.bringToFront()
         timer.bringToFront()
+
+        editText.addTextChangedListener(RecorderTextWatcher(txtBtn, recBtn))
         val recordingAnim = RecordingAnimation(mic, timer as TextView)
-        slideAnimator = RecorderSlideAnimator(mic, timer, slide, btn)
+        slideAnimator = RecorderSlideAnimator(mic, timer, slide, recBtn)
         slideAnimator.recordingAnimation = recordingAnim
         slideAnimator.textInput = editText
         val touchListener = RecorderTouchListener()
         touchListener.recordingAnimations = slideAnimator
-        btn.setOnTouchListener(touchListener)
+        recBtn.setOnTouchListener(touchListener)
 
         return SideButton(view, dpToPx(50, context))
 
