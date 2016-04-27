@@ -3,10 +3,13 @@ package com.criptext.monkeykitui.input.recorder
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.input.BaseInputView
@@ -23,6 +26,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     var slideMsg: View
     var button : View
 
+    var leftButton : View? = null
     var textInput : View? = null
 
     var redMicStartX: Float = 0f
@@ -110,6 +114,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
     fun resetAnimation(){
         textInput?.visibility = View.VISIBLE
+        leftButton?.visibility = View.VISIBLE
 
         redMic.x = redMicStartX
         timer.x = timerStartX
@@ -123,6 +128,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         button.scaleY = 1f
         button.scaleX = 1f
 
+        textInput?.requestFocus()
     }
 
     fun initStartValues(){
@@ -180,6 +186,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             override fun onAnimationStart() {
                 playingRevealAnim = true
                 textInput?.visibility = View.INVISIBLE
+                leftButton?.visibility = View.INVISIBLE
             }
 
         })

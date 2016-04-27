@@ -1,11 +1,13 @@
 package com.criptext.monkeykitui.input
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
@@ -20,7 +22,7 @@ import com.criptext.monkeykitui.input.recorder.RecordingAnimation
  * Created by gesuwall on 4/25/16.
  */
 
-class AudioInputView : TextInputView {
+open class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
 
     var recordingListener : RecordingListener? = null
@@ -34,7 +36,7 @@ class AudioInputView : TextInputView {
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
 
-    override fun setRightButton(): SideButton? {
+    override fun setRightButton(a : TypedArray?): SideButton? {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val params = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(100, context))
         view.layoutParams = params
@@ -43,6 +45,11 @@ class AudioInputView : TextInputView {
         val mic = view.findViewById(R.id.redMic)
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)
+
+        if (a?.getDrawable(R.styleable.InputView_sendButton) != null)
+            (txtBtn as ImageView).setImageDrawable(a?.getDrawable(R.styleable.InputView_sendButton))
+        if (a?.getDrawable(R.styleable.InputView_micButton) != null)
+            (recBtn as ImageView).setImageDrawable(a?.getDrawable(R.styleable.InputView_micButton))
 
         mic.bringToFront()
         timer.bringToFront()
@@ -55,6 +62,7 @@ class AudioInputView : TextInputView {
         slideAnimator = RecorderSlideAnimator(mic, timer, slide, recBtn)     //controls animation shows/hides recorder
         slideAnimator.recordingAnimation = recordingAnim
         slideAnimator.textInput = editText
+        slideAnimator.leftButton = leftButtonView
 
         val touchListener = RecorderTouchListener()                          //starts animations depending on touch gestures
         touchListener.recordingAnimations = slideAnimator
@@ -64,10 +72,11 @@ class AudioInputView : TextInputView {
 
     }
 
-    override fun init() {
+    override fun init(a : TypedArray?) {
         setWhiteBackground()
-        super.init()
+        super.init(a)
     }
+
     fun setWhiteBackground(){
         val view = View(context)
         view.setBackgroundColor(Color.WHITE)

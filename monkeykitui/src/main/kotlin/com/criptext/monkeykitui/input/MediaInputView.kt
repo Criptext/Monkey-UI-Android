@@ -22,7 +22,7 @@ import com.criptext.monkeykitui.util.Utils
  * Created by daniel on 4/22/16.
  */
 
-open class AttachmentInputView : TextInputView {
+open class MediaInputView : AudioInputView {
 
     var onAttachmentButtonClickListener : OnAttachmentButtonClickListener? = null
 

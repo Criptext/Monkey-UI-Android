@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.input
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
@@ -25,10 +26,11 @@ open class TextInputView : BaseInputView {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    override fun setRightButton() : SideButton? {
+    override fun setRightButton(a : TypedArray?) : SideButton? {
         val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
         val btn = newCirclularSendButton(diameter)
-
+        if (a?.getDrawable(R.styleable.InputView_sendButton) != null)
+            btn.setImageDrawable(a?.getDrawable(R.styleable.InputView_sendButton))
         return SideButton(btn, diameter.toInt())
     }
 
