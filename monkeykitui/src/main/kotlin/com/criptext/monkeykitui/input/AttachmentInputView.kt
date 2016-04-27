@@ -36,7 +36,7 @@ open class AttachmentInputView : TextInputView {
     fun setActionString(actionStrings : Array<String>){
         this.actionStrings=actionStrings
     }
-    
+
     override fun setLeftButton() : SideButton{
         val btn = ImageView(context)
         btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
