@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 
@@ -32,8 +33,9 @@ class AudioInputView : BaseInputView {
 
         mic.bringToFront()
         timer.bringToFront()
-
+        val recordingAnim = RecordingAnimation(mic, timer as TextView)
         val anim = RecorderSlideAnimator(mic, timer, slide, btn)
+        anim.recordingAnimation = recordingAnim
         anim.textInput = editText
         val touchListener = RecorderTouchListener()
         touchListener.recordingAnimations = anim
