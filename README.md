@@ -16,7 +16,7 @@ repositories {
 Then add the following to your app's build.gradle file dependencies block:
 ```
 dependencies {
-    compile ('com.criptext.monkeykitui:monkeykitui:1.3@aar') {
+    compile ('com.criptext.monkeykitui:monkeykitui:1.5.2@aar') {
         transitive = true;
     }
 }
