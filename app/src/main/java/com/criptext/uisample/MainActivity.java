@@ -16,14 +16,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.criptext.monkeykitui.input.AudioInputView;
-import com.criptext.monkeykitui.input.InputView;
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
@@ -54,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     final static int MAX_MESSAGES = 150;
     MonkeyAdapter adapter;
     RecyclerView recycler;
-    InputView inputView;
     AudioPlaybackHandler audioHandler;
 
     String mAudioFileName = null;

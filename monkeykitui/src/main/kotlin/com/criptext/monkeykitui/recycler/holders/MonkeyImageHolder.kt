@@ -52,14 +52,23 @@ class MonkeyImageHolder : MonkeyHolder {
     }
 
     fun setDownloadedImage(file : File, context : Context){
-        Picasso.with(context).load(file).into(photoImageView)
+        Picasso.with(context)
+                .load(file)
+                .resize(200, 200)
+                .centerCrop()
+                .into(photoImageView)
         photoLoadingView!!.visibility = View.GONE
     }
 
     fun setNotDownloadedImage(item : MonkeyItem, context: Context){
         val filePlaceholder = File(item.getPlaceholderFilePath())
         if(filePlaceholder.exists())
-            Picasso.with(context).load(filePlaceholder).into(placeholderImageView)
+            Picasso.with(context)
+                    .load(filePlaceholder)
+                    .resize(200, 200)
+                    .centerCrop()
+                    .into(placeholderImageView)
+        photoImageView!!.setImageBitmap(null)
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout!!.visibility = View.GONE
     }
