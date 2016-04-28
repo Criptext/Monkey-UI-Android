@@ -37,16 +37,16 @@ it via intent:
 ```
 # The Basics
 
-The Layout for a chat needs at least two views: A `RecyclerView` and a
-`BaseInputView`, which is a custom view provided by `MonkeyKit  that contains an
+The layout for a chat needs at least two views: A `RecyclerView` and a
+`BaseInputView`, which is a custom view provided by `MonkeyKit`  that contains an
 `EditText` and other useful components needed to create messages.
 
 ![Chat with RecyclerView and
 MediaInputView](https://cloud.githubusercontent.com/assets/14115856/14875816/22e457e2-0cd4-11e6-8096-add2cd2a3f20.jpeg)
 
 The layout file for this chat can be found
-[here](https://github.com/Criptext/MonkeyUIAndroid/blob/master/app/src/main/res/layout/activity_main.xml)
-. `FrameLayout`is the reccomended container since the input view may have hidden
+[here.](https://github.com/Criptext/MonkeyUIAndroid/blob/master/app/src/main/res/layout/activity_main.xml)
+`FrameLayout`is the recommended container since the input view may have hidden
 views that need more space when they are revealed.
 
 We also provide a custom adapter for `RecyclerView` called `MonkeyAdapter` that
@@ -79,8 +79,8 @@ You can also find an implementation example [here.](app/src/main/java/com/cripte
 A subclass of `BaseInputView` is needed in your layout for the user to be able
 to compose new messages. You could create your own, or use one of our defaults:
 
-- **TextInputView:** only sends text
-- **AttachmentInputView:** sends text and attachments such as photos
+- **TextInputView:** only sends text.
+- **AttachmentInputView:** sends text and attachments such as photos.
 - **AudioInputView:** sends text and voice notes.
 - **MediaInputView:** sends text, attachments and voicenotes. It is a
   combination of `AttachmentInputView` and `MediaInputView.
