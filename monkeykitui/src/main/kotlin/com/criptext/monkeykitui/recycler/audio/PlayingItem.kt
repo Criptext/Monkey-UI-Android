@@ -8,7 +8,7 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
 
 class PlayingItem(position : Int, item : MonkeyItem) {
     val item : MonkeyItem
-    val position : Int
+    var position : Int
 
     init{
         this.item = item

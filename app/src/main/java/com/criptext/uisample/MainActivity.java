@@ -501,22 +501,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     /***OVERRIDE METHODS****/
 
     @Override
-    public int getMemberColor(@NotNull String sessionId) {
-        return Color.WHITE;
-    }
-
-    @NotNull
-    @Override
-    public String getMenberName(@NotNull String sessionId) {
-        return "Unknown";
-    }
-
-    @Override
-    public boolean isGroupChat() {
-        return false;
-    }
-
-    @Override
     public boolean isOnline() {
         return true;
     }

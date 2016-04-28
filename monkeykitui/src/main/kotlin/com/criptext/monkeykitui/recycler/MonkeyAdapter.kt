@@ -16,7 +16,6 @@ import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
 import com.criptext.monkeykitui.recycler.holders.*
-import com.criptext.monkeykitui.recycler.listeners.AudioListener
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.recycler.listeners.OnLongClickMonkeyListener
 import com.criptext.monkeykitui.util.Utils
@@ -29,7 +28,7 @@ import java.util.*
  * Created by gesuwall on 4/4/16.
  */
 
-class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
+open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
     val mContext : Context
     val messagesList: ArrayList<MonkeyItem>
 
@@ -46,8 +45,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
 
     private var selectedMessage : MonkeyItem?
 
-    var audioListener : AudioListener?
-
     var audioHandler : AudioPlaybackHandler?
     var imageListener : ImageListener?
     var onLongClickListener : OnLongClickMonkeyListener?
@@ -56,7 +53,6 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         mContext = ctx
         messagesList = list
         selectedMessage = null
-        audioListener = null
         audioHandler = null
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
@@ -112,6 +108,25 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
             })
             return
         }
+
+        bindMonkeyBasicView(position, item, holder)
+
+        //type specific stuff
+        when(MonkeyItem.MonkeyItemType.values()[item.getMessageType()]){
+            MonkeyItem.MonkeyItemType.text -> {
+                bindMonkeyTextView(position, item, holder)
+            }
+            MonkeyItem.MonkeyItemType.audio -> {
+                bindMonkeyAudioView(position, item, holder)
+            }
+            MonkeyItem.MonkeyItemType.photo -> {
+                bindMonkeyPhotoView(position, item, holder)
+            }
+        }
+
+    }
+
+    open protected fun bindMonkeyBasicView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         //set message date
         holder.setMessageDate(item.getMessageTimestamp())
         //long click
@@ -135,103 +150,99 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         //selected status
         val selected = selectedMessage
         holder.updateSelectedStatus(selected != null && selected.getMessageId() == item.getMessageId())
+    }
 
-        //type specific stuff
-        when(MonkeyItem.MonkeyItemType.values()[item.getMessageType()]){
-            MonkeyItem.MonkeyItemType.text -> {
-                val textHolder = holder as MonkeyTextHolder
-                textHolder.messageTextView!!.text = item.getMessageText()
-            }
-            MonkeyItem.MonkeyItemType.audio -> {
-                val audioHolder = holder as MonkeyAudioHolder
-                val target = File(item.getFilePath())
-                val playingAudio = audioHandler?.currentlyPlayingItem?.item
+    open protected fun bindMonkeyTextView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+        val textHolder = holder as MonkeyTextHolder
+        textHolder.messageTextView!!.text = item.getMessageText()
+    }
 
-                val playAction = object : AudioActions() {
-                            override fun onActionClicked() {
-                                super.onActionClicked()
-                                audioListener?.onPlayButtonClicked(position, item)
-                            }
-
-                            override fun onActionLongClicked() {
-                                super.onActionLongClicked()
-                                onLongClickListener?.onLongClick(position, item)
-                            }
-                        }
-
-                val pauseAction = object : AudioActions() {
-                            override fun onActionClicked() {
-                                super.onActionClicked()
-                                audioListener?.onPauseButtonClicked(position, item)
-                            }
-
-                            override fun onActionLongClicked() {
-                                super.onActionLongClicked()
-                                onLongClickListener?.onLongClick(position, item)
-                            }
-                        }
-                if(!target.exists()){
-                    chatActivity.onFileDownloadRequested(position, item)
-                    audioHolder.updatePlayPauseButton(false)
-                    audioHolder.setWaitingForDownload()
-                } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is playing
-                    audioHolder.setReadyForPlayback()
-                    if(audioHandler?.playingAudio ?: false){
-                        Log.d("MonkeyAdapter", "set pause button")
-                        audioHolder.updatePlayPauseButton(true)
-                        audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
-                                audioHandler?.playbackProgressText ?: MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
-                        audioHolder.setAudioActions(pauseAction)
-                    } else {
-                        audioHolder.updatePlayPauseButton(false)
-                        audioHolder.setAudioActions(playAction)
-                    }
-                    audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
-                        override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
-                            Log.d("Seekbar", "start tracking")
-                            audioHandler?.updateProgressEnabled = false
-                        }
-
-                        override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
-                            Log.d("Seekbar", "stop tracking")
-                            audioHandler?.updateProgressEnabled = true
-                        }
-
-                        override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                            if(fromUser && progress > -1 && progress < 100 && playingAudio?.getMessageId().equals(item.getMessageId()))
-                                audioListener?.onProgressManuallyChanged(position, item, progress)
-                        }
-                    })
-                } else {
-                    audioHolder.setReadyForPlayback()
-                    audioHolder.updatePlayPauseButton(false)
-                    audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
-                    audioHolder.setAudioDurationText(item.getAudioDuration())
-                    audioHolder.setAudioActions(playAction)
-                }
-            }
-            MonkeyItem.MonkeyItemType.photo -> {
-                val imageHolder = holder as MonkeyImageHolder
-                val file = File(item.getFilePath())
-                if(file.exists()){
-                    imageHolder.setDownloadedImage(file, chatActivity as Context)
-                    if(file.length() < item.getFileSize())
-                        imageHolder.setRetryDownloadButton(position, item, chatActivity)
-                }
-                else{
-                    imageHolder.setNotDownloadedImage(item, chatActivity as Context)
-                    chatActivity.onFileDownloadRequested(position, item)
-                }
-
-                imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
-                imageHolder.setOnLongClickListener(View.OnLongClickListener {
-                    onLongClickListener?.onLongClick(position, item)
-                    true
-                })
-
-            }
+    open protected fun bindMonkeyPhotoView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+        val imageHolder = holder as MonkeyImageHolder
+        val file = File(item.getFilePath())
+        if(file.exists()){
+            imageHolder.setDownloadedImage(file, chatActivity as Context)
+            if(file.length() < item.getFileSize())
+                imageHolder.setRetryDownloadButton(position, item, chatActivity)
+        }
+        else{
+            imageHolder.setNotDownloadedImage(item, chatActivity as Context)
+            chatActivity.onFileDownloadRequested(position, item)
         }
 
+        imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+        imageHolder.setOnLongClickListener(View.OnLongClickListener {
+            onLongClickListener?.onLongClick(position, item)
+            true
+        })
+    }
+
+    open protected fun bindMonkeyAudioView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+        val audioHolder = holder as MonkeyAudioHolder
+        val target = File(item.getFilePath())
+        val playingAudio = audioHandler?.currentlyPlayingItem?.item
+
+        val playAction = object : AudioActions() {
+                    override fun onActionClicked() {
+                        super.onActionClicked()
+                        audioHandler?.onPlayButtonClicked(position, item)
+                    }
+
+                    override fun onActionLongClicked() {
+                        super.onActionLongClicked()
+                        onLongClickListener?.onLongClick(position, item)
+                    }
+                }
+
+        val pauseAction = object : AudioActions() {
+                    override fun onActionClicked() {
+                        super.onActionClicked()
+                        audioHandler?.onPauseButtonClicked(position, item)
+                    }
+
+                    override fun onActionLongClicked() {
+                        super.onActionLongClicked()
+                        onLongClickListener?.onLongClick(position, item)
+                    }
+                }
+        audioHolder.setAudioDurationText(item.getAudioDuration())
+        if(!target.exists()){ //Message does not exist, needs to be downloaded
+            chatActivity.onFileDownloadRequested(position, item)
+            audioHolder.updatePlayPauseButton(false)
+            audioHolder.setWaitingForDownload()
+        } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
+            audioHolder.setReadyForPlayback()
+            audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
+                        audioHandler?.playbackProgressText ?: MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
+            if(audioHandler?.playingAudio ?: false){ // Message is playing
+                audioHolder.updatePlayPauseButton(true)
+                audioHolder.setAudioActions(pauseAction)
+            } else { // Message is paused
+                audioHolder.updatePlayPauseButton(false)
+                audioHolder.setAudioActions(playAction)
+            }
+            audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
+                override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
+                    Log.d("Seekbar", "start tracking")
+                    audioHandler?.updateProgressEnabled = false
+                }
+
+                override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
+                    Log.d("Seekbar", "stop tracking")
+                    audioHandler?.updateProgressEnabled = true
+                }
+
+                override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
+                    if(fromUser && progress > -1 && progress < 100 && playingAudio?.getMessageId().equals(item.getMessageId()))
+                        audioHandler?.onProgressManuallyChanged(position, item, progress)
+                }
+            })
+        } else { //Message is available for playback but not prepared in the MediaPlayer
+            audioHolder.setReadyForPlayback()
+            audioHolder.updatePlayPauseButton(false)
+            audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
+            audioHolder.setAudioActions(playAction)
+        }
     }
 
     fun inflateView(incoming: Boolean, inLayout: Int, outLayout : Int) : View {
@@ -255,6 +266,10 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         removeEndOfRecyclerView()
         messagesList.addAll(0, newData)
         notifyItemRangeInserted(0, newData.size)
+
+        val playingItem = audioHandler?.currentlyPlayingItem
+        if(playingItem != null)
+            playingItem.position += newData.size
     }
 
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
