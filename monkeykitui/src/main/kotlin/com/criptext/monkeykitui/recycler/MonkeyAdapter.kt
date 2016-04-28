@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.criptext.monkeykitui.recycler.GroupChat
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
@@ -32,6 +33,7 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
     val mContext : Context
     val messagesList: ArrayList<MonkeyItem>
 
+    var groupChat : GroupChat? = null
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
@@ -120,9 +122,10 @@ class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.A
         })
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
-            if (chatActivity.isGroupChat()) {
-                holder.setSenderName(chatActivity.getMenberName(item.getContactSessionId()),
-                        chatActivity.getMemberColor(item.getContactSessionId()))
+            val group = groupChat
+            if (group != null) {
+                holder.setSenderName(group.getMemberName(item.getContactSessionId()),
+                        group.getMemberColor(item.getContactSessionId()))
             }
         } else { //stuff for outgoing messages
            holder.updateReadStatus(item.getOutgoingMessageStatus())
