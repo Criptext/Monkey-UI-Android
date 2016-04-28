@@ -23,7 +23,9 @@ dependencies {
 ```
 
 ## Edit your Manifest.xml
-Monkey UIKit use a photoviewer to show the photos that you send and receive. If you want to use it you need declare PhotoViewActivity in your manifest:
+By default, Monkey UIKit uses its own activity to display sent and received photos in conversations. 
+You must declare `PhotoViewActivity`in your manifest so that your app can start
+it via intent:
 ```
 <application
     ...
@@ -33,67 +35,61 @@ Monkey UIKit use a photoviewer to show the photos that you send and receive. If 
     ...
 </application>
 ```
-## Components
-Monkey UIKIT use several components:
-- MonkeyAdapter (RecyclerView.Adapter)
-- MonkeyHolder (RecyclerView.ViewHolder)
-- MonkeyView (Bubbles)
-- MonkeyItem 
-- ChatActivity
-- BaseInputView
+# The Basics
 
-### MonkeyAdapter
-We use a custom Adapter called MonkeyAdapter for the RecyclerView. The MonkeyAdapter guides the way the messages are shown in the UI. We have written useful methods:
-- addNewData
-- smoothlyAddNewData
-- smoothlyAddNewItem
+The Layout for a chat needs at least two views: A `RecyclerView` and a
+`BaseInputView`, which is a custom view provided by `MonkeyKit  that contains an
+`EditText` and other useful components needed to create messages.
 
-### MonkeyHolder
-We use a custom ViewHolder called MonkeyHolder for the RecyclerView. MonkeyHolder contain a reference to all common controls(TextView, ImageView, etc) we have to handle in our layout. We have some classes that extends of MonkeyHolder for example: MonkeyTextHolder, MonkeyImageHolder, etc.
-[Example here](monkeykitui/src/main/kotlin/com/criptext/monkeykitui/recycler/holders/MonkeyTextHolder.kt)
+![Chat with RecyclerView and
+MediaInputView](https://cloud.githubusercontent.com/assets/14115856/14875816/22e457e2-0cd4-11e6-8096-add2cd2a3f20.jpeg)
 
-### MonkeyView
-The class MonkeyView is a custom View that contains all the common controls and methods that the bubbles has. For example: datetimeTextView, errorImageView, sendingProgressBar, etc. We have some classes that extends of MonkeyView for example: AudioMessageView, TextMessageView, etc.
-[Example here](monkeykitui/src/main/kotlin/com/criptext/monkeykitui/bubble/TextMessageView.kt)
+The layout file for this chat can be found
+[here](https://github.com/Criptext/MonkeyUIAndroid/blob/master/app/src/main/res/layout/activity_main.xml)
+. `FrameLayout`is the reccomended container since the input view may have hidden
+views that need more space when they are revealed.
 
-### MonkeyItem
-To create your chat activity you need to create a Class that represent a message. This class has to implement an interface called MonkeyItem and implement his methods.
-[Example here](app/src/main/java/com/criptext/uisample/MessageItem.java)
+We also provide a custom adapter for `RecyclerView` called `MonkeyAdapter` that
+does all the wiring for you. All you need to do is implement `MonkeyItem` in
+your message class and `ChatActivity` in your activity.
 
-### ChatActivity
-To create a chat activity you need to have an activity and make it implements the interface ChatActivity. This interface has useful methods that you have to implement.
-[Example here](app/src/main/java/com/criptext/uisample/MainActivity.java)
+## ChatActivity
 
-### BaseInputView
-Monkey UIKIT provides you with differents InputView: 
-- **TextInputView:** View that implements an editText and a send button
-- **AttachmentInputView:** View that implements the TextInputView and an attachment button with custom options
-- **AudioInputView:** View that implements the TextInputView and an audio button that implements methods to record audio
-- **MediaInputView:** View that implements all the InputViews
-
-To add your InputView inside your layout just add these lines:
-```
-<com.criptext.monkeykitui.input.TextInputView
-        android:id="@+id/inputView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"/>
-```
-Implementation in your activity:
-```
-final TextInputView inputTextView = (TextInputView) findViewById(R.id.inputView);
-if(inputTextView != null) {
-    inputTextView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
-        @Override
-        public void onSendButtonClick(String text) {
-            addTextMessageToConversation(text);
-        }
-    });
-}
-```
-In order to create your own InputView you need to create a Class that extends the Class BaseInputView and override two optional methods: **setRightButton** and **setLeftButton**. These methods help you to implement your own buttons inside the InputView.
+`MonkeyAdapter` may need to interact with your activity in certain events or to
+gather additional data. To instatiate `MonkeyAdapter` you must pass a `Context`
+reference that implements `ChatActivity`. For more information about the methods
+ you must implement please see the [ChatActivity source code with 
+documentation.](https://github.com/Criptext/MonkeyUIAndroid/blob/master/monkeykitui/src/main/kotlin/com/criptext/monkeykitui/recycler/ChatActivity.kt)
+You can also find an example [here.](app/src/main/java/com/criptext/uisample/MainActivity.java)
 
 
+## MonkeyAdapter and MonkeyItem
 
+No matter how you design the class that holds each individual chat message in
+your app, integration with our UI Kit is a breeze. Just implement the the
+`MonkeyItem` interface in your class, instantiate  a `MonkeyAdapter` class 
+using an `ArrayList` of your `MonkeyItem` messages and when you set the adapter to
+the `RecyclerView` your messages will be displayed on screen. For more
+information about the methods you must implement please see the [MonkeyItem 
+source code with 
+documentation.](https://github.com/Criptext/MonkeyUIAndroid/blob/master/monkeykitui/src/main/kotlin/com/criptext/monkeykitui/recycler/MonkeyItem.kt)
+You can also find an implementation example [here.](app/src/main/java/com/criptext/uisample/MessageItem.java)
+##InputView
 
+A subclass of `BaseInputView` is needed in your layout for the user to be able
+to compose new messages. You could create your own, or use one of our defaults:
+
+- **TextInputView:** only sends text
+- **AttachmentInputView:** sends text and attachments such as photos
+- **AudioInputView:** sends text and voice notes.
+- **MediaInputView:** sends text, attachments and voicenotes. It is a
+  combination of `AttachmentInputView` and `MediaInputView.
+
+For your activity to listen to new messages to send, set the appropiate
+listener to the InputView.
+
+After following all these steps you'll have the UI ready for a messaging
+application. For a full implementation please see our sample app's source code
+[here,](app/src/main/java/com/criptext/uisample/) or clone this repository and
+build it with Android Studio.
 
