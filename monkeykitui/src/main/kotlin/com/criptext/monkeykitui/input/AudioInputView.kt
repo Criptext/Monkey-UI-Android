@@ -80,7 +80,7 @@ open class AudioInputView : TextInputView {
     fun setWhiteBackground(){
         val view = View(context)
         view.setBackgroundColor(Color.WHITE)
-        val  params = LayoutParams(LayoutParams.MATCH_PARENT, BaseInputView.dpToPx(53, context))
+        val  params = LayoutParams(LayoutParams.MATCH_PARENT, context.resources.getDimension(R.dimen.audio_right_btn_height).toInt())
         params.gravity = Gravity.BOTTOM
         view.layoutParams = params
         addView(view)

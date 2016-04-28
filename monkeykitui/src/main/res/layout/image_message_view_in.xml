@@ -6,7 +6,7 @@
     android:id="@+id/row_messages_thread"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:clickable="false"
     android:paddingBottom="5dp"
     android:gravity="left"
     android:orientation="vertical" >

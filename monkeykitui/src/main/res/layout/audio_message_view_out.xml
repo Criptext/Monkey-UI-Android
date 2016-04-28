@@ -6,7 +6,7 @@
     android:id="@+id/content_message"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="@android:color/white"
+    android:clickable="false"
     android:gravity="right"
     android:orientation="horizontal" >
 
