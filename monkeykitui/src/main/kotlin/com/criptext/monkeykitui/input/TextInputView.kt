@@ -31,6 +31,7 @@ open class TextInputView : BaseInputView {
         val btn = newCirclularSendButton(diameter)
         if (a?.getDrawable(R.styleable.InputView_sendButton) != null)
             btn.setImageDrawable(a?.getDrawable(R.styleable.InputView_sendButton))
+        initSendTextButton(btn)
         return SideButton(btn, diameter.toInt())
     }
 

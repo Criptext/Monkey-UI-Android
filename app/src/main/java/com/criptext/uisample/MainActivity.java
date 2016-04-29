@@ -22,9 +22,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.criptext.monkeykitui.input.AttachmentInputView;
 import com.criptext.monkeykitui.input.AudioInputView;
 import com.criptext.monkeykitui.input.InputView;
 import com.criptext.monkeykitui.input.MediaInputView;
+import com.criptext.monkeykitui.input.TextInputView;
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
 import com.criptext.monkeykitui.input.listeners.RecordingListener;
@@ -121,52 +123,8 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
-        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
-        if(mediaInputView!=null) {
-            mediaInputView.setRecordingListener(new RecordingListener() {
-                @Override
-                public void onStartRecording() {
-                    Log.d("MainActivity", "start record");
-                    startRecording();
-                }
 
-                @Override
-                public void onStopRecording() {
-                    Log.d("MainActivity", "stop record");
-                    stopRecording();
-                    sendAudioFile();
-                }
-
-                @Override
-                public void onCancelRecording() {
-                    cancelRecording();
-                }
-            });
-
-            mediaInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
-                @Override
-                public void onSendButtonClick(String text) {
-                    addTextMessageToConversation(text);
-                }
-            });
-
-            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
-            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
-                @Override
-                public void onAttachmentButtonClickListener(int item) {
-                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
-                    switch (item){
-                        case 0:
-                            takePicture();
-                            break;
-                        case 1:
-                            Crop.pickImage(MainActivity.this);
-                            break;
-                    }
-                }
-            });
-        }
-
+        initTextInputView();
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
 
     }
@@ -251,6 +209,95 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    public void initAttachmentInputView(){
+        final AttachmentInputView inputView = (AttachmentInputView) findViewById(R.id.inputView);
+        if(inputView != null) {
+            //SEND BUTTON
+            inputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+                @Override
+                public void onSendButtonClick(String text) {
+                    addTextMessageToConversation(text);
+                }
+            });
+            //ATTACHMENT BUTTON
+            inputView.setActionString(new String[]{"Take a Photo", "Choose Photo"});
+            inputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+                @Override
+                public void onAttachmentButtonClickListener(int item) {
+                    mPhotoFileName = (System.currentTimeMillis() / 1000) + TEMP_PHOTO_FILE_NAME;
+                    switch (item) {
+                        case 0:
+                            takePicture();
+                            break;
+                        case 1:
+                            Crop.pickImage(MainActivity.this);
+                            break;
+                    }
+                }
+            });
+        }
+    }
+
+    public void initTextInputView(){
+        final TextInputView inputView = (TextInputView) findViewById(R.id.inputView);
+        if(inputView != null) {
+            //SEND BUTTON
+            inputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+                @Override
+                public void onSendButtonClick(String text) {
+                    addTextMessageToConversation(text);
+                }
+            });
+        }
+    }
+
+    public void initInputView(){
+        final MediaInputView mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        if(mediaInputView!=null) {
+            mediaInputView.setRecordingListener(new RecordingListener() {
+                @Override
+                public void onStartRecording() {
+                    Log.d("MainActivity", "start record");
+                    startRecording();
+                }
+
+                @Override
+                public void onStopRecording() {
+                    Log.d("MainActivity", "stop record");
+                    stopRecording();
+                    sendAudioFile();
+                }
+
+                @Override
+                public void onCancelRecording() {
+                    cancelRecording();
+                }
+            });
+
+            mediaInputView.setOnSendButtonClickListener(new OnSendButtonClickListener() {
+                @Override
+                public void onSendButtonClick(String text) {
+                    addTextMessageToConversation(text);
+                }
+            });
+
+            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
+            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+                @Override
+                public void onAttachmentButtonClickListener(int item) {
+                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
+                    switch (item){
+                        case 0:
+                            takePicture();
+                            break;
+                        case 1:
+                            Crop.pickImage(MainActivity.this);
+                            break;
+                    }
+                }
+            });
         }
     }
 

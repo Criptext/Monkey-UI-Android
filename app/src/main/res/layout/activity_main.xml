@@ -11,9 +11,9 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="50.5dp"/>
+        android:paddingBottom="@dimen/default_inputview_height"/>
 
-    <com.criptext.monkeykitui.input.MediaInputView
+    <com.criptext.monkeykitui.input.TextInputView
         android:id="@+id/inputView"
         android:layout_width="match_parent"
         android:layout_height="100dp"

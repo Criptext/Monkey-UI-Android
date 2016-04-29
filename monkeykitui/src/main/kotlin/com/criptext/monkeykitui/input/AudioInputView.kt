@@ -73,17 +73,10 @@ open class AudioInputView : TextInputView {
     }
 
     override fun init(a : TypedArray?) {
-        setWhiteBackground()
+        setBarBackground(a)
         super.init(a)
     }
 
-    fun setWhiteBackground(){
-        val view = View(context)
-        view.setBackgroundColor(Color.WHITE)
-        val  params = LayoutParams(LayoutParams.MATCH_PARENT, context.resources.getDimension(R.dimen.audio_right_btn_height).toInt())
-        params.gravity = Gravity.BOTTOM
-        view.layoutParams = params
-        addView(view)
-    }
+
 
 }

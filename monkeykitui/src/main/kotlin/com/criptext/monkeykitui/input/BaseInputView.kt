@@ -42,6 +42,7 @@ open class BaseInputView : FrameLayout {
     }
 
     open protected fun init(a : TypedArray?){
+        setBarBackground(a)
         editText = EditText(context);
         editText.maxLines = 4
         editText.hint = context.resources.getString(R.string.text_message_write_hint)
@@ -72,6 +73,14 @@ open class BaseInputView : FrameLayout {
 
     }
 
+    fun setBarBackground(a: TypedArray?){
+        val view = View(context)
+        view.setBackgroundColor(Color.WHITE)
+        val  params = LayoutParams(LayoutParams.MATCH_PARENT, context.resources.getDimension(R.dimen.default_inputview_height).toInt())
+        params.gravity = Gravity.BOTTOM
+        view.layoutParams = params
+        addView(view)
+    }
     open protected fun setLeftButton(a : TypedArray?) : SideButton? = null
     open protected fun setRightButton(a : TypedArray?) : SideButton? = null
 

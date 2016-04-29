@@ -5,5 +5,5 @@
     <dimen name="bubble_button">1dp</dimen>
 
     <dimen name="circle_button_diameter">50dp</dimen>
-    <dimen name="audio_right_btn_height">50dp</dimen>
+    <dimen name="default_inputview_height">50dp</dimen>
 </resources>
