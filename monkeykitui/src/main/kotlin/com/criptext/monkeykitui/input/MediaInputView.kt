@@ -14,8 +14,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
+import com.criptext.monkeykitui.input.listeners.CameraListener
+import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
+import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.Utils
 
 /**
@@ -25,6 +28,8 @@ import com.criptext.monkeykitui.util.Utils
 open class MediaInputView : AudioInputView {
 
     var onAttachmentButtonClickListener : OnAttachmentButtonClickListener? = null
+
+    var cameraHandler : CameraHandler? = null
 
     constructor(context: Context?) : super(context)
 
@@ -70,7 +75,30 @@ open class MediaInputView : AudioInputView {
 
             }
             else{
-                Log.e(Utils.TAG, "Please set your action strings via the following method: setActionString")
+
+                cameraHandler = CameraHandler(context)
+                cameraHandler?.setCameraListen(object : CameraListener {
+                    override fun onNewItem(item: MonkeyItem) {
+                        inputListener?.onNewItem(item)
+                    }
+                })
+
+                val items = cameraHandler?.defaultActionStrings
+                val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
+                val builder = AlertDialog.Builder(context)
+
+                builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
+                builder.setAdapter(adapter) { dialog, item ->
+                    when (item){
+                        0 -> {
+                            cameraHandler?.takePicture()
+                        }
+                        1 -> {
+                            cameraHandler?.pickFromGallery()
+                        }
+                    }
+                    dialog.dismiss()
+                }.show()
             }
 
         })
