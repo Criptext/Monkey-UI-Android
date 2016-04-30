@@ -44,14 +44,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     open val playbackProgress : Int
     get() = 100 * player.currentPosition / player.duration;
 
-    open val playbackProgressText : String
-    get() {
-        val progress = player.currentPosition/ 1000;
-        var res = "00:";
-        if(progress < 10)
-            res += "0";
-        return res + progress;
-    }
+
 
     init {
         currentlyPlayingItem = null
@@ -61,17 +54,17 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         updateProgressEnabled = true
 
         handler = Handler()
+        player = MediaPlayer()
         playerRunnable = object : Runnable {
             override fun run() {
                 if (playingAudio) {
                     if(updateProgressEnabled) updateAudioSeekbar(recycler,
-                            playbackProgress, playbackProgressText)
+                            playbackProgress, player.currentPosition.toLong())
                     handler.postDelayed(this, 67)
                 }
             }
         }
 
-        player = MediaPlayer()
         player.setOnPreparedListener {
             startAudioHolderPlayer()
         }
@@ -119,9 +112,9 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         adapter.notifyDataSetChanged()
     }
 
-    fun updateAudioSeekbar(recycler: RecyclerView, progress: Int, progressText: String){
+    fun updateAudioSeekbar(recycler: RecyclerView, percentage: Int, progress: Long){
         val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
-        audioHolder?.updateAudioProgress(progress, progressText)
+        audioHolder?.updateAudioProgress(percentage, progress)
     }
 
     fun notifyPlaybackStopped(){

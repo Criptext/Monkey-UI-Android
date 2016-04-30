@@ -12,11 +12,9 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
-import com.criptext.monkeykitui.input.listeners.RecordingListener
-import com.criptext.monkeykitui.input.recorder.RecorderSlideAnimator
-import com.criptext.monkeykitui.input.recorder.RecorderTextWatcher
-import com.criptext.monkeykitui.input.recorder.RecorderTouchListener
-import com.criptext.monkeykitui.input.recorder.RecordingAnimation
+import com.criptext.monkeykitui.input.listeners.AudioRecorder
+import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.input.recorder.*
 
 /**
  * Created by gesuwall on 4/25/16.
@@ -25,10 +23,18 @@ import com.criptext.monkeykitui.input.recorder.RecordingAnimation
 open class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
 
-    var recordingListener : RecordingListener? = null
+    var recorder: AudioRecorder? = null
     set (value){
-        slideAnimator.recordingListener = value
+        slideAnimator.audioRecorder = value
+        field = value
     }
+
+    override var inputListener : InputListener? = null
+    set (value){
+        recorder?.inputListener = value
+        field = value
+    }
+
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -68,8 +74,15 @@ open class AudioInputView : TextInputView {
         touchListener.recordingAnimations = slideAnimator
         recBtn.setOnTouchListener(touchListener)
 
+        setDefaultRecorder()
         return SideButton(view, dpToPx(50, context))
 
+    }
+
+    private fun setDefaultRecorder(){
+        val recorder = VoiceNoteRecorder(context)
+        recorder.inputListener = inputListener
+        this.recorder = recorder
     }
 
     override fun init(a : TypedArray?) {

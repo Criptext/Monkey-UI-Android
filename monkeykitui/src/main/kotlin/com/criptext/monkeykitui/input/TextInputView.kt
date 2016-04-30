@@ -18,7 +18,7 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
 
 open class TextInputView : BaseInputView {
 
-    var inputListener : InputListener? = null
+    open var inputListener : InputListener? = null
 
     constructor(context: Context?) : super(context)
 
@@ -78,10 +78,6 @@ open class TextInputView : BaseInputView {
                         return MonkeyItem.MonkeyItemType.text.ordinal
                     }
 
-                    override fun getDataObject(): Any {
-                        throw UnsupportedOperationException()
-                    }
-
                     override fun getMessageText(): String {
                         return inputText.toString()
                     }
@@ -98,7 +94,7 @@ open class TextInputView : BaseInputView {
                         throw UnsupportedOperationException()
                     }
 
-                    override fun getAudioDuration(): String {
+                    override fun getAudioDuration(): Long {
                         throw UnsupportedOperationException()
                     }
 

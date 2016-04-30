@@ -5,8 +5,6 @@ import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
-import com.criptext.monkeykitui.input.listeners.AudioRecorder
-import com.criptext.monkeykitui.input.listeners.RecordingListener
 
 /**
  * Created by gesuwall on 4/25/16.

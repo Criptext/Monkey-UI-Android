@@ -205,32 +205,28 @@ class CameraHandler constructor(ctx : Context){
                         return MonkeyItem.MonkeyItemType.photo.ordinal
                     }
 
-                    override fun getDataObject(): Any {
-                        throw UnsupportedOperationException()
-                    }
-
                     override fun getMessageText(): String {
                         return getTempFile().absolutePath
                     }
 
                     override fun getPlaceholderFilePath(): String {
-                        throw UnsupportedOperationException()
+                        return ""
                     }
 
                     override fun getFilePath(): String {
-                        throw UnsupportedOperationException()
+                        return ""
                     }
 
                     override fun getFileSize(): Long {
-                        throw UnsupportedOperationException()
+                        return 0
                     }
 
-                    override fun getAudioDuration(): String {
-                        throw UnsupportedOperationException()
+                    override fun getAudioDuration(): Long {
+                        return 0
                     }
 
                     override fun getContactSessionId(): String {
-                        throw UnsupportedOperationException()
+                        return ""
                     }
 
                 }

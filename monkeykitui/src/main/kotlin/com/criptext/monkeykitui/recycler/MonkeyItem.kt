@@ -42,8 +42,6 @@ interface MonkeyItem {
      */
     fun getMessageType() : Int
 
-    fun getDataObject() : Any
-
     /*TEXT*/
 
     /**
@@ -77,11 +75,11 @@ interface MonkeyItem {
     /* AUDIO */
 
     /**
-     * @return a string with the duration of the audio file in the desired format to be displayed.
+     * @return a Long with the duration of the audio file
      * &nbsp\ It is recommended to have this value cached instead of measuring it every time it is needed.
      * &nbsp\ only used for messages of type audio.
      */
-    fun getAudioDuration() : String
+    fun getAudioDuration() : Long
 
     /*CONTACT */
 

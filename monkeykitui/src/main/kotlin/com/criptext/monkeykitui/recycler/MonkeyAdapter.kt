@@ -213,7 +213,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
             audioHolder.setReadyForPlayback()
             audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
-                        audioHandler?.playbackProgressText ?: MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
+                        audioHandler?.player?.currentPosition?.toLong() ?: 0)
             if(audioHandler?.playingAudio ?: false){ // Message is playing
                 audioHolder.updatePlayPauseButton(true)
                 audioHolder.setAudioActions(pauseAction)
@@ -240,7 +240,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         } else { //Message is available for playback but not prepared in the MediaPlayer
             audioHolder.setReadyForPlayback()
             audioHolder.updatePlayPauseButton(false)
-            audioHolder.updateAudioProgress(0, MonkeyAudioHolder.DEFAULT_AUDIO_DURATION)
+            audioHolder.updateAudioProgress(0, item.getAudioDuration())
             audioHolder.setAudioActions(playAction)
         }
     }

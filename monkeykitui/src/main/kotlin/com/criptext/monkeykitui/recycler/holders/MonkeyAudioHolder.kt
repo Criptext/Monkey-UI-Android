@@ -64,15 +64,24 @@ class MonkeyAudioHolder: MonkeyHolder {
             playButtonView!!.setImageLevel(0);
     }
 
-    fun updateAudioProgress(progress: Int, textProgress: String){
-        circularAudioView!!.progress = if(progress > 100) 100 else progress
-        durationTextView!!.text = textProgress
-        //Log.d("Holder", "update seekbar with $progress")
-
+    fun updateAudioProgress(percentage: Int, audioTime: Long){
+        circularAudioView!!.progress = if(percentage > 100) 100 else percentage
+        setAudioDurationText(audioTime)
     }
 
-    fun setAudioDurationText(textDuration : String){
-        durationTextView!!.text = textDuration
+    open fun getAudioTimeFormattedText(time: Long) : String
+    {
+        val totalSeconds = time / 1000;
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        var strMinutes = if(minutes < 10)  "0" + minutes else "" + minutes
+        var strSeconds = if(seconds < 10)  "0" + seconds else "" + seconds
+
+        return "$strMinutes:$strSeconds"
+    }
+
+    fun setAudioDurationText(duration : Long){
+        durationTextView!!.text = getAudioTimeFormattedText(duration)
     }
 
     fun setOnSeekBarChangeListener(listener: CircularAudioView.OnCircularAudioViewChangeListener){

@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.input.BaseInputView
-import com.criptext.monkeykitui.input.listeners.RecordingListener
+import com.criptext.monkeykitui.input.listeners.AudioRecorder
 import com.criptext.monkeykitui.util.MonkeyAnimatorListener
 
 /**
@@ -43,7 +43,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
     var dragger : ViewDraggerFadeOut? = null
     var recordingAnimation : RecordingAnimation? = null
-    var recordingListener : RecordingListener? = null
+    var audioRecorder: AudioRecorder? = null
 
     init{
         this.redMic = redMic
@@ -88,16 +88,16 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             override fun onAnimationCancel() {
                 playingConcealAnim = false
                 resetAnimation()
-                recordingListener?.onCancelRecording()
+                audioRecorder?.cancelRecording()
             }
 
             override fun onAnimationEnd() {
                 playingConcealAnim = false
                 resetAnimation()
                 if(cancelled)
-                    recordingListener?.onCancelRecording()
+                    audioRecorder?.cancelRecording()
                 else
-                    recordingListener?.onStopRecording()
+                    audioRecorder?.stopRecording()
             }
 
             override fun onAnimationStart() {
@@ -180,7 +180,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
                 dragger?.textStartX = slideMsgStartX
 
                 recordingAnimation?.start()
-                recordingListener?.onStartRecording()
+                audioRecorder?.startRecording()
             }
 
             override fun onAnimationStart() {
