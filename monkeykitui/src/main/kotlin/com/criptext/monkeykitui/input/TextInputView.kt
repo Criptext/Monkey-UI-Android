@@ -5,20 +5,20 @@ import android.content.res.TypedArray
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
-import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
+import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
  * Created by gesuwall on 4/21/16.
  */
 
 open class TextInputView : BaseInputView {
-    var onSendButtonClickListener : OnSendButtonClickListener? = null
+
+    var inputListener : InputListener? = null
 
     constructor(context: Context?) : super(context)
 
@@ -55,13 +55,64 @@ open class TextInputView : BaseInputView {
         btn.setOnClickListener({
             val inputText = editText.text.trim()
             if(!inputText.isEmpty()) {
-                onSendButtonClickListener?.onSendButtonClick(inputText.toString())
+
+                var monkeyItem = object : com.criptext.monkeykitui.recycler.MonkeyItem{
+
+                    override fun getMessageTimestamp(): Long {
+                        return System.currentTimeMillis() - 1000 * 60 * 60 * 48
+                    }
+
+                    override fun getMessageId(): String {
+                        return "" + (System.currentTimeMillis() - 1000 * 60 * 60 * 48)
+                    }
+
+                    override fun isIncomingMessage(): Boolean {
+                        return false
+                    }
+
+                    override fun getOutgoingMessageStatus(): MonkeyItem.OutgoingMessageStatus {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getMessageType(): Int {
+                        return MonkeyItem.MonkeyItemType.text.ordinal
+                    }
+
+                    override fun getDataObject(): Any {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getMessageText(): String {
+                        return inputText.toString()
+                    }
+
+                    override fun getPlaceholderFilePath(): String {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getFilePath(): String {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getFileSize(): Long {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getAudioDuration(): String {
+                        throw UnsupportedOperationException()
+                    }
+
+                    override fun getContactSessionId(): String {
+                        throw UnsupportedOperationException()
+                    }
+
+                }
+
+                inputListener?.onNewItem(monkeyItem)
+
                 clearText()
             }
         })
     }
-
-
-
 
 }

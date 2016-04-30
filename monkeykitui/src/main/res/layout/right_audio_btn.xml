@@ -24,7 +24,7 @@
         android:alpha="0"
         android:textColor="@android:color/black"
         android:gravity="center_vertical|left"
-        android:layout_toRightOf="@id/redMic"
+        android:layout_toRightOf="@+id/redMic"
         android:layout_alignParentBottom="true"
         android:textSize="16sp"
         android:background="@android:color/white"
@@ -38,7 +38,7 @@
         android:orientation="horizontal"
         android:layout_height="@dimen/default_inputview_height"
         android:alpha="0"
-        android:layout_toRightOf="@id/textViewTimeRecording"
+        android:layout_toRightOf="@+id/textViewTimeRecording"
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
         android:background="@android:color/white">

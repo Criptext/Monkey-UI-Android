@@ -1,9 +1,14 @@
 package com.criptext.monkeykitui.input.listeners
 
 /**
- * Created by gesuwall on 4/25/16.
+ * Created by jigl on 4/15/16.
  */
-
 interface AudioRecorder {
-    fun startRecording()
+
+    fun onStartRecording()
+
+    fun onStopRecording()
+
+    fun onCancelRecording()
+
 }
