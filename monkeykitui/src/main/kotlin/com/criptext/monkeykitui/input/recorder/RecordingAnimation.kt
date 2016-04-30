@@ -50,8 +50,8 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
     fun updateUI(){
         val time = currentTime
         watch.text = time
-
-        recordingMic.alpha = Math.cos(counter.toDouble()/11.6).toFloat()
+        val periodFactor = 0.17
+        recordingMic.alpha = Math.cos(counter.toDouble()/180L * (2 * 3.14) * periodFactor).toFloat()/2 + 0.5f
         handler.postDelayed(updateRunnable, PERIOD)
     }
 
