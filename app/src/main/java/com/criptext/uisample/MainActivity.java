@@ -178,6 +178,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                             newItem.setDuration(item.getAudioDuration());
                             newItem.setMessageContent(item.getFilePath());
                             break;
+                        case photo:
+                            newItem.setMessageContent(item.getFilePath());
+                            break;
                     }
 
                     adapter.smoothlyAddNewItem(newItem, recycler); // Add to recyclerView

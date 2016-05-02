@@ -94,7 +94,7 @@ class VoiceNoteRecorder(ctx : Context) : AudioRecorder() {
                 }
 
                 override fun getFileSize(): Long {
-                    return 0
+                    return file.length()
                 }
 
                 override fun getMessageText(): String {

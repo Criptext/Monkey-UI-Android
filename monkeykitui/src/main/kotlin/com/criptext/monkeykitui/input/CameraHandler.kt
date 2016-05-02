@@ -206,7 +206,7 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getMessageText(): String {
-                        return getTempFile().absolutePath
+                        return ""
                     }
 
                     override fun getPlaceholderFilePath(): String {
@@ -214,11 +214,11 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getFilePath(): String {
-                        return ""
+                        return getTempFile().absolutePath
                     }
 
                     override fun getFileSize(): Long {
-                        return 0
+                        return getTempFile().length()
                     }
 
                     override fun getAudioDuration(): Long {
