@@ -1,21 +1,10 @@
 package com.criptext.uisample;
 
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,18 +12,14 @@ import android.util.Log;
 
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
-import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener;
-import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener;
-import com.criptext.monkeykitui.input.listeners.RecordingListener;
+import com.criptext.monkeykitui.input.listeners.AudioRecorder;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
-import com.soundcloud.android.crop.Crop;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,11 +39,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     RecyclerView recycler;
     AudioPlaybackHandler audioHandler;
 
-    String mAudioFileName = null;
-    MediaRecorder mRecorder = null;
-
-    public static final String TEMP_PHOTO_FILE_NAME = "temp_photo.jpg";
-    public static final String TEMP_AUDIO_FILE_NAME = "temp_audio.3gp";
 
     private MediaInputView mediaInputView;
 
@@ -104,59 +84,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
 
-        mediaInputView = (MediaInputView) findViewById(R.id.inputView);
-        if(mediaInputView!=null) {
-            mediaInputView.setRecordingListener(new RecordingListener() {
-                @Override
-                public void onStartRecording() {
-                    Log.d("MainActivity", "start record");
-                    startRecording();
-                }
-
-                @Override
-                public void onStopRecording() {
-                    Log.d("MainActivity", "stop record");
-                    stopRecording();
-                    sendAudioFile();
-                }
-
-                @Override
-                public void onCancelRecording() {
-                    cancelRecording();
-                }
-            });
-
-            mediaInputView.setInputListener(new InputListener() {
-                @Override
-                public void onNewItem(@NotNull MonkeyItem item) {
-                    MessageItem newItem = new MessageItem("0", item.getMessageId(),
-                            item.getMessageText(), item.getMessageTimestamp(), item.isIncomingMessage(),
-                            MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
-                    adapter.smoothlyAddNewItem(newItem, recycler);
-                }
-            });
-
-            /*
-            ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
-            *
-            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
-            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
-                @Override
-                public void onAttachmentButtonClickListener(int item) {
-                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
-                    switch (item){
-                        case 0:
-                            takePicture();
-                            break;
-                        case 1:
-                            Crop.pickImage(MainActivity.this);
-                            break;
-                    }
-                }
-            });
-            */
-        }
-
+        initInputView();
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
 
     }
@@ -188,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
                         ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
-                item.setDuration("00:10");
+                item.setDuration(1000 * 10);
             }
             else if(i%8 == 1){
                 //photo
@@ -231,6 +159,49 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void initInputView(){
+        mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        if(mediaInputView!=null) {
+            mediaInputView.setInputListener(new InputListener() {
+                @Override
+                public void onNewItem(@NotNull MonkeyItem item) {
+                    MessageItem newItem = new MessageItem("0", item.getMessageId(),
+                            item.getMessageText(), item.getMessageTimestamp(), item.isIncomingMessage(),
+                            MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
+
+                    newItem.setStatus(MonkeyItem.OutgoingMessageStatus.read);
+                    switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
+                        case audio: //init audio MessageItem
+                            newItem.setDuration(item.getAudioDuration());
+                            newItem.setMessageContent(item.getFilePath());
+                            break;
+                    }
+
+                    adapter.smoothlyAddNewItem(newItem, recycler); // Add to recyclerView
+                }
+            });
+            /*
+            ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
+            *
+            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
+            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+                @Override
+                public void onAttachmentButtonClickListener(int item) {
+                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
+                    switch (item){
+                        case 0:
+                            takePicture();
+                            break;
+                        case 1:
+                            Crop.pickImage(MainActivity.this);
+                            break;
+                    }
+                }
+            });
+            */
         }
     }
 
@@ -278,69 +249,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
     /***AUDIO RECORD STUFFS****/
 
-    private void startRecording(){
 
-        try {
-            mAudioFileName = getCacheDir().toString() + "/" + (System.currentTimeMillis()/1000) + TEMP_AUDIO_FILE_NAME;
-            mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setOutputFile(mAudioFileName);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            //TO MAKE AUDIO LOW QUALITY
-            mRecorder.setAudioSamplingRate(22050);//8khz-92khz
-            mRecorder.setAudioEncodingBitRate(22050);//8000
-            mRecorder.prepare();
-            mRecorder.start();
-            mRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
-
-                @Override
-                public void onError(MediaRecorder mr, int what, int extra) {
-                    if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-                        mr.release();
-                    }
-                }
-            });
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
-    private void stopRecording() {
-        try{
-            if(mRecorder!=null){
-                mRecorder.stop();
-                mRecorder.release();
-                mRecorder = null;
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private void cancelRecording() {
-        stopRecording();
-        File file = new File(mAudioFileName);
-        if(file.exists())
-            file.delete();
-    }
-
-    private void sendAudioFile(){
-
-        File file = new File(mAudioFileName);
-        if(file.exists()) {
-            long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * 48;
-            MessageItem item = new MessageItem("0", "" + timestamp,
-                    mAudioFileName, timestamp, false,
-                    MonkeyItem.MonkeyItemType.audio);
-            item.setDuration("00:10");
-            adapter.getMessagesList().add(item);
-            adapter.notifyDataSetChanged();
-            recycler.scrollToPosition(adapter.getMessagesList().size()-1);
-        }
-    }
 
     /***IMAGE RECORD STUFFS****/
 
@@ -358,22 +267,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     }
 
     /***OVERRIDE METHODS****/
-
-    @Override
-    public int getMemberColor(@NotNull String sessionId) {
-        return Color.WHITE;
-    }
-
-    @NotNull
-    @Override
-    public String getMenberName(@NotNull String sessionId) {
-        return "Unknown";
-    }
-
-    @Override
-    public boolean isGroupChat() {
-        return false;
-    }
 
     @Override
     public boolean isOnline() {

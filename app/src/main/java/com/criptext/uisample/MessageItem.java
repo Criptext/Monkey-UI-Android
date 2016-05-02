@@ -18,7 +18,7 @@ public class MessageItem  implements MonkeyItem {
     private OutgoingMessageStatus status;
     private MonkeyItemType itemType;
     /*AUDIO*/
-    private String duration;
+    private long duration;
     /*PHOTO*/
     private String placeHolderFilePath;
 
@@ -31,14 +31,14 @@ public class MessageItem  implements MonkeyItem {
         this.isIncoming = isIncoming;
         this.itemType = itemType;
         this.placeHolderFilePath = "";
-        this.duration = "0";
+        this.duration = 0;
     }
 
     public void setStatus (OutgoingMessageStatus status){
         this.status = status;
     }
 
-    public void setDuration(String durationText) {
+    public void setDuration(long durationText) {
         this.duration = durationText;
     }
 
@@ -46,6 +46,9 @@ public class MessageItem  implements MonkeyItem {
         this.placeHolderFilePath = placeHolderFilePath;
     }
 
+    public void setMessageContent(String content) {
+        this.messageContent = content;
+    }
     @NotNull
     @Override
     public String getContactSessionId() {
@@ -81,12 +84,6 @@ public class MessageItem  implements MonkeyItem {
 
     @NotNull
     @Override
-    public Object getDataObject() {
-        return null;
-    }
-
-    @NotNull
-    @Override
     public String getMessageText() {
         return messageContent;
     }
@@ -109,7 +106,7 @@ public class MessageItem  implements MonkeyItem {
     }
 
     @Override
-    public String getAudioDuration() {
+    public long getAudioDuration() {
         return duration;
     }
 }

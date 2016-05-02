@@ -1,9 +1,16 @@
 package com.criptext.monkeykitui.input.listeners
 
 /**
- * Created by gesuwall on 4/25/16.
+ * Created by jigl on 4/15/16.
  */
+abstract class AudioRecorder {
 
-interface AudioRecorder {
-    fun startRecording()
+    var inputListener: InputListener? = null
+
+    abstract fun startRecording()
+
+    abstract fun stopRecording()
+
+    abstract fun cancelRecording()
+
 }

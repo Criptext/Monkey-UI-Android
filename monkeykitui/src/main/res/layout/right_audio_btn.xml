@@ -7,7 +7,7 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/default_inputview_height"
         android:src="@drawable/btn_mic_red"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
@@ -19,7 +19,7 @@
     <TextView
         android:id="@+id/textViewTimeRecording"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/default_inputview_height"
         android:text="00:00"
         android:alpha="0"
         android:textColor="@android:color/black"
@@ -36,7 +36,7 @@
         android:id="@+id/layoutSwipeCancel"
         android:layout_width="wrap_content"
         android:orientation="horizontal"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/default_inputview_height"
         android:alpha="0"
         android:layout_toRightOf="@+id/textViewTimeRecording"
         android:layout_alignParentBottom="true"
@@ -54,7 +54,6 @@
             android:layout_height="wrap_content"
             android:text="@string/text_message_write_slidecancel"
             android:textSize="16sp"
-            android:layout_alignParentBottom="true"
             android:paddingRight="20dp"
             android:textColor="@android:color/darker_gray"
             android:textStyle="italic"/>
@@ -62,8 +61,8 @@
     </LinearLayout>
     <ImageView
             android:id="@+id/button_mic"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/default_inputview_height"
+            android:layout_height="@dimen/default_inputview_height"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:layout_alignParentRight="true"
@@ -73,8 +72,8 @@
 
         <ImageView
             android:id="@+id/button_send"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/default_inputview_height"
+            android:layout_height="@dimen/default_inputview_height"
             android:layout_gravity="bottom|right"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"

@@ -11,7 +11,7 @@ class EndItem : MonkeyItem {
         throw UnsupportedOperationException()
     }
 
-    override fun getAudioDuration(): String {
+    override fun getAudioDuration(): Long {
         throw UnsupportedOperationException()
     }
 
@@ -40,9 +40,5 @@ class EndItem : MonkeyItem {
     }
 
     override fun getContactSessionId(): String = ""
-
-    override fun getDataObject(): Any {
-        throw UnsupportedOperationException()
-    }
 
 }

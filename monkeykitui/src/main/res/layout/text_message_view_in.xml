@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="@android:color/white"
+    android:clickable="false"
     android:gravity="left"
     android:orientation="vertical">
 
@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
-        android:background="@android:color/white"
         android:gravity="left"
         android:orientation="horizontal"
         android:paddingRight="50dp">
