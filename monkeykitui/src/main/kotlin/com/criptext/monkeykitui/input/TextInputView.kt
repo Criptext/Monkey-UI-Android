@@ -58,11 +58,11 @@ open class TextInputView : BaseInputView {
                 var monkeyItem = object : com.criptext.monkeykitui.recycler.MonkeyItem{
 
                     override fun getMessageTimestamp(): Long {
-                        return System.currentTimeMillis() - 1000 * 60 * 60 * 48
+                        return System.currentTimeMillis()
                     }
 
                     override fun getMessageId(): String {
-                        return "" + (System.currentTimeMillis() - 1000 * 60 * 60 * 48)
+                        return "" + System.currentTimeMillis()
                     }
 
                     override fun isIncomingMessage(): Boolean {
