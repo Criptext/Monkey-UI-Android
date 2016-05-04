@@ -58,7 +58,7 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         checkmarkImageView = view.findViewById(R.id.imageViewCheckmark) as ImageView?
         errorImageView = view.findViewById(R.id.net_error) as ImageView?
         sendingProgressBar = view.findViewById(R.id.sendingWheel) as ProgressBar?
-        sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
+        sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.parseColor("#014766"), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
     constructor (view : MonkeyView, type : Int) : super (view.viewForRecyclerView){
