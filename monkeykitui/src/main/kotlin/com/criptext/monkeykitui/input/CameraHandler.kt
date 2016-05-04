@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.soundcloud.android.crop.Crop
@@ -40,7 +41,20 @@ class CameraHandler constructor(ctx : Context){
     var orientationImage: Int = 0
 
     enum class RequestType {
-        openGallery, takePicture, editPhoto, cropPhoto
+        openGallery, takePicture, editPhoto, cropPhoto;
+
+        companion object {
+            val DEFAULT_REQUEST_CODE = 8000
+
+            fun fromCode(requestCode: Int) = RequestType.values()[requestCode - DEFAULT_REQUEST_CODE]
+        }
+        val requestCode: Int
+        get() = this.ordinal + DEFAULT_REQUEST_CODE
+
+    }
+
+    private fun startActivity(intent: Intent, requestCode: Int){
+        (context as? Activity)?.startActivityForResult(intent, requestCode)
     }
 
     private fun initTemporaryPhotoFile() {
@@ -48,7 +62,7 @@ class CameraHandler constructor(ctx : Context){
         if (Environment.MEDIA_MOUNTED == state) {
             mPhotoFile = File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME)
         } else {
-            mPhotoFile = File(context?.getFilesDir(), TEMP_PHOTO_FILE_NAME)
+            mPhotoFile = File(context?.filesDir, TEMP_PHOTO_FILE_NAME)
         }
     }
 
@@ -56,6 +70,12 @@ class CameraHandler constructor(ctx : Context){
         cameraListener=cameraList
     }
 
+    fun startPhotoEditor(photoUri: Uri?){
+        val intent = Intent(context, PhotoEditorActivity::class.java)
+        intent.putExtra(PhotoEditorActivity.destinationPath, getTempFile().absolutePath)
+        intent.data = photoUri
+        startActivity(intent, RequestType.editPhoto.requestCode)
+    }
     fun takePicture() {
 
         if(mPhotoFile == null)
@@ -75,7 +95,7 @@ class CameraHandler constructor(ctx : Context){
             }
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri)
             intent.putExtra("return-data", true)
-            (context as Activity).startActivityForResult(intent, RequestType.takePicture.ordinal)
+            startActivity(intent, RequestType.takePicture.requestCode)
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
         }
@@ -96,7 +116,7 @@ class CameraHandler constructor(ctx : Context){
         if (Environment.MEDIA_MOUNTED == state) {
             return File(Environment.getExternalStorageDirectory(), mPhotoFileName)
         } else {
-            return File(context!!.getFilesDir(), mPhotoFileName)
+            return File(context!!.filesDir, mPhotoFileName)
         }
     }
 
@@ -109,11 +129,11 @@ class CameraHandler constructor(ctx : Context){
         }
 
         if (requestCode == Crop.REQUEST_PICK)
-            requestCode = RequestType.openGallery.ordinal
+            requestCode = RequestType.openGallery.requestCode
         if (requestCode == Crop.REQUEST_CROP)
-            requestCode = RequestType.cropPhoto.ordinal
+            requestCode = RequestType.cropPhoto.requestCode
 
-        when (RequestType.values()[requestCode]) {
+        when (RequestType.fromCode(requestCode)) {
             RequestType.openGallery -> {
                 try {
                     val ei = ExifInterface(getTempFile().absolutePath)
@@ -122,7 +142,10 @@ class CameraHandler constructor(ctx : Context){
                     Log.e("error", "Exif error")
                 }
 
-                Crop.of(data?.data, Uri.fromFile(getTempFile())).start(context as Activity)
+                //Crop.of(data?.data, Uri.fromFile(getTempFile())).start(context as Activity)
+                startPhotoEditor(data?.data)
+
+
             }
             RequestType.takePicture -> {
                 try {
@@ -132,9 +155,10 @@ class CameraHandler constructor(ctx : Context){
                     Log.e("error", "Exif error")
                 }
 
-                Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getTempFile())).start(context as Activity)
+                startPhotoEditor(Uri.fromFile(mPhotoFile))
+                //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getTempFile())).start(context as Activity)
             }
-            RequestType.cropPhoto -> {
+            RequestType.editPhoto -> {
 
                 var rotation = 0
                 if (orientationImage == 0) {
@@ -162,6 +186,7 @@ class CameraHandler constructor(ctx : Context){
                         }
                     }
                 }
+                Log.d("CameraHandler", "decoding: " + getTempFile().absolutePath)
                 if (rotation != 0) {
                     val bmp = BitmapFactory.decodeFile(getTempFile().absolutePath)
                     val matrix = Matrix()
