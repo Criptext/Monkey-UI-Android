@@ -12,14 +12,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
+import android.widget.Button
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.util.FlatButtonDrawable
 
 import com.soundcloud.android.crop.Crop
 import java.io.File
@@ -57,7 +60,20 @@ class PhotoEditorActivity : AppCompatActivity() {
 
         //set Photo
         setEditingPhoto()
+
+        //set button color
+        setButtonColor()
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setButtonColor(){
+        val sendButton = findViewById(R.id.sendPhoto) as Button
+        val typedValue = TypedValue();
+        val a = obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
+        val color = a.getColor(0,0)
+        a.recycle()
+        sendButton.background =FlatButtonDrawable.new(color)
+
     }
 
     /**
