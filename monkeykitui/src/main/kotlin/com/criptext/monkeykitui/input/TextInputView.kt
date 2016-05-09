@@ -20,25 +20,27 @@ open class TextInputView : BaseInputView {
 
     open var inputListener : InputListener? = null
 
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet): super(context, attrs)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    override fun setRightButton(a : TypedArray?) : SideButton? {
-        val diameter = context.resources.getDimension(R.dimen.circle_button_diameter)
-        val btn = newCirclularSendButton(diameter)
-        if (a?.getDrawable(R.styleable.InputView_sendButton) != null)
-            btn.setImageDrawable(a?.getDrawable(R.styleable.InputView_sendButton))
+    override fun setRightButton(a : AttributeHandler) : SideButton? {
+        val diameter = context.resources.getDimension(R.dimen.default_inputview_height)
+        val btn = newCirclularSendButton(diameter, a)
+
         initSendTextButton(btn)
         return SideButton(btn, diameter.toInt())
     }
 
-    private fun newCirclularSendButton(diameter: Float): ImageView{
+    private fun newCirclularSendButton(diameter: Float, a: AttributeHandler): ImageView{
         val btn = ImageView(context)
         val dp5 = dpToPx(5, context)
-        btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
+        if (a.sendTextDrawableInputView != -1)
+            btn.setImageDrawable(ContextCompat.getDrawable(context, a.sendTextDrawableInputView))
+        else
+            btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_send_now))
         btn.setPadding(dp5, 0, dp5, 0)
 
         val params = FrameLayout.LayoutParams(diameter.toInt(), diameter.toInt())
