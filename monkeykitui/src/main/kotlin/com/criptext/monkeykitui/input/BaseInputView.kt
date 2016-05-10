@@ -20,7 +20,19 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 
 /**
- * Created by gesuwall on 4/21/16.
+ * Superclass for all InputViews. An InputView is a FrameLayout with an EditText and buttons to the
+ * left and right of it.
+ *
+ * An InputView should always match its width to its parent, but its height is arbitrary. The only
+ * limitation is that the height should be at least 50dp because that is the default height that the
+ * InputView uses for its EditText and background. A taller InputView may be used when the left or
+ * right button has hidden views that need more vertical space, however, the background will not grow
+ * accordingly.
+ *
+ * This class only configures the EditText and the background. child classes should implement their
+ * own left and right buttons overriding the setLeftButton and setRightButton methods.
+ *
+ * Created by Gabriel Aumala on 4/21/16.
  */
 
 open class BaseInputView : FrameLayout {
@@ -45,6 +57,10 @@ open class BaseInputView : FrameLayout {
         init()
     }
 
+    /**
+     * Initializes the InputView. Instantiates an EditText and sets the left and right buttons if there
+     * are any to their respective positions. You may override this method to customize the EditText.
+     */
     open protected fun init(){
         setBarBackground(attrHandler)
         editText = EditText(context);
@@ -80,6 +96,14 @@ open class BaseInputView : FrameLayout {
 
     }
 
+    /**
+     * Sets a rectangular background to the InputView. The rectangle isn't necessarily the same height
+     * as the actual InputView because hidden views may take more space. You may override this method
+     * to customize the background.
+     * @param a AttributeHandler with the customizations set in the XML layout file. If
+     * backgroundDrawableInputView has been set in the AttributeHandler, it will use that Drawable as
+     * background.
+     */
     fun setBarBackground(a: AttributeHandler){
         val view = View(context)
 
@@ -93,7 +117,22 @@ open class BaseInputView : FrameLayout {
         view.layoutParams = params
         addView(view)
     }
+
+    /**
+     * Creates a View that will be placed to the left of the EditText
+     * @param a AttributeHandler with the customizations set in the XML layout file.
+     * @return A SideButton instance that contains the View to place to the left to the EditText and
+     * the margin distance that should be between the screen's left edge and the EditText to make room
+     * for the new View.
+     */
     open protected fun setLeftButton(a : AttributeHandler) : SideButton? = null
+    /**
+     * Creates a View that will be placed to the right of the EditText
+     * @param a AttributeHandler with the customizations set in the XML layout file.
+     * @return A SideButton instance that contains the View to place to the right to the EditText and
+     * the margin distance that should be between the screen's right edge and the EditText to make room
+     * for the new View.
+     */
     open protected fun setRightButton(a : AttributeHandler) : SideButton? = null
 
     companion object {

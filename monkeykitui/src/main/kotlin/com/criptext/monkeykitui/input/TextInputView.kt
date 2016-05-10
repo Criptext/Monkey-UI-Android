@@ -13,6 +13,8 @@ import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
+ * A InputView Implementation that only sends text messages. Overrides setRightButton to insert
+ * a simple button for sending text messages written with the EditText on click.
  * Created by gesuwall on 4/21/16.
  */
 
@@ -34,6 +36,9 @@ open class TextInputView : BaseInputView {
         return SideButton(btn, diameter.toInt())
     }
 
+    /**
+     * Creates an ImageView with the size needed to fit the InputView
+     */
     private fun newCirclularSendButton(diameter: Float, a: AttributeHandler): ImageView{
         val btn = ImageView(context)
         val dp5 = dpToPx(5, context)
@@ -53,7 +58,11 @@ open class TextInputView : BaseInputView {
         return btn
     }
 
-    protected fun initSendTextButton(btn: View){
+    /**
+     * Creates a view to be used as button for sending text messages written with the InputView's
+     * EditText. On click, the InputListener's onNewItem() method is called with the new text message.
+     */
+    open protected fun initSendTextButton(btn: View){
         btn.setOnClickListener({
             val inputText = editText.text.trim()
             if(!inputText.isEmpty()) {
