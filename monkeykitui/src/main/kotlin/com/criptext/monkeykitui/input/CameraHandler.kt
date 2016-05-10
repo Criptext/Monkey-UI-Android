@@ -37,7 +37,6 @@ class CameraHandler constructor(ctx : Context){
 
     val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
     val CONTENT_URI = Uri.parse("content://com.criptext.uisample/")
-    var defaultActionStrings : ArrayList<String> = ArrayList<String>(Arrays.asList("Take a Photo", "Choose Photo"));
 
     var orientationImage: Int = 0
 
@@ -258,6 +257,7 @@ class CameraHandler constructor(ctx : Context){
                 }
 
                 cameraListener?.onNewItem(monkeyItem)
+                mPhotoFileName = null
 
             }
         }

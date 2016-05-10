@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     private Sensor mSensor;
     private AudioManager mAudioManager;
 
-    private AttachmentInputView mediaInputView;
+    private MediaInputView mediaInputView;
 
     final static class SlowMessageLoader extends AsyncTask<WeakReference<MainActivity>, Void, ArrayList<MonkeyItem>>{
         WeakReference<MainActivity> activityWeakReference;
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     }
 
     public void initInputView(){
-        mediaInputView = (AttachmentInputView) findViewById(R.id.inputView);
+        mediaInputView = (MediaInputView) findViewById(R.id.inputView);
         if(mediaInputView!=null) {
             mediaInputView.setInputListener(new InputListener() {
                 @Override
@@ -227,18 +227,20 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
             /*
             ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
             */
-            mediaInputView.addNewAttachmentButton(new AttachmentButton(){
-                @NonNull
-                @Override
-                public String getTitle(){
-                    return "Send Contact";
-                }
-                @Override
-                public void clickButton(){
-                    System.out.println("DO SOMETHING!!");
-                }
-            });
+            if(mediaInputView.getAttachmentHandler()!=null) {
+                mediaInputView.getAttachmentHandler().addNewAttachmentButton(new AttachmentButton() {
+                    @NonNull
+                    @Override
+                    public String getTitle() {
+                        return "Send Contact";
+                    }
 
+                    @Override
+                    public void clickButton() {
+                        System.out.println("DO SOMETHING!!");
+                    }
+                });
+            }
         }
     }
 

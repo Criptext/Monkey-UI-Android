@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/default_inputview_height"/>
 
-    <com.criptext.monkeykitui.input.AttachmentInputView
+    <com.criptext.monkeykitui.input.MediaInputView
         android:id="@+id/inputView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
