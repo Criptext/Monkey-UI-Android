@@ -11,8 +11,17 @@
         <attr name="datetimeSize" format="dimension" />
     </declare-styleable>
     <declare-styleable name="InputView">
-        <attr name="attachmentButton" format="reference" />
-        <attr name="sendButton" format="reference" />
-        <attr name="micButton" format="reference" />
+        <attr name="attachmentDrawable" format="integer" />
+        <attr name="sendTextDrawable" format="integer" />
+        <attr name="sendAudioDrawable" format="integer" />
+        <attr name="editTextDrawable" format="integer" />
+        <attr name="backgroundDrawable" format="integer" />
+
+        <attr name="useDefaultCamera" format="boolean" />
+        <attr name="useDefaultGallery" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="PhotoEditor">
+        <attr name="okButtonDrawable" format="integer" />
+        <attr name="okButtonColor" format="integer" />
     </declare-styleable>
 </resources>

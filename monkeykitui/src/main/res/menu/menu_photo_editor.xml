@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android=
+    "http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item android:id="@+id/action_crop"
+        android:title="@string/mk_action_crop"
+        android:icon="@drawable/ic_crop_white_24dp"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_rot"
+        android:title="@string/mk_action_rot"
+        android:icon="@drawable/ic_rotate_90_degrees_ccw_white_24dp"
+        android:orderInCategory="200"
+        app:showAsAction="ifRoom" />
+</menu>

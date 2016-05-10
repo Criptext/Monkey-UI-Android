@@ -29,6 +29,9 @@
         <activity
             android:name="com.soundcloud.android.crop.CropImageActivity"
             android:theme="@style/CustomTheme"/>
+        <!-- Edit Image -->
+        <activity
+            android:name="com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity" />
     </application>
 
 </manifest>

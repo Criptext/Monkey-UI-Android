@@ -26,16 +26,12 @@ open class AttachmentInputView : TextInputView {
     var cameraHandler : CameraHandler? = null
 
     var attachmentsButtons : ArrayList<AttachmentButton>? = null
+    
+    constructor(context: Context) : super(context)
 
-    var defaultCamera : Boolean = true
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    var defaultGallery : Boolean = true
-
-    constructor(context: Context?) : super(context)
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     fun addNewAttachmentButton(attachmentButton: AttachmentButton){
 
@@ -51,11 +47,11 @@ open class AttachmentInputView : TextInputView {
         }
     }
 
-    override fun setLeftButton(a : TypedArray?) : SideButton{
+    override fun setLeftButton(a : AttributeHandler) : SideButton{
 
         val btn = ImageView(context)
-        if (a?.getDrawable(R.styleable.InputView_attachmentButton) != null)
-            btn.setImageDrawable(a?.getDrawable(R.styleable.InputView_attachmentButton))
+        if (a.attachmentDrawableInputView != -1)
+            btn.setImageDrawable(ContextCompat.getDrawable(context, a.attachmentDrawableInputView))
         else
             btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
 

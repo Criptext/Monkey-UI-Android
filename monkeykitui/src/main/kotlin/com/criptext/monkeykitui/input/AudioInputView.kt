@@ -2,16 +2,13 @@ package com.criptext.monkeykitui.input
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
-import android.view.Gravity
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
-import com.criptext.monkeykitui.input.listeners.OnSendButtonClickListener
 import com.criptext.monkeykitui.input.listeners.AudioRecorder
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.input.recorder.*
@@ -35,14 +32,14 @@ open class AudioInputView : TextInputView {
         field = value
     }
 
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
 
-    override fun setRightButton(a : TypedArray?): SideButton? {
+    override fun setRightButton(a : AttributeHandler): SideButton? {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val params = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(100, context))
         view.layoutParams = params
@@ -52,10 +49,12 @@ open class AudioInputView : TextInputView {
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)
 
-        if (a?.getDrawable(R.styleable.InputView_sendButton) != null)
-            (txtBtn as ImageView).setImageDrawable(a?.getDrawable(R.styleable.InputView_sendButton))
-        if (a?.getDrawable(R.styleable.InputView_micButton) != null)
-            (recBtn as ImageView).setImageDrawable(a?.getDrawable(R.styleable.InputView_micButton))
+        if (a.sendTextDrawableInputView != -1)
+            (txtBtn as ImageView).setImageDrawable(ContextCompat.getDrawable(context,
+                    a.sendTextDrawableInputView))
+        if (a.sendAudioDrawableInputView != -1)
+            (recBtn as ImageView).setImageDrawable(ContextCompat.getDrawable(context,
+                    a.sendAudioDrawableInputView))
 
         mic.bringToFront()
         timer.bringToFront()
@@ -84,12 +83,6 @@ open class AudioInputView : TextInputView {
         recorder.inputListener = inputListener
         this.recorder = recorder
     }
-
-    override fun init(a : TypedArray?) {
-        setBarBackground(a)
-        super.init(a)
-    }
-
 
 
 }
