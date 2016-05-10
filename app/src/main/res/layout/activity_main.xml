@@ -19,6 +19,14 @@
         android:layout_height="100dp"
         android:layout_gravity="bottom"/>
 
+    <LinearLayout
+        android:id="@+id/layoutBlack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/black"
+        android:visibility="gone"/>
+
     <!--app:attachmentButton="@drawable/ic_alert"-->
     <!--app:sendButton="@drawable/ic_launcher"-->
     <!--app:micButton="@drawable/mk_contact_checked"-->

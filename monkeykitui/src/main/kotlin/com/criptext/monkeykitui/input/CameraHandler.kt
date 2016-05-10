@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 /**
  * Created by daniel on 4/21/16.
@@ -36,7 +37,6 @@ class CameraHandler constructor(ctx : Context){
 
     val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
     val CONTENT_URI = Uri.parse("content://com.criptext.uisample/")
-    var defaultActionStrings : Array<String>? = arrayOf("Take a Photo", "Choose Photo")
 
     var orientationImage: Int = 0
 
@@ -211,11 +211,11 @@ class CameraHandler constructor(ctx : Context){
                 var monkeyItem = object : com.criptext.monkeykitui.recycler.MonkeyItem{
 
                     override fun getMessageTimestamp(): Long {
-                        return System.currentTimeMillis() - 1000 * 60 * 60 * 48
+                        return System.currentTimeMillis()
                     }
 
                     override fun getMessageId(): String {
-                        return "" + (System.currentTimeMillis() - 1000 * 60 * 60 * 48)
+                        return "" + (System.currentTimeMillis())
                     }
 
                     override fun isIncomingMessage(): Boolean {
@@ -231,7 +231,7 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getMessageText(): String {
-                        return getTempFile().absolutePath
+                        return ""
                     }
 
                     override fun getPlaceholderFilePath(): String {
@@ -239,11 +239,11 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getFilePath(): String {
-                        return ""
+                        return getTempFile().absolutePath
                     }
 
                     override fun getFileSize(): Long {
-                        return 0
+                        return getTempFile().length()
                     }
 
                     override fun getAudioDuration(): Long {
@@ -257,6 +257,7 @@ class CameraHandler constructor(ctx : Context){
                 }
 
                 cameraListener?.onNewItem(monkeyItem)
+                mPhotoFileName = null
 
             }
         }

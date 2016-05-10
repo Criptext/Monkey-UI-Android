@@ -3,16 +3,25 @@ package com.criptext.uisample;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 
+import com.criptext.monkeykitui.input.AttachmentInputView;
 import com.criptext.monkeykitui.input.MediaInputView;
+import com.criptext.monkeykitui.input.children.AttachmentButton;
 import com.criptext.monkeykitui.input.listeners.InputListener;
-import com.criptext.monkeykitui.input.listeners.AudioRecorder;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -26,19 +35,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements ChatActivity {
+public class MainActivity extends AppCompatActivity implements ChatActivity, SensorEventListener {
 
     final static String[] messages = { "Hello", "'sup", "How are you doing", "Is everything OK?", "I'm at work", "I'm at school",
     "The weather is terrible", "I'm not feeling very well", "Today is my lucky day", "I hate when that happens",
     "I'm fine", "What are you doing this weekend?", "Sorry, I have plans", "I'm free", "Everything is going according to plan",
     "Here's my credit card number: 1111 2222 3333 4444"};
     final static int MAX_MESSAGES = 150;
-    MonkeyAdapter adapter;
-    RecyclerView recycler;
-    AudioPlaybackHandler audioHandler;
+    private MonkeyAdapter adapter;
+    private RecyclerView recycler;
 
+    private AudioPlaybackHandler audioHandler;
+    private boolean isProximityOn=false;
+    private SensorManager mSensorManager;
+    private Sensor mSensor;
+    private AudioManager mAudioManager;
 
     private MediaInputView mediaInputView;
 
@@ -76,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         adapter = new MonkeyAdapter(this, messages);
         adapter.setHasReachedEnd(false);
 
-        //
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -86,18 +101,41 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
 
         initInputView();
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mAudioManager.setMode(AudioManager.MODE_NORMAL);
+        if(audioHandler!=null && audioHandler.getPlayingAudio()) {
+            audioHandler.getAudioHolder().updatePlayPauseButton(false);
+            audioHandler.getPlayer().pause();
+            audioHandler.getAdapter().notifyDataSetChanged();
+        }
     }
 
     @Override
     protected void onStop() {
-        audioHandler.releasePlayer();
         super.onStop();
+
+        audioHandler.releasePlayer();
+
+        if(isProximityOn){
+            mAudioManager.setMode(AudioManager.MODE_NORMAL);
+            isProximityOn=false;
+            ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.GONE);
+        }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+        mSensorManager.unregisterListener(this);
     }
 
     private static ArrayList<MonkeyItem> generateRandomMessages(Context ctx){
@@ -178,6 +216,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
                             newItem.setDuration(item.getAudioDuration());
                             newItem.setMessageContent(item.getFilePath());
                             break;
+                        case photo:
+                            newItem.setMessageContent(item.getFilePath());
+                            break;
                     }
 
                     adapter.smoothlyAddNewItem(newItem, recycler); // Add to recyclerView
@@ -185,20 +226,16 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
             });
             /*
             ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
-            *
-            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
-            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+            mediaInputView.getAttachmentHandler().addNewAttachmentButton(new AttachmentButton() {
+                @NonNull
                 @Override
-                public void onAttachmentButtonClickListener(int item) {
-                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
-                    switch (item){
-                        case 0:
-                            takePicture();
-                            break;
-                        case 1:
-                            Crop.pickImage(MainActivity.this);
-                            break;
-                    }
+                public String getTitle() {
+                    return "Send Contact";
+                }
+
+                @Override
+                public void clickButton() {
+                    System.out.println("DO SOMETHING!!");
                 }
             });
             */
@@ -247,11 +284,23 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
         }
     }
 
-    /***AUDIO RECORD STUFFS****/
+    public MediaPlayer.OnCompletionListener localCompletionForProximity=new MediaPlayer.OnCompletionListener() {
 
-
-
-    /***IMAGE RECORD STUFFS****/
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            try {
+                audioHandler.getAudioSeekBar().setProgress(0);
+                audioHandler.getAudioHolder().updatePlayPauseButton(false);
+                audioHandler.getAudioHolder().setAudioDurationText(0);
+                audioHandler.getPlayer().seekTo(0);
+                audioHandler.notifyPlaybackStopped();
+                audioHandler.restartListeners();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -267,6 +316,57 @@ public class MainActivity extends AppCompatActivity implements ChatActivity {
     }
 
     /***OVERRIDE METHODS****/
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        if (event.values[0] < mSensor.getMaximumRange()) {
+
+            if(audioHandler!=null && audioHandler.getPlayingAudio()){
+                audioHandler.getPlayer().reset();
+                try {
+                    audioHandler.getPlayer().release();
+                    audioHandler.createNewPlayer();
+                    audioHandler.getPlayer().setDataSource(audioHandler.getCurrentlyPlayingItem().getItem().getFilePath());
+                    audioHandler.getPlayer().setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+                    audioHandler.getPlayer().prepare();
+                    audioHandler.getPlayer().start();
+                    audioHandler.getPlayer().setOnCompletionListener(localCompletionForProximity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+                isProximityOn=true;
+                ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.VISIBLE);
+            }
+
+        } else {
+
+            if(audioHandler!=null && isProximityOn){
+                audioHandler.getPlayer().reset();
+                try {
+                    audioHandler.getPlayer().release();
+                    audioHandler.createNewPlayer();
+                    audioHandler.getPlayer().setDataSource(audioHandler.getCurrentlyPlayingItem().getItem().getFilePath());
+                    audioHandler.getPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    audioHandler.getAudioHolder().updatePlayPauseButton(false);
+                    audioHandler.getPlayer().setOnCompletionListener(localCompletionForProximity);
+                    audioHandler.getAdapter().notifyDataSetChanged();
+                    audioHandler.restartListeners();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mAudioManager.setMode(AudioManager.MODE_NORMAL);
+                isProximityOn=false;
+                ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 
     @Override
     public boolean isOnline() {

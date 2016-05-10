@@ -10,6 +10,7 @@ import android.view.View
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
+import com.innovative.circularaudioview.CircularAudioView
 import org.jetbrains.annotations.NotNull
 import java.io.File
 import java.io.IOException
@@ -20,7 +21,7 @@ import java.io.IOException
 
 open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) {
     val handler : Handler
-    val player : MediaPlayer
+    var player : MediaPlayer
     var currentlyPlayingItem : PlayingItem?
     private set
     var recycler : RecyclerView
@@ -39,12 +40,15 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     var updateProgressEnabled : Boolean
 
 
-    val playerRunnable : Runnable
+    var playerRunnable : Runnable
 
     open val playbackProgress : Int
-    get() = 100 * player.currentPosition / player.duration;
-
-
+    get(){
+        if(player.duration > 0)
+            return 100 * player.currentPosition / player.duration;
+        else
+            return 0;
+    }
 
     init {
         currentlyPlayingItem = null
@@ -115,6 +119,29 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     fun updateAudioSeekbar(recycler: RecyclerView, percentage: Int, progress: Long){
         val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
         audioHolder?.updateAudioProgress(percentage, progress)
+    }
+
+    fun getAudioSeekBar():CircularAudioView?{
+        val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
+        return audioHolder?.circularAudioView
+    }
+
+    fun getAudioHolder():MonkeyAudioHolder{
+        return recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder
+    }
+
+    fun createNewPlayer(){
+        player = MediaPlayer()
+    }
+
+    fun restartListeners(){
+        player.setOnPreparedListener {
+            startAudioHolderPlayer()
+        }
+
+        player.setOnCompletionListener {
+            notifyPlaybackStopped()
+        }
     }
 
     fun notifyPlaybackStopped(){

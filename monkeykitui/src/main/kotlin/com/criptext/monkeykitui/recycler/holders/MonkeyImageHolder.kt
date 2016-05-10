@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.recycler.holders
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -40,6 +41,7 @@ class MonkeyImageHolder : MonkeyHolder {
         photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar
         retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout
         photoImageView = view.findViewById(R.id.image_view) as ImageView
+        sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
     constructor(view : MonkeyView, type : Int) : super(view, type) {
