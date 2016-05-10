@@ -226,21 +226,19 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
             });
             /*
             ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
-            */
-            if(mediaInputView.getAttachmentHandler()!=null) {
-                mediaInputView.getAttachmentHandler().addNewAttachmentButton(new AttachmentButton() {
-                    @NonNull
-                    @Override
-                    public String getTitle() {
-                        return "Send Contact";
-                    }
+            mediaInputView.getAttachmentHandler().addNewAttachmentButton(new AttachmentButton() {
+                @NonNull
+                @Override
+                public String getTitle() {
+                    return "Send Contact";
+                }
 
-                    @Override
-                    public void clickButton() {
-                        System.out.println("DO SOMETHING!!");
-                    }
-                });
-            }
+                @Override
+                public void clickButton() {
+                    System.out.println("DO SOMETHING!!");
+                }
+            });
+            */
         }
     }
 

@@ -27,7 +27,7 @@ open class MediaInputView : AudioInputView {
 
     var cameraHandler : CameraHandler? = null
 
-    var attachmentHandler : AttachmentHandler? = null
+    lateinit var attachmentHandler : AttachmentHandler
 
     constructor(context: Context) : super(context)
 
@@ -38,7 +38,7 @@ open class MediaInputView : AudioInputView {
     override fun setLeftButton(a : AttributeHandler) : SideButton?{
         cameraHandler = CameraHandler(context)
         attachmentHandler = AttachmentHandler()
-        return attachmentHandler?.getLeftButton(a, context, this, cameraHandler, resources)
+        return attachmentHandler.getLeftButton(a, context, this, cameraHandler, resources)
     }
 
 }
