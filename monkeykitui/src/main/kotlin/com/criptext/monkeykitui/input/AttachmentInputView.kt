@@ -9,11 +9,13 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.input.children.AttachmentButton
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.input.listeners.OnAttachmentButtonClickListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import java.util.*
 
 /**
  * Created by daniel on 4/22/16.
@@ -21,9 +23,13 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
 
 open class AttachmentInputView : TextInputView {
 
-    var onAttachmentButtonClickListener : OnAttachmentButtonClickListener? = null
-
     var cameraHandler : CameraHandler? = null
+
+    var attachmentsButtons : ArrayList<AttachmentButton>? = null
+
+    var defaultCamera : Boolean = true
+
+    var defaultGallery : Boolean = true
 
     constructor(context: Context?) : super(context)
 
@@ -31,10 +37,18 @@ open class AttachmentInputView : TextInputView {
 
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    var actionStrings : Array<String>? = null
+    fun addNewAttachmentButton(attachmentButton: AttachmentButton){
 
-    fun setActionString(actionStrings : Array<String>){
-        this.actionStrings=actionStrings
+        if(attachmentsButtons == null)
+            attachmentsButtons = ArrayList()
+
+        attachmentsButtons?.add(attachmentButton)
+    }
+
+    fun triggerClickButtonAttachment(indice : Int){
+        if(indice >= 0){
+            attachmentsButtons?.get(indice)?.clickButton()
+        }
     }
 
     override fun setLeftButton(a : TypedArray?) : SideButton{
@@ -55,46 +69,40 @@ open class AttachmentInputView : TextInputView {
         btn.layoutParams = params
         btn.setOnClickListener({
 
-            if(actionStrings!=null){
+            cameraHandler = CameraHandler(context)
+            cameraHandler?.setCameraListen(object : CameraListener {
+                override fun onNewItem(item: MonkeyItem) {
+                    inputListener?.onNewItem(item)
+                }
+            })
 
-                val items = actionStrings
-                val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
-                val builder = AlertDialog.Builder(context)
-
-                builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
-                builder.setAdapter(adapter) { dialog, item ->
-                    onAttachmentButtonClickListener?.onAttachmentButtonClickListener(item)
-                    dialog.dismiss()
-                }.show()
-
-            }
-            else{
-
-                cameraHandler = CameraHandler(context)
-                cameraHandler?.setCameraListen(object : CameraListener {
-                    override fun onNewItem(item: MonkeyItem) {
-                        inputListener?.onNewItem(item)
+            val items = cameraHandler?.defaultActionStrings
+            if(attachmentsButtons!=null){
+                attachmentsButtons?.let {
+                    for (button in it) {
+                        items?.add(button.getTitle())
                     }
-                })
-
-                val items = cameraHandler?.defaultActionStrings
-                val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
-                val builder = AlertDialog.Builder(context)
-
-                builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
-                builder.setAdapter(adapter) { dialog, item ->
-                    when (item){
-                        0 -> {
-                            cameraHandler?.takePicture()
-                        }
-                        1 -> {
-                            cameraHandler?.pickFromGallery()
-                        }
-                    }
-                    dialog.dismiss()
-                }.show()
-
+                }
             }
+
+            val adapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_item, items)
+            val builder = AlertDialog.Builder(context)
+
+            builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
+            builder.setAdapter(adapter) { dialog, item ->
+                when (item){
+                    0 -> {
+                        cameraHandler?.takePicture()
+                    }
+                    1 -> {
+                        cameraHandler?.pickFromGallery()
+                    }
+                }
+                if(attachmentsButtons!=null){
+                    triggerClickButtonAttachment(item-2)
+                }
+                dialog.dismiss()
+            }.show()
 
         })
         return SideButton(btn, diameter.toInt())

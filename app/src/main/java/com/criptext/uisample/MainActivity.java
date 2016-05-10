@@ -11,13 +11,16 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.criptext.monkeykitui.input.AttachmentInputView;
 import com.criptext.monkeykitui.input.MediaInputView;
+import com.criptext.monkeykitui.input.children.AttachmentButton;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
@@ -32,6 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements ChatActivity, SensorEventListener {
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     private Sensor mSensor;
     private AudioManager mAudioManager;
 
-    private MediaInputView mediaInputView;
+    private AttachmentInputView mediaInputView;
 
     final static class SlowMessageLoader extends AsyncTask<WeakReference<MainActivity>, Void, ArrayList<MonkeyItem>>{
         WeakReference<MainActivity> activityWeakReference;
@@ -195,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     }
 
     public void initInputView(){
-        mediaInputView = (MediaInputView) findViewById(R.id.inputView);
+        mediaInputView = (AttachmentInputView) findViewById(R.id.inputView);
         if(mediaInputView!=null) {
             mediaInputView.setInputListener(new InputListener() {
                 @Override
@@ -220,23 +226,19 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
             });
             /*
             ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
-            *
-            mediaInputView.setActionString(new String [] {"Take a Photo", "Choose Photo"});
-            mediaInputView.setOnAttachmentButtonClickListener(new OnAttachmentButtonClickListener() {
+            */
+            mediaInputView.addNewAttachmentButton(new AttachmentButton(){
+                @NonNull
                 @Override
-                public void onAttachmentButtonClickListener(int item) {
-                    mPhotoFileName = (System.currentTimeMillis()/1000) + TEMP_PHOTO_FILE_NAME;
-                    switch (item){
-                        case 0:
-                            takePicture();
-                            break;
-                        case 1:
-                            Crop.pickImage(MainActivity.this);
-                            break;
-                    }
+                public String getTitle(){
+                    return "Send Contact";
+                }
+                @Override
+                public void clickButton(){
+                    System.out.println("DO SOMETHING!!");
                 }
             });
-            */
+
         }
     }
 

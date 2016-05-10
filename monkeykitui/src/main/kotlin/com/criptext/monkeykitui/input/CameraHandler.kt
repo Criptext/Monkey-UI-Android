@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 /**
  * Created by daniel on 4/21/16.
@@ -35,7 +36,7 @@ class CameraHandler constructor(ctx : Context){
 
     val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
     val CONTENT_URI = Uri.parse("content://com.criptext.uisample/")
-    var defaultActionStrings : Array<String>? = arrayOf("Take a Photo", "Choose Photo")
+    var defaultActionStrings : ArrayList<String> = ArrayList<String>(Arrays.asList("Take a Photo", "Choose Photo"));
 
     var orientationImage: Int = 0
 
