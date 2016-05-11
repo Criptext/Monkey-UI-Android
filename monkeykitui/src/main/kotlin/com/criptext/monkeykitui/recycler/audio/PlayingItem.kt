@@ -6,12 +6,12 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
  * Created by gesuwall on 4/15/16.
  */
 
-class PlayingItem(position : Int, item : MonkeyItem) {
+class PlayingItem(item : MonkeyItem) {
     val item : MonkeyItem
-    var position : Int
+    var lastPlaybackPosition: Int
 
     init{
         this.item = item
-        this.position = position
+        lastPlaybackPosition = 0
     }
 }

@@ -10,8 +10,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.bubble.MonkeyView
-import com.criptext.monkeykitui.bubble.TextMessageView
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.Utils
 import com.innovative.circularaudioview.CircularAudioView
@@ -61,60 +59,6 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.parseColor("#014766"), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    constructor (view : MonkeyView, type : Int) : super (view.viewForRecyclerView){
-        datetimeTextView = view.datetimeTextView
-        bubbleLayout = view.bubbleLayout
-        tailImageView = view.tailImageView
-        selectedImageView = view.selectedImageView
-
-        if(view.isIncomingMessage){
-            senderNameTextView = view.senderNameTextView
-            privateDatetimeTextView = view.privateDatetimeTextView
-            privacyCoverView = view.privacyCoverView
-            privacyTextView = view.privacyTextView
-        } else {
-            checkmarkImageView = view.checkmarkImageView
-            errorImageView = view.errorImageView
-            sendingProgressBar = view.sendingProgressBar
-        }
-        /*
-        when(MonkeyItem.MonkeyItemType.values()[type]){
-            MonkeyItem.MonkeyItemType.text -> {
-                val tmv = view as TextMessageView
-                messageTextView = tmv.messageTextView
-            }
-            MonkeyItem.MonkeyItemType.audio -> {
-                val amv = view as AudioMessageView
-                durationTextView = amv.durationTextView
-                circularAudioView = amv.circularAudioView
-                playButtonView = amv.playButtonView
-            }
-            MonkeyItem.MonkeyItemType.photo -> {
-                val imv = view as ImageMessageView
-                photoCoverImageView = imv.photoCoverImageView
-                photoImageView = imv.photoImageView
-                filesizeTextView = imv.photoSizeTextView
-                downloadingView = imv.photoLoadingView
-                retryDownloadLayout = imv.retryDownloadLayout
-            }
-            MonkeyItem.MonkeyItemType.file -> {
-                val fmv = view as FileMessageView
-                fileLogoImageView = fmv.FileLogoImageView
-                filenameTextView = fmv.FileNameTextView
-                filesizeTextView = fmv.FileSizeTextView
-            }
-            MonkeyItem.MonkeyItemType.contact -> {
-                val cmv = view as ContactMessageView
-                contactAvatarImageView = cmv.contactAvatarImageView
-                contactNameTextView = cmv.contactNameTextView
-                createNewTextView = cmv.createNewTextView
-                addExisitingTextView = cmv.addExistingTextView
-            }
-        }*/
-
-        view.removeView(super.itemView)
-
-    }
 /**
  * Revisa si el mensaje ya fue leído, y coloca los vistos respectivos para 'entregado' y leído.
  *

@@ -16,14 +16,19 @@ import java.io.File
 import java.io.IOException
 
 /**
+ * This class plays audio files from MonkeyItem messages and updates the UI of the items in the
+ * RecyclerView.
  * Created by gesuwall on 4/15/16.
  */
 
 open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) {
     val handler : Handler
-    var player : MediaPlayer
-    var currentlyPlayingItem : PlayingItem?
+
+    lateinit private var player : MediaPlayer
+    lateinit var playerRunnable : Runnable
+    var currentlyPlayingItem : PlayingItem? = null
     private set
+
     var recycler : RecyclerView
     private set
     var adapter : MonkeyAdapter
@@ -39,9 +44,6 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
 
     var updateProgressEnabled : Boolean
 
-
-    var playerRunnable : Runnable
-
     open val playbackProgress : Int
     get(){
         if(player.duration > 0)
@@ -50,14 +52,33 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
             return 0;
     }
 
+    open val playbackPosition : Int
+    get() = player.currentPosition
+
     init {
-        currentlyPlayingItem = null
         recycler = recyclerView
         this.adapter = monkeyAdapter
         adapter.audioHandler = this
         updateProgressEnabled = true
-
+        //initPlayer()
         handler = Handler()
+
+
+    }
+
+    private fun restorePreviousPlayback(prevPlayingItem: PlayingItem){
+        player.setDataSource(prevPlayingItem.item.getFilePath())
+        player.setOnPreparedListener {
+            player.seekTo(prevPlayingItem.lastPlaybackPosition)
+        }
+        player.prepareAsync()
+        Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
+    }
+
+    /**
+     * Initializes the media player. It should be called on the onStart() callback of your activity.
+     */
+    open fun initPlayer(){
         player = MediaPlayer()
         playerRunnable = object : Runnable {
             override fun run() {
@@ -69,35 +90,38 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
             }
         }
 
-        player.setOnPreparedListener {
-            startAudioHolderPlayer()
-        }
+        val playingTrack = currentlyPlayingItem
+        if(playingTrack != null)
+            restorePreviousPlayback(playingTrack)
 
         player.setOnCompletionListener {
             notifyPlaybackStopped()
         }
-
     }
 
-    open fun onPauseButtonClicked(position: Int, item: MonkeyItem) {
+    /**
+     * Callback that pauses media playback after the user clicks on the play button.
+     */
+    open fun onPauseButtonClicked(item: MonkeyItem) {
         //handler.removeCallbacks(playerRunnable);
         Log.d("AudioPlayback", "pause clicked")
-        player.pause();
-        adapter.notifyDataSetChanged();
+        pauseAudioHolderPlayer()
     }
 
-    open fun onPlayButtonClicked(position: Int, item: MonkeyItem) {
-        Log.d("AudioPlayback", "play clicked $position")
+    /**
+     * Callback that starts or resumes mediaplayback after the user clicks on the play button.
+     */
+    open fun onPlayButtonClicked(item: MonkeyItem) {
+        Log.d("AudioPlayback", "play clicked")
         if ( currentlyPlayingItem?.item?.getMessageId().equals(item.getMessageId())) {
             //Resume playback
-            startAudioHolderPlayer()
+            startPlayback()
         } else {
             //Start from beggining
-            player.reset();
-            currentlyPlayingItem = PlayingItem(position, item)
+            safelyResetPlayer()
             try {
                 player.setDataSource(adapter.mContext, Uri.fromFile(File(item.getFilePath())));
-                player.prepareAsync();
+                startAudioHolderPlayer(PlayingItem(item))
             } catch (ex: IOException) {
                 ex.printStackTrace();
             }
@@ -105,52 +129,102 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
 
     }
 
+    /**
+     * Callback that updates media playback after the user has changed the playback position with a
+     * touch gesture in the UI.
+     * @param position the adapter position of the MonkeyItem of the playing audio
+     * @param item the MonkeyItem of the playing audio
+     */
     open fun onProgressManuallyChanged(position: Int, item: MonkeyItem, newProgress: Int) {
         player.seekTo(newProgress * player.duration / 100)
     }
 
-
+    /**
+     * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
+     * the holder can reflect the new playback status.
+     * @param newPlayingItem the new MonkeyItem containing an audio file to play.
+     */
+    fun startAudioHolderPlayer(newPlayingItem: PlayingItem){
+        currentlyPlayingItem = newPlayingItem
+        startAudioHolderPlayer()
+    }
+    /**
+     * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
+     * the holder can reflect the new playback status.
+     */
     fun startAudioHolderPlayer(){
+        player.setOnPreparedListener {
+            startPlayback()
+        }
+        player.prepareAsync()
+    }
+
+    private fun rebindAudioHolder(){
+        val timeStamp = currentlyPlayingItem?.item?.getMessageTimestamp() ?: null
+        if(timeStamp != null) {
+            val adapterPosition = adapter.getItemPositionByTimestamp(timeStamp)
+            val audioHolder = getAudioHolder(adapterPosition)
+            if (audioHolder != null) {
+                adapter.onBindViewHolder(audioHolder, adapterPosition)
+            }
+        }
+    }
+
+    private fun startPlayback(){
         player.start()
         playerRunnable.run()
         adapter.notifyDataSetChanged()
+
     }
 
-    fun updateAudioSeekbar(recycler: RecyclerView, percentage: Int, progress: Long){
-        val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
+    /**
+     * Pauses media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
+     * the holder can reflect the new playback status.
+     */
+    fun pauseAudioHolderPlayer(){
+        player.pause()
+        currentlyPlayingItem?.lastPlaybackPosition = player.currentPosition
+        rebindAudioHolder()
+    }
+
+    private fun updateAudioSeekbar(recycler: RecyclerView, percentage: Int, progress: Long){
+        val audioHolder = getAudioHolder()
         audioHolder?.updateAudioProgress(percentage, progress)
     }
 
-    fun getAudioSeekBar():CircularAudioView?{
-        val audioHolder = recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder?
-        return audioHolder?.circularAudioView
+    /**
+     * Returns a MonkeyAudioHolder object that holds the UI for the currently playing audio message.
+     * @return if there is no item being currently playing or maybe it is not visible, null will be
+     * returned. Otherwise, a valid MonkeyAudioHolder object is returned
+     */
+    fun getAudioHolder(adapterPosition: Int):MonkeyAudioHolder?{
+        return recycler.findViewHolderForAdapterPosition(adapterPosition) as MonkeyAudioHolder?
     }
 
-    fun getAudioHolder():MonkeyAudioHolder{
-        return recycler.findViewHolderForAdapterPosition(currentlyPlayingItem?.position ?: -1) as MonkeyAudioHolder
+    fun getAudioHolder(): MonkeyAudioHolder? {
+        val timeStamp = currentlyPlayingItem?.item?.getMessageTimestamp() ?: return null
+        val adapterPosition = adapter.getItemPositionByTimestamp(timeStamp)
+        return getAudioHolder(adapterPosition)
     }
 
-    fun createNewPlayer(){
-        player = MediaPlayer()
-    }
-
-    fun restartListeners(){
-        player.setOnPreparedListener {
-            startAudioHolderPlayer()
-        }
-
-        player.setOnCompletionListener {
-            notifyPlaybackStopped()
-        }
-    }
-
-    fun notifyPlaybackStopped(){
+    private fun notifyPlaybackStopped(){
         if(!playingAudio) {
             currentlyPlayingItem = null
             adapter.notifyDataSetChanged();
         }
     }
 
+    private fun safelyResetPlayer(){
+        try{
+            player.reset()
+        } catch(ex: IllegalStateException){
+
+        }
+    }
+
+    /**
+     * Releases the MediaPlayer's resources. This should be called on the onStop() callback of your activity.
+     */
     open fun releasePlayer(){
         try{
             if(playingAudio) {

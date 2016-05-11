@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         linearLayoutManager.setStackFromEnd(true);
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
-
-        initInputView();
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
+        initInputView();
+
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -112,17 +112,21 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         super.onPause();
 
         mAudioManager.setMode(AudioManager.MODE_NORMAL);
-        if(audioHandler!=null && audioHandler.getPlayingAudio()) {
-            audioHandler.getAudioHolder().updatePlayPauseButton(false);
-            audioHandler.getPlayer().pause();
-            audioHandler.getAdapter().notifyDataSetChanged();
-        }
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        audioHandler.initPlayer();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
+        if(audioHandler!=null && audioHandler.getPlayingAudio()) {
+            audioHandler.pauseAudioHolderPlayer();
+        }
         audioHandler.releasePlayer();
 
         if(isProximityOn){
@@ -288,17 +292,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-            try {
-                audioHandler.getAudioSeekBar().setProgress(0);
-                audioHandler.getAudioHolder().updatePlayPauseButton(false);
-                audioHandler.getAudioHolder().setAudioDurationText(0);
-                audioHandler.getPlayer().seekTo(0);
-                audioHandler.notifyPlaybackStopped();
-                audioHandler.restartListeners();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
+
         }
     };
 
@@ -320,47 +314,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        if (event.values[0] < mSensor.getMaximumRange()) {
-
-            if(audioHandler!=null && audioHandler.getPlayingAudio()){
-                audioHandler.getPlayer().reset();
-                try {
-                    audioHandler.getPlayer().release();
-                    audioHandler.createNewPlayer();
-                    audioHandler.getPlayer().setDataSource(audioHandler.getCurrentlyPlayingItem().getItem().getFilePath());
-                    audioHandler.getPlayer().setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-                    audioHandler.getPlayer().prepare();
-                    audioHandler.getPlayer().start();
-                    audioHandler.getPlayer().setOnCompletionListener(localCompletionForProximity);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-                isProximityOn=true;
-                ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.VISIBLE);
-            }
-
-        } else {
-
-            if(audioHandler!=null && isProximityOn){
-                audioHandler.getPlayer().reset();
-                try {
-                    audioHandler.getPlayer().release();
-                    audioHandler.createNewPlayer();
-                    audioHandler.getPlayer().setDataSource(audioHandler.getCurrentlyPlayingItem().getItem().getFilePath());
-                    audioHandler.getPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    audioHandler.getAudioHolder().updatePlayPauseButton(false);
-                    audioHandler.getPlayer().setOnCompletionListener(localCompletionForProximity);
-                    audioHandler.getAdapter().notifyDataSetChanged();
-                    audioHandler.restartListeners();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                mAudioManager.setMode(AudioManager.MODE_NORMAL);
-                isProximityOn=false;
-                ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.GONE);
-            }
-        }
     }
 
     @Override

@@ -63,6 +63,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         }
         onLongClickListener = null
+        setHasStableIds(true)
 
     }
 
@@ -98,6 +99,10 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     }
 
 
+    override fun getItemId(position: Int): Long {
+        return messagesList[position].getMessageTimestamp()
+    }
+
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
 
         val item = messagesList[position]
@@ -131,8 +136,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         holder.setMessageDate(item.getMessageTimestamp())
         //long click
         holder.setOnLongClickListener(View.OnLongClickListener {
-            onLongClickListener?.onLongClick(position, item)
-            Toast.makeText(mContext, "long clicked: " + position, Toast.LENGTH_SHORT).show()
+            onLongClickListener?.onLongClick(item)
             true
         })
 
@@ -172,7 +176,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
         imageHolder.setOnLongClickListener(View.OnLongClickListener {
-            onLongClickListener?.onLongClick(position, item)
+            onLongClickListener?.onLongClick(item)
             true
         })
     }
@@ -185,24 +189,24 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val playAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
-                        audioHandler?.onPlayButtonClicked(position, item)
+                        audioHandler?.onPlayButtonClicked(item)
                     }
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
-                        onLongClickListener?.onLongClick(position, item)
+                        onLongClickListener?.onLongClick(item)
                     }
                 }
 
         val pauseAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
-                        audioHandler?.onPauseButtonClicked(position, item)
+                        audioHandler?.onPauseButtonClicked(item)
                     }
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
-                        onLongClickListener?.onLongClick(position, item)
+                        onLongClickListener?.onLongClick(item)
                     }
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
@@ -213,7 +217,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
             audioHolder.setReadyForPlayback()
             audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
-                        audioHandler?.player?.currentPosition?.toLong() ?: 0)
+                        audioHandler?.playbackPosition?.toLong() ?: 0)
             if(audioHandler?.playingAudio ?: false){ // Message is playing
                 audioHolder.updatePlayPauseButton(true)
                 audioHolder.setAudioActions(pauseAction)
@@ -233,7 +237,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 }
 
                 override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                    if(fromUser && progress > -1 && progress < 100 && playingAudio?.getMessageId().equals(item.getMessageId()))
+                    if(fromUser && progress > -1 && progress < 100 &&
+                            audioHandler?.currentlyPlayingItem?.item == item)
                         audioHandler?.onProgressManuallyChanged(position, item, progress)
                 }
             })
@@ -266,14 +271,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         removeEndOfRecyclerView()
         messagesList.addAll(0, newData)
         notifyItemRangeInserted(0, newData.size)
-
-        val playingItem = audioHandler?.currentlyPlayingItem
-        if(playingItem != null)
-            playingItem.position += newData.size
     }
 
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
-        var view : MonkeyView
         var mView : View
         var incoming = viewtype >= (getViewTypes()/2)
         val truetype = viewtype%MonkeyItem.MonkeyItemType.values().size
@@ -290,8 +290,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 mView = inflateView(incoming, R.layout.audio_message_view_in, R.layout.audio_message_view_out)
                 return MonkeyAudioHolder(mView)
             }
-            MonkeyItem.MonkeyItemType.file -> view = FileMessageView(mContext, incoming)
-            MonkeyItem.MonkeyItemType.contact -> view = ContactMessageView(mContext, incoming)
+            //MonkeyItem.MonkeyItemType.file ->
+            //MonkeyItem.MonkeyItemType.contact ->
             MonkeyItem.MonkeyItemType.MoreMessages ->  {
                 mView = LayoutInflater.from(mContext).inflate(R.layout.end_of_recycler_view, null)
                 return MonkeyEndHolder(mView)
@@ -300,6 +300,40 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return null
     }
 
+    fun getItemPositionByTimestamp(targetId: Long): Int{
+        var setLength = messagesList.size
+        var startPos = 0
+        val MAX_SIZE = 16
+        //reduce list size
+        while(setLength > MAX_SIZE) {
+            val residuo  = setLength % 2
+            var halfPos = setLength / 2 + startPos
+            val  id = getItemId(halfPos)
+            if (targetId < id) {
+                setLength = halfPos - startPos
+            } else {
+                setLength = halfPos - startPos
+                if(residuo == 1 && targetId == getItemId(halfPos))
+                    return halfPos
+                startPos = halfPos  + residuo
+            }
+        }
+
+        //search in small list
+        for(i in 0 .. 16){
+            if(targetId == getItemId(startPos + i))
+                return startPos + i
+        }
+
+        //fallback to normal algorithm, this should never happen
+        for(i in messagesList.indices)
+            if(targetId == getItemId(i))
+                return i
+
+        //id non existant.
+        return -1
+
+    }
 
     fun smoothlyAddNewData(newData: ArrayList<MonkeyItem>, recyclerView: RecyclerView, reachedEnd: Boolean){
             addNewData(newData);

@@ -8,5 +8,5 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
 
 abstract interface OnLongClickMonkeyListener {
 
-    abstract fun onLongClick(position: Int, item: MonkeyItem)
+    abstract fun onLongClick(item: MonkeyItem)
 }

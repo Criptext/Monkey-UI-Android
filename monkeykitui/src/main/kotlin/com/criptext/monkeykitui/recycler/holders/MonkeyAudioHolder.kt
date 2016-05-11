@@ -8,8 +8,6 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.bubble.AudioMessageView
-import com.criptext.monkeykitui.bubble.MonkeyView
 import com.innovative.circularaudioview.AudioActions
 import com.innovative.circularaudioview.CircularAudioView
 
@@ -34,13 +32,6 @@ class MonkeyAudioHolder: MonkeyHolder {
         circularAudioView = view.findViewById(R.id.seek_bar) as CircularAudioView
         playButtonView = view.findViewById(R.id.play_button) as ImageView
         downloadProgressView = view.findViewById(R.id.progress_audio) as ProgressBar?
-    }
-
-    constructor(view : MonkeyView, type : Int) : super(view, type) {
-        val amv = view as AudioMessageView
-        durationTextView = amv.durationTextView
-        circularAudioView = amv.circularAudioView
-        playButtonView = amv.playButtonView
     }
 
     fun setAudioActions(actions: AudioActions){

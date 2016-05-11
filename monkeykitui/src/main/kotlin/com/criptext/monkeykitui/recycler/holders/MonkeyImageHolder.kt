@@ -10,8 +10,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.bubble.ImageMessageView
-import com.criptext.monkeykitui.bubble.MonkeyView
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
@@ -42,15 +40,6 @@ class MonkeyImageHolder : MonkeyHolder {
         retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout
         photoImageView = view.findViewById(R.id.image_view) as ImageView
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
-    }
-
-    constructor(view : MonkeyView, type : Int) : super(view, type) {
-        val tmv = view as ImageMessageView
-        photoSizeTextView = tmv.photoSizeTextView
-        placeholderImageView = tmv.photoCoverImageView
-        photoLoadingView = tmv.photoLoadingView
-        retryDownloadLayout = tmv.retryDownloadLayout
-        photoImageView = tmv.photoImageView
     }
 
     fun setDownloadedImage(file : File, context : Context){
