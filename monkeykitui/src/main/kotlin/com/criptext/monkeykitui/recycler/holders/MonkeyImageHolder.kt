@@ -1,8 +1,6 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
@@ -10,7 +8,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.squareup.picasso.Picasso
@@ -66,18 +63,11 @@ class MonkeyImageHolder : MonkeyHolder {
 
     fun setRetryDownloadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
         retryDownloadLayout!!.visibility = View.VISIBLE
-        retryDownloadLayout!!.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-                chatActivity.onFileDownloadRequested(position, item)
-            }
-        })
+        retryDownloadLayout!!.setOnClickListener { chatActivity.onFileDownloadRequested(position, item) }
     }
 
     fun setOnClickListener(listener : View.OnClickListener){
         photoImageView!!.setOnClickListener(listener)
     }
 
-    override fun setOnLongClickListener(listener: View.OnLongClickListener){
-        photoImageView!!.setOnLongClickListener(listener)
-    }
 }

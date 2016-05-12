@@ -12,7 +12,6 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.Utils
-import com.innovative.circularaudioview.CircularAudioView
 
 /**
  * Created by gesuwall on 4/11/16.
@@ -118,9 +117,7 @@ open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline
         }
 
         open fun setOnLongClickListener(listener: View.OnLongClickListener){
-            bubbleLayout!!.setOnLongClickListener { v ->
-                listener.onLongClick(v)
-            }
+            bubbleLayout?.setOnLongClickListener(listener)
         }
 
         /**

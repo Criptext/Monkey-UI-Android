@@ -1,8 +1,10 @@
 package com.criptext.monkeykitui.recycler
 
+import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -10,15 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.criptext.monkeykitui.recycler.GroupChat
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.bubble.*
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
-import com.criptext.monkeykitui.recycler.listeners.OnLongClickMonkeyListener
-import com.criptext.monkeykitui.util.Utils
 import com.innovative.circularaudioview.AudioActions
 import com.innovative.circularaudioview.CircularAudioView
 import java.io.File
@@ -49,7 +47,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     var audioHandler : AudioPlaybackHandler?
     var imageListener : ImageListener?
-    var onLongClickListener : OnLongClickMonkeyListener?
 
     init{
         mContext = ctx
@@ -64,7 +61,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             }
 
         }
-        onLongClickListener = null
         setHasStableIds(true)
 
     }
@@ -149,11 +145,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     open protected fun bindCommonMonkeyHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         //set message date
         holder.setMessageDate(item.getMessageTimestamp())
-        //long click
-        holder.setOnLongClickListener(View.OnLongClickListener {
-            onLongClickListener?.onLongClick(item)
-            true
-        })
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
             val group = groupChat
@@ -179,7 +170,15 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      */
     open protected fun bindMonkeyTextHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val textHolder = holder as MonkeyTextHolder
-        textHolder.messageTextView!!.text = item.getMessageText()
+        textHolder.setText(item.getMessageText())
+        textHolder.setOnLongClickListener(View.OnLongClickListener {
+            val act = chatActivity as Activity
+            val clipboard =  act.getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("MonkeyKitCopy", item.getMessageText());
+            clipboard.primaryClip = clip;
+            Toast.makeText(act, "Message copied to Clipboard", Toast.LENGTH_SHORT).show()
+            true
+        })
     }
     /**
      * Binds an existing MonkeyHolder with a MonkeyItem of type Photo. This method is called on the
@@ -202,10 +201,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         }
 
         imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
-        imageHolder.setOnLongClickListener(View.OnLongClickListener {
-            onLongClickListener?.onLongClick(item)
-            true
-        })
+
     }
 
     /**
@@ -228,7 +224,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
-                        onLongClickListener?.onLongClick(item)
                     }
                 }
 
@@ -240,7 +235,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
-                        onLongClickListener?.onLongClick(item)
                     }
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
