@@ -218,7 +218,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             audioHolder.setReadyForPlayback()
             audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
                         audioHandler?.playbackPosition?.toLong() ?: 0)
-            if(audioHandler?.playingAudio ?: false){ // Message is playing
+            if(audioHandler?.isPlayingAudio ?: false){ // Message is playing
                 audioHolder.updatePlayPauseButton(true)
                 audioHolder.setAudioActions(pauseAction)
             } else { // Message is paused
@@ -267,10 +267,11 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     }
 
-    fun addNewData(newData : ArrayList<MonkeyItem>){
+    fun addNewData(newData : ArrayList<MonkeyItem>, reachedEnd: Boolean){
         removeEndOfRecyclerView()
         messagesList.addAll(0, newData)
         notifyItemRangeInserted(0, newData.size)
+        hasReachedEnd = reachedEnd
     }
 
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
@@ -334,12 +335,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return -1
 
     }
-
-    fun smoothlyAddNewData(newData: ArrayList<MonkeyItem>, recyclerView: RecyclerView, reachedEnd: Boolean){
-            addNewData(newData);
-            recyclerView.smoothScrollToPosition(newData.size - (if(reachedEnd) 1 else 0) );
-            hasReachedEnd = reachedEnd
-        }
 
     fun smoothlyAddNewItem(item : MonkeyItem, recyclerView: RecyclerView){
 

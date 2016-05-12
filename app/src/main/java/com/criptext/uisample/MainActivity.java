@@ -11,16 +11,13 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.criptext.monkeykitui.input.AttachmentInputView;
 import com.criptext.monkeykitui.input.MediaInputView;
-import com.criptext.monkeykitui.input.children.AttachmentButton;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
@@ -35,9 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements ChatActivity, SensorEventListener {
@@ -64,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         protected void onPostExecute(ArrayList<MonkeyItem> newData) {
             MainActivity act = activityWeakReference.get();
             if(act != null && newData != null){
-                act.adapter.smoothlyAddNewData(newData, act.recycler, act.adapter.getItemCount() + newData.size() > MAX_MESSAGES);
+                act.adapter.addNewData(newData, act.adapter.getItemCount() + newData.size() > MAX_MESSAGES);
             }
         }
 
@@ -124,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     @Override
     protected void onStop() {
         super.onStop();
-        if(audioHandler!=null && audioHandler.getPlayingAudio()) {
+        if(audioHandler!=null && audioHandler.isPlayingAudio()) {
             audioHandler.pauseAudioHolderPlayer();
         }
         audioHandler.releasePlayer();

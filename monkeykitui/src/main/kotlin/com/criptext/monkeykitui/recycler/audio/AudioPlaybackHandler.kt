@@ -33,7 +33,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     private set
     var adapter : MonkeyAdapter
     private set
-    val playingAudio : Boolean
+    val isPlayingAudio: Boolean
     get() {
         try {
             return player.isPlaying
@@ -82,7 +82,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         player = MediaPlayer()
         playerRunnable = object : Runnable {
             override fun run() {
-                if (playingAudio) {
+                if (isPlayingAudio) {
                     if(updateProgressEnabled) updateAudioSeekbar(recycler,
                             playbackProgress, player.currentPosition.toLong())
                     handler.postDelayed(this, 67)
@@ -208,7 +208,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     }
 
     private fun notifyPlaybackStopped(){
-        if(!playingAudio) {
+        if(!isPlayingAudio) {
             currentlyPlayingItem = null
             adapter.notifyDataSetChanged();
         }
@@ -227,7 +227,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
      */
     open fun releasePlayer(){
         try{
-            if(playingAudio) {
+            if(isPlayingAudio) {
                 player.release();
                 recycler.removeCallbacks(playerRunnable);
                 notifyPlaybackStopped();
