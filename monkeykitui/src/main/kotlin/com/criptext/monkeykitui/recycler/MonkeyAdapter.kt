@@ -25,6 +25,8 @@ import java.io.File
 import java.util.*
 
 /**
+ * Adapter class for displaying MonkeyItem messages on a RecyclerView.
+ * Displays 3 kinds of messages, Text, Audio, and Photos.
  * Created by gesuwall on 4/4/16.
  */
 
@@ -74,6 +76,11 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return messagesList.size
     }
 
+    /**
+     * Gets number of View Types that this adapter can display on a RecyclerView. This number must
+     * be constant. The value returned by this function is important for getItemViewType method
+     * @return the number of View Types that this adapter can display on a RecyclerView
+     */
     fun getViewTypes() : Int{
         return 7
     }
@@ -114,24 +121,32 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             return
         }
 
-        bindMonkeyBasicView(position, item, holder)
+        bindCommonMonkeyHolder(position, item, holder)
 
         //type specific stuff
         when(MonkeyItem.MonkeyItemType.values()[item.getMessageType()]){
             MonkeyItem.MonkeyItemType.text -> {
-                bindMonkeyTextView(position, item, holder)
+                bindMonkeyTextHolder(position, item, holder)
             }
             MonkeyItem.MonkeyItemType.audio -> {
-                bindMonkeyAudioView(position, item, holder)
+                bindMonkeyAudioHolder(position, item, holder)
             }
             MonkeyItem.MonkeyItemType.photo -> {
-                bindMonkeyPhotoView(position, item, holder)
+                bindMonkeyPhotoHolder(position, item, holder)
             }
         }
 
     }
 
-    open protected fun bindMonkeyBasicView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+    /**
+     * Binds an existing MonkeyHolder with a MonkeyItem. This method is called before type specific
+     * methods like bindMonkeyTextView or bindMonkeyAudio. Common attributes for all MonkeyItem types
+     * are set. It is called for every MonkeyItem, regardless of type.
+     * @param position The adapter position of the MonkeyItem
+     * @param item a MonkeyItem o show in the RecyclerView using a MonkeyHolder
+     * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
+     */
+    open protected fun bindCommonMonkeyHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         //set message date
         holder.setMessageDate(item.getMessageTimestamp())
         //long click
@@ -155,13 +170,25 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val selected = selectedMessage
         holder.updateSelectedStatus(selected != null && selected.getMessageId() == item.getMessageId())
     }
-
-    open protected fun bindMonkeyTextView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+    /**
+     * Binds an existing MonkeyHolder with a MonkeyItem of type Text. This method is called on the
+     * onBindViewHolder method when the MonkeyItem is of type Text.
+     * @param position The adapter position of the MonkeyItem
+     * @param item a MonkeyItem of type Text to show in the RecyclerView using a MonkeyHolder
+     * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
+     */
+    open protected fun bindMonkeyTextHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val textHolder = holder as MonkeyTextHolder
         textHolder.messageTextView!!.text = item.getMessageText()
     }
-
-    open protected fun bindMonkeyPhotoView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+    /**
+     * Binds an existing MonkeyHolder with a MonkeyItem of type Photo. This method is called on the
+     * onBindViewHolder method when the MonkeyItem is of type photo.
+     * @param position The adapter position of the MonkeyItem
+     * @param item a MonkeyItem of type Photo to show in the RecyclerView using a MonkeyHolder
+     * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
+     */
+    open protected fun bindMonkeyPhotoHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
         if(file.exists()){
@@ -181,7 +208,14 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         })
     }
 
-    open protected fun bindMonkeyAudioView(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+    /**
+     * Binds an existing MonkeyHolder with a MonkeyItem of type Audio. This method is called on the
+     * onBindViewHolder method when the MonkeyItem is of type audio.
+     * @param position The adapter position of the MonkeyItem
+     * @param item a MonkeyItem of type Audio to show in the RecyclerView using a MonkeyHolder
+     * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
+     */
+    open protected fun bindMonkeyAudioHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val audioHolder = holder as MonkeyAudioHolder
         val target = File(item.getFilePath())
         val playingAudio = audioHandler?.currentlyPlayingItem?.item
@@ -256,6 +290,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return LayoutInflater.from(mContext).inflate(outLayout, null)
     }
 
+    /**
+     *removes the more messages view
+     */
     protected fun removeEndOfRecyclerView(){
         val lastItem = messagesList[0]
         if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
@@ -267,6 +304,14 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     }
 
+    /**
+     * Adds a group of MonkeyItems to the beginning of the list. This should be only used for showing
+     * older messages as the user scrolls up.
+     * @param newData the list of MonkeyItems to add
+     * @param reachedEnd boolean that indicates whether there are still more items available. If there are
+     * then when the user scrolls to the beginning of the list, the adapter should attempt to load the
+     * remaining items and show a view that tells the user that it is loading messages.
+     */
     fun addNewData(newData : ArrayList<MonkeyItem>, reachedEnd: Boolean){
         removeEndOfRecyclerView()
         messagesList.addAll(0, newData)
@@ -274,35 +319,70 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         hasReachedEnd = reachedEnd
     }
 
+    /**
+     * Creates a new MonkeyHolder for messages of type text.
+     * @param received boolean that indicates whether the message was received or sent by the user
+     * @return a new MonkeyHolder for messages of type text.
+     */
+    open fun createMonkeyTextHolder(received: Boolean): MonkeyHolder{
+        val mView = inflateView(received, R.layout.text_message_view_in, R.layout.text_message_view_out)
+        return MonkeyTextHolder(mView)
+    }
+
+    /**
+     * Creates a new MonkeyHolder for messages of type photo.
+     * @param received boolean that indicates whether the message was received or sent by the user
+     * @return a new MonkeyHolder for messages of type photo.
+     */
+    open fun createMonkeyPhotoHolder(received: Boolean): MonkeyHolder{
+        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out)
+                return MonkeyImageHolder(mView)
+    }
+
+    /**
+     * Creates a new MonkeyHolder for messages of type audio.
+     * @param received boolean that indicates whether the message was received or sent by the user
+     * @return a new MonkeyHolder for messages of type audio.
+     */
+    open fun createMonkeyAudioHolder(received: Boolean): MonkeyHolder{
+        val mView = inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out)
+        return MonkeyAudioHolder(mView)
+    }
+    /**
+     * Creates a new MonkeyHolder to be displayed when the adapter is loading more messages
+     * @return a new MonkeyHolder to be displayed when the adapter is loading more messages
+     */
+    open fun createMoreMessagesView(): MonkeyHolder{
+        val mView = LayoutInflater.from(mContext).inflate(R.layout.end_of_recycler_view, null)
+        return MonkeyEndHolder(mView)
+    }
+
+
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
         var mView : View
         var incoming = viewtype >= (getViewTypes()/2)
         val truetype = viewtype%MonkeyItem.MonkeyItemType.values().size
         when(MonkeyItem.MonkeyItemType.values()[truetype]){
-            MonkeyItem.MonkeyItemType.text -> {
-                mView = inflateView(incoming, R.layout.text_message_view_in, R.layout.text_message_view_out)
-                return MonkeyTextHolder(mView)
-            }
-            MonkeyItem.MonkeyItemType.photo -> {
-                mView = inflateView(incoming, R.layout.image_message_view_in, R.layout.image_message_view_out)
-                return MonkeyImageHolder(mView)
-            }
-            MonkeyItem.MonkeyItemType.audio -> {
-                mView = inflateView(incoming, R.layout.audio_message_view_in, R.layout.audio_message_view_out)
-                return MonkeyAudioHolder(mView)
-            }
+            MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(incoming)
+            MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(incoming)
+            MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(incoming)
             //MonkeyItem.MonkeyItemType.file ->
             //MonkeyItem.MonkeyItemType.contact ->
-            MonkeyItem.MonkeyItemType.MoreMessages ->  {
-                mView = LayoutInflater.from(mContext).inflate(R.layout.end_of_recycler_view, null)
-                return MonkeyEndHolder(mView)
-            }
+            MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
         }
         return null
     }
 
+
+    /**
+     * Finds the adapter position by the MonkeyItem's timestamp.
+     * @param targetId the timestamp of the MonkeyItem whose adapter position will be searched. This
+     * timestamp must belong to an existing MonkeyItem in this adapter.
+     * @return The adapter position of the MonkeyItem. If the item was not found returns -1.
+     */
     fun getItemPositionByTimestamp(targetId: Long): Int{
-        var setLength = messagesList.size
+        val list = messagesList
+        var setLength = list.size
         var startPos = 0
         val MAX_SIZE = 16
         //reduce list size
@@ -320,12 +400,15 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             }
         }
 
+        //Log.d("MonkeyAdapter", "getItemPositionByTimestamp searching for $targetId with startPos: $startPos length $setLength")
         //search in small list
-        for(i in 0 .. 16){
-            if(targetId == getItemId(startPos + i))
+        for(i in 0 .. setLength){
+            if(targetId == list[startPos + i].getMessageTimestamp())
                 return startPos + i
         }
 
+
+        Log.e("MonkeyAdapter", "getItemPositionByTimestamp algorithm failed, is the list ordered?")
         //fallback to normal algorithm, this should never happen
         for(i in messagesList.indices)
             if(targetId == getItemId(i))
@@ -336,6 +419,12 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     }
 
+    /**
+     * Adds a new item to the RecyclerView with a smooth scrolling animation
+     * @param item MonkeyItem to add. It will be added at the end of the messagesList, so it should
+     * have a higher timestamp than the other messages.
+     * @recylerview The recyclerView object that displays the messages.
+     */
     fun smoothlyAddNewItem(item : MonkeyItem, recyclerView: RecyclerView){
 
         val manager = recyclerView.layoutManager as LinearLayoutManager
