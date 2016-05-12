@@ -9,10 +9,14 @@ import com.criptext.monkeykitui.R
  */
 
 class MonkeyTextHolder : MonkeyHolder {
-    var messageTextView : TextView? = null
+    protected var messageTextView : TextView? = null
 
     constructor(view : View) : super(view) {
         messageTextView = view.findViewById(R.id.text_message) as TextView
+    }
+
+    open fun setText(text: String){
+        messageTextView?.text = text
     }
 
 }
