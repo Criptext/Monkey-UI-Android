@@ -55,16 +55,14 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
-    compile ('com.criptext.circularaudioview:circularAudioView:1.0.0@aar') {
-        transitive = true;
-    }
+    compile project(':circularAudioView')
 }
 
 task copyLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
-
+project
 task androidJavadocs(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
