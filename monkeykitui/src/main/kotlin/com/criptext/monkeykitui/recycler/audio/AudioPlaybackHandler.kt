@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.recycler.audio
 
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
@@ -75,6 +76,16 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
     }
 
+    private fun restorePreviousPlaybackAndPlay(prevPlayingItem: PlayingItem){
+        player.setDataSource(prevPlayingItem.item.getFilePath())
+        player.setOnPreparedListener {
+            player.seekTo(prevPlayingItem.lastPlaybackPosition)
+            player.start()
+        }
+        player.prepareAsync()
+        Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
+    }
+
     /**
      * Initializes the media player. It should be called on the onStart() callback of your activity.
      */
@@ -93,6 +104,31 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         val playingTrack = currentlyPlayingItem
         if(playingTrack != null)
             restorePreviousPlayback(playingTrack)
+
+        player.setOnCompletionListener {
+            notifyPlaybackStopped()
+        }
+    }
+
+    /**
+     * Initializes the media player with audio stream type STREAM_VOICE_CALL. It should be called on the onStart() callback of your activity.
+     */
+    open fun initPlayerWithFrontSpeaker(){
+        player = MediaPlayer()
+        player.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+        playerRunnable = object : Runnable {
+            override fun run() {
+                if (isPlayingAudio) {
+                    if(updateProgressEnabled) updateAudioSeekbar(recycler,
+                            playbackProgress, player.currentPosition.toLong())
+                    handler.postDelayed(this, 67)
+                }
+            }
+        }
+
+        val playingTrack = currentlyPlayingItem
+        if(playingTrack != null)
+            restorePreviousPlaybackAndPlay(playingTrack)
 
         player.setOnCompletionListener {
             notifyPlaybackStopped()

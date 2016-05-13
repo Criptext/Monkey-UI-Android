@@ -34,20 +34,17 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements ChatActivity, SensorEventListener {
+public class MainActivity extends AppCompatActivity implements ChatActivity{
 
     private MonkeyAdapter adapter;
     private RecyclerView recycler;
 
     private AudioPlaybackHandler audioHandler;
-    private boolean isProximityOn=false;
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private AudioManager mAudioManager;
 
     private MediaInputView mediaInputView;
 
     SlowMessageLoader loader;
+    private SensorHandler sensorHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,18 +68,13 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         audioHandler = new AudioPlaybackHandler(adapter, recycler);
         initInputView();
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorHandler = new SensorHandler(audioHandler, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        mAudioManager.setMode(AudioManager.MODE_NORMAL);
-
+        sensorHandler.onPause();
     }
 
     @Override
@@ -97,19 +89,16 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         if(audioHandler!=null && audioHandler.isPlayingAudio()) {
             audioHandler.pauseAudioHolderPlayer();
         }
-        audioHandler.releasePlayer();
-
-        if(isProximityOn){
-            mAudioManager.setMode(AudioManager.MODE_NORMAL);
-            isProximityOn=false;
-            ((LinearLayout)findViewById(R.id.layoutBlack)).setVisibility(View.GONE);
+        if(audioHandler!=null) {
+            audioHandler.releasePlayer();
         }
+        sensorHandler.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSensorManager.unregisterListener(this);
+        sensorHandler.onDestroy();
     }
 
     public MonkeyAdapter getAdapter() {
@@ -224,14 +213,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
         }
     }
 
-    public MediaPlayer.OnCompletionListener localCompletionForProximity=new MediaPlayer.OnCompletionListener() {
-
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-
-        }
-    };
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -246,16 +227,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity, Sen
     }
 
     /***OVERRIDE METHODS****/
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 
     @Override
     public boolean isOnline() {
