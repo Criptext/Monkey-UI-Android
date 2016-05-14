@@ -9,16 +9,12 @@ import com.criptext.monkeykitui.R
  */
 
 class MonkeyEndHolder : MonkeyHolder {
-    var loadMoreButton : Button
 
     constructor(view: View) : super(view){
-        loadMoreButton = view.findViewById(R.id.load_more_btn) as Button
     }
 
     fun setOnClickListener(listener: () -> Unit){
-        loadMoreButton.setOnClickListener({
-            listener.invoke()
-        })
+
     }
 
 }
