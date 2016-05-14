@@ -29,8 +29,6 @@
             android:visibility="invisible"
             android:src="@drawable/mk_piko_izq" />
 
-        <include layout="@layout/include_privacy_cover" />
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
