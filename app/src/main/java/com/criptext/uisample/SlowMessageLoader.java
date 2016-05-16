@@ -2,7 +2,6 @@ package com.criptext.uisample;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
@@ -39,7 +38,7 @@ public class SlowMessageLoader  {
             protected void onPostExecute(ArrayList<MonkeyItem> newData) {
                 MainActivity act = activityWeakReference.get();
                 if(act != null && newData != null){
-                    act.getAdapter().addNewData(newData, act.getAdapter().getItemCount() + newData.size() > MAX_MESSAGES);
+                    act.getAdapter().addOldMessages(newData, act.getAdapter().getItemCount() + newData.size() > MAX_MESSAGES);
                 }
             }
 
