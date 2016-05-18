@@ -58,86 +58,109 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.parseColor("#014766"), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-/**
- * Revisa si el mensaje ya fue leído, y coloca los vistos respectivos para 'entregado' y leído.
- *
- * @param positionMessage El mensaje que se va a revisar
- * @param datetext El TextView donde se coloca la fecha y los vistos
- */
-open fun updateReadStatus(status : MonkeyItem.OutgoingMessageStatus){
-    if(status == MonkeyItem.OutgoingMessageStatus.read){
-        checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
-                checkmarkImageView!!.context, R.drawable.mk_checkmark_read));
-        checkmarkImageView!!.visibility = View.VISIBLE
-    } else if(status == MonkeyItem.OutgoingMessageStatus.delivered){
-        checkmarkImageView!!.visibility = View.VISIBLE
-        checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
-                checkmarkImageView!!.context, R.drawable.mk_checkmark_sent));
-    } else {
-        checkmarkImageView!!.visibility = View.GONE
+    /**
+     * Changes this MonkeyHolder's UI so that it can inform the user about the
+     * bound MonkeyItem's status, whether it has been read or delivered.
+     *
+     * @param status the status of the MonkeyItem bound to this holder
+     */
+    open fun updateReadStatus(status : MonkeyItem.OutgoingMessageStatus){
+        if(status == MonkeyItem.OutgoingMessageStatus.read){
+            checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
+                    checkmarkImageView!!.context, R.drawable.mk_checkmark_read));
+            checkmarkImageView!!.visibility = View.VISIBLE
+        } else if(status == MonkeyItem.OutgoingMessageStatus.delivered){
+            checkmarkImageView!!.visibility = View.VISIBLE
+            checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
+                    checkmarkImageView!!.context, R.drawable.mk_checkmark_sent));
+        } else {
+            checkmarkImageView!!.visibility = View.GONE
+        }
     }
-}
 
     /**
- * Revisa si ya se envio el mensaje. Si no, le pone un alpha de 0.5. Si no hay internet
- * coloca el mensaje de error. Si ya lo envio, el alpha regresa a ser normal.
- * @param positionMessage Mensaje a enviar
- * @param view view que contiene el mensaje
- * @param holder holder con todos los views del mensaje
- */
-open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline : Boolean, messageTimestamp: Long){
-    if(status == MonkeyItem.OutgoingMessageStatus.sending){
-        checkmarkImageView!!.visibility = View.GONE
-        if(isOnline){
-            errorImageView!!.visibility = View.GONE
-            sendingProgressBar!!.visibility = View.VISIBLE
-        }else{
-            errorImageView!!.visibility = View.VISIBLE
-            sendingProgressBar!!.visibility = View.GONE
-        }
-        //COMPARO TIMESTAMPS
-        if((System.currentTimeMillis()/1000)- messageTimestamp >= 15){
-            errorImageView!!.visibility = View.VISIBLE
-            sendingProgressBar!!.visibility = View.GONE
-        }
-    }else{
-        sendingProgressBar!!.visibility = View.GONE
-        checkmarkImageView!!.visibility = View.VISIBLE
-        errorImageView!!.visibility = View.GONE
-    }
-}
-
-        open fun setSenderName(name : String, color : Int){
-            contactNameTextView!!.text = name
-            contactNameTextView!!.setTextColor(color)
-        }
-
-        open fun setMessageDate(timestamp : Long){
-            datetimeTextView!!.text = Utils.getHoraVerdadera(timestamp)
-        }
-
-        open fun setOnLongClickListener(listener: View.OnLongClickListener){
-            bubbleLayout?.setOnLongClickListener(listener)
-        }
-
-        /**
-         * Revisa si el mensaje esta seleccionado
-         *
-         * @param positionMessage El mensaje que se va a revisar
-         */
-        open fun updateSelectedStatus(isSelected: Boolean){
-            if(isSelected) {
-                selectedImageView?.visibility = View.VISIBLE
-                bubbleLayout?.alpha = 0.5f
-                tailImageView?.alpha = 0.5f
-            } else{
-                selectedImageView?.visibility = View.INVISIBLE
-                bubbleLayout?.alpha = 1f
-                tailImageView?.alpha = 1f
+     * Changes this MonkeyHolder's UI so that it can inform the user about the
+     * bound MonkeyItem's sending status, whether it is still in route to server, or it has
+     * already been successfully delivered.
+     * @param status the status of the MonkeyItem bound to this holder
+     * @param isOnline true if there's an active internet connection
+     * @param messageTimestamp timestamp of the date that the message was sent.
+     */
+    open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline : Boolean, messageTimestamp: Long){
+        if(status == MonkeyItem.OutgoingMessageStatus.sending){
+            checkmarkImageView!!.visibility = View.GONE
+            if(isOnline){
+                errorImageView!!.visibility = View.GONE
+                sendingProgressBar!!.visibility = View.VISIBLE
+            }else{
+                errorImageView!!.visibility = View.VISIBLE
+                sendingProgressBar!!.visibility = View.GONE
             }
+            //COMPARO TIMESTAMPS
+            if((System.currentTimeMillis()/1000)- messageTimestamp >= 15){
+                errorImageView!!.visibility = View.VISIBLE
+                sendingProgressBar!!.visibility = View.GONE
+            }
+        }else{
+            sendingProgressBar!!.visibility = View.GONE
+            checkmarkImageView!!.visibility = View.VISIBLE
+            errorImageView!!.visibility = View.GONE
         }
+    }
+
+    /**
+     * Makes this MonkeyHolder display the name of the user that sent the bound
+     * MonkeyItem.
+     * @param name The name of the user
+     * @param color The color that the text of the user's name should have.
+     */
+    open fun setSenderName(name : String, color : Int){
+        contactNameTextView!!.text = name
+        contactNameTextView!!.setTextColor(color)
+    }
+
+
+    /**
+     * Makes this MonkeyHolder display the date in which the the bound
+     * MonkeyItem was sent.
+     * @param timestamp a timestamp of the date in which the MonkeyItem was sent.
+     */
+    open fun setMessageDate(timestamp : Long){
+        datetimeTextView!!.text = Utils.getHoraVerdadera(timestamp)
+    }
+
+    /**
+     * Sets a long click listener to this MonkeyHolder.
+     * @param listener The OnLongClickListener to set to this MonkeyHolder
+     */
+    open fun setOnLongClickListener(listener: View.OnLongClickListener){
+        bubbleLayout?.setOnLongClickListener(listener)
+    }
+
+    /**
+     * Makes this MonkeyHolder display to the user whether the bound MonkeyItem
+     * is selected or not.
+     * @param isSelected true if the bound MonkeyItem is selected, otherwise false
+     */
+    open fun updateSelectedStatus(isSelected: Boolean){
+        if(isSelected) {
+            selectedImageView?.visibility = View.VISIBLE
+            bubbleLayout?.alpha = 0.5f
+            tailImageView?.alpha = 0.5f
+        } else{
+            selectedImageView?.visibility = View.INVISIBLE
+            bubbleLayout?.alpha = 1f
+            tailImageView?.alpha = 1f
+        }
+    }
 
     companion object {
+        /**
+         * Adds a RecyclerView.LayoutParams to a view
+         * @param view view to set the new layout params
+         * @return the view with a RecyclerView.LayoutParams object as its layout params
+         *
+         */
         fun getViewWithRecyclerLayoutParams(view: View) : View{
             val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             view.layoutParams = RecyclerView.LayoutParams(params)
