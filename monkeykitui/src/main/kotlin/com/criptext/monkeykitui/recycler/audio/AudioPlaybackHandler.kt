@@ -94,8 +94,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         playerRunnable = object : Runnable {
             override fun run() {
                 if (isPlayingAudio) {
-                    if(updateProgressEnabled) updateAudioSeekbar(recycler,
-                            playbackProgress, player.currentPosition.toLong())
+                    if(updateProgressEnabled) updateAudioSeekbar(playbackProgress,
+                            player.currentPosition.toLong())
                     handler.postDelayed(this, 67)
                 }
             }
@@ -111,7 +111,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
     }
 
     /**
-     * Initializes the media player with audio stream type STREAM_VOICE_CALL. It should be called on the onStart() callback of your activity.
+     * Initializes the media player with audio stream type STREAM_VOICE_CALL. It should be called
+     * on the onStart() callback of your activity.
      */
     open fun initPlayerWithFrontSpeaker(){
         player = MediaPlayer()
@@ -119,8 +120,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         playerRunnable = object : Runnable {
             override fun run() {
                 if (isPlayingAudio) {
-                    if(updateProgressEnabled) updateAudioSeekbar(recycler,
-                            playbackProgress, player.currentPosition.toLong())
+                    if(updateProgressEnabled) updateAudioSeekbar(playbackProgress,
+                            player.currentPosition.toLong())
                     handler.postDelayed(this, 67)
                 }
             }
@@ -217,13 +218,13 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
      * Pauses media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
      * the holder can reflect the new playback status.
      */
-    fun pauseAudioHolderPlayer(){
+    private fun pauseAudioHolderPlayer(){
         player.pause()
         currentlyPlayingItem?.lastPlaybackPosition = player.currentPosition
         rebindAudioHolder()
     }
 
-    private fun updateAudioSeekbar(recycler: RecyclerView, percentage: Int, progress: Long){
+    private fun updateAudioSeekbar(percentage: Int, progress: Long){
         val audioHolder = getAudioHolder()
         audioHolder?.updateAudioProgress(percentage, progress)
     }
@@ -233,17 +234,21 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
      * @return if there is no item being currently playing or maybe it is not visible, null will be
      * returned. Otherwise, a valid MonkeyAudioHolder object is returned
      */
-    fun getAudioHolder(adapterPosition: Int):MonkeyAudioHolder?{
+    open protected fun getAudioHolder(adapterPosition: Int):MonkeyAudioHolder?{
         return recycler.findViewHolderForAdapterPosition(adapterPosition) as MonkeyAudioHolder?
     }
 
-    fun getAudioHolder(): MonkeyAudioHolder? {
+    open protected fun getAudioHolder(): MonkeyAudioHolder? {
         val timeStamp = currentlyPlayingItem?.item?.getMessageTimestamp() ?: return null
         val adapterPosition = adapter.getItemPositionByTimestamp(timeStamp)
         return getAudioHolder(adapterPosition)
     }
 
-    private fun notifyPlaybackStopped(){
+    /**
+     * If there is audio being actively played, notifies the adapter that all messages of type audio
+     * should show the play button and have the seekbar at 0
+     */
+    protected fun notifyPlaybackStopped(){
         if(!isPlayingAudio) {
             currentlyPlayingItem = null
             adapter.notifyDataSetChanged();
