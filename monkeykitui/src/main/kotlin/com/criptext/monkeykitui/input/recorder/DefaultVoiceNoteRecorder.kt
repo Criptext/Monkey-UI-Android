@@ -3,12 +3,12 @@ package com.criptext.monkeykitui.input.recorder
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.MediaRecorder
-import com.criptext.monkeykitui.input.recorder.VoiceNoteRecorder
-import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import java.io.File
 
 /**
+ * VoiceNoteRecorder implementation using MediaRecorder. this class records voice notes
+ * with low quality, encoding it with AAC and saving it as a 3gp file.
  * Created by gesuwall on 4/29/16.
  */
 
