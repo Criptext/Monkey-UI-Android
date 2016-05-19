@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.view.WindowManager;
 
-import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 
 /**

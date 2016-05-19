@@ -17,12 +17,12 @@ import java.io.File
 import java.io.IOException
 
 /**
- * This class plays audio files from MonkeyItem messages and updates the UI of the items in the
- * RecyclerView.
+ * This implementation of VoiceNotePlayer uses a MediaPlayer object to play the audio files. During
+ * playback it uses a handler to update the UI of the playing MonkeyItem at 15 fps.
  * Created by gesuwall on 4/15/16.
  */
 
-open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) : VoiceNotePlayer(){
+open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) : VoiceNotePlayer(){
     val handler : Handler
 
     lateinit private var player : MediaPlayer

@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
-import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
+import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener

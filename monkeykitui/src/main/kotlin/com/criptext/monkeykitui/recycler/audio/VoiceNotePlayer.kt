@@ -3,6 +3,8 @@ package com.criptext.monkeykitui.recycler.audio
 import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
+ * This abstract class plays audio files from MonkeyItem messages and updates the UI of the items in the
+ * RecyclerView.
  * Created by gesuwall on 5/19/16.
  */
 
