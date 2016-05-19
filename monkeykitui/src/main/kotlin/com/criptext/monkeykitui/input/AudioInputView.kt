@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
-import com.criptext.monkeykitui.input.listeners.AudioRecorder
+import com.criptext.monkeykitui.input.recorder.VoiceNoteRecorder
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.input.recorder.*
 
@@ -20,7 +20,7 @@ import com.criptext.monkeykitui.input.recorder.*
 open class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
 
-    var recorder: AudioRecorder? = null
+    var recorder: VoiceNoteRecorder? = null
     set (value){
         slideAnimator.audioRecorder = value
         field = value
@@ -79,7 +79,7 @@ open class AudioInputView : TextInputView {
     }
 
     private fun setDefaultRecorder(){
-        val recorder = VoiceNoteRecorder(context)
+        val recorder = DefaultVoiceNoteRecorder(context)
         recorder.inputListener = inputListener
         this.recorder = recorder
     }

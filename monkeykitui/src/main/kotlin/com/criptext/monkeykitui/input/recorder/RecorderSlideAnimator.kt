@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.input.BaseInputView
-import com.criptext.monkeykitui.input.listeners.AudioRecorder
+import com.criptext.monkeykitui.input.recorder.VoiceNoteRecorder
 import com.criptext.monkeykitui.util.MonkeyAnimatorListener
 
 /**
@@ -43,7 +43,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
     var dragger : ViewDraggerFadeOut? = null
     var recordingAnimation : RecordingAnimation? = null
-    var audioRecorder: AudioRecorder? = null
+    var audioRecorder: VoiceNoteRecorder? = null
 
     init{
         this.redMic = redMic
