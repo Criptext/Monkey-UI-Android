@@ -16,6 +16,7 @@ import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler
+import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.innovative.circularaudioview.AudioActions
@@ -46,7 +47,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     private var selectedMessage : MonkeyItem?
 
-    var audioHandler : AudioPlaybackHandler?
+    var audioHandler : VoiceNotePlayer?
     var imageListener : ImageListener?
 
     //MessageLoading
@@ -239,7 +240,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val pauseAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
-                        audioHandler?.onPauseButtonClicked(item)
+                        audioHandler?.onPauseButtonClicked()
                     }
 
                     override fun onActionLongClicked() {
@@ -263,20 +264,23 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 audioHolder.setAudioActions(playAction)
             }
             audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
+                val isThisMonkeyItemPlaying : Boolean
+                get() = item.getMessageTimestamp() == audioHandler?.currentlyPlayingItem?.item?.getMessageTimestamp()
                 override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
                     Log.d("Seekbar", "start tracking")
-                    audioHandler?.updateProgressEnabled = false
+                    if(isThisMonkeyItemPlaying)
+                        audioHandler?.updateProgressEnabled = false
                 }
 
                 override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
                     Log.d("Seekbar", "stop tracking")
-                    audioHandler?.updateProgressEnabled = true
+                    if(isThisMonkeyItemPlaying)
+                        audioHandler?.updateProgressEnabled = true
                 }
 
                 override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
-                    if(fromUser && progress > -1 && progress < 100 &&
-                            audioHandler?.currentlyPlayingItem?.item == item)
-                        audioHandler?.onProgressManuallyChanged(position, item, progress)
+                    if(fromUser && isThisMonkeyItemPlaying && progress > -1 && progress < 100)
+                        audioHandler?.onProgressManuallyChanged(item, progress)
                 }
             })
         } else { //Message is available for playback but not prepared in the MediaPlayer

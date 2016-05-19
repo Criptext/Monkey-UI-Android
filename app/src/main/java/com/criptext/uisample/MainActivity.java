@@ -23,6 +23,7 @@ import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
+import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     private MonkeyAdapter adapter;
     private RecyclerView recycler;
 
-    private AudioPlaybackHandler audioHandler;
+    private VoiceNotePlayer voiceNotePlayer;
 
     private MediaInputView mediaInputView;
 
@@ -65,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         linearLayoutManager.setStackFromEnd(true);
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
-        audioHandler = new AudioPlaybackHandler(adapter, recycler);
+        voiceNotePlayer = new AudioPlaybackHandler(adapter, recycler);
         initInputView();
 
-        sensorHandler = new SensorHandler(audioHandler, this);
+        sensorHandler = new SensorHandler(voiceNotePlayer, this);
     }
 
     @Override
@@ -80,17 +81,17 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     @Override
     protected void onStart(){
         super.onStart();
-        audioHandler.initPlayer();
+        voiceNotePlayer.initPlayer();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(audioHandler!=null && audioHandler.isPlayingAudio()) {
-            audioHandler.pauseAudioHolderPlayer();
+        if(voiceNotePlayer!=null && voiceNotePlayer.isPlayingAudio()) {
+            voiceNotePlayer.onPauseButtonClicked();
         }
-        if(audioHandler!=null) {
-            audioHandler.releasePlayer();
+        if(voiceNotePlayer!=null) {
+            voiceNotePlayer.releasePlayer();
         }
         sensorHandler.onStop();
     }

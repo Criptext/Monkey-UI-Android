@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.view.WindowManager;
 
 import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
+import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 
 /**
  * Created by daniel on 5/12/16.
@@ -17,7 +18,7 @@ import com.criptext.monkeykitui.recycler.audio.AudioPlaybackHandler;
 
 public class SensorHandler implements SensorEventListener {
 
-    private AudioPlaybackHandler audioHandler;
+    private VoiceNotePlayer voiceNotePlayer;
     private boolean isProximityOn=false;
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -26,9 +27,9 @@ public class SensorHandler implements SensorEventListener {
     private float prevBrightness;
     private WindowManager.LayoutParams layout;
 
-    public SensorHandler(AudioPlaybackHandler audioHandler, Activity activity) {
+    public SensorHandler(VoiceNotePlayer voiceNotePlayer, Activity activity) {
 
-        this.audioHandler = audioHandler;
+        this.voiceNotePlayer = voiceNotePlayer;
         this.activity = activity;
         layout = activity.getWindow().getAttributes();
         mAudioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
@@ -43,10 +44,10 @@ public class SensorHandler implements SensorEventListener {
 
         if (event.values[0] < mSensor.getMaximumRange()) {
 
-            if(audioHandler!=null && audioHandler.isPlayingAudio()) {
-                audioHandler.pauseAudioHolderPlayer();
-                audioHandler.releasePlayer();
-                audioHandler.initPlayerWithFrontSpeaker();
+            if(voiceNotePlayer !=null && voiceNotePlayer.isPlayingAudio()) {
+                voiceNotePlayer.onPauseButtonClicked();
+                voiceNotePlayer.releasePlayer();
+                voiceNotePlayer.initPlayerWithFrontSpeaker();
                 activity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
                 isProximityOn=true;
                 prevBrightness = layout.screenBrightness;
@@ -56,10 +57,10 @@ public class SensorHandler implements SensorEventListener {
 
         } else {
 
-            if(audioHandler!=null && isProximityOn){
-                audioHandler.pauseAudioHolderPlayer();
-                audioHandler.releasePlayer();
-                audioHandler.initPlayer();
+            if(voiceNotePlayer !=null && isProximityOn){
+                voiceNotePlayer.onPauseButtonClicked();
+                voiceNotePlayer.releasePlayer();
+                voiceNotePlayer.initPlayer();
                 mAudioManager.setMode(AudioManager.MODE_NORMAL);
                 isProximityOn=false;
                 layout.screenBrightness = prevBrightness;

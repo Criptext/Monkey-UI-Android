@@ -22,19 +22,19 @@ import java.io.IOException
  * Created by gesuwall on 4/15/16.
  */
 
-open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) {
+open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) : VoiceNotePlayer(){
     val handler : Handler
 
     lateinit private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
-    var currentlyPlayingItem : PlayingItem? = null
     private set
 
     var recycler : RecyclerView
     private set
     var adapter : MonkeyAdapter
     private set
-    val isPlayingAudio: Boolean
+
+    override val isPlayingAudio: Boolean
     get() {
         try {
             return player.isPlaying
@@ -43,9 +43,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         }
     }
 
-    var updateProgressEnabled : Boolean
 
-    open val playbackProgress : Int
+    override val playbackProgress : Int
     get(){
         if(player.duration > 0)
             return 100 * player.currentPosition / player.duration;
@@ -53,7 +52,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
             return 0;
     }
 
-    open val playbackPosition : Int
+    override  val playbackPosition : Int
     get() = player.currentPosition
 
     init {
@@ -86,10 +85,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
     }
 
-    /**
-     * Initializes the media player. It should be called on the onStart() callback of your activity.
-     */
-    open fun initPlayer(){
+
+    override fun initPlayer(){
         player = MediaPlayer()
         playerRunnable = object : Runnable {
             override fun run() {
@@ -110,11 +107,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         }
     }
 
-    /**
-     * Initializes the media player with audio stream type STREAM_VOICE_CALL. It should be called
-     * on the onStart() callback of your activity.
-     */
-    open fun initPlayerWithFrontSpeaker(){
+    override fun initPlayerWithFrontSpeaker(){
         player = MediaPlayer()
         player.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
         playerRunnable = object : Runnable {
@@ -136,19 +129,13 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         }
     }
 
-    /**
-     * Callback that pauses media playback after the user clicks on the play button.
-     */
-    open fun onPauseButtonClicked(item: MonkeyItem) {
+    override fun onPauseButtonClicked() {
         //handler.removeCallbacks(playerRunnable);
         Log.d("AudioPlayback", "pause clicked")
         pauseAudioHolderPlayer()
     }
 
-    /**
-     * Callback that starts or resumes mediaplayback after the user clicks on the play button.
-     */
-    open fun onPlayButtonClicked(item: MonkeyItem) {
+    override fun onPlayButtonClicked(item: MonkeyItem) {
         Log.d("AudioPlayback", "play clicked")
         if ( currentlyPlayingItem?.item?.getMessageId().equals(item.getMessageId())) {
             //Resume playback
@@ -166,14 +153,8 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
 
     }
 
-    /**
-     * Callback that updates media playback after the user has changed the playback position with a
-     * touch gesture in the UI.
-     * @param position the adapter position of the MonkeyItem of the playing audio
-     * @param item the MonkeyItem of the playing audio
-     */
-    open fun onProgressManuallyChanged(position: Int, item: MonkeyItem, newProgress: Int) {
-        player.seekTo(newProgress * player.duration / 100)
+    override fun onProgressManuallyChanged(item: MonkeyItem, newProgress: Int) {
+            player.seekTo(newProgress * player.duration / 100)
     }
 
     /**
@@ -181,7 +162,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
      * the holder can reflect the new playback status.
      * @param newPlayingItem the new MonkeyItem containing an audio file to play.
      */
-    fun startAudioHolderPlayer(newPlayingItem: PlayingItem){
+    private fun startAudioHolderPlayer(newPlayingItem: PlayingItem){
         currentlyPlayingItem = newPlayingItem
         startAudioHolderPlayer()
     }
@@ -189,7 +170,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
      * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
      * the holder can reflect the new playback status.
      */
-    fun startAudioHolderPlayer(){
+    private fun startAudioHolderPlayer(){
         player.setOnPreparedListener {
             startPlayback()
         }
@@ -214,10 +195,6 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
 
     }
 
-    /**
-     * Pauses media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
-     * the holder can reflect the new playback status.
-     */
     private fun pauseAudioHolderPlayer(){
         player.pause()
         currentlyPlayingItem?.lastPlaybackPosition = player.currentPosition
@@ -263,10 +240,7 @@ open class AudioPlaybackHandler(monkeyAdapter : MonkeyAdapter, recyclerView: Rec
         }
     }
 
-    /**
-     * Releases the MediaPlayer's resources. This should be called on the onStop() callback of your activity.
-     */
-    open fun releasePlayer(){
+    override fun releasePlayer(){
         try{
             if(isPlayingAudio) {
                 player.release();
