@@ -24,8 +24,18 @@ abstract class VoiceNotePlayer {
      */
     var updateProgressEnabled : Boolean = false
 
+    /**
+     * Boolean flag that is set to true when a voice note is playing and consequentially, false when
+     * a voice note is paused or if there is no currently playing item.
+     */
     abstract val isPlayingAudio : Boolean
+    /**
+     * an int between 0 - 100 indicating the playback progress.
+     */
     abstract val playbackProgress : Int
+    /**
+     * an int with the playback position in miliseconds.
+     */
     abstract  val playbackPosition : Int
 
     /**

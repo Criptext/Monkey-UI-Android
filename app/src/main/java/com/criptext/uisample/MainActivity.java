@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
                             newItem.setMessageContent(item.getFilePath());
                             break;
                         case photo:
+                            Log.d("MainActivity", "new photo");
                             newItem.setMessageContent(item.getFilePath());
                             break;
                     }

@@ -2,6 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,17 +19,5 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_gravity="bottom"/>
-
-    <LinearLayout
-        android:id="@+id/layoutBlack"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/black"
-        android:visibility="gone"/>
-
-    <!--app:attachmentButton="@drawable/ic_alert"-->
-    <!--app:sendButton="@drawable/ic_launcher"-->
-    <!--app:micButton="@drawable/mk_contact_checked"-->
 
 </FrameLayout>

@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.input
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
@@ -19,6 +20,8 @@ import com.criptext.monkeykitui.input.recorder.*
 
 open class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
+    private lateinit var txtBtn: ImageView
+    private lateinit var recBtn: ImageView
 
     var recorder: VoiceNoteRecorder? = null
     set (value){
@@ -32,29 +35,33 @@ open class AudioInputView : TextInputView {
         field = value
     }
 
-    constructor(context: Context) : super(context)
-
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+    fun setSendTextDrawable(customDrawable: Drawable){
+        txtBtn.setImageDrawable(customDrawable)
+    }
 
-    override fun setRightButton(a : AttributeHandler): SideButton? {
+    fun setSendAudioDrawable(customDrawable: Drawable){
+        recBtn.setImageDrawable(customDrawable)
+    }
+    override fun setRightButton(a : TypedArray): SideButton? {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val params = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(100, context))
         view.layoutParams = params
-        val txtBtn = view.findViewById(R.id.button_send)
-        val recBtn = view.findViewById(R.id.button_mic)
+        txtBtn = view.findViewById(R.id.button_send) as ImageView
+        recBtn = view.findViewById(R.id.button_mic) as ImageView
         val mic = view.findViewById(R.id.redMic)
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)
 
-        if (a.sendTextDrawableInputView != -1)
-            (txtBtn as ImageView).setImageDrawable(ContextCompat.getDrawable(context,
-                    a.sendTextDrawableInputView))
-        if (a.sendAudioDrawableInputView != -1)
-            (recBtn as ImageView).setImageDrawable(ContextCompat.getDrawable(context,
-                    a.sendAudioDrawableInputView))
+        val customTextDrawable = a.getDrawable(R.styleable.InputView_sendTextDrawable)
+        val customAudioDrawable = a.getDrawable(R.styleable.InputView_sendAudioDrawable)
+        if (customTextDrawable != null)
+            setSendTextDrawable(customTextDrawable)
+        if (customAudioDrawable != null)
+            setSendAudioDrawable(customAudioDrawable)
 
         mic.bringToFront()
         timer.bringToFront()
