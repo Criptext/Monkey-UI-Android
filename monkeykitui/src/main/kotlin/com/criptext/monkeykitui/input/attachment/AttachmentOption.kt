@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input.children
+package com.criptext.monkeykitui.input.attachment
 
 /**
  * Created by daniel on 5/9/16.

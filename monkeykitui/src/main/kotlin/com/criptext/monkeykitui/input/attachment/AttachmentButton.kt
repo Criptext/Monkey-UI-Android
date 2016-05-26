@@ -1,8 +1,7 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.attachment
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.res.Resources
 import android.content.res.TypedArray
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
@@ -11,8 +10,9 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.input.children.AttachmentOption
-import com.criptext.monkeykitui.input.children.SideButton
+import com.criptext.monkeykitui.input.BaseInputView
+import com.criptext.monkeykitui.input.attachment.CameraHandler
+import com.criptext.monkeykitui.input.attachment.AttachmentOption
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
@@ -22,7 +22,16 @@ import java.util.*
  * Created by daniel on 5/10/16.
  */
 
-open class AttachmentButton : ImageView{
+open class AttachmentButton : ImageView {
+
+    lateinit var cameraHandler: CameraHandler
+    var inputListener: InputListener? = null
+
+    var defaultCameraOptionLabel = "Take Picture"
+    var defaultGalleryOptionLabel = "Choose Picture"
+
+    lateinit var attachmentOptions: ArrayList<AttachmentOption>
+    private set
 
     constructor(context: Context): super(context){
         initialize(null)
@@ -37,27 +46,20 @@ open class AttachmentButton : ImageView{
         initialize(typedArray)
     }
 
-    lateinit var cameraHandler: CameraHandler
-    var inputListener: InputListener? = null
-
-    var defaultCameraOptionLabel = "Take Picture"
-    var defaultGalleryOptionLabel = "Choose Picture"
-
-    private lateinit var attachmentsButtons : ArrayList<AttachmentOption>
 
     fun initialize(typedArray: TypedArray?) {
         cameraHandler = CameraHandler(context)
 
-        attachmentsButtons = ArrayList(2)
+        attachmentOptions = ArrayList(2)
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
-            attachmentsButtons.add(object : AttachmentOption(defaultCameraOptionLabel) {
+            attachmentOptions.add(object : AttachmentOption(defaultCameraOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.takePicture()
                 }
             })
 
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
-            attachmentsButtons.add(object : AttachmentOption(defaultGalleryOptionLabel) {
+            attachmentOptions.add(object : AttachmentOption(defaultGalleryOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.pickFromGallery()
                 }
@@ -80,25 +82,15 @@ open class AttachmentButton : ImageView{
                 }
             })
 
-            val adapter = ArrayAdapter<AttachmentOption>(context, android.R.layout.select_dialog_item, attachmentsButtons)
+            val adapter = ArrayAdapter<AttachmentOption>(context, android.R.layout.select_dialog_item, attachmentOptions)
             val builder = AlertDialog.Builder(context)
 
             builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
             builder.setAdapter(adapter, { dialog, item ->
-                val selectedOption = attachmentsButtons[item]
+                val selectedOption = attachmentOptions[item]
                 selectedOption.onOptionSelected()
             }).show()
         })
-    }
-
-    fun triggerClickButtonAttachment(indice : Int){
-        if(indice >= 0 && indice < attachmentsButtons.size){
-            attachmentsButtons[indice].onOptionSelected()
-        }
-    }
-
-    fun addNewAttachmentOption(attachmentButton: AttachmentOption){
-        attachmentsButtons.add(attachmentButton)
     }
 
     open val diameter: Int

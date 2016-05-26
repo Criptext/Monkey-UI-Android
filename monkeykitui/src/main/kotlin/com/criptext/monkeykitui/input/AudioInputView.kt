@@ -87,7 +87,6 @@ open class AudioInputView : TextInputView {
 
     private fun setDefaultRecorder(){
         val recorder = DefaultVoiceNoteRecorder(context)
-        recorder.inputListener = inputListener
         this.recorder = recorder
     }
 

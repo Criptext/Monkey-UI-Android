@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.input.attachment.AttachmentButton
+import com.criptext.monkeykitui.input.attachment.CameraHandler
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
@@ -44,7 +46,6 @@ open class MediaInputView : AudioInputView {
 
     override fun setLeftButton(a : TypedArray) : SideButton?{
         val attachBtn = AttachmentButton(context, a)
-        attachBtn.inputListener = inputListener
         return SideButton(attachBtn, attachBtn.diameter)
     }
 

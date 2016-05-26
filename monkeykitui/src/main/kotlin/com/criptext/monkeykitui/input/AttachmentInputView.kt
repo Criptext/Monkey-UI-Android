@@ -3,6 +3,8 @@ package com.criptext.monkeykitui.input
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import com.criptext.monkeykitui.input.attachment.AttachmentButton
+import com.criptext.monkeykitui.input.attachment.CameraHandler
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.InputListener
 
@@ -31,7 +33,6 @@ open class AttachmentInputView : TextInputView {
 
     override fun setLeftButton(a : TypedArray) : SideButton?{
         val attachBtn = AttachmentButton(context, a)
-        attachBtn.inputListener = inputListener
         return SideButton(attachBtn, attachBtn.diameter)
     }
 

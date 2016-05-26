@@ -1,4 +1,4 @@
-package com.criptext.monkeykitui.input
+package com.criptext.monkeykitui.input.attachment
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -46,7 +46,7 @@ class CameraHandler constructor(ctx : Context){
         companion object {
             val DEFAULT_REQUEST_CODE = 8000
 
-            fun fromCode(requestCode: Int) = RequestType.values()[requestCode - DEFAULT_REQUEST_CODE]
+            fun fromCode(requestCode: Int) = values()[requestCode - DEFAULT_REQUEST_CODE]
         }
         val requestCode: Int
         get() = this.ordinal + DEFAULT_REQUEST_CODE
@@ -93,7 +93,7 @@ class CameraHandler constructor(ctx : Context){
 				 */
                 mImageCaptureUri = CONTENT_URI
             }
-            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri)
             intent.putExtra("return-data", true)
             startActivity(intent, RequestType.takePicture.requestCode)
         } catch (e: ActivityNotFoundException) {
@@ -208,7 +208,7 @@ class CameraHandler constructor(ctx : Context){
 
                 }
 
-                var monkeyItem = object : com.criptext.monkeykitui.recycler.MonkeyItem{
+                var monkeyItem = object : MonkeyItem {
 
                     override fun getMessageTimestamp(): Long {
                         return System.currentTimeMillis()
