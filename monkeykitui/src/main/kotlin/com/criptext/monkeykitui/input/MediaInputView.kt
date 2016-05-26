@@ -34,7 +34,7 @@ open class MediaInputView : AudioInputView {
     open val cameraHandler: CameraHandler
     get() = attachmentButton.cameraHandler
 
-    private val attachmentButton: AttachmentButton
+    val attachmentButton: AttachmentButton
     get() = leftButtonView as AttachmentButton
 
     override var inputListener: InputListener?

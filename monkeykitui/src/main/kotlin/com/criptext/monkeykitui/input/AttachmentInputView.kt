@@ -21,7 +21,7 @@ open class AttachmentInputView : TextInputView {
     val cameraHandler: CameraHandler
     get() = attachmentButton.cameraHandler
 
-    private val attachmentButton: AttachmentButton
+    open val attachmentButton: AttachmentButton
     get() = leftButtonView as AttachmentButton
 
     override var inputListener: InputListener?

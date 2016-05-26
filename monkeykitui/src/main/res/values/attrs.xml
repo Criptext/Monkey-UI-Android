@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MonkeyView">
-        <attr name="incoming" format="boolean" />
-        <attr name="datetext" format="string" />
-        <attr name="datetextColor" format="integer" />
-        <attr name="datetextSize" format="string" />
-        <attr name="bubble_bg" format="integer" />
-        <attr name="datetimeText" format="string" />
-        <attr name="datetimeColor" format="integer" />
-        <attr name="datetimeSize" format="dimension" />
-    </declare-styleable>
     <declare-styleable name="InputView">
         <attr name="attachmentDrawable" format="integer" />
         <attr name="sendTextDrawable" format="integer" />
@@ -19,9 +9,5 @@
 
         <attr name="useDefaultCamera" format="boolean" />
         <attr name="useDefaultGallery" format="boolean" />
-    </declare-styleable>
-    <declare-styleable name="PhotoEditor">
-        <attr name="okButtonDrawable" format="integer" />
-        <attr name="okButtonColor" format="integer" />
     </declare-styleable>
 </resources>
