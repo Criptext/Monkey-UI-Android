@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.photoview.PhotoViewActivity
-import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
@@ -355,7 +354,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @return a new MonkeyHolder for messages of type photo.
      */
     open fun createMonkeyPhotoHolder(received: Boolean): MonkeyHolder{
-        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out)
+        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out_pending)
                 return MonkeyImageHolder(mView)
     }
 
@@ -400,44 +399,15 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * timestamp must belong to an existing MonkeyItem in this adapter.
      * @return The adapter position of the MonkeyItem. If the item was not found returns -1.
      */
-    fun getItemPositionByTimestamp(targetId: Long): Int{
-        val list = messagesList
-        var setLength = list.size
-        var startPos = 0
-        val MAX_SIZE = 16
-        //reduce list size
-        while(setLength > MAX_SIZE) {
-            val residuo  = setLength % 2
-            var halfPos = setLength / 2 + startPos
-            val  id = getItemId(halfPos)
-            if (targetId < id) {
-                setLength = halfPos - startPos
-            } else {
-                setLength = halfPos - startPos
-                if(residuo == 1 && targetId == getItemId(halfPos))
-                    return halfPos
-                startPos = halfPos  + residuo
-            }
-        }
-
-        //Log.d("MonkeyAdapter", "getItemPositionByTimestamp searching for $targetId with startPos: $startPos length $setLength")
-        //search in small list
-        for(i in 0 .. setLength){
-            if(targetId == list[startPos + i].getMessageTimestamp())
-                return startPos + i
-        }
-
-
-        Log.e("MonkeyAdapter", "getItemPositionByTimestamp algorithm failed, is the list ordered?")
-        //fallback to normal algorithm, this should never happen
-        for(i in messagesList.indices)
-            if(targetId == getItemId(i))
-                return i
-
-        //id non existant.
-        return -1
-
-    }
+    fun getItemPositionByTimestamp(item: MonkeyItem) = messagesList.binarySearch(item,
+            Comparator { t1, t2 ->
+               if(t1.getMessageTimestamp() < t2.getMessageTimestamp()) {
+                  -1
+               }else if (t1.getMessageTimestamp() > t2.getMessageTimestamp()) {
+                   1
+               } else
+               0
+            })
 
     /**
      * Adds a new item to the RecyclerView with a smooth scrolling animation

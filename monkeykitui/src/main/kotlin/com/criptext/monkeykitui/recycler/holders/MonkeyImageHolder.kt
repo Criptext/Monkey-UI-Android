@@ -19,22 +19,10 @@ import java.io.File
 
 class MonkeyImageHolder : MonkeyHolder {
 
-    var photoSizeTextView : TextView? = null
-
-    var placeholderImageView: ImageView? = null
-
-    var photoLoadingView : ProgressBar? = null
-
-    var retryDownloadLayout : LinearLayout? = null
 
     var photoImageView : ImageView? = null
 
     constructor(view : View) : super(view) {
-
-        photoSizeTextView = view.findViewById(R.id.textViewTamano) as TextView
-        placeholderImageView = view.findViewById(R.id.image_placeholder) as ImageView
-        photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar
-        retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout
         photoImageView = view.findViewById(R.id.image_view) as ImageView
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
@@ -45,10 +33,10 @@ class MonkeyImageHolder : MonkeyHolder {
                 .resize(200, 200)
                 .centerCrop()
                 .into(photoImageView)
-        photoLoadingView!!.visibility = View.GONE
     }
 
     fun setNotDownloadedImage(item : MonkeyItem, context: Context){
+        /*
         val filePlaceholder = File(item.getPlaceholderFilePath())
         if(filePlaceholder.exists())
             Picasso.with(context)
@@ -59,11 +47,14 @@ class MonkeyImageHolder : MonkeyHolder {
         photoImageView!!.setImageBitmap(null)
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout!!.visibility = View.GONE
+        */
     }
 
     fun setRetryDownloadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
+        /*
         retryDownloadLayout!!.visibility = View.VISIBLE
         retryDownloadLayout!!.setOnClickListener { chatActivity.onFileDownloadRequested(position, item) }
+        */
     }
 
     fun setOnClickListener(listener : View.OnClickListener){

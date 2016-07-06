@@ -177,28 +177,30 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         player.prepareAsync()
     }
 
-    private fun rebindAudioHolder(){
-        val timeStamp = currentlyPlayingItem?.item?.getMessageTimestamp() ?: null
-        if(timeStamp != null) {
-            val adapterPosition = adapter.getItemPositionByTimestamp(timeStamp)
-            val audioHolder = getAudioHolder(adapterPosition)
-            if (audioHolder != null) {
-                adapter.onBindViewHolder(audioHolder, adapterPosition)
-            }
-        }
+    private fun rebindAudioHolder(monkeyItem: MonkeyItem){
+        val adapterPosition = adapter.getItemPositionByTimestamp(monkeyItem)
+        val audioHolder = getAudioHolder(adapterPosition)
+        if (audioHolder != null)
+            adapter.onBindViewHolder(audioHolder, adapterPosition)
+    }
+
+    private fun rebindCurrentAudioHolder(){
+        val currentMonkeyItem = currentlyPlayingItem?.item ?: null
+        if(currentMonkeyItem != null)
+            rebindAudioHolder(currentMonkeyItem)
     }
 
     private fun startPlayback(){
         player.start()
         playerRunnable.run()
-        adapter.notifyDataSetChanged()
+        rebindCurrentAudioHolder()
 
     }
 
     private fun pauseAudioHolderPlayer(){
         player.pause()
         currentlyPlayingItem?.lastPlaybackPosition = player.currentPosition
-        rebindAudioHolder()
+        rebindCurrentAudioHolder()
     }
 
     private fun updateAudioSeekbar(percentage: Int, progress: Long){
@@ -216,8 +218,8 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
     }
 
     open protected fun getAudioHolder(): MonkeyAudioHolder? {
-        val timeStamp = currentlyPlayingItem?.item?.getMessageTimestamp() ?: return null
-        val adapterPosition = adapter.getItemPositionByTimestamp(timeStamp)
+        val currentMonkeyItem = currentlyPlayingItem?.item ?: return null
+        val adapterPosition = adapter.getItemPositionByTimestamp(currentMonkeyItem)
         return getAudioHolder(adapterPosition)
     }
 
@@ -227,8 +229,9 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
      */
     protected fun notifyPlaybackStopped(){
         if(!isPlayingAudio) {
+            val lastPlayingItem = currentlyPlayingItem!!.item
             currentlyPlayingItem = null
-            adapter.notifyDataSetChanged();
+            rebindAudioHolder(lastPlayingItem)
         }
     }
 

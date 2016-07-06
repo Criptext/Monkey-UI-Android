@@ -104,7 +104,7 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         }else{
             sendingProgressBar!!.visibility = View.GONE
             checkmarkImageView!!.visibility = View.VISIBLE
-            errorImageView!!.visibility = View.GONE
+            errorImageView?.visibility = View.GONE
         }
     }
 
