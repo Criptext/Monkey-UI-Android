@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="63dp"
         android:paddingTop="3dp"
-        android:background="@drawable/bubble_outgoing"
+        android:background="@drawable/mk_bubble_outgoing"
         android:longClickable="true"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="5dp"

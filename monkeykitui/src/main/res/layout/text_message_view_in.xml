@@ -1,90 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- VIEW TEXTO IN -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="7dp"
     android:clickable="false"
-    android:gravity="left"
-    android:orientation="vertical">
+    android:gravity="left|bottom"
+    android:paddingRight="50dp">
+
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/content_message"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:gravity="left"
-        android:orientation="horizontal"
-        android:paddingRight="50dp">
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/tail"
+        android:background="@drawable/mk_bubble_incoming"
+        android:longClickable="true"
+        android:minHeight="42dp"
+        android:minWidth="90dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/tail"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="bottom"
-            android:src="@drawable/mk_piko_izq" />
-
-        <include layout="@layout/include_privacy_cover" />
-
-        <RelativeLayout
+        <TextView
+            android:id="@+id/text_message"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:gravity="fill"
+            android:linksClickable="true"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:text=""
+            android:paddingRight="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/black"
+            android:textColorLink="@color/mk_blue"
+            android:lineSpacingExtra="0.8dp"
+            android:textSize="16sp" />
 
-            <com.criptext.monkeykitui.bubble.BubbleTextIn
-                android:id="@+id/content_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/mk_bubble_incoming"
-                android:longClickable="true"
-                android:minHeight="42dp"
-                android:minWidth="90dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/text_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autoLink="all"
-                    android:gravity="fill"
-                    android:linksClickable="true"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:text=""
-                    android:paddingRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/black"
-                    android:textColorLink="@color/mk_blue"
-                    android:lineSpacingExtra="0.8dp"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/datetime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:ellipsize="end"
-                    android:gravity="left|center_vertical"
-                    android:maxLines="1"
-                    android:text="datetime"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/mk_grey_letters"
-                    android:layout_marginBottom="4dp"
-                    android:textSize="12sp" />
-            </com.criptext.monkeykitui.bubble.BubbleTextIn>
-
-            <ImageView
-                android:id="@+id/imageViewChecked"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/mk_contact_checked"
-                android:layout_toRightOf="@+id/content_row_messages_in"
-                android:layout_marginLeft="-22dp"/>
-
-        </RelativeLayout>
-
+        <TextView
+            android:id="@+id/datetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="1"
+            android:text="datetime"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/mk_grey_letters"
+            android:layout_marginBottom="4dp"
+            android:textSize="12sp" />
     </LinearLayout>
 
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/tail"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/mk_piko_izq"
+        android:layout_gravity="left|bottom" />
+    <!--
+        <ImageView
+            android:id="@+id/imageViewChecked"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/mk_contact_checked"
+            android:layout_toRightOf="@+id/content_row_messages_in"
+            android:layout_marginLeft="-22dp"/> -->
+
+</FrameLayout>
