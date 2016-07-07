@@ -27,8 +27,8 @@ open class AttachmentButton : ImageView {
     lateinit var cameraHandler: CameraHandler
     var inputListener: InputListener? = null
 
-    var defaultCameraOptionLabel = "Take Picture"
-    var defaultGalleryOptionLabel = "Choose Picture"
+    var cameraOptionLabel = "Take Picture"
+    var galleryOptionLabel = "Choose Picture"
 
     lateinit var attachmentOptions: ArrayList<AttachmentOption>
     private set
@@ -51,15 +51,17 @@ open class AttachmentButton : ImageView {
         cameraHandler = CameraHandler(context)
 
         attachmentOptions = ArrayList(2)
+        cameraOptionLabel = typedArray?.getString(R.styleable.InputView_cameraOptionLabel) ?: defaultCameraOptionLabel
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
-            attachmentOptions.add(object : AttachmentOption(defaultCameraOptionLabel) {
+            attachmentOptions.add(object : AttachmentOption(cameraOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.takePicture()
                 }
             })
 
+        galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?: galleryOptionLabel
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
-            attachmentOptions.add(object : AttachmentOption(defaultGalleryOptionLabel) {
+            attachmentOptions.add(object : AttachmentOption(galleryOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.pickFromGallery()
                 }
@@ -96,4 +98,9 @@ open class AttachmentButton : ImageView {
     open val diameter: Int
     get() = context.resources.getDimension(R.dimen.circle_button_diameter).toInt()
 
+    companion object {
+        val defaultCameraOptionLabel = "Take Picture"
+        val defaultGalleryOptionLabel = "Choose Picture"
+
+    }
 }

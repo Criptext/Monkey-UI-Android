@@ -9,5 +9,7 @@
 
         <attr name="useDefaultCamera" format="boolean" />
         <attr name="useDefaultGallery" format="boolean" />
+        <attr name="cameraOptionLabel" format="string" />
+        <attr name="galleryOptionLabel" format="string" />
     </declare-styleable>
 </resources>
