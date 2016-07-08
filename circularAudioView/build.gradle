@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.criptext.circularaudioview'
+group = 'com.github.gaumala'
 version = '1.0.0'
 
 
