@@ -35,7 +35,9 @@ import com.criptext.monkeykitui.input.children.SideButton
 open class BaseInputView : FrameLayout {
 
     protected var barBackground: View? = null
-    protected lateinit var editText : EditText
+    lateinit var editText : EditText
+    protected set
+
     protected lateinit var leftButtonView : View
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs){
