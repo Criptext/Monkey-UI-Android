@@ -46,7 +46,17 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     private var selectedMessage : MonkeyItem?
 
+
+    var monkeyConfig: MonkeyConfig
+    /**
+     * Handles all media playback of voice notes. MonkeyAdapter must notify the audioHandler whenever
+     * the user wants to play/pause a voice note.
+     */
     var audioHandler : VoiceNotePlayer?
+
+    /**
+     * Listener to do an action when user clicks a photo. Default action should be open a photo viewer
+     */
     var imageListener : ImageListener?
 
     //MessageLoading
@@ -69,6 +79,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             }
 
         }
+        monkeyConfig = MonkeyConfig()
         setHasStableIds(true)
 
     }
@@ -345,7 +356,20 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      */
     open fun createMonkeyTextHolder(received: Boolean): MonkeyHolder{
         val mView = inflateView(received, R.layout.text_message_view_in, R.layout.text_message_view_out)
-        return MonkeyTextHolder(mView)
+        val holder = MonkeyTextHolder(mView)
+
+        //customize background colors
+        if(received){
+            val incomingBubleColor = monkeyConfig.textBubbleIncomingColor
+            if(incomingBubleColor != null)
+                holder.setBackgroundColor(incomingBubleColor)
+        } else {
+            val outgoingBubleColor = monkeyConfig.textBubbleOutgoingColor
+            if(outgoingBubleColor != null)
+                holder.setBackgroundColor(outgoingBubleColor)
+        }
+
+        return holder
     }
 
     /**

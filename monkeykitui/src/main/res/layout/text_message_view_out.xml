@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/mk_bubble_outgoing"
         android:orientation="vertical"
+        android:layout_marginRight="12dp"
         android:longClickable="true"
         android:minHeight="42dp"
         android:minWidth="90dp"
@@ -80,14 +81,7 @@
         </LinearLayout>
 
     </LinearLayout>
-    <ImageView
-        android:id="@+id/tail"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="2dp"
-        android:src="@drawable/mk_piko_der"/>
+
     <ImageView
         android:id="@+id/imageViewChecked"
         android:layout_width="22dp"

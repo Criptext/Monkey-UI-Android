@@ -2,6 +2,7 @@ package com.criptext.uisample;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
+import com.criptext.monkeykitui.recycler.MonkeyConfig;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         loader = new SlowMessageLoader(this);
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
         adapter = new MonkeyAdapter(this, messages);
+        //configureMonkeyAdapter();
         adapter.setHasReachedEnd(false);
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
@@ -59,6 +62,13 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         initInputView();
 
         sensorHandler = new SensorHandler(voiceNotePlayer, this);
+    }
+
+    private void configureMonkeyAdapter(){
+        MonkeyConfig config = new MonkeyConfig();
+        config.setTextBubbleIncomingColor(Color.GREEN);
+        config.setTextBubbleOutgoingColor(Color.BLUE);
+        adapter.setMonkeyConfig(config);
     }
 
     @Override

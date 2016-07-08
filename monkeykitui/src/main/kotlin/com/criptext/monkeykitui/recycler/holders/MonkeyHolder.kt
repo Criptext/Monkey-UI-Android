@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -154,6 +155,10 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         }
     }
 
+    fun setBackgroundColor(color: Int){
+        val bgShape = bubbleLayout!!.background.current as GradientDrawable
+        bgShape.setColor(color)
+    }
     companion object {
         /**
          * Adds a RecyclerView.LayoutParams to a view
