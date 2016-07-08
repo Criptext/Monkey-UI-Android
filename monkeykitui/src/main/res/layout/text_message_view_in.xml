@@ -55,15 +55,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-
-    <ImageView
-        android:id="@+id/tail"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
-        android:src="@drawable/mk_piko_izq"
-        android:layout_gravity="left|bottom" />
     <!--
         <ImageView
             android:id="@+id/imageViewChecked"
