@@ -87,7 +87,7 @@ open class AttachmentButton : ImageView {
             val adapter = ArrayAdapter<AttachmentOption>(context, android.R.layout.select_dialog_item, attachmentOptions)
             val builder = AlertDialog.Builder(context)
 
-            builder.setNegativeButton(resources.getString(R.string.text_cancel)) { dialog, which -> dialog.dismiss() }
+            builder.setCancelable(true)
             builder.setAdapter(adapter, { dialog, item ->
                 val selectedOption = attachmentOptions[item]
                 selectedOption.onOptionSelected()
