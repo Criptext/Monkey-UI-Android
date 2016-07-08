@@ -27,8 +27,8 @@ open class AttachmentButton : ImageView {
     lateinit var cameraHandler: CameraHandler
     var inputListener: InputListener? = null
 
-    var cameraOptionLabel = "Take Picture"
-    var galleryOptionLabel = "Choose Picture"
+    var cameraOptionLabel = defaultCameraOptionLabel
+    var galleryOptionLabel = defaultGalleryOptionLabel
 
     lateinit var attachmentOptions: ArrayList<AttachmentOption>
     private set
@@ -59,7 +59,7 @@ open class AttachmentButton : ImageView {
                 }
             })
 
-        galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?: galleryOptionLabel
+        galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?: defaultGalleryOptionLabel
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
             attachmentOptions.add(object : AttachmentOption(galleryOptionLabel) {
                 override fun onOptionSelected() {
