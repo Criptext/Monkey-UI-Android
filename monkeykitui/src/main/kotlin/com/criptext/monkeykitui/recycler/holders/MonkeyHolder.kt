@@ -91,20 +91,20 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         if(status == MonkeyItem.OutgoingMessageStatus.sending){
             checkmarkImageView!!.visibility = View.GONE
             if(isOnline){
-                errorImageView!!.visibility = View.GONE
-                sendingProgressBar!!.visibility = View.VISIBLE
+                errorImageView?.visibility = View.GONE
+                sendingProgressBar?.visibility = View.VISIBLE
             }else{
-                errorImageView!!.visibility = View.VISIBLE
-                sendingProgressBar!!.visibility = View.GONE
+                errorImageView?.visibility = View.VISIBLE
+                sendingProgressBar?.visibility = View.GONE
             }
             //COMPARO TIMESTAMPS
             if((System.currentTimeMillis()/1000)- messageTimestamp >= 15){
-                errorImageView!!.visibility = View.VISIBLE
-                sendingProgressBar!!.visibility = View.GONE
+                errorImageView?.visibility = View.VISIBLE
+                sendingProgressBar?.visibility = View.GONE
             }
         }else{
-            sendingProgressBar!!.visibility = View.GONE
-            checkmarkImageView!!.visibility = View.VISIBLE
+            sendingProgressBar?.visibility = View.GONE
+            checkmarkImageView?.visibility = View.VISIBLE
             errorImageView?.visibility = View.GONE
         }
     }
