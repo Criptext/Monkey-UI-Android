@@ -65,12 +65,12 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      *
      * @param status the status of the MonkeyItem bound to this holder
      */
-    open fun updateReadStatus(status : MonkeyItem.OutgoingMessageStatus){
-        if(status == MonkeyItem.OutgoingMessageStatus.read){
+    open fun updateReadStatus(status : MonkeyItem.DeliveryStatus){
+        if(status == MonkeyItem.DeliveryStatus.read){
             checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
                     checkmarkImageView!!.context, R.drawable.mk_checkmark_read));
             checkmarkImageView!!.visibility = View.VISIBLE
-        } else if(status == MonkeyItem.OutgoingMessageStatus.delivered){
+        } else if(status == MonkeyItem.DeliveryStatus.delivered){
             checkmarkImageView!!.visibility = View.VISIBLE
             checkmarkImageView!!.setImageDrawable(ContextCompat.getDrawable(
                     checkmarkImageView!!.context, R.drawable.mk_checkmark_sent));
@@ -87,8 +87,8 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      * @param isOnline true if there's an active internet connection
      * @param messageTimestamp timestamp of the date that the message was sent.
      */
-    open fun updateSendingStatus(status : MonkeyItem.OutgoingMessageStatus, isOnline : Boolean, messageTimestamp: Long){
-        if(status == MonkeyItem.OutgoingMessageStatus.sending){
+    open fun updateSendingStatus(status : MonkeyItem.DeliveryStatus, isOnline : Boolean, messageTimestamp: Long){
+        if(status == MonkeyItem.DeliveryStatus.sending){
             checkmarkImageView!!.visibility = View.GONE
             if(isOnline){
                 errorImageView?.visibility = View.GONE

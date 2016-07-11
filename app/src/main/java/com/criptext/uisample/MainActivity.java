@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
                             item.getMessageText(), item.getMessageTimestamp(), item.isIncomingMessage(),
                             MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
 
-                    newItem.setStatus(MonkeyItem.OutgoingMessageStatus.read);
+                    newItem.setStatus(MonkeyItem.DeliveryStatus.read);
                     switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
                         case audio: //init audio MessageItem
                             newItem.setDuration(item.getAudioDuration());

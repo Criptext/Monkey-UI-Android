@@ -12,101 +12,70 @@
     android:orientation="vertical" >
 
     <include layout="@layout/include_member_name" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
+
+    <RelativeLayout
+        android:id="@+id/content_message"
+        android:minWidth="100dp"
+        android:layout_height="@dimen/monkey_image_size"
+        android:layout_width="@dimen/monkey_image_size"
+        android:orientation="vertical"
+        android:longClickable="true"
         android:layout_marginLeft="15dp"
         android:gravity="left"
-        android:orientation="horizontal" >
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="7dp">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            <include layout="@layout/include_photo_progress" />
 
             <LinearLayout
-                android:id="@+id/content_message"
-                android:minWidth="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:longClickable="true"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp">
+                android:layout_alignParentBottom="true"
+                android:background="#000000"
+                android:alpha="0.60">
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <include layout="@layout/include_photo_progress" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/image_view"
-                        android:layout_alignLeft="@+id/image_view"
-                        android:layout_alignRight="@+id/image_view"
-                        android:background="#000000"
-                        android:alpha="0.60">
-
-                        <TextView
-                            android:id="@+id/datetime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:gravity="left|center_vertical"
-                            android:maxLines="1"
-                            android:text="datetime"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@android:color/white"
-                            android:padding="0dp"
-                            android:textSize="12sp"
-                            android:layout_margin="5dp"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layoutRetryDownload"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/mk_retry_download"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_centerInParent="true"
-                        android:alpha="0.60"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/mk_file_download"
-                            android:layout_margin="10dp"/>
-
-                        <TextView
-                            android:id="@+id/textViewTamano"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="67 KB"
-                            android:layout_marginRight="10dp"
-                            android:textColor="@android:color/white"/>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/datetime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="left|center_vertical"
+                    android:maxLines="1"
+                    android:text="datetime"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/white"
+                    android:padding="0dp"
+                    android:textSize="12sp"
+                    android:layout_margin="5dp"/>
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imageViewChecked"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/mk_contact_checked"
-                android:layout_toRightOf="@+id/content_row_messages_in"
-                android:layout_marginLeft="-22dp"/>
+            <LinearLayout
+                android:id="@+id/layoutRetryDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mk_retry_download"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:alpha="0.60" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/mk_file_download"
+                    android:layout_margin="10dp"/>
+
+                <TextView
+                    android:id="@+id/textViewTamano"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="67 KB"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@android:color/white"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
-
-   </LinearLayout>
 
 </LinearLayout>

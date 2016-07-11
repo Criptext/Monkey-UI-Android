@@ -97,17 +97,25 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @return the number of View Types that this adapter can display on a RecyclerView
      */
     fun getViewTypes() : Int{
-        return 7
+        return (MonkeyItem.MonkeyItemType.values().size - 1) * 4 + 1;
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = messagesList[position]
-        //incoming messages have viewtypes/2 higher type
-        //Log.d("MonkeyAdapter", "position: $position/${messagesList.size - 1} type: ${item.getMessageType()}" )
+        if(item.getDeliveryStatus().isTransferring()
+                &&(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered || item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read))
+            throw IllegalArgumentException();
+        val typeConst = if(!item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
+               0 //outgoing and delivered
+            else if(!item.isIncomingMessage() && item.getDeliveryStatus().isTransferring())
+               1 //outgoing and transferring
+            else if(item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
+               2 //incoming and delivered
+            else 3 //incoming and transferring
         if(item.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal)
             return item.getMessageType()
 
-        return item.getMessageType() + (if(item.isIncomingMessage()) 6 else 0)
+        return item.getMessageType() + typeConst * MonkeyItem.MonkeyItemType.values().size
     }
 
 
@@ -140,6 +148,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         bindCommonMonkeyHolder(position, item, holder)
 
         //type specific stuff
+        Log.d("MonkeyAdapter", "type speciic ${item.getMessageType()}")
         when(MonkeyItem.MonkeyItemType.values()[item.getMessageType()]){
             MonkeyItem.MonkeyItemType.text -> {
                 bindMonkeyTextHolder(position, item, holder)
@@ -173,8 +182,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                         group.getMemberColor(item.getContactSessionId()))
             }
         } else { //stuff for outgoing messages
-           holder.updateReadStatus(item.getOutgoingMessageStatus())
-           holder.updateSendingStatus(item.getOutgoingMessageStatus(), chatActivity.isOnline(), item.getMessageTimestamp())
+           holder.updateReadStatus(item.getDeliveryStatus())
+           holder.updateSendingStatus(item.getDeliveryStatus(), chatActivity.isOnline(), item.getMessageTimestamp())
         }
 
         //selected status
@@ -402,16 +411,26 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
 
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
-        var mView : View
-        var incoming = viewtype >= (getViewTypes()/2)
-        val truetype = viewtype%MonkeyItem.MonkeyItemType.values().size
-        when(MonkeyItem.MonkeyItemType.values()[truetype]){
-            MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(incoming)
-            MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(incoming)
-            MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(incoming)
+        val typeClassification = viewtype / MonkeyItem.MonkeyItemType.values().size
+        if (typeClassification == 0)
+            when (MonkeyItem.MonkeyItemType.values()[viewtype]) {
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false)
             //MonkeyItem.MonkeyItemType.file ->
             //MonkeyItem.MonkeyItemType.contact ->
-            MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
+                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
+            }
+        else if(typeClassification == 2) {
+            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
+            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true)
+            //MonkeyItem.MonkeyItemType.file ->
+            //MonkeyItem.MonkeyItemType.contact ->
+                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
+            }
         }
         return null
     }

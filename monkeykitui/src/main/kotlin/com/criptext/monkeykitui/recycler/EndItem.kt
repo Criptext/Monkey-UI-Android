@@ -17,9 +17,7 @@ class EndItem : MonkeyItem {
 
     override fun isIncomingMessage(): Boolean = true
 
-    override fun getOutgoingMessageStatus(): MonkeyItem.OutgoingMessageStatus {
-        throw UnsupportedOperationException()
-    }
+    override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus  = MonkeyItem.DeliveryStatus.read
 
     override fun getMessageType(): Int = MonkeyItem.MonkeyItemType.MoreMessages.ordinal
 
