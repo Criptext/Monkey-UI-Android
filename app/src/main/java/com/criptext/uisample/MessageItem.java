@@ -1,8 +1,5 @@
 package com.criptext.uisample;
 
-import android.graphics.Bitmap;
-import android.view.View;
-
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +12,7 @@ public class MessageItem  implements MonkeyItem {
     private String senderSessionId, messageId, messageContent;
     private long timestamp;
     private boolean isIncoming;
-    private OutgoingMessageStatus status;
+    private DeliveryStatus status;
     private MonkeyItemType itemType;
     /*AUDIO*/
     private long duration;
@@ -32,9 +29,10 @@ public class MessageItem  implements MonkeyItem {
         this.itemType = itemType;
         this.placeHolderFilePath = "";
         this.duration = 0;
+        this.status = DeliveryStatus.read;
     }
 
-    public void setStatus (OutgoingMessageStatus status){
+    public void setStatus (DeliveryStatus status){
         this.status = status;
     }
 
@@ -73,8 +71,8 @@ public class MessageItem  implements MonkeyItem {
 
     @NotNull
     @Override
-    public OutgoingMessageStatus getOutgoingMessageStatus() {
-        return OutgoingMessageStatus.read;
+    public DeliveryStatus getDeliveryStatus() {
+        return this.status;
     }
 
     @Override

@@ -113,8 +113,8 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
                     return MonkeyItem.MonkeyItemType.audio.ordinal
                 }
 
-                override fun getOutgoingMessageStatus(): MonkeyItem.OutgoingMessageStatus {
-                    return MonkeyItem.OutgoingMessageStatus.read
+                override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus {
+                    return MonkeyItem.DeliveryStatus.read
                 }
 
                 override fun isIncomingMessage(): Boolean {

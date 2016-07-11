@@ -222,7 +222,7 @@ class CameraHandler constructor(ctx : Context){
                         return false
                     }
 
-                    override fun getOutgoingMessageStatus(): MonkeyItem.OutgoingMessageStatus {
+                    override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus {
                         throw UnsupportedOperationException()
                     }
 

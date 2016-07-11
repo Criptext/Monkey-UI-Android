@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 
@@ -35,7 +36,7 @@ interface MonkeyItem {
      * @return the status of a message sent by the user. See {@see OutgoingMessageStatus}
      * &nbsp\ for possible values
      */
-    fun getOutgoingMessageStatus() : OutgoingMessageStatus
+    fun getDeliveryStatus() : DeliveryStatus
 
     /**
      * @return an integer with the ordinal value of the {@see MonkeyItemType} of this message.
@@ -89,13 +90,19 @@ interface MonkeyItem {
      * enum class that holds the state of a message sent by the user. {@see MonkeyAdapter} will display
      * &nbsp\ the message bubble in a way that the user can understand the status of the sent message.
      */
-    enum class OutgoingMessageStatus {
+    enum class DeliveryStatus {
         /* The message was just sent to the user, but it hasn't reached the server yet */
         sending,
+        /* There was an error sending the message */
+        error,
         /* The message has been delivered to the server, but the recipient hasn't read it yet */
         delivered,
         /* The message has been read by the recipient */
-        read
+        read;
+
+        fun isTransferring () = this < delivered
+
+
     }
 
     /**
