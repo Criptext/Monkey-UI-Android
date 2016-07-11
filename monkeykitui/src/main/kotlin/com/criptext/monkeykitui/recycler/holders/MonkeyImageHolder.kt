@@ -17,7 +17,7 @@ import java.io.File
  * Created by daniel on 4/12/16.
  */
 
-class MonkeyImageHolder : MonkeyHolder {
+open class MonkeyImageHolder : MonkeyHolder {
 
 
     var photoImageView : ImageView? = null
@@ -27,7 +27,7 @@ class MonkeyImageHolder : MonkeyHolder {
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    fun setDownloadedImage(file : File, context : Context){
+    open fun setDownloadedImage(file : File, context : Context){
         Picasso.with(context)
                 .load(file)
                 .resize(200, 200)
@@ -35,7 +35,7 @@ class MonkeyImageHolder : MonkeyHolder {
                 .into(photoImageView)
     }
 
-    fun setNotDownloadedImage(item : MonkeyItem, context: Context){
+    open fun setNotDownloadedImage(item : MonkeyItem, context: Context){
         /*
         val filePlaceholder = File(item.getPlaceholderFilePath())
         if(filePlaceholder.exists())
@@ -50,14 +50,14 @@ class MonkeyImageHolder : MonkeyHolder {
         */
     }
 
-    fun setRetryDownloadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
+    open fun setRetryDownloadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
         /*
         retryDownloadLayout!!.visibility = View.VISIBLE
         retryDownloadLayout!!.setOnClickListener { chatActivity.onFileDownloadRequested(position, item) }
         */
     }
 
-    fun setOnClickListener(listener : View.OnClickListener){
+    open fun setOnClickListener(listener : View.OnClickListener){
         photoImageView!!.setOnClickListener(listener)
     }
 

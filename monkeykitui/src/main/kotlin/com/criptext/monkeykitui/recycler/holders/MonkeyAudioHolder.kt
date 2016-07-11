@@ -16,7 +16,7 @@ import com.innovative.circularaudioview.CircularAudioView
  * Created by gesuwall on 4/12/16.
  */
 
-class MonkeyAudioHolder: MonkeyHolder {
+open class MonkeyAudioHolder: MonkeyHolder {
 
     var durationTextView : TextView? = null
     var circularAudioView : CircularAudioView? = null
@@ -34,28 +34,28 @@ class MonkeyAudioHolder: MonkeyHolder {
         downloadProgressView = view.findViewById(R.id.progress_audio) as ProgressBar?
     }
 
-    fun setAudioActions(actions: AudioActions){
+    open fun setAudioActions(actions: AudioActions){
         circularAudioView!!.setAudioActions(actions)
     }
 
-    fun setReadyForPlayback(){
+    open fun setReadyForPlayback(){
         playButtonView!!.visibility = View.VISIBLE
         downloadProgressView?.visibility = View.GONE
     }
 
-    fun setWaitingForDownload(){
+    open fun setWaitingForDownload(){
         playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
     }
 
-    fun updatePlayPauseButton(isPlaying: Boolean){
+    open fun updatePlayPauseButton(isPlaying: Boolean){
         if(isPlaying)
             playButtonView!!.setImageLevel(1);
         else
             playButtonView!!.setImageLevel(0);
     }
 
-    fun updateAudioProgress(percentage: Int, audioTime: Long){
+    open fun updateAudioProgress(percentage: Int, audioTime: Long){
         circularAudioView!!.progress = if(percentage > 100) 100 else percentage
         setAudioDurationText(audioTime)
     }
@@ -71,11 +71,11 @@ class MonkeyAudioHolder: MonkeyHolder {
         return "$strMinutes:$strSeconds"
     }
 
-    fun setAudioDurationText(duration : Long){
+    open fun setAudioDurationText(duration : Long){
         durationTextView!!.text = getAudioTimeFormattedText(duration)
     }
 
-    fun setOnSeekBarChangeListener(listener: CircularAudioView.OnCircularAudioViewChangeListener){
+    open fun setOnSeekBarChangeListener(listener: CircularAudioView.OnCircularAudioViewChangeListener){
         circularAudioView!!.setOnSeekBarChangeListener(listener)
     }
 
