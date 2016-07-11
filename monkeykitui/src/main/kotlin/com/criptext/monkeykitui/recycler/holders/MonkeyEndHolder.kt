@@ -8,12 +8,12 @@ import com.criptext.monkeykitui.R
  * Created by gesuwall on 4/18/16.
  */
 
-class MonkeyEndHolder : MonkeyHolder {
+open class MonkeyEndHolder : MonkeyHolder {
 
     constructor(view: View) : super(view){
     }
 
-    fun setOnClickListener(listener: () -> Unit){
+    open fun setOnClickListener(listener: () -> Unit){
 
     }
 
