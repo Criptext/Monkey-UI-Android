@@ -32,6 +32,9 @@ open class MonkeyAudioHolder: MonkeyHolder {
         circularAudioView = view.findViewById(R.id.seek_bar) as CircularAudioView
         playButtonView = view.findViewById(R.id.play_button) as ImageView
         downloadProgressView = view.findViewById(R.id.progress_audio) as ProgressBar?
+        circularAudioView!!.setAudioActions(object: AudioActions(){
+
+        })
     }
 
     open fun setAudioActions(actions: AudioActions){
