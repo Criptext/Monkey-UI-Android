@@ -387,7 +387,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @return a new MonkeyHolder for messages of type photo.
      */
     open fun createMonkeyPhotoHolder(received: Boolean): MonkeyHolder{
-        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out_pending)
+        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out)
                 return MonkeyImageHolder(mView)
     }
 
