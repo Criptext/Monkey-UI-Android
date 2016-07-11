@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:seekbar="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:id="@+id/content_message"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:clickable="false"
+    android:gravity="right"
+    android:orientation="horizontal" >
 
     <RelativeLayout
         android:id="@+id/message_audio"
         android:layout_width="130dp"
         android:layout_height="133dp"
-        android:layout_gravity="right"
-        android:clickable="false"
-        android:layout_marginBottom="10dp">
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp">
 
         <TextView
             android:id="@+id/text_shown"
@@ -42,6 +46,15 @@
             android:gravity="center"
             android:layout_marginBottom="3dp"
             android:layout_alignParentBottom="true">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:id="@+id/sendingWheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="2dp"
+                android:indeterminateTint="#014766"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/imageViewCheckmark"
@@ -75,4 +88,6 @@
 
     </RelativeLayout>
 
-</FrameLayout>
+    <include layout="@layout/include_net_error" />
+
+</LinearLayout>
