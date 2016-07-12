@@ -80,6 +80,7 @@ public class SlowMessageLoader  {
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
                         ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
+                item.setStatus(MonkeyItem.DeliveryStatus.sending);
                 item.setPlaceHolderFilePath(ctx.getCacheDir() + "/mrbean_blur.jpg");
             }
             else {

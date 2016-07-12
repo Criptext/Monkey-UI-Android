@@ -24,7 +24,7 @@
         android:layout_marginTop="5dp">
 
         <ImageView
-            android:id="@+id/image_loading"
+            android:id="@+id/image_view"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:background="#e1e1e1"
@@ -77,6 +77,59 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/layoutRetryDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mk_retry_download"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:alpha="0.60" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mk_file_download"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/textViewTamano"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="67 KB"
+                android:layout_marginRight="10dp"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutRetryUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mk_retry_download"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:alpha="0.60" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_upload"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/textViewTamanoUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="67 KB"
+                android:layout_marginRight="10dp"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
     </FrameLayout>
 
     <ImageView
@@ -86,7 +139,5 @@
         android:src="@drawable/mk_contact_checked"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="-22dp"/>
-
-    <include layout="@layout/include_net_error"/>
 
 </LinearLayout>
