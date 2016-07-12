@@ -136,6 +136,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
 
+        val typeClassification = getItemViewType(position) / MonkeyItem.MonkeyItemType.values().size
         val item = messagesList[position]
 
         if(holder is MonkeyEndHolder) {
@@ -149,18 +150,32 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         //type specific stuff
         Log.d("MonkeyAdapter", "type speciic ${item.getMessageType()}")
-        when(MonkeyItem.MonkeyItemType.values()[item.getMessageType()]){
-            MonkeyItem.MonkeyItemType.text -> {
-                bindMonkeyTextHolder(position, item, holder)
-            }
-            MonkeyItem.MonkeyItemType.audio -> {
-                bindMonkeyAudioHolder(position, item, holder)
-            }
-            MonkeyItem.MonkeyItemType.photo -> {
-                bindMonkeyPhotoHolder(position, item, holder)
+        if(typeClassification == 0 || typeClassification == 2) {
+            when (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
+                MonkeyItem.MonkeyItemType.text -> {
+                    bindMonkeyTextHolder(position, item, holder)
+                }
+                MonkeyItem.MonkeyItemType.audio -> {
+                    bindMonkeyAudioHolder(position, item, holder)
+                }
+                MonkeyItem.MonkeyItemType.photo -> {
+                    bindMonkeyPhotoHolder(position, item, holder)
+                }
             }
         }
-
+        else if(typeClassification == 1 || typeClassification == 3) {
+            when (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
+                MonkeyItem.MonkeyItemType.text -> {
+                    bindMonkeyTextHolder(position, item, holder)
+                }
+                MonkeyItem.MonkeyItemType.audio -> {
+                    bindMonkeyAudioHolder(position, item, holder)
+                }
+                MonkeyItem.MonkeyItemType.photo -> {
+                    bindMonkeyPhotoProcessingHolder(position, item, holder)
+                }
+            }
+        }
     }
 
     /**
@@ -217,6 +232,16 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
      */
     open protected fun bindMonkeyPhotoHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+
+        val imageHolder = holder as MonkeyImageHolder
+        val file = File(item.getFilePath())
+        imageHolder.setDownloadedImage(file, chatActivity as Context)
+        imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+
+    }
+
+    open protected fun bindMonkeyPhotoProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
         if(file.exists()){
@@ -311,9 +336,12 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     }
 
     fun inflateView(incoming: Boolean, inLayout: Int, outLayout : Int) : View {
-        if(incoming)
+        if(incoming) {
             return LayoutInflater.from(mContext).inflate(inLayout, null)
-        return LayoutInflater.from(mContext).inflate(outLayout, null)
+        }
+        else {
+            return LayoutInflater.from(mContext).inflate(outLayout, null)
+        }
     }
 
     /**
@@ -363,9 +391,13 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @param received boolean that indicates whether the message was received or sent by the user
      * @return a new MonkeyHolder for messages of type text.
      */
-    open fun createMonkeyTextHolder(received: Boolean): MonkeyHolder{
-        val mView = inflateView(received, R.layout.text_message_view_in, R.layout.text_message_view_out)
-        val holder = MonkeyTextHolder(mView)
+    open fun createMonkeyTextHolder(received: Boolean, transferring: Boolean): MonkeyHolder{
+
+        val holder : MonkeyTextHolder?
+        if(transferring)
+            holder = MonkeyTextHolder(inflateView(received, R.layout.text_message_view_in, R.layout.text_message_view_out))
+        else
+            holder = MonkeyTextHolder(inflateView(received, R.layout.text_message_view_in, R.layout.text_message_view_out))
 
         //customize background colors
         if(received){
@@ -386,9 +418,13 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @param received boolean that indicates whether the message was received or sent by the user
      * @return a new MonkeyHolder for messages of type photo.
      */
-    open fun createMonkeyPhotoHolder(received: Boolean): MonkeyHolder{
-        val mView = inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out)
-                return MonkeyImageHolder(mView)
+    open fun createMonkeyPhotoHolder(received: Boolean, transferring: Boolean): MonkeyHolder{
+
+        if(transferring)
+            return MonkeyImageHolder(inflateView(received, R.layout.image_message_view_in_pending, R.layout.image_message_view_out_pending))
+        else
+            return MonkeyImageHolder(inflateView(received, R.layout.image_message_view_in, R.layout.image_message_view_out))
+
     }
 
     /**
@@ -396,9 +432,15 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @param received boolean that indicates whether the message was received or sent by the user
      * @return a new MonkeyHolder for messages of type audio.
      */
-    open fun createMonkeyAudioHolder(received: Boolean): MonkeyHolder{
-        val mView = inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out)
-        return MonkeyAudioHolder(mView)
+    open fun createMonkeyAudioHolder(received: Boolean, transferring: Boolean): MonkeyHolder{
+
+        if(transferring) {
+            return MonkeyAudioHolder(inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out))
+        }
+        else {
+            return MonkeyAudioHolder(inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out))
+        }
+
     }
     /**
      * Creates a new MonkeyHolder to be displayed when the adapter is loading more messages
@@ -414,9 +456,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val typeClassification = viewtype / MonkeyItem.MonkeyItemType.values().size
         if (typeClassification == 0)
             when (MonkeyItem.MonkeyItemType.values()[viewtype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false)
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, false)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, false)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, false)
             //MonkeyItem.MonkeyItemType.file ->
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
@@ -424,9 +466,31 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         else if(typeClassification == 2) {
             val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
             when (MonkeyItem.MonkeyItemType.values()[truetype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true)
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, false)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, false)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, false)
+            //MonkeyItem.MonkeyItemType.file ->
+            //MonkeyItem.MonkeyItemType.contact ->
+                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
+            }
+        }
+        else if(typeClassification == 1) {
+            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
+            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, true)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, true)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, true)
+            //MonkeyItem.MonkeyItemType.file ->
+            //MonkeyItem.MonkeyItemType.contact ->
+                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
+            }
+        }
+        else if(typeClassification == 3) {
+            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
+            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
+                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, true)
+                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, true)
+                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, true)
             //MonkeyItem.MonkeyItemType.file ->
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
