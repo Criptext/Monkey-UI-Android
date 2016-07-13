@@ -45,40 +45,40 @@ open class MonkeyImageHolder : MonkeyHolder {
                 .into(photoImageView)
     }
 
-    open fun setNotDownloadedImage(item : MonkeyItem, context: Context){
+    open fun setWaitingForDownload(){
 
         photoImageView!!.setImageBitmap(null)
         photoLoadingView!!.visibility = View.VISIBLE
-        retryDownloadLayout!!.visibility = View.GONE
-        retryUploadLayout!!.visibility = View.GONE
+        retryDownloadLayout?.visibility = View.INVISIBLE
+        retryUploadLayout?.visibility = View.INVISIBLE
+        retryUploadLayout?.setOnClickListener(null)
+        retryDownloadLayout?.setOnClickListener(null)
 
     }
+    open fun setWaitingForUpload(){
 
-    open fun setRetryUploadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
+        retryUploadLayout!!.visibility = View.GONE
+        sendingProgressBar?.visibility = View.VISIBLE
+
+    }
+    open fun setRetryUploadButton(retryListener: View.OnClickListener){
 
         photoLoadingView!!.visibility = View.GONE
         retryUploadLayout!!.visibility = View.VISIBLE
-        retryUploadLayout!!.setOnClickListener {
-            chatActivity.onFileUploadRequested(position, item)
-            sendingProgressBar?.visibility = View.VISIBLE
-            retryUploadLayout!!.visibility = View.GONE
-        }
+        retryUploadLayout!!.setOnClickListener(retryListener)
+        sendingProgressBar?.visibility = View.INVISIBLE
 
     }
 
-    open fun setRetryDownloadButton(position : Int, item: MonkeyItem, chatActivity: ChatActivity){
+    open fun setRetryDownloadButton(retryListener: View.OnClickListener){
 
         photoLoadingView!!.visibility = View.GONE
         retryDownloadLayout!!.visibility = View.VISIBLE
-        retryDownloadLayout!!.setOnClickListener {
-            chatActivity.onFileDownloadRequested(position, item)
-            photoLoadingView!!.visibility = View.VISIBLE
-            retryDownloadLayout!!.visibility = View.GONE
-        }
+        retryDownloadLayout!!.setOnClickListener(retryListener)
 
     }
 
-    open fun setOnClickListener(listener : View.OnClickListener){
+    open fun setOnClickListener(listener : View.OnClickListener?){
         photoImageView!!.setOnClickListener(listener)
     }
 
