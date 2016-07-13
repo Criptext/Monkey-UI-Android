@@ -1,6 +1,8 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.content.DialogInterface
+import android.graphics.drawable.Drawable
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -32,6 +34,7 @@ open class MonkeyAudioHolder: MonkeyHolder {
         circularAudioView = view.findViewById(R.id.seek_bar) as CircularAudioView
         playButtonView = view.findViewById(R.id.play_button) as ImageView
         downloadProgressView = view.findViewById(R.id.progress_audio) as ProgressBar?
+        circularAudioView!!.setAudioActions(object : AudioActions(){ })
     }
 
     open fun setAudioActions(actions: AudioActions){
@@ -46,8 +49,34 @@ open class MonkeyAudioHolder: MonkeyHolder {
     open fun setWaitingForDownload(){
         playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
+        playButtonView!!.setOnClickListener(null)
     }
 
+    open fun setWaitingForUpload(){
+        playButtonView!!.visibility = View.VISIBLE
+        sendingProgressBar?.visibility = View.VISIBLE
+        playButtonView!!.setImageDrawable(ContextCompat.getDrawable(playButtonView!!.context,
+                R.drawable.audio_play_in))
+        playButtonView!!.setOnClickListener(null)
+    }
+
+    private fun setErrorInTransfer(retryDrawable: Drawable, retryListener: View.OnClickListener){
+        playButtonView!!.visibility = View.VISIBLE
+        downloadProgressView?.visibility = View.INVISIBLE
+        playButtonView!!.setImageDrawable(retryDrawable)
+        playButtonView!!.setOnClickListener(retryListener)
+    }
+
+    open fun setErrorInDownload(clickListener: View.OnClickListener){
+        setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
+                R.drawable.ic_play_down), clickListener)
+    }
+
+    open fun setErrorInUpload(clickListener: View.OnClickListener){
+        setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
+                R.drawable.ic_play_up), clickListener)
+        checkmarkImageView?.visibility = View.INVISIBLE
+    }
     open fun updatePlayPauseButton(isPlaying: Boolean){
         if(isPlaying)
             playButtonView!!.setImageLevel(1);

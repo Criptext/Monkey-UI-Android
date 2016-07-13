@@ -71,8 +71,9 @@ public class SlowMessageLoader  {
             if(i%6 == 1){
                 //audio
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
+                        ctx.getCacheDir() + "/barneyfake.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
+                item.setStatus(MonkeyItem.DeliveryStatus.sending);
                 item.setDuration(1000 * 10);
             }
             else if(i%8 == 1){
@@ -108,6 +109,9 @@ public class SlowMessageLoader  {
         return arrayList;
     }
 
+    public String getAudioFilePath(Context ctx){
+        return ctx.getCacheDir() + "/barney.aac";
+    }
     public void execute(){
         AsyncTask task = newAsyncTask();
         task.execute();

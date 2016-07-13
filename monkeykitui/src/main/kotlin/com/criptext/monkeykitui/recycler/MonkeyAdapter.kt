@@ -134,6 +134,12 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return messagesList[position].getMessageTimestamp()
     }
 
+    fun rebindMonkeyItem(position: Int, recyclerView: RecyclerView){
+        val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
+        if(monkeyHolder != null)
+            onBindViewHolder(monkeyHolder, position)
+    }
+
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
 
         val typeClassification = getItemViewType(position) / MonkeyItem.MonkeyItemType.values().size
@@ -149,7 +155,6 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         bindCommonMonkeyHolder(position, item, holder)
 
         //type specific stuff
-        Log.d("MonkeyAdapter", "type speciic ${item.getMessageType()}")
         if(typeClassification == 0 || typeClassification == 2) {
             when (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
                 MonkeyItem.MonkeyItemType.text -> {
@@ -169,7 +174,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                     bindMonkeyTextHolder(position, item, holder)
                 }
                 MonkeyItem.MonkeyItemType.audio -> {
-                    bindMonkeyAudioHolder(position, item, holder)
+                    bindMonkeyAudioProcessingHolder(position, item, holder)
                 }
                 MonkeyItem.MonkeyItemType.photo -> {
                     bindMonkeyPhotoProcessingHolder(position, item, holder)
@@ -346,6 +351,36 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         }
     }
 
+    open protected fun bindMonkeyAudioProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+        val audioHolder = holder as MonkeyAudioHolder
+        val target = File(item.getFilePath())
+
+        audioHolder.updateAudioProgress(0, 0)
+        if(item.isIncomingMessage()){
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    audioHolder.setErrorInDownload(View.OnClickListener {
+                        chatActivity.onFileDownloadRequested(position, item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    audioHolder.setWaitingForDownload()
+                    chatActivity.onFileDownloadRequested(position, item)
+                }
+            }
+        } else {
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    audioHolder.setErrorInUpload(View.OnClickListener {
+                        chatActivity.onFileUploadRequested(position, item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    audioHolder.setWaitingForUpload()
+                    chatActivity.onFileUploadRequested(position, item)
+                }
+            }
+        }
+    }
+
     fun inflateView(incoming: Boolean, inLayout: Int, outLayout : Int) : View {
         if(incoming) {
             return LayoutInflater.from(mContext).inflate(inLayout, null)
@@ -444,12 +479,13 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * @return a new MonkeyHolder for messages of type audio.
      */
     open fun createMonkeyAudioHolder(received: Boolean, transferring: Boolean): MonkeyHolder{
-
         if(transferring) {
-            return MonkeyAudioHolder(inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out))
+            return MonkeyAudioHolder(inflateView(received,
+                    R.layout.audio_message_view_in_pending, R.layout.audio_message_view_out_pending))
         }
         else {
-            return MonkeyAudioHolder(inflateView(received, R.layout.audio_message_view_in, R.layout.audio_message_view_out))
+            return MonkeyAudioHolder(inflateView(received, R.layout.audio_message_view_in,
+                    R.layout.audio_message_view_out))
         }
 
     }

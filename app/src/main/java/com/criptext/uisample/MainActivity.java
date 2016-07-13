@@ -4,10 +4,12 @@ package com.criptext.uisample;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
@@ -38,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     SlowMessageLoader loader;
     private SensorHandler sensorHandler;
 
+    private Handler handler = new Handler();
+
+    public final String defaultAudiofile(){
+        return getCacheDir() + "/barney.aac";
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +71,10 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         sensorHandler = new SensorHandler(voiceNotePlayer, this);
     }
 
-    private void configureMonkeyAdapter(){
+    /**
+     * Call this on the onCreate method if you want to customize the look of the bubbles.
+     */
+    private void customizeMonkeyAdapter(){
         MonkeyConfig config = new MonkeyConfig();
         config.setTextBubbleIncomingColor(Color.GREEN);
         config.setTextBubbleOutgoingColor(Color.BLUE);
@@ -109,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
      * Si no tengo archivos creo uno nuevo.
      */
     private void createAudioFile(){
-        File file = new File(getCacheDir() + "/barney.aac");
+        File file = new File(defaultAudiofile());
         if(!file.exists()){
             try {
             InputStream ins = getResources().openRawResource(R.raw.barney);
@@ -234,9 +244,32 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         return true;
     }
 
-    @Override
-    public void onFileDownloadRequested(int position, @NotNull MonkeyItem item) {
+    private void mockFileNetworkRequests(final int position, MonkeyItem item){
+        final MessageItem message = (MessageItem) item;
+        Runnable errorCallback = new Runnable() {
+            @Override
+            public void run() {
+                if(message.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending){
+                    message.setDeliveryStatus(MonkeyItem.DeliveryStatus.error);
+                    adapter.rebindMonkeyItem(position, recycler);
+                }
+            }
+        };
 
+        if(message.getDeliveryStatus() != MonkeyItem.DeliveryStatus.sending) {
+            message.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
+            adapter.rebindMonkeyItem(position, recycler);
+        } else
+            handler.postDelayed(errorCallback, 3000);
+    }
+    @Override
+    public void onFileDownloadRequested(final int position, @NotNull MonkeyItem item) {
+        mockFileNetworkRequests(position, item);
+    }
+
+    @Override
+    public void onFileUploadRequested(final int position, @NotNull MonkeyItem item) {
+        mockFileNetworkRequests(position, item);
     }
 
     @Override
