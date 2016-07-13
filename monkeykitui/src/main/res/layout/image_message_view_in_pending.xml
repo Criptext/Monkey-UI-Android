@@ -58,6 +58,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_centerInParent="true"
+                android:visibility="gone"
                 android:alpha="0.60" >
 
                 <ImageView

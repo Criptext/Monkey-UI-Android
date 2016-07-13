@@ -237,6 +237,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val file = File(item.getFilePath())
         imageHolder.setDownloadedImage(file, chatActivity as Context)
         imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+        if(file.length() < item.getFileSize())
+            imageHolder.setRetryDownloadButton(position, item, chatActivity)
 
     }
 
@@ -246,12 +248,21 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val file = File(item.getFilePath())
         if(file.exists()){
             imageHolder.setDownloadedImage(file, chatActivity as Context)
-            if(file.length() < item.getFileSize())
-                imageHolder.setRetryDownloadButton(position, item, chatActivity)
         }
-        else{
-            imageHolder.setNotDownloadedImage(item, chatActivity as Context)
-            chatActivity.onFileDownloadRequested(position, item)
+
+        if(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending){
+            if(!file.exists()){
+                imageHolder.setNotDownloadedImage(item, chatActivity as Context)
+                chatActivity.onFileDownloadRequested(position, item)
+            }
+        }
+        else if(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error){
+            if(item.isIncomingMessage()){
+                imageHolder.setRetryDownloadButton(position, item, chatActivity)
+            }
+            else{
+                imageHolder.setRetryUploadButton(position, item, chatActivity)
+            }
         }
 
         imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
