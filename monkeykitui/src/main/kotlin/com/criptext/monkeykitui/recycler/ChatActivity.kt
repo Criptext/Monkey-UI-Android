@@ -10,10 +10,21 @@ interface ChatActivity {
      * If a file instantiated with MonkeyItem.getFilePath() does not exist, this method will be called
      * &nbsp\ to download the neccesary file. Once the download is complete the adapter should be notified
      * &nbsp\ to update the UI.
+     * Monkey Adapter may call this method several times for the same file, you must make sure that
+     * you only start the download operation once.
+     *
      * @param position the adapter position of the MonkeyItem with the missing file
      * @param item the MonkeyItem with the missing file.
      */
     fun onFileDownloadRequested(position: Int, item: MonkeyItem)
+
+    /**
+     * This method will be called when there is a file that had an error during its upload and the
+     * user wants to retry the upload.`
+     * Monkey Adapter may call this method several times for the same file, you must make sure that
+     * you only start the upload operation once.
+     */
+    fun onFileUploadRequested(position: Int, item: MonkeyItem)
 
     /**
      * @return true if the device is connected to the internet, otherwise false

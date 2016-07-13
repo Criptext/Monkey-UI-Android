@@ -75,6 +75,10 @@ public class MessageItem  implements MonkeyItem {
         return this.status;
     }
 
+    public void setDeliveryStatus(DeliveryStatus newStatus) {
+        this.status = newStatus;
+    }
+
     @Override
     public int getMessageType() {
         return itemType.ordinal();
