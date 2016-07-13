@@ -16,6 +16,13 @@ interface ChatActivity {
     fun onFileDownloadRequested(position: Int, item: MonkeyItem)
 
     /**
+     * If a file fails to upload, this method will be called
+     * @param position the adapter position of the MonkeyItem with the missing file
+     * @param item the MonkeyItem with the missing file.
+     */
+    fun onFileUploadRequested(position: Int, item: MonkeyItem)
+
+    /**
      * @return true if the device is connected to the internet, otherwise false
      */
     fun isOnline() : Boolean
