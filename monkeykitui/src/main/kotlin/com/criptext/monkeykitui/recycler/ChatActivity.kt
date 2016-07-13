@@ -16,7 +16,7 @@ interface ChatActivity {
      * @param position the adapter position of the MonkeyItem with the missing file
      * @param item the MonkeyItem with the missing file.
      */
-    fun onFileDownloadRequested(position: Int, item: MonkeyItem)
+    fun onFileDownloadRequested(item: MonkeyItem)
 
     /**
      * This method will be called when there is a file that had an error during its upload and the
@@ -24,7 +24,7 @@ interface ChatActivity {
      * Monkey Adapter may call this method several times for the same file, you must make sure that
      * you only start the upload operation once.
      */
-    fun onFileUploadRequested(position: Int, item: MonkeyItem)
+    fun onFileUploadRequested(item: MonkeyItem)
 
     /**
      * @return true if the device is connected to the internet, otherwise false

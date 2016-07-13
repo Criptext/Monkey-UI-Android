@@ -241,9 +241,10 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
-        if(!file.exists() || file.length() < item.getFileSize())
-            imageHolder.setRetryDownloadButton(item, chatActivity)
-        else {
+        if(!file.exists() || file.length() < item.getFileSize()) {
+            chatActivity.onFileDownloadRequested(item)
+            imageHolder.setOnClickListener(null)
+        }else {
             imageHolder.setDownloadedImage(file, chatActivity as Context)
             imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
         }
@@ -254,27 +255,32 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
-        if(file.exists()){
-            imageHolder.setDownloadedImage(file, chatActivity as Context)
-        }
 
-        if(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending){
-            if(!file.exists()){
-                imageHolder.setNotDownloadedImage(item, chatActivity as Context)
-                chatActivity.onFileDownloadRequested(position, item)
+        if(item.isIncomingMessage()){
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    imageHolder.setRetryDownloadButton(View.OnClickListener {
+                        chatActivity.onFileDownloadRequested(item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    imageHolder.setWaitingForDownload()
+                    chatActivity.onFileDownloadRequested(item)
+                }
+            }
+        } else {
+            if(file.exists())
+                imageHolder.setDownloadedImage(file, mContext)
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    imageHolder.setRetryUploadButton(View.OnClickListener {
+                        chatActivity.onFileUploadRequested(item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    imageHolder.setWaitingForUpload()
+                    chatActivity.onFileUploadRequested(item)
+                }
             }
         }
-        else if(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error){
-            if(item.isIncomingMessage()){
-                imageHolder.setRetryDownloadButton(position, item, chatActivity)
-            }
-            else{
-                imageHolder.setRetryUploadButton(position, item, chatActivity)
-            }
-        }
-
-        imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
-
     }
 
     /**
@@ -312,7 +318,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
         if(!target.exists()){ //Message does not exist, needs to be downloaded
-            chatActivity.onFileDownloadRequested(position, item)
+            chatActivity.onFileDownloadRequested(item)
             audioHolder.updatePlayPauseButton(false)
             audioHolder.setWaitingForDownload()
         } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
@@ -363,22 +369,22 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->
                     audioHolder.setErrorInDownload(View.OnClickListener {
-                        chatActivity.onFileDownloadRequested(position, item)
+                        chatActivity.onFileDownloadRequested(item)
                     })
                 MonkeyItem.DeliveryStatus.sending -> {
                     audioHolder.setWaitingForDownload()
-                    chatActivity.onFileDownloadRequested(position, item)
+                    chatActivity.onFileDownloadRequested(item)
                 }
             }
         } else {
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->
                     audioHolder.setErrorInUpload(View.OnClickListener {
-                        chatActivity.onFileUploadRequested(position, item)
+                        chatActivity.onFileUploadRequested(item)
                     })
                 MonkeyItem.DeliveryStatus.sending -> {
                     audioHolder.setWaitingForUpload()
-                    chatActivity.onFileUploadRequested(position, item)
+                    chatActivity.onFileUploadRequested(item)
                 }
             }
         }

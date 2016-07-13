@@ -263,12 +263,12 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
             handler.postDelayed(errorCallback, 3000);
     }
     @Override
-    public void onFileDownloadRequested(final int position, @NotNull MonkeyItem item) {
+    public void onFileDownloadRequested(@NotNull MonkeyItem item) {
         mockFileNetworkRequests(item);
     }
 
     @Override
-    public void onFileUploadRequested(final int position, @NotNull MonkeyItem item) {
+    public void onFileUploadRequested(@NotNull MonkeyItem item) {
         mockFileNetworkRequests(item);
     }
 

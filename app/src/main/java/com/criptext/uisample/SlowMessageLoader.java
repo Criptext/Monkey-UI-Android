@@ -71,9 +71,8 @@ public class SlowMessageLoader  {
             if(i%6 == 1){
                 //audio
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        ctx.getCacheDir() + "/barneyfake.aac", timestamp, incoming,
+                        ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
-                item.setStatus(MonkeyItem.DeliveryStatus.sending);
                 item.setDuration(1000 * 10);
             }
             else if(i%8 == 1){
@@ -100,11 +99,23 @@ public class SlowMessageLoader  {
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
-        MessageItem item2 = new MessageItem("1", "" + timestamp,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, true,
+        item = new MessageItem("1", "" + timestamp++,
+                ctx.getCacheDir() + "/mrbean_blur.jpg", timestamp, true,
                 MonkeyItem.MonkeyItemType.photo);
-        item2.setStatus(MonkeyItem.DeliveryStatus.error);
-        arrayList.add(item2);
+        item.setStatus(MonkeyItem.DeliveryStatus.error);
+        arrayList.add(item);
+
+        //audio with errors
+        item = new MessageItem("0", "" + timestamp++,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp, false,
+                MonkeyItem.MonkeyItemType.audio);
+        item.setStatus(MonkeyItem.DeliveryStatus.error);
+        arrayList.add(item);
+        item = new MessageItem("1", "" + timestamp++,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp, true,
+                MonkeyItem.MonkeyItemType.audio);
+        item.setStatus(MonkeyItem.DeliveryStatus.error);
+        arrayList.add(item);
 
         return arrayList;
     }

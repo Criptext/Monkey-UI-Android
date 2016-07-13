@@ -88,9 +88,9 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      * @param messageTimestamp timestamp of the date that the message was sent.
      */
     open fun updateSendingStatus(status : MonkeyItem.DeliveryStatus, isOnline : Boolean, messageTimestamp: Long){
-        if(status == MonkeyItem.DeliveryStatus.sending){
+        if(status.isTransferring()){
             checkmarkImageView?.visibility = View.GONE
-            if(isOnline){
+            if(status == MonkeyItem.DeliveryStatus.sending){
                 errorImageView?.visibility = View.GONE
                 sendingProgressBar?.visibility = View.VISIBLE
             }else{
