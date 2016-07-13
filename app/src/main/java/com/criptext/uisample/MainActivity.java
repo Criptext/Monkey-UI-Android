@@ -244,32 +244,32 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         return true;
     }
 
-    private void mockFileNetworkRequests(final int position, MonkeyItem item){
+    private void mockFileNetworkRequests(MonkeyItem item){
         final MessageItem message = (MessageItem) item;
         Runnable errorCallback = new Runnable() {
             @Override
             public void run() {
                 if(message.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending){
                     message.setDeliveryStatus(MonkeyItem.DeliveryStatus.error);
-                    adapter.rebindMonkeyItem(position, recycler);
+                    adapter.rebindMonkeyItem(message, recycler);
                 }
             }
         };
 
         if(message.getDeliveryStatus() != MonkeyItem.DeliveryStatus.sending) {
             message.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
-            adapter.rebindMonkeyItem(position, recycler);
+            adapter.rebindMonkeyItem(message, recycler);
         } else
             handler.postDelayed(errorCallback, 3000);
     }
     @Override
     public void onFileDownloadRequested(final int position, @NotNull MonkeyItem item) {
-        mockFileNetworkRequests(position, item);
+        mockFileNetworkRequests(item);
     }
 
     @Override
     public void onFileUploadRequested(final int position, @NotNull MonkeyItem item) {
-        mockFileNetworkRequests(position, item);
+        mockFileNetworkRequests(item);
     }
 
     @Override
@@ -277,8 +277,4 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         loader.execute();
     }
 
-    @Override
-    public void onFileUploadRequested(int position, @NotNull MonkeyItem item) {
-
-    }
 }
