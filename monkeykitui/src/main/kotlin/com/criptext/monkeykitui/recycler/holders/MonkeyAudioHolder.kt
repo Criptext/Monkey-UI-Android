@@ -65,6 +65,7 @@ open class MonkeyAudioHolder: MonkeyHolder {
         downloadProgressView?.visibility = View.INVISIBLE
         playButtonView!!.setImageDrawable(retryDrawable)
         playButtonView!!.setOnClickListener(retryListener)
+        sendingProgressBar?.visibility = View.INVISIBLE
     }
 
     open fun setErrorInDownload(clickListener: View.OnClickListener){

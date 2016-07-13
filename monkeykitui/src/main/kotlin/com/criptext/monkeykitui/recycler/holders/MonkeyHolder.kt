@@ -102,7 +102,7 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
                 errorImageView?.visibility = View.VISIBLE
                 sendingProgressBar?.visibility = View.GONE
             }
-        }else if(status == MonkeyItem.DeliveryStatus.delivered){
+        }else if(!status.isTransferring()){
             sendingProgressBar?.visibility = View.GONE
             checkmarkImageView?.visibility = View.VISIBLE
             errorImageView?.visibility = View.GONE

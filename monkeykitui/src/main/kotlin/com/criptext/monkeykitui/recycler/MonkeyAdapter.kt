@@ -134,7 +134,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         return messagesList[position].getMessageTimestamp()
     }
 
-    fun rebindMonkeyItem(position: Int, recyclerView: RecyclerView){
+    fun rebindMonkeyItem(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
+        val position = getItemPositionByTimestamp(monkeyItem)
         val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
         if(monkeyHolder != null)
             onBindViewHolder(monkeyHolder, position)
