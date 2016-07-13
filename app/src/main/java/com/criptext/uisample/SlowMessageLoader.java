@@ -81,7 +81,6 @@ public class SlowMessageLoader  {
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp,
                         ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
-                item.setStatus(MonkeyItem.DeliveryStatus.sending);
                 item.setPlaceHolderFilePath(ctx.getCacheDir() + "/mrbean_blur.jpg");
             }
             else {
@@ -90,9 +89,23 @@ public class SlowMessageLoader  {
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, message, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.text);
             }
+
             timestamp += r.nextInt(1000 * 60 * 10);
             arrayList.add(item);
         }
+
+        //photo with errors
+        MessageItem item = new MessageItem("0", "" + timestamp,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, false,
+                MonkeyItem.MonkeyItemType.photo);
+        item.setStatus(MonkeyItem.DeliveryStatus.error);
+        arrayList.add(item);
+        MessageItem item2 = new MessageItem("1", "" + timestamp,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, true,
+                MonkeyItem.MonkeyItemType.photo);
+        item2.setStatus(MonkeyItem.DeliveryStatus.error);
+        arrayList.add(item2);
+
         return arrayList;
     }
 

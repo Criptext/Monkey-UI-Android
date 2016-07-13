@@ -23,6 +23,8 @@ interface ChatActivity {
      * user wants to retry the upload.`
      * Monkey Adapter may call this method several times for the same file, you must make sure that
      * you only start the upload operation once.
+     * @param position the adapter position of the MonkeyItem with the file to upload
+     * @param item the MonkeyItem with file to upload.
      */
     fun onFileUploadRequested(position: Int, item: MonkeyItem)
 

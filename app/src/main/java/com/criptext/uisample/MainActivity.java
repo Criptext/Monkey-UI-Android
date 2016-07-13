@@ -276,4 +276,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     public void onLoadMoreData(int loadedItems) {
         loader.execute();
     }
+
+    @Override
+    public void onFileUploadRequested(int position, @NotNull MonkeyItem item) {
+
+    }
 }
