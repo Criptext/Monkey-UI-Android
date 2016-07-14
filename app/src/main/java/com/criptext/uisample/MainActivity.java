@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     }
 
     /**
-     * Si no tengo archivos creo uno nuevo.
+     * If audio files don't exist, create them.
      */
     private void createAudioFile(){
         File file = new File(defaultAudiofile());
@@ -156,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
                             newItem.setMessageContent(item.getFilePath());
                             break;
                         case photo:
-                            Log.d("MainActivity", "new photo");
                             newItem.setMessageContent(item.getFilePath());
                             break;
                     }
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
     }
 
     /**
-     * Si no tengo archivos creo uno nuevo.
+     * if photo files do not exist, create them
      */
     private void createImageFile(){
         File file = new File(getCacheDir() + "/mrbean.jpg");
