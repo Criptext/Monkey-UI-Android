@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.recorder.VoiceNoteRecorder
 import com.criptext.monkeykitui.util.MonkeyAnimatorListener
@@ -62,7 +63,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         val buttonXAnimator = ObjectAnimator.ofFloat(button, "scaleX", button.scaleX, 1f)
         val buttonYAnimator = ObjectAnimator.ofFloat(button, "scaleY", button.scaleY, 1f)
         val buttonSlideAnimator = ObjectAnimator.ofFloat(button, "x", button.x, animStartX -
-                BaseInputView.dpToPx(80, button.context))
+                button.context.resources.getDimension(R.dimen.cancel_audio_msg_length))
 
         val accelerator = AccelerateInterpolator()
 
@@ -146,7 +147,9 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             return false
 
         initStartValues()
-        animStartX = button.x + BaseInputView.dpToPx(80, button.context)
+        animStartX = button.x +
+                button.context.resources.getDimension(R.dimen.cancel_audio_msg_length).toInt()
+
         val buttonXAnimator = ObjectAnimator.ofFloat(button, "scaleX", 1f, buttonScaleFactor)
         val buttonYAnimator = ObjectAnimator.ofFloat(button, "scaleY", 1f, buttonScaleFactor)
 

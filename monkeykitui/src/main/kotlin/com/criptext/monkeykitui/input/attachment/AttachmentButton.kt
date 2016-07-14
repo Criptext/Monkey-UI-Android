@@ -71,7 +71,7 @@ open class AttachmentButton : ImageView {
         setImageDrawable(customDrawable ?:
                         ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
 
-        val dp5 = BaseInputView.dpToPx(5, context)
+        val dp5 = context.resources.getDimension(R.dimen.attach_button_padding).toInt()
         setPadding(dp5, 0, dp5, 0)
         val diameter = diameter
         val params = FrameLayout.LayoutParams(diameter, diameter)

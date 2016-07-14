@@ -3,8 +3,12 @@
     <dimen name="max_Height">50dp</dimen>
     <dimen name="bubble_corner_radius">5dp</dimen>
     <dimen name="bubble_button">1dp</dimen>
+    <dimen name="attach_button_padding">5dp</dimen>
+    <dimen name="input_view_bottom_margin">5dp</dimen>
+    <dimen name="cancel_audio_msg_length">80dp</dimen>
 
     <dimen name="circle_button_diameter">50dp</dimen>
     <dimen name="default_inputview_height">50dp</dimen>
+    <dimen name="audio_btn_expanded_height">100dp</dimen>
     <dimen name="monkey_image_size">200dp</dimen>
 </resources>

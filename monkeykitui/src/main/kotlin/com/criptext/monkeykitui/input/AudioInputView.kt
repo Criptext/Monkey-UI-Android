@@ -48,7 +48,8 @@ open class AudioInputView : TextInputView {
     }
     override fun setRightButton(a : TypedArray): SideButton? {
         val view = inflate(context, R.layout.right_audio_btn, null);
-        val params = LayoutParams(LayoutParams.MATCH_PARENT, dpToPx(100, context))
+        val defaultInputViewHeight = context.resources.getDimension(R.dimen.audio_btn_expanded_height)
+        val params = LayoutParams(LayoutParams.MATCH_PARENT, defaultInputViewHeight.toInt())
         view.layoutParams = params
         txtBtn = view.findViewById(R.id.button_send) as ImageView
         recBtn = view.findViewById(R.id.button_mic) as ImageView
@@ -81,7 +82,7 @@ open class AudioInputView : TextInputView {
         recBtn.setOnTouchListener(touchListener)
 
         setDefaultRecorder()
-        return SideButton(view, dpToPx(50, context))
+        return SideButton(view, context.resources.getDimension(R.dimen.circle_button_diameter).toInt())
 
     }
 

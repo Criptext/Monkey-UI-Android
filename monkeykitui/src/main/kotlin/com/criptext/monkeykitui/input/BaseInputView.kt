@@ -84,7 +84,7 @@ open class BaseInputView : FrameLayout {
         editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         params.gravity = Gravity.BOTTOM
-        params.bottomMargin = dpToPx(5, context)
+        params.bottomMargin = context.resources.getDimension(R.dimen.input_view_bottom_margin).toInt()
 
         editText.layoutParams = params
         addView(editText)
@@ -161,15 +161,6 @@ open class BaseInputView : FrameLayout {
      * for the new View.
      */
     open protected fun setRightButton(typedArray: TypedArray) : SideButton? = null
-
-    companion object {
-        fun dpToPx(dp: Int, context: Context): Int {
-            val displayMetrics = context.resources.displayMetrics;
-            val px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-            return px;
-
-        }
-    }
 
     fun clearText(){
         editText.text.clear()
