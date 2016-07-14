@@ -39,43 +39,31 @@
             seekbar:end_angle="45"
             seekbar:inner_tolerance="0.15"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/datetime"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:ellipsize="end"
             android:gravity="center"
+            android:maxLines="1"
+            android:text="datetime"
             android:layout_marginBottom="3dp"
-            android:layout_alignParentBottom="true">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleSmall"
-                android:id="@+id/sendingWheel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="2dp"
-                android:indeterminateTint="#014766"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/imageViewCheckmark"
-                android:layout_width="13dp"
-                android:layout_height="10dp"
-                android:src="@drawable/mk_checkmark_sent"
-                android:layout_marginRight="2dp"/>
-
-            <TextView
-                android:id="@+id/datetime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="datetime"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/mk_grey_letters"
-                android:textSize="12sp" />
-
-        </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/mk_grey_letters"
+            android:textSize="12sp" />
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:id="@+id/sendingWheel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/datetime"
+            android:layout_alignTop="@id/datetime"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="2dp"
+            android:indeterminateTint="#014766"
+            />
 
         <ImageView
             android:id="@+id/play_button"
@@ -87,7 +75,5 @@
             android:layout_height="wrap_content"/>
 
     </RelativeLayout>
-
-    <include layout="@layout/include_net_error" />
 
 </LinearLayout>
