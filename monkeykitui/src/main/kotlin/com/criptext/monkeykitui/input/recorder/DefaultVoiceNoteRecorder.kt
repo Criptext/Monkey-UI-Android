@@ -20,7 +20,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
     private var startTime : Long = 0
 
     companion object {
-        val TEMP_AUDIO_FILE_NAME = "temp_audio.3gp";
+        val TEMP_AUDIO_FILE_NAME = "temp_audio.aac";
     }
 
     init {
@@ -33,7 +33,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
             mAudioFileName = ctx.cacheDir.toString() + "/" + (System.currentTimeMillis()/1000) + TEMP_AUDIO_FILE_NAME;
             mRecorder = MediaRecorder()
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
             mRecorder.setOutputFile(mAudioFileName)
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             //TO MAKE AUDIO LOW QUALITY
