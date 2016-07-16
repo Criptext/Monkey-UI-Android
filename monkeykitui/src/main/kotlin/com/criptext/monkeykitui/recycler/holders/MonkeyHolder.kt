@@ -41,9 +41,6 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
     /* COMMON IMAGE & FILE & AUDIO */
     var downloadingView : ProgressBar? = null
     var filesizeTextView : TextView? = null
-    /* FILE */
-    var fileLogoImageView : ImageView? = null
-    var filenameTextView : TextView? = null
 
     constructor(view : View) : super(getViewWithRecyclerLayoutParams(view)) {
         datetimeTextView = view.findViewById(R.id.datetime) as TextView?

@@ -117,6 +117,14 @@ public class SlowMessageLoader  {
                 MonkeyItem.MonkeyItemType.audio);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
+        item = new MessageItem("0", "" + timestamp++,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, false,
+                MonkeyItem.MonkeyItemType.file);
+        arrayList.add(item);
+        item = new MessageItem("1", "" + timestamp++,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, true,
+                MonkeyItem.MonkeyItemType.file);
+        arrayList.add(item);
 
         return arrayList;
     }

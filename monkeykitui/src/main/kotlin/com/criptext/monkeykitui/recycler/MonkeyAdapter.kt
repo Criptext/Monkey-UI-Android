@@ -167,6 +167,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.photo -> {
                     bindMonkeyPhotoHolder(position, item, holder)
                 }
+                MonkeyItem.MonkeyItemType.file -> {
+                    bindMonkeyFileHolder(position, item, holder)
+                }
             }
         }
         else if(typeClassification == 1 || typeClassification == 3) {
@@ -229,6 +232,15 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             Toast.makeText(act, "Message copied to Clipboard", Toast.LENGTH_SHORT).show()
             true
         })
+    }
+
+
+
+    open protected fun bindMonkeyFileHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
+        val fileHolder = holder as MonkeyFileHolder
+        val file = File(item.getFilePath())
+        fileHolder.showFileData(file.name, getTotalSizeFile(item.getFileSize()))
+        fileHolder.showFileIcon(file.extension)
     }
     /**
      * Binds an existing MonkeyHolder with a MonkeyItem of type Photo. This method is called on the
@@ -498,6 +510,11 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         }
 
     }
+
+    open fun createMonkeyFileHolder(received: Boolean, transferring: Boolean): MonkeyHolder {
+            return MonkeyFileHolder(inflateView(received,
+                    R.layout.file_message_view_in, R.layout.file_message_view_out))
+    }
     /**
      * Creates a new MonkeyHolder to be displayed when the adapter is loading more messages
      * @return a new MonkeyHolder to be displayed when the adapter is loading more messages
@@ -515,7 +532,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, false)
                 MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, false)
                 MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, false)
-            //MonkeyItem.MonkeyItemType.file ->
+                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(false, false)
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
             }
@@ -525,7 +542,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, false)
                 MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, false)
                 MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, false)
-            //MonkeyItem.MonkeyItemType.file ->
+                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(true, false)
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
             }
@@ -536,7 +553,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, true)
                 MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, true)
                 MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, true)
-            //MonkeyItem.MonkeyItemType.file ->
+                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(false, true)
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
             }
@@ -547,7 +564,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, true)
                 MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, true)
                 MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, true)
-            //MonkeyItem.MonkeyItemType.file ->
+                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(true, true)
             //MonkeyItem.MonkeyItemType.contact ->
                 MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
             }
@@ -556,6 +573,12 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     }
 
 
+    fun getTotalSizeFile(totalBytes: Long) : String{
+        if((totalBytes/1000) < 1000)
+            return String.format("%.2f", (totalBytes/1000).toDouble())+" KB";
+        else
+            return String.format("%.2f", (totalBytes / 1000000).toDouble())+" MB";
+    }
     /**
      * Finds the adapter position by the MonkeyItem's timestamp.
      * @param targetId the timestamp of the MonkeyItem whose adapter position will be searched. This
