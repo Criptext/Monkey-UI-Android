@@ -88,10 +88,11 @@ open class AttachmentButton : ImageView {
             val builder = AlertDialog.Builder(context)
 
             builder.setCancelable(true)
-            builder.setAdapter(adapter, { dialog, item ->
+            val dialog = builder.setAdapter(adapter, { dialog, item ->
                 val selectedOption = attachmentOptions[item]
                 selectedOption.onOptionSelected()
             }).show()
+            dialog.setCanceledOnTouchOutside(true)
         })
     }
 
