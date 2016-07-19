@@ -18,7 +18,7 @@ import com.innovative.circularaudioview.CircularAudioView
  * Created by gesuwall on 4/12/16.
  */
 
-open class MonkeyAudioHolder: MonkeyHolder {
+open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
 
     var durationTextView : TextView? = null
     var circularAudioView : CircularAudioView? = null
@@ -46,13 +46,13 @@ open class MonkeyAudioHolder: MonkeyHolder {
         downloadProgressView?.visibility = View.GONE
     }
 
-    open fun setWaitingForDownload(){
+    override fun setWaitingForDownload(){
         playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
         playButtonView!!.setOnClickListener(null)
     }
 
-    open fun setWaitingForUpload(){
+    override fun setWaitingForUpload(){
         playButtonView!!.visibility = View.VISIBLE
         sendingProgressBar?.visibility = View.VISIBLE
         playButtonView!!.setImageDrawable(ContextCompat.getDrawable(playButtonView!!.context,
@@ -68,12 +68,12 @@ open class MonkeyAudioHolder: MonkeyHolder {
         sendingProgressBar?.visibility = View.INVISIBLE
     }
 
-    open fun setErrorInDownload(clickListener: View.OnClickListener){
+    override fun setErrorInDownload(clickListener: View.OnClickListener){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.ic_play_down), clickListener)
     }
 
-    open fun setErrorInUpload(clickListener: View.OnClickListener){
+    override fun setErrorInUpload(clickListener: View.OnClickListener){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.ic_play_up), clickListener)
         checkmarkImageView?.visibility = View.INVISIBLE

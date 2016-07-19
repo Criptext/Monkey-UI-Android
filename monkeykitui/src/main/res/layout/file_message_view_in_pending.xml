@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- VIEW FILE IN -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row_messages_thread"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="15dp"
+    android:gravity="left"
+    android:paddingRight="50dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/content_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:longClickable="true"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/mk_bubble_incoming">
+           <!-- <include layout="@layout/layout_file_content" /> -->
+        <ProgressBar
+            android:id="@+id/downloadProgress"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:tag="1dp" />
+
+        <ImageView
+        android:id="@+id/imageViewLogoFile"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_file_download_black_40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:tag="1dp" />
+
+    <TextView
+        android:id="@+id/textViewFilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="top|center_vertical"
+        android:maxLines="3"
+        android:text="Criptext as dkaspd asdsa dsapkdpas.pfd"
+        android:paddingRight="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/imageViewLogoFile"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewFileSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/mk_grey_letters"
+        android:textSize="12sp"
+        android:text="128 KB"
+        android:layout_below="@+id/textViewFilename"
+        android:layout_alignLeft="@id/textViewFilename"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="10dp"/>
+
+
+    <TextView
+        android:id="@+id/datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:layout_below="@+id/textViewFileSize"
+        android:layout_alignLeft="@id/textViewFilename"
+        android:maxLines="1"
+        android:text="datetime"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/mk_grey_letters"
+        android:layout_marginBottom="4dp"
+        android:textSize="12sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

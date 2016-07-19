@@ -4,6 +4,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 
@@ -11,15 +12,17 @@ import com.criptext.monkeykitui.R
  * Created by gesuwall on 7/15/16.
  */
 
-open class MonkeyFileHolder: MonkeyHolder {
+open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
     /* FILE */
     var fileLogoImageView : ImageView? = null
     var filenameTextView : TextView? = null
+    var downloadProgressBar : ProgressBar? = null
 
     constructor(view : View) : super(view) {
         fileLogoImageView = view.findViewById(R.id.imageViewLogoFile) as ImageView
         filenameTextView = view.findViewById(R.id.textViewFilename) as TextView
         filesizeTextView = view.findViewById(R.id.textViewFileSize) as TextView
+        downloadProgressBar = view.findViewById(R.id.downloadProgress) as ProgressBar?
     }
 
     open fun showFileData(filename: String, fileSize: String){
@@ -43,38 +46,32 @@ open class MonkeyFileHolder: MonkeyHolder {
         else
             fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.default_file));
     }
-    open fun setWaitingForDownload(){
+    override fun setWaitingForDownload(){
 
-        /*
-        photoLoadingView!!.visibility = View.VISIBLE
-        retryDownloadLayout?.visibility = View.INVISIBLE
-        retryUploadLayout?.visibility = View.INVISIBLE
-        retryUploadLayout?.setOnClickListener(null)
-        retryDownloadLayout?.setOnClickListener(null)
-        */
+        downloadProgressBar?.visibility = View.VISIBLE
+        fileLogoImageView!!.visibility = View.INVISIBLE
+        fileLogoImageView!!.setOnClickListener(null)
+    }
+    override fun setWaitingForUpload(){
+
+        fileLogoImageView!!.visibility = View.INVISIBLE
+        fileLogoImageView!!.setOnClickListener(null)
+        sendingProgressBar!!.visibility = View.VISIBLE
 
     }
-    open fun setWaitingForUpload(){
+    override fun setErrorInUpload(retryListener: View.OnClickListener){
 
-        /*
-        sendingProgressBar?.visibility = View.VISIBLE
-        retryUploadLayout!!.visibility = View.GONE
-        sendingProgressBar?.visibility = View.VISIBLE
-        */
-
-    }
-    open fun setRetryUploadButton(retryListener: View.OnClickListener){
-
-        /*
-        photoLoadingView!!.visibility = View.GONE
-        retryUploadLayout!!.visibility = View.VISIBLE
-        retryUploadLayout!!.setOnClickListener(retryListener)
-        sendingProgressBar?.visibility = View.INVISIBLE
-        */
+        fileLogoImageView!!.visibility = View.VISIBLE
+        fileLogoImageView!!.setOnClickListener(retryListener)
+        sendingProgressBar!!.visibility = View.GONE
 
     }
 
-    open fun setRetryDownloadButton(retryListener: View.OnClickListener){
+    override fun setErrorInDownload(retryListener: View.OnClickListener){
+
+        downloadProgressBar?.visibility = View.INVISIBLE
+        fileLogoImageView!!.visibility = View.VISIBLE
+        fileLogoImageView!!.setOnClickListener(retryListener)
         /*
         photoLoadingView!!.visibility = View.GONE
         retryDownloadLayout!!.visibility = View.VISIBLE

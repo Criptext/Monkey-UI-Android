@@ -75,6 +75,10 @@ public class SlowMessageLoader  {
                         ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration(1000 * 10);
+            } else if(i%7 == 1){
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
+                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                        MonkeyItem.MonkeyItemType.file);
             }
             else if(i%8 == 1){
                 //photo
@@ -120,10 +124,12 @@ public class SlowMessageLoader  {
         item = new MessageItem("0", "" + timestamp++,
                 ctx.getCacheDir() + "/mrbean.jpg", timestamp, false,
                 MonkeyItem.MonkeyItemType.file);
+        item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,
                 ctx.getCacheDir() + "/mrbean.jpg", timestamp, true,
                 MonkeyItem.MonkeyItemType.file);
+        item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
 
         return arrayList;

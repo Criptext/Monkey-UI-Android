@@ -6,10 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.recycler.ChatActivity
-import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.squareup.picasso.Picasso
 import java.io.File
 
@@ -17,7 +14,7 @@ import java.io.File
  * Created by daniel on 4/12/16.
  */
 
-open class MonkeyImageHolder : MonkeyHolder {
+open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
     var retryDownloadLayout: LinearLayout? = null
     var retryUploadLayout: LinearLayout? = null
@@ -26,12 +23,9 @@ open class MonkeyImageHolder : MonkeyHolder {
 
     constructor(view : View) : super(view) {
         photoImageView = view.findViewById(R.id.image_view) as ImageView
-        if(view.findViewById(R.id.layoutRetryDownload)!=null)
-            retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout
-        if(view.findViewById(R.id.layoutRetryUpload) != null)
-            retryUploadLayout = view.findViewById(R.id.layoutRetryUpload) as LinearLayout
-        if(view.findViewById(R.id.progressBarImage) != null)
-            photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar
+        retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout?
+        retryUploadLayout = view.findViewById(R.id.layoutRetryUpload) as LinearLayout?
+        photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar?
 
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
@@ -45,7 +39,7 @@ open class MonkeyImageHolder : MonkeyHolder {
                 .into(photoImageView)
     }
 
-    open fun setWaitingForDownload(){
+    override fun setWaitingForDownload(){
 
         photoImageView!!.setImageBitmap(null)
         photoLoadingView!!.visibility = View.VISIBLE
@@ -55,22 +49,22 @@ open class MonkeyImageHolder : MonkeyHolder {
         retryDownloadLayout?.setOnClickListener(null)
 
     }
-    open fun setWaitingForUpload(){
+    override fun setWaitingForUpload(){
 
         retryUploadLayout!!.visibility = View.GONE
         sendingProgressBar?.visibility = View.VISIBLE
 
     }
-    open fun setRetryUploadButton(retryListener: View.OnClickListener){
+    override fun setErrorInUpload(retryListener: View.OnClickListener){
 
-        photoLoadingView!!.visibility = View.GONE
+        //photoLoadingView?.visibility = View.GONE
         retryUploadLayout!!.visibility = View.VISIBLE
         retryUploadLayout!!.setOnClickListener(retryListener)
         sendingProgressBar?.visibility = View.INVISIBLE
 
     }
 
-    open fun setRetryDownloadButton(retryListener: View.OnClickListener){
+    override fun setErrorInDownload(retryListener: View.OnClickListener){
 
         photoLoadingView!!.visibility = View.GONE
         retryDownloadLayout!!.visibility = View.VISIBLE

@@ -183,6 +183,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 MonkeyItem.MonkeyItemType.photo -> {
                     bindMonkeyPhotoProcessingHolder(position, item, holder)
                 }
+                MonkeyItem.MonkeyItemType.file -> {
+                    bindMonkeyFileProcessingHolder(position, item, holder)
+                }
             }
         }
     }
@@ -235,12 +238,46 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     }
 
 
-
+    open protected fun bindMonkeyFile(item: MonkeyItem, fileHolder: MonkeyFile){
+        if(item.isIncomingMessage()){
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    fileHolder.setErrorInDownload(View.OnClickListener {
+                        chatActivity.onFileDownloadRequested(item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    fileHolder.setWaitingForDownload()
+                    chatActivity.onFileDownloadRequested(item)
+                }
+            }
+        } else {
+            when(item.getDeliveryStatus()){
+                MonkeyItem.DeliveryStatus.error ->
+                    fileHolder.setErrorInUpload(View.OnClickListener {
+                        chatActivity.onFileUploadRequested(item)
+                    })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    fileHolder.setWaitingForUpload()
+                    chatActivity.onFileUploadRequested(item)
+                }
+            }
+        }
+    }
     open protected fun bindMonkeyFileHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
         val fileHolder = holder as MonkeyFileHolder
         val file = File(item.getFilePath())
         fileHolder.showFileData(file.name, getTotalSizeFile(item.getFileSize()))
         fileHolder.showFileIcon(file.extension)
+    }
+
+    open protected fun bindMonkeyFileProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
+        val fileHolder = holder as MonkeyFileHolder
+        val file = File(item.getFilePath())
+        if(file.exists()) {
+            fileHolder.showFileData(file.name, getTotalSizeFile(item.getFileSize()))
+        }
+        bindMonkeyFile(item, fileHolder)
+
     }
     /**
      * Binds an existing MonkeyHolder with a MonkeyItem of type Photo. This method is called on the
@@ -267,32 +304,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
-
-        if(item.isIncomingMessage()){
-            when(item.getDeliveryStatus()){
-                MonkeyItem.DeliveryStatus.error ->
-                    imageHolder.setRetryDownloadButton(View.OnClickListener {
-                        chatActivity.onFileDownloadRequested(item)
-                    })
-                MonkeyItem.DeliveryStatus.sending -> {
-                    imageHolder.setWaitingForDownload()
-                    chatActivity.onFileDownloadRequested(item)
-                }
-            }
-        } else {
-            if(file.exists())
-                imageHolder.setDownloadedImage(file, mContext)
-            when(item.getDeliveryStatus()){
-                MonkeyItem.DeliveryStatus.error ->
-                    imageHolder.setRetryUploadButton(View.OnClickListener {
-                        chatActivity.onFileUploadRequested(item)
-                    })
-                MonkeyItem.DeliveryStatus.sending -> {
-                    imageHolder.setWaitingForUpload()
-                    chatActivity.onFileUploadRequested(item)
-                }
-            }
-        }
+        if(file.exists())
+            imageHolder.setDownloadedImage(file, mContext)
+        bindMonkeyFile(item, imageHolder)
     }
 
     /**
@@ -372,34 +386,13 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         }
     }
 
+
+
     open protected fun bindMonkeyAudioProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val audioHolder = holder as MonkeyAudioHolder
-        val target = File(item.getFilePath())
 
         audioHolder.updateAudioProgress(0, 0)
-        if(item.isIncomingMessage()){
-            when(item.getDeliveryStatus()){
-                MonkeyItem.DeliveryStatus.error ->
-                    audioHolder.setErrorInDownload(View.OnClickListener {
-                        chatActivity.onFileDownloadRequested(item)
-                    })
-                MonkeyItem.DeliveryStatus.sending -> {
-                    audioHolder.setWaitingForDownload()
-                    chatActivity.onFileDownloadRequested(item)
-                }
-            }
-        } else {
-            when(item.getDeliveryStatus()){
-                MonkeyItem.DeliveryStatus.error ->
-                    audioHolder.setErrorInUpload(View.OnClickListener {
-                        chatActivity.onFileUploadRequested(item)
-                    })
-                MonkeyItem.DeliveryStatus.sending -> {
-                    audioHolder.setWaitingForUpload()
-                    chatActivity.onFileUploadRequested(item)
-                }
-            }
-        }
+        bindMonkeyFile(item, holder)
     }
 
     fun inflateView(incoming: Boolean, inLayout: Int, outLayout : Int) : View {
@@ -512,8 +505,14 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     }
 
     open fun createMonkeyFileHolder(received: Boolean, transferring: Boolean): MonkeyHolder {
+        if(transferring) {
             return MonkeyFileHolder(inflateView(received,
-                    R.layout.file_message_view_in, R.layout.file_message_view_out))
+                    R.layout.file_message_view_in_pending, R.layout.file_message_view_out_pending))
+        }
+        else {
+            return MonkeyFileHolder(inflateView(received, R.layout.file_message_view_in,
+                    R.layout.file_message_view_out))
+        }
     }
     /**
      * Creates a new MonkeyHolder to be displayed when the adapter is loading more messages
@@ -527,47 +526,24 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
 
     override fun onCreateViewHolder(p0: ViewGroup?, viewtype: Int): MonkeyHolder? {
         val typeClassification = viewtype / MonkeyItem.MonkeyItemType.values().size
-        if (typeClassification == 0)
-            when (MonkeyItem.MonkeyItemType.values()[viewtype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, false)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, false)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, false)
-                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(false, false)
-            //MonkeyItem.MonkeyItemType.contact ->
-                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
-            }
-        else if(typeClassification == 2) {
-            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
-            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, false)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, false)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, false)
-                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(true, false)
-            //MonkeyItem.MonkeyItemType.contact ->
-                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
-            }
+        val isTransferring: Boolean
+        val isIncoming: Boolean
+        when(typeClassification){
+            0 -> { isIncoming = false; isTransferring = false }
+            1 -> { isIncoming = false; isTransferring = true }
+            2 -> { isIncoming = true; isTransferring = false }
+            3 -> { isIncoming = true; isTransferring = true }
+            else -> throw IllegalArgumentException("Wrong typeClassification: $typeClassification. Should be 0-3")
         }
-        else if(typeClassification == 1) {
-            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
-            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(false, true)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(false, true)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(false, true)
-                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(false, true)
+
+        val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
+        when (MonkeyItem.MonkeyItemType.values()[truetype]) {
+            MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(isIncoming, isTransferring)
+            MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(isIncoming, isTransferring)
+            MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(isIncoming, isTransferring)
+            MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(isIncoming, isTransferring)
             //MonkeyItem.MonkeyItemType.contact ->
-                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
-            }
-        }
-        else if(typeClassification == 3) {
-            val truetype = viewtype - MonkeyItem.MonkeyItemType.values().size * typeClassification
-            when (MonkeyItem.MonkeyItemType.values()[truetype]) {
-                MonkeyItem.MonkeyItemType.text -> return createMonkeyTextHolder(true, true)
-                MonkeyItem.MonkeyItemType.photo -> return createMonkeyPhotoHolder(true, true)
-                MonkeyItem.MonkeyItemType.audio -> return createMonkeyAudioHolder(true, true)
-                MonkeyItem.MonkeyItemType.file -> return createMonkeyFileHolder(true, true)
-            //MonkeyItem.MonkeyItemType.contact ->
-                MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
-            }
+            MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
         }
         return null
     }
