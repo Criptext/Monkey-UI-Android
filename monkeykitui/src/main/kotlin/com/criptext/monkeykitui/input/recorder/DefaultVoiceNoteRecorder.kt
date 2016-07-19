@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.input.recorder
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Build
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import java.io.File
 
@@ -20,7 +21,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
     private var startTime : Long = 0
 
     companion object {
-        val TEMP_AUDIO_FILE_NAME = "temp_audio.aac";
+        val TEMP_AUDIO_FILE_NAME = "temp_audio.m4a";
     }
 
     init {
@@ -33,9 +34,12 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
             mAudioFileName = ctx.cacheDir.toString() + "/" + (System.currentTimeMillis()/1000) + TEMP_AUDIO_FILE_NAME;
             mRecorder = MediaRecorder()
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             mRecorder.setOutputFile(mAudioFileName)
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)
+            else
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             //TO MAKE AUDIO LOW QUALITY
             mRecorder.setAudioSamplingRate(22050)//8khz-92khz
             mRecorder.setAudioEncodingBitRate(22050)//8000
