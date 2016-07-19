@@ -13,6 +13,7 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -562,7 +563,8 @@ public class CircularAudioView extends View {
 
 		canvas.rotate((135 + mProgress * 270 / mMax)%360, mPointerPositionXY[0], mPointerPositionXY[1]);
 		canvas.drawRect(mPointerPositionXY[0] - mCircleStrokeWidth*1.2f/2, mPointerPositionXY[1] - mPointerRadius/2, mPointerPositionXY[0] + mCircleStrokeWidth*1.2f/2, mPointerPositionXY[1] + mPointerRadius/2, mPointerPaint);
-		canvas.restore();
+		if(Build.VERSION.SDK_INT != 23)
+			canvas.restore(); //Marshmallow Bug http://stackoverflow.com/a/33820284/5207721
 
 		//canvas.translate(this.getWidth() / 2, this.getHeight() / 2);
 		//canvas.drawCircle(0, 0, 30*0.55f, mCirclePaint);

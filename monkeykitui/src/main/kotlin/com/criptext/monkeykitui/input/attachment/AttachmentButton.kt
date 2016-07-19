@@ -3,6 +3,8 @@ package com.criptext.monkeykitui.input.attachment
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
@@ -88,10 +90,13 @@ open class AttachmentButton : ImageView {
             val builder = AlertDialog.Builder(context)
 
             builder.setCancelable(true)
-            builder.setAdapter(adapter, { dialog, item ->
+            val dialog = builder.setAdapter(adapter, { dialog, item ->
                 val selectedOption = attachmentOptions[item]
                 selectedOption.onOptionSelected()
             }).show()
+            if(android.os.Build.VERSION.SDK_INT < 20)
+                dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+            dialog.setCanceledOnTouchOutside(true)
         })
     }
 
