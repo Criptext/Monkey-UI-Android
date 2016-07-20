@@ -39,7 +39,6 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
     var createNewTextView : TextView? = null
     var addExisitingTextView : TextView? = null
     /* COMMON IMAGE & FILE & AUDIO */
-    var downloadingView : ProgressBar? = null
     var filesizeTextView : TextView? = null
 
     constructor(view : View) : super(getViewWithRecyclerLayoutParams(view)) {

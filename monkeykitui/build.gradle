@@ -30,6 +30,8 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
     }
 
     packagingOptions {
@@ -49,7 +51,12 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
     testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "org.robolectric:robolectric:3.1.1"
+
     compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.android.support:recyclerview-v7:22.1.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
