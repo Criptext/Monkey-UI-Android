@@ -15,6 +15,7 @@ abstract class VoiceNotePlayer {
      * it is null.
      */
     var currentlyPlayingItem : PlayingItem? = null
+    protected set
 
     /**
      * Boolean flag that if set to true, the seekbar of the MonkeyHolder of the playing item

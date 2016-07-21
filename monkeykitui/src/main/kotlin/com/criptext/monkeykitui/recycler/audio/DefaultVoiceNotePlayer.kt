@@ -228,7 +228,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
      * should show the play button and have the seekbar at 0
      */
     protected fun notifyPlaybackStopped(){
-        if(!isPlayingAudio) {
+        if(!isPlayingAudio && currentlyPlayingItem != null) {
             val lastPlayingItem = currentlyPlayingItem!!.item
             currentlyPlayingItem = null
             rebindAudioHolder(lastPlayingItem)
