@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="EditPhoto"></style>
+
+    <style name="EditPhoto.CommitPhotoChangesButton">
+        <item name="android:text">@string/mk_commit_photo_changes</item>
+        <item name="android:background">@drawable/mk_btn_blue</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>

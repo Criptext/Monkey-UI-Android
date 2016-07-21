@@ -14,9 +14,7 @@
         android:layout_weight="0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/mk_btn_blue"
-        android:text="@string/mk_use"
-        android:textColor="@android:color/white"
+        style="@style/EditPhoto.CommitPhotoChangesButton"
         android:onClick="done"/>
 
 

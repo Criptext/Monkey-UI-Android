@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mk_text_message_write_hint">Enviar mensagem</string>
+    <string name="mk_slide_cancel">Deslize para cancelar</string>
+    <string name="mk_commit_photo_changes">Enviar</string>
+    <string name="mk_edit_photo">Edit Photo</string>
+</resources>
