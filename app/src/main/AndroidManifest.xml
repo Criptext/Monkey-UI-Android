@@ -31,7 +31,8 @@
             android:theme="@style/CustomTheme"/>
         <!-- Edit Image -->
         <activity
-            android:name="com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity" />
+            android:name="com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity"
+            android:label="@string/mk_edit_photo"/>
     </application>
 
 </manifest>

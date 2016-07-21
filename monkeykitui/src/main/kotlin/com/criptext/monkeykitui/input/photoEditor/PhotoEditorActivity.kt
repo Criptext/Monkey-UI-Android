@@ -51,10 +51,8 @@ class PhotoEditorActivity : AppCompatActivity() {
 
         tempFile = File(cacheDir.absolutePath + "/tempEditedPhoto.png")
         retainFragment()
-        //set Title
-        val title = intent.getStringExtra(titlePhotoEditor) ?: "Edit Photo"
+
         photoFilePath = intent.getStringExtra(destinationPath)
-        supportActionBar!!.title = title
 
         photo = findViewById(R.id.photo) as ImageView?
 

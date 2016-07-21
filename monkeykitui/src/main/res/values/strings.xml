@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">MonkeyKit UI</string>
-    <string name="text_message_write_hint">Send message</string>
-    <string name="text_message_write_slidecancel">Slide left to cancel</string>
-    <string name="text_cancel">Cancel</string>
+    <string name="mk_text_message_write_hint">Send message</string>
+    <string name="mk_slide_cancel">Slide left to cancel</string>
+    <string name="mk_cancel">Cancel</string>
     <string name="mk_action_crop">Crop</string>
     <string name="mk_action_rot">Rotate</string>
-    <string name="mk_use">Use</string>
+    <string name="mk_commit_photo_changes">Use</string>
+    <string name="mk_edit_photo">Edit Photo</string>
 </resources>

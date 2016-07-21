@@ -11,5 +11,14 @@
         <attr name="useDefaultGallery" format="boolean" />
         <attr name="cameraOptionLabel" format="string" />
         <attr name="galleryOptionLabel" format="string" />
+
+        <attr name="EditPhotoActionBarTitle" format="string" />
+        <attr name="EditPhotoOkButtonText" format="string" />
+        <attr name="EditPhotoRotateButtonHint" format="string" />
+        <attr name="EditPhotoCropButtonHint" format="string" />
+    </declare-styleable>
+
+
+    <declare-styleable name="EditPhoto">
     </declare-styleable>
 </resources>

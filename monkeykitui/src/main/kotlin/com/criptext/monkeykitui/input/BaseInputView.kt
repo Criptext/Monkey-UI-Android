@@ -73,7 +73,7 @@ open class BaseInputView : FrameLayout {
         setBarBackground(typedArray)
         editText = EditText(context);
         editText.maxLines = 4
-        editText.hint = context.resources.getString(R.string.text_message_write_hint)
+        editText.hint = context.resources.getString(R.string.mk_text_message_write_hint)
         editText.setTextColor(Color.BLACK)
         editText.setEms(10)
 
