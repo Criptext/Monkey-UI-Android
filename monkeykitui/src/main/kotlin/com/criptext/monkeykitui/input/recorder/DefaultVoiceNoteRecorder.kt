@@ -36,10 +36,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             mRecorder.setOutputFile(mAudioFileName)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)
-            else
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             //TO MAKE AUDIO LOW QUALITY
             mRecorder.setAudioSamplingRate(22050)//8khz-92khz
             mRecorder.setAudioEncodingBitRate(22050)//8000
@@ -85,6 +82,15 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
             val timestamp = System.currentTimeMillis() //- 1000 * 60 * 60 * 48
             val duration = timestamp - startTime
             val newItem = object : MonkeyItem {
+
+                override fun getMessageTimestampOrder(): Long {
+                    return timestamp
+                }
+
+                override fun getOldMessageId(): String {
+                    return "-" + timestamp
+                }
+
                 override fun getAudioDuration(): Long {
                     return duration
                 }

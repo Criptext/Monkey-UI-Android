@@ -14,7 +14,7 @@ interface MonkeyItem {
     /*COMMON*/
 
     /**
-     * @return the timestamp with the date in which the message was created.
+     * @return the timestamp according with the server.
      * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
      * &nbsp\ display it to the user.
      *
@@ -22,9 +22,22 @@ interface MonkeyItem {
     fun getMessageTimestamp() : Long
 
     /**
+     * @return the timestamp with the date in which the message was created.
+     * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
+     * &nbsp\ display it to the user.
+     *
+     */
+    fun getMessageTimestampOrder() : Long
+
+    /**
      * @return a unique identifier for this item.
      */
     fun getMessageId() : String
+
+    /**
+     * @return server or old identifier for this item.
+     */
+    fun getOldMessageId() : String
 
     /**
      * @return true if the message was received or false if it was sent by the user. This decides the

@@ -159,56 +159,31 @@ class CameraHandler constructor(ctx : Context){
                 //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getTempFile())).start(context as Activity)
             }
             RequestType.editPhoto -> {
-
-                var rotation = 0
-                if (orientationImage == 0) {
-                    try {
-                        val ei = ExifInterface(getTempFile().absolutePath)
-                        orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-                    } catch (e: IOException) {
-                        Log.e("error", "Exif error")
-                    }
-
-                }
-                if (orientationImage != 0) {
-                    when (orientationImage) {
-                        3 -> {
-                            // ORIENTATION_ROTATE_180
-                            rotation = 180
-                        }
-                        6 -> {
-                            // ORIENTATION_ROTATE_90
-                            rotation = 90
-                        }
-                        8 -> {
-                            // ORIENTATION_ROTATE_270
-                            rotation = 270
-                        }
-                    }
-                }
+                
                 Log.d("CameraHandler", "decoding: " + getTempFile().absolutePath)
-                if (rotation != 0) {
-                    val bmp = BitmapFactory.decodeFile(getTempFile().absolutePath)
-                    val matrix = Matrix()
-                    matrix.postRotate(rotation.toFloat())
-                    val rotatedImg = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
-                    bmp.recycle()
+                val bmp = BitmapFactory.decodeFile(getTempFile().absolutePath)
 
-                    try {
-                        val bos = ByteArrayOutputStream()
-                        rotatedImg.compress(Bitmap.CompressFormat.JPEG, 100, bos)
-                        val bitmapdata = bos.toByteArray()
-                        val fos = FileOutputStream(getTempFile())
-                        fos.write(bitmapdata)
-                        fos.flush()
-                        fos.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
+                try {
+                    val bos = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+                    val bitmapdata = bos.toByteArray()
+                    val fos = FileOutputStream(getTempFile())
+                    fos.write(bitmapdata)
+                    fos.flush()
+                    fos.close()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
 
                 var monkeyItem = object : MonkeyItem {
+
+                    override fun getMessageTimestampOrder(): Long {
+                        return System.currentTimeMillis()
+                    }
+
+                    override fun getOldMessageId(): String {
+                        return "-" + System.currentTimeMillis()
+                    }
 
                     override fun getMessageTimestamp(): Long {
                         return System.currentTimeMillis()
