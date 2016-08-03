@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">MonkeyKit UI</string>
     <string name="mk_text_message_write_hint">Enviar mensaje</string>
     <string name="mk_slide_cancel">Desliza para cancelar</string>
     <string name="mk_cancel">Cancelar</string>

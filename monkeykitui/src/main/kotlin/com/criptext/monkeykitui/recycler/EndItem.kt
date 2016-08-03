@@ -1,12 +1,19 @@
 package com.criptext.monkeykitui.recycler
 
-import android.graphics.Bitmap
-
 /**
  * Created by gesuwall on 4/18/16.
  */
 
 class EndItem : MonkeyItem {
+
+    override fun getMessageTimestampOrder(): Long {
+        throw UnsupportedOperationException()
+    }
+
+    override fun getOldMessageId(): String {
+        throw UnsupportedOperationException()
+    }
+
     override fun getPlaceholderFilePath(): String {
         throw UnsupportedOperationException()
     }

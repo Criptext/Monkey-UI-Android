@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MessageItem  implements MonkeyItem {
 
-    private String senderSessionId, messageId, messageContent;
-    private long timestamp;
+    private String senderSessionId, messageId, oldMessageId, messageContent;
+    private long timestamp, timestampOrder;
     private boolean isIncoming;
     private DeliveryStatus status;
     private MonkeyItemType itemType;
@@ -19,12 +19,14 @@ public class MessageItem  implements MonkeyItem {
     /*PHOTO*/
     private String placeHolderFilePath;
 
-    public MessageItem(String senderId, String messageId, String messageContent, long timestamp,
-                       boolean isIncoming, MonkeyItemType itemType){
+    public MessageItem(String senderId, String messageId, String oldMessageId, String messageContent,
+                       long timestamp, long timestampOrder, boolean isIncoming, MonkeyItemType itemType){
         senderSessionId = senderId;
         this.messageId = messageId;
+        this.oldMessageId = oldMessageId;
         this.messageContent = messageContent;
         this.timestamp = timestamp;
+        this.timestampOrder = timestampOrder;
         this.isIncoming = isIncoming;
         this.itemType = itemType;
         this.placeHolderFilePath = "";
@@ -54,6 +56,11 @@ public class MessageItem  implements MonkeyItem {
     }
 
     @Override
+    public long getMessageTimestampOrder() {
+        return timestampOrder;
+    }
+
+    @Override
     public long getMessageTimestamp() {
         return timestamp;
     }
@@ -62,6 +69,12 @@ public class MessageItem  implements MonkeyItem {
     @Override
     public String getMessageId() {
         return messageId;
+    }
+
+    @NotNull
+    @Override
+    public String getOldMessageId() {
+        return oldMessageId;
     }
 
     @Override
@@ -111,4 +124,5 @@ public class MessageItem  implements MonkeyItem {
     public long getAudioDuration() {
         return duration;
     }
+
 }

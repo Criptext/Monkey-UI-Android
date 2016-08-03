@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.criptext.uisample.MainActivity"   >
+    android:orientation="vertical"
+    tools:context="com.criptext.uisample.MainActivity"
+    android:clipChildren="false">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/default_inputview_height"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <com.criptext.monkeykitui.input.MediaInputView
         android:id="@+id/inputView"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
-</FrameLayout>
+</LinearLayout>
