@@ -60,7 +60,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         this.adapter = monkeyAdapter
         adapter.audioHandler = this
         updateProgressEnabled = true
-        //initPlayer()
+        player = MediaPlayer()
         handler = Handler()
 
 
