@@ -38,7 +38,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
     get() {
         try {
             return player.isPlaying
-        } catch (ex : IllegalStateException){
+        } catch (ex : Exception){
             return false
         }
     }
