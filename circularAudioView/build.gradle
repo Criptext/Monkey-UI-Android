@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.gaumala'
@@ -59,23 +58,3 @@ artifacts {
     archives androidJavadocsJar
 }
 
-bintray {
-    user = 'criptext'
-    key = '093138d874366bedf1953c28e317439845586a08'
-    pkg {
-        repo = 'maven'
-        name = 'com.criptext.circularaudioview'
-
-        version {
-            name = '1.0.0'
-            desc = 'CircularAudioView'
-            released = new Date()
-            vcsTag = '1.0.1'
-        }
-
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Criptext/MonkeyUIAndroid'
-        websiteUrl = 'http://criptext.com'
-    }
-    configurations = ['archives']
-}
