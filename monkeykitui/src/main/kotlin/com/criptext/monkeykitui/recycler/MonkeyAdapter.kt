@@ -557,7 +557,8 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * Finds the adapter position by the MonkeyItem's timestamp.
      * @param targetId the timestamp of the MonkeyItem whose adapter position will be searched. This
      * timestamp must belong to an existing MonkeyItem in this adapter.
-     * @return The adapter position of the MonkeyItem. If the item was not found returns -1.
+     * @return The adapter position of the MonkeyItem. If the item was not found returns
+     * the negated expected position.
      */
     fun getItemPositionByTimestamp(item: MonkeyItem) = messagesList.binarySearch(item,
             Comparator { t1, t2 ->
@@ -565,8 +566,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                   -1
                }else if (t1.getMessageTimestamp() > t2.getMessageTimestamp()) {
                    1
-               } else
-               0
+               } else t1.getMessageId().compareTo(t2.getMessageId())
             })
 
     /**
