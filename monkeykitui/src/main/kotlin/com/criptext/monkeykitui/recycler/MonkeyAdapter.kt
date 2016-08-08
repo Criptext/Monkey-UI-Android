@@ -362,13 +362,11 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
                 val isThisMonkeyItemPlaying : Boolean
                 get() = item.getMessageTimestamp() == audioHandler?.currentlyPlayingItem?.item?.getMessageTimestamp()
                 override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
-                    Log.d("Seekbar", "start tracking")
                     if(isThisMonkeyItemPlaying)
                         audioHandler?.updateProgressEnabled = false
                 }
 
                 override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
-                    Log.d("Seekbar", "stop tracking")
                     if(isThisMonkeyItemPlaying)
                         audioHandler?.updateProgressEnabled = true
                 }

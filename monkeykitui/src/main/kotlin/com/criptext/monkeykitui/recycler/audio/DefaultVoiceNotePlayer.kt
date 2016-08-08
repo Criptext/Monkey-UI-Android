@@ -72,7 +72,6 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
             player.seekTo(prevPlayingItem.lastPlaybackPosition)
         }
         player.prepareAsync()
-        Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
     }
 
     private fun restorePreviousPlaybackAndPlay(prevPlayingItem: PlayingItem){
@@ -82,7 +81,6 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
             player.start()
         }
         player.prepareAsync()
-        Log.d("AudioHandler", "set ${prevPlayingItem.item.getFilePath()}")
     }
 
 
@@ -131,12 +129,10 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
 
     override fun onPauseButtonClicked() {
         //handler.removeCallbacks(playerRunnable);
-        Log.d("AudioPlayback", "pause clicked")
         pauseAudioHolderPlayer()
     }
 
     override fun onPlayButtonClicked(item: MonkeyItem) {
-        Log.d("AudioPlayback", "play clicked")
         if ( currentlyPlayingItem?.item?.getMessageId().equals(item.getMessageId())) {
             //Resume playback
             startPlayback()
@@ -159,12 +155,16 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
 
     /**
      * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
-     * the holder can reflect the new playback status.
+     * the holder can reflect the new playback status. If there was an audio item already playing audio,
+     * that item will rebind as well to reflect its new state.
      * @param newPlayingItem the new MonkeyItem containing an audio file to play.
      */
     private fun startAudioHolderPlayer(newPlayingItem: PlayingItem){
+        val lastPlayedItem = currentlyPlayingItem?.item
         currentlyPlayingItem = newPlayingItem
         startAudioHolderPlayer()
+        if(lastPlayedItem != null)
+            rebindAudioHolder(lastPlayedItem)
     }
     /**
      * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
