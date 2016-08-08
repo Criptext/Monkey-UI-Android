@@ -70,6 +70,8 @@ open class BaseInputView : FrameLayout {
      * are any to their respective positions. You may override this method to customize the EditText.
      */
     open protected fun init(typedArray: TypedArray){
+
+        clipChildren = false
         setBarBackground(typedArray)
         editText = EditText(context);
         editText.maxLines = 4
@@ -81,7 +83,7 @@ open class BaseInputView : FrameLayout {
         if(customBackground != null)
             setEditTextBackground(customBackground)
 
-        editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        //editText.inputType = InputType.TYPE_TEXT_FLAG_AUTO_CORRECT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         val params = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         params.gravity = Gravity.BOTTOM
         params.bottomMargin = context.resources.getDimension(R.dimen.input_view_bottom_margin).toInt()

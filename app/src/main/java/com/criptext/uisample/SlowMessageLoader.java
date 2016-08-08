@@ -71,27 +71,27 @@ public class SlowMessageLoader  {
 
             if(i%6 == 1){
                 //audio
-                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        ctx.getCacheDir() + "/barney.aac", timestamp, incoming,
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
+                        ctx.getCacheDir() + "/barney.aac", timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration(1000 * 10);
             } else if(i%7 == 1){
-                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
+                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.file);
             }
             else if(i%8 == 1){
                 //photo
-                item = new MessageItem(incoming ? "1":"0", "" + timestamp,
-                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, incoming,
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
+                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
                 item.setPlaceHolderFilePath(ctx.getCacheDir() + "/mrbean_blur.jpg");
             }
             else {
                 //text
                 String message = messages[r.nextInt(messages.length)];
-                item = new MessageItem(incoming ? "1":"0", "" + timestamp, message, timestamp, incoming,
-                        MonkeyItem.MonkeyItemType.text);
+                item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
+                        message, timestamp, timestamp, incoming, MonkeyItem.MonkeyItemType.text);
             }
 
             timestamp += r.nextInt(1000 * 60 * 10);
@@ -99,35 +99,35 @@ public class SlowMessageLoader  {
         }
 
         //photo with errors
-        MessageItem item = new MessageItem("0", "" + timestamp++,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, false,
+        MessageItem item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, false,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
-        item = new MessageItem("1", "" + timestamp++,
-                ctx.getCacheDir() + "/mrbean_blur.jpg", timestamp, true,
+        item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/mrbean_blur.jpg", timestamp, timestamp, true,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
 
         //audio with errors
-        item = new MessageItem("0", "" + timestamp++,
-                ctx.getCacheDir() + "/barneyfake.aac", timestamp, false,
+        item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp, timestamp, false,
                 MonkeyItem.MonkeyItemType.audio);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
-        item = new MessageItem("1", "" + timestamp++,
-                ctx.getCacheDir() + "/barneyfake.aac", timestamp, true,
+        item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp, timestamp, true,
                 MonkeyItem.MonkeyItemType.audio);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
-        item = new MessageItem("0", "" + timestamp++,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, false,
+        item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, false,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
-        item = new MessageItem("1", "" + timestamp++,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, true,
+        item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
+                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, true,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);

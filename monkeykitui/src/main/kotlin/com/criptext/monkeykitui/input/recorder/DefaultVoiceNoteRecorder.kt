@@ -82,6 +82,15 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
             val timestamp = System.currentTimeMillis() //- 1000 * 60 * 60 * 48
             val duration = timestamp - startTime
             val newItem = object : MonkeyItem {
+
+                override fun getMessageTimestampOrder(): Long {
+                    return timestamp
+                }
+
+                override fun getOldMessageId(): String {
+                    return "-" + timestamp
+                }
+
                 override fun getAudioDuration(): Long {
                     return duration
                 }

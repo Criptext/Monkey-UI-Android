@@ -145,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
             mediaInputView.setInputListener(new InputListener() {
                 @Override
                 public void onNewItem(@NotNull MonkeyItem item) {
-                    MessageItem newItem = new MessageItem("0", item.getMessageId(),
-                            item.getMessageText(), item.getMessageTimestamp(), item.isIncomingMessage(),
-                            MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
+                    MessageItem newItem = new MessageItem("0", item.getMessageId(), item.getOldMessageId(),
+                            item.getMessageText(), item.getMessageTimestamp(), item.getMessageTimestampOrder(),
+                            item.isIncomingMessage(), MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
 
                     newItem.setStatus(MonkeyItem.DeliveryStatus.read);
                     switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
