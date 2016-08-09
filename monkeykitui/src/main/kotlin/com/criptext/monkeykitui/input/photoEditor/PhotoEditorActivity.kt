@@ -21,6 +21,7 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.util.FlatButtonDrawable
 
@@ -34,6 +35,9 @@ import java.io.File
 class PhotoEditorActivity : AppCompatActivity() {
 
     private var photo: ImageView? = null
+    private var sendButton: Button? = null
+    private var progressBar: ProgressBar? = null
+    private var processing: Boolean? = false
     private lateinit var retainedFragment: RetainEditPhoto
     private lateinit var tempFile : File
     lateinit var photoFilePath: String
@@ -55,6 +59,8 @@ class PhotoEditorActivity : AppCompatActivity() {
         photoFilePath = intent.getStringExtra(destinationPath)
 
         photo = findViewById(R.id.photo) as ImageView?
+        sendButton = findViewById(R.id.sendPhoto) as Button?
+        progressBar = findViewById(R.id.progressBarSending) as ProgressBar?
 
         //set Photo
         setEditingPhoto()
@@ -166,6 +172,11 @@ class PhotoEditorActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (processing!!){
+            return true
+        }
+
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.action_crop -> {
@@ -264,6 +275,9 @@ class PhotoEditorActivity : AppCompatActivity() {
      */
     fun done(view: View) {
         val processTask = PhotoEditTask(bitmapUri, photoFilePath, contentResolver)
+        progressBar?.visibility = View.VISIBLE
+        sendButton?.isEnabled = false
+        processing = true
         Log.d("PhotoEditor", "export source: ${bitmapUri.path} dest: $photoFilePath, degs: $editedDegrees")
         processTask.setOnBitmapProcessedCallback(Runnable {
             val intent = Intent()
