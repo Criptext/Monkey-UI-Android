@@ -104,44 +104,7 @@ public class MainActivity extends BaseChatActivity{
 
     public void initInputView(){
         mediaInputView = (MediaInputView) findViewById(R.id.inputView);
-        if(mediaInputView!=null) {
-            mediaInputView.setInputListener(new InputListener() {
-                @Override
-                public void onNewItem(@NotNull MonkeyItem item) {
-                    MessageItem newItem = new MessageItem("0", item.getMessageId(), item.getOldMessageId(),
-                            item.getMessageText(), item.getMessageTimestamp(), item.getMessageTimestampOrder(),
-                            item.isIncomingMessage(), MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
-
-                    newItem.setStatus(MonkeyItem.DeliveryStatus.read);
-                    switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
-                        case audio: //init audio MessageItem
-                            newItem.setDuration(item.getAudioDuration());
-                            newItem.setMessageContent(item.getFilePath());
-                            break;
-                        case photo:
-                            newItem.setMessageContent(item.getFilePath());
-                            break;
-                    }
-
-                    adapter.smoothlyAddNewItem(newItem, recycler); // Add to recyclerView
-                }
-            });
-            /*
-            ONLY IF DEVELOPER DECIDES TO USE HIS OWN OPTIONS FOR LEFT BUTTON
-            mediaInputView.getAttachmentHandler().addNewAttachmentButton(new AttachmentButton() {
-                @NonNull
-                @Override
-                public String getTitle() {
-                    return "Send Contact";
-                }
-
-                @Override
-                public void clickButton() {
-                    System.out.println("DO SOMETHING!!");
-                }
-            });
-            */
-        }
+        mediaInputView.setInputListener(createInputListener());
     }
 
 
@@ -155,7 +118,7 @@ public class MainActivity extends BaseChatActivity{
         }
 
         if(mediaInputView!=null && mediaInputView.getCameraHandler()!=null)
-            mediaInputView.getCameraHandler().onActivityResult(requestCode,resultCode, data);
+            mediaInputView.getCameraHandler().onActivityResult(requestCode, resultCode, data);
 
     }
 
@@ -168,5 +131,10 @@ public class MainActivity extends BaseChatActivity{
     @Override
     void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd) {
         adapter.addOldMessages(messages, hasReachedEnd);
+    }
+
+    @Override
+    void smoothlyAddNewItem(MonkeyItem message) {
+        adapter.smoothlyAddNewItem(message, recycler);
     }
 }

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
+import com.criptext.monkeykitui.input.BaseInputView;
+import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
@@ -33,6 +35,30 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
         return true;
     }
 
+    public InputListener createInputListener(){
+        return new InputListener() {
+                @Override
+                public void onNewItem(@NotNull MonkeyItem item) {
+                    MessageItem newItem = new MessageItem("0", item.getMessageId(), item.getOldMessageId(),
+                            item.getMessageText(), item.getMessageTimestamp(), item.getMessageTimestampOrder(),
+                            item.isIncomingMessage(), MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
+
+                    newItem.setStatus(MonkeyItem.DeliveryStatus.read);
+                    switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
+                        case audio: //init audio MessageItem
+                            newItem.setDuration(item.getAudioDuration());
+                            newItem.setMessageContent(item.getFilePath());
+                            break;
+                        case photo:
+                            newItem.setMessageContent(item.getFilePath());
+                            break;
+                    }
+
+                    smoothlyAddNewItem(newItem); // Add to recyclerView
+                }
+            };
+    }
+
     private void mockFileNetworkRequests(MonkeyItem item) {
         final MessageItem message = (MessageItem) item;
         Runnable errorCallback = new Runnable() {
@@ -55,6 +81,8 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     abstract void rebindMonkeyItem(MonkeyItem message);
 
     abstract void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd);
+
+    abstract void smoothlyAddNewItem(MonkeyItem message);
 
     @Override
     public void onFileDownloadRequested(@NotNull MonkeyItem item) {
