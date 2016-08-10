@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
 
         loader = new SlowMessageLoader(this);
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
-        adapter = new MonkeyAdapter(this, messages);
+        adapter = new MonkeyAdapter(this);
+        adapter.addOldMessages(messages, false);
         //configureMonkeyAdapter();
         adapter.setHasReachedEnd(false);
 

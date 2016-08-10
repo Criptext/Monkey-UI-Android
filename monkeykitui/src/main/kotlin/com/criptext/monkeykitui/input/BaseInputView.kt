@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
+import com.criptext.monkeykitui.input.listeners.InputListener
 
 /**
  * Superclass for all InputViews. An InputView is a FrameLayout with an EditText and buttons to the
@@ -39,6 +40,8 @@ open class BaseInputView : FrameLayout {
     protected set
 
     protected lateinit var leftButtonView : View
+    protected lateinit var rightButtonView : View
+    open var inputListener : InputListener? = null
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs){
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.InputView, 0, 0)
@@ -101,6 +104,7 @@ open class BaseInputView : FrameLayout {
 
         val rightBtn = setRightButton(typedArray)
         if(rightBtn != null) {
+            rightButtonView = rightBtn.button
             params.rightMargin = rightBtn.visibleWidth
             (rightBtn.button.layoutParams as LayoutParams).gravity = Gravity.RIGHT or Gravity.BOTTOM
             addView(rightBtn.button)

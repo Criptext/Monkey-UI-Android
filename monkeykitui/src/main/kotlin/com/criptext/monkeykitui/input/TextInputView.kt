@@ -9,7 +9,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
-import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
@@ -19,8 +18,6 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
  */
 
 open class TextInputView : BaseInputView {
-
-    open var inputListener : InputListener? = null
 
     constructor(context: Context, attrs: AttributeSet): super(context, attrs)
 

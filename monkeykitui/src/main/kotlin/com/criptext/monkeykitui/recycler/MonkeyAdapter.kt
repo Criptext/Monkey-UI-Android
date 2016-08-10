@@ -29,11 +29,9 @@ import java.util.*
  * Created by gesuwall on 4/4/16.
  */
 
-open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerView.Adapter<MonkeyHolder>() {
-    val mContext : Context
-    val messagesList: ArrayList<MonkeyItem>
-
+open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
+    val messagesList: ArrayList<MonkeyItem>
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
@@ -67,8 +65,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     val handler = Handler()
 
     init{
-        mContext = ctx
-        messagesList = list
+        messagesList = ArrayList<MonkeyItem>()
         selectedMessage = null
         voiceNotePlayer = null
         imageListener = object : ImageListener {
