@@ -92,12 +92,7 @@ public class MainActivity extends BaseChatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        if(voiceNotePlayer!=null && voiceNotePlayer.isPlayingAudio()) {
-            voiceNotePlayer.onPauseButtonClicked();
-        }
-        if(voiceNotePlayer!=null) {
-            voiceNotePlayer.releasePlayer();
-        }
+        voiceNotePlayer.releasePlayer();
         sensorHandler.onStop();
     }
 

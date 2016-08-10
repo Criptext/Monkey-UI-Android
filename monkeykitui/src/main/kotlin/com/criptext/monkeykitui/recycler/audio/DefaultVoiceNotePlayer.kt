@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import java.io.File
 import java.io.IOException
@@ -17,7 +18,6 @@ import java.io.IOException
 
 open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     val handler : Handler
-    var uiUpdater: AudioUIUpdater?
     lateinit private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
     private set
@@ -47,7 +47,6 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         updateProgressEnabled = true
         player = MediaPlayer()
         handler = Handler()
-        uiUpdater = null
     }
 
     constructor(ctx: Context, uiUpdater: AudioUIUpdater): this(ctx){
@@ -167,7 +166,13 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     private fun startPlayback(){
         player.start()
-        playerRunnable.run()
+        try {
+            playerRunnable.run()
+        } catch (ex: UninitializedPropertyAccessException){
+            throw IllegalStateException("This Player has not been initialized yet!\nYou should call initPlayer()" +
+            " in your onStart() activity callback and call releasePlayer() on your onStop() activity callback." +
+            "\nDon't play voice notes while your activity is stopped.")
+        }
         rebindCurrentAudioHolder()
 
     }
@@ -201,9 +206,9 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     override fun releasePlayer(){
         try{
             if(isPlayingAudio) {
-                player.release();
-                notifyPlaybackStopped();
+                pauseAudioHolderPlayer()
             }
+            player.release();
         }catch (ex: IllegalStateException) {
             ex.printStackTrace();
         }

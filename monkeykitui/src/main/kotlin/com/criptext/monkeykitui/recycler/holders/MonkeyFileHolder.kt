@@ -32,7 +32,6 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
 
     open fun showFileIcon(ext: String){
         val context = fileLogoImageView!!.context
-        Log.d("MonkeyFileHolder", ext)
         if(ext.compareTo("xls")==0 || ext.compareTo("xlsx")==0)
             fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.excel_file));
         else if(ext.compareTo("doc")==0 || ext.compareTo("docx")==0)

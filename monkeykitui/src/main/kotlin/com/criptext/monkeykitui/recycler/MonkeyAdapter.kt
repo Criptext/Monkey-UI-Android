@@ -136,6 +136,8 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
         if(monkeyHolder != null)
             onBindViewHolder(monkeyHolder, position)
+        else //sometimes recyclerview cant find the viewholder, and never rebind the holder. this may fix it...
+            notifyItemChanged(position)
     }
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {

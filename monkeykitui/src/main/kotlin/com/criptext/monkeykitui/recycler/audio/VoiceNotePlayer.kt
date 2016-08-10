@@ -40,6 +40,10 @@ abstract class VoiceNotePlayer {
     abstract  val playbackPosition : Int
 
     /**
+     * object that updates the View of the voice note player in the RecyclerView.
+     */
+    var uiUpdater: AudioUIUpdater? = null
+    /**
      * Initializes the media player. It should be called on the onStart() callback of your activity.
      */
     abstract  fun initPlayer()
@@ -64,7 +68,8 @@ abstract class VoiceNotePlayer {
      */
     abstract fun onProgressManuallyChanged(item: MonkeyItem, newPlaybackPosition: Int)
     /**
-     * Releases the MediaPlayer's resources. This should be called on the onStop() callback of your activity.
+     * Releases the MediaPlayer's resources. if audio is playing, onPauseButtonCLicked() should be
+     * called before releasing. This should be called on the onStop() callback of your activity.
      */
     abstract fun releasePlayer()
 }
