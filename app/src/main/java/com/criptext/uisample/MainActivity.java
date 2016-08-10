@@ -27,30 +27,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements ChatActivity{
+public class MainActivity extends BaseChatActivity{
 
+    /* Adapter that shows our chat messages in the recyclerView */
     private MonkeyAdapter adapter;
     private RecyclerView recycler;
 
+    /* Object that plays voice notes in our recyclerView from the chat */
     private VoiceNotePlayer voiceNotePlayer;
-
+    /* This view is used to compose new messages: audio, photo and text */
     private MediaInputView mediaInputView;
-
-    SlowMessageLoader loader;
+    /* handles sensor events to to change voice note playback */
     private SensorHandler sensorHandler;
 
-    private Handler handler = new Handler();
 
-    public final String defaultAudiofile(){
-        return getCacheDir() + "/barney.aac";
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        createAudioFile();
-        createImageFile();
 
         loader = new SlowMessageLoader(this);
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
@@ -113,34 +107,6 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         sensorHandler.onDestroy();
     }
 
-    public MonkeyAdapter getAdapter() {
-        return adapter;
-    }
-
-    /**
-     * If audio files don't exist, create them.
-     */
-    private void createAudioFile(){
-        File file = new File(defaultAudiofile());
-        if(!file.exists()){
-            try {
-            InputStream ins = getResources().openRawResource(R.raw.barney);
-            FileOutputStream outputStream = new FileOutputStream(file.getPath());
-
-            byte buf[] = new byte[1024];
-            int len;
-
-                while ((len = ins.read(buf)) != -1) {
-                    outputStream.write(buf, 0, len);
-                }
-                outputStream.close();
-                ins.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void initInputView(){
         mediaInputView = (MediaInputView) findViewById(R.id.inputView);
         if(mediaInputView!=null) {
@@ -183,47 +149,7 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         }
     }
 
-    /**
-     * if photo files do not exist, create them
-     */
-    private void createImageFile(){
-        File file = new File(getCacheDir() + "/mrbean.jpg");
-        if(!file.exists()){
-            try {
-                InputStream ins = getResources().openRawResource(R.raw.mrbean);
-                FileOutputStream outputStream = new FileOutputStream(file.getPath());
 
-                byte buf[] = new byte[1024];
-                int len;
-
-                while ((len = ins.read(buf)) != -1) {
-                    outputStream.write(buf, 0, len);
-                }
-                outputStream.close();
-                ins.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        file = new File(getCacheDir() + "/mrbean_blur.jpg");
-        if(!file.exists()){
-            try {
-                InputStream ins = getResources().openRawResource(R.raw.mrbean_blur);
-                FileOutputStream outputStream = new FileOutputStream(file.getPath());
-
-                byte buf[] = new byte[1024];
-                int len;
-
-                while ((len = ins.read(buf)) != -1) {
-                    outputStream.write(buf, 0, len);
-                }
-                outputStream.close();
-                ins.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -238,44 +164,14 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
 
     }
 
-    /***OVERRIDE METHODS****/
 
     @Override
-    public boolean isOnline() {
-        return true;
-    }
-
-    private void mockFileNetworkRequests(MonkeyItem item){
-        final MessageItem message = (MessageItem) item;
-        Runnable errorCallback = new Runnable() {
-            @Override
-            public void run() {
-                if(message.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending){
-                    message.setDeliveryStatus(MonkeyItem.DeliveryStatus.error);
-                    adapter.rebindMonkeyItem(message, recycler);
-                }
-            }
-        };
-
-        if(message.getDeliveryStatus() != MonkeyItem.DeliveryStatus.sending) {
-            message.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
-            adapter.rebindMonkeyItem(message, recycler);
-        } else
-            handler.postDelayed(errorCallback, 3000);
-    }
-    @Override
-    public void onFileDownloadRequested(@NotNull MonkeyItem item) {
-        mockFileNetworkRequests(item);
+    void rebindMonkeyItem(MonkeyItem message) {
+        adapter.rebindMonkeyItem(message, recycler);
     }
 
     @Override
-    public void onFileUploadRequested(@NotNull MonkeyItem item) {
-        mockFileNetworkRequests(item);
+    void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd) {
+        adapter.addOldMessages(messages, hasReachedEnd);
     }
-
-    @Override
-    public void onLoadMoreData(int loadedItems) {
-        loader.execute();
-    }
-
 }

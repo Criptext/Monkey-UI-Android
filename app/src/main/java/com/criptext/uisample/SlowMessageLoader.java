@@ -25,21 +25,22 @@ public class SlowMessageLoader  {
     "I'm fine", "What are you doing this weekend?", "Sorry, I have plans", "I'm free", "Everything is going according to plan",
     "Here's my credit card number: 1111 2222 3333 4444"};
     final static int MAX_MESSAGES = 150;
-    WeakReference<MainActivity> activityWeakReference;
+    final static int BATCH_SIZE = 26;
+    WeakReference<BaseChatActivity> activityWeakReference;
     private int batchNumber;
 
-    public SlowMessageLoader(MainActivity act){
+    public SlowMessageLoader(BaseChatActivity act){
         batchNumber = 0;
-        activityWeakReference = new WeakReference<MainActivity>(act);
+        activityWeakReference = new WeakReference(act);
     }
 
     AsyncTask newAsyncTask() {
         return new AsyncTask<Object, Void, ArrayList<MonkeyItem>>(){
 
             protected void onPostExecute(ArrayList<MonkeyItem> newData) {
-                MainActivity act = activityWeakReference.get();
+                BaseChatActivity act = activityWeakReference.get();
                 if(act != null && newData != null){
-                    act.getAdapter().addOldMessages(newData, act.getAdapter().getItemCount() + newData.size() > MAX_MESSAGES);
+                    act.addOldMessages(newData, batchNumber * BATCH_SIZE > MAX_MESSAGES);
                 }
             }
 
@@ -63,7 +64,7 @@ public class SlowMessageLoader  {
 
         ArrayList<MonkeyItem> arrayList = new ArrayList<MonkeyItem>();
         long timestamp = System.currentTimeMillis() - 1000 * 60 * 60 * (++batchNumber) * 24;
-        for(int i = 0; i < 26; i++){
+        for(int i = 0; i < BATCH_SIZE; i++){
             //Log.d("SlowMessageLoader", "creating new msg: " + timestamp);
             Random r = new Random();
             boolean incoming = r.nextBoolean();
@@ -72,20 +73,20 @@ public class SlowMessageLoader  {
             if(i%6 == 1){
                 //audio
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        ctx.getCacheDir() + "/barney.aac", timestamp, timestamp, incoming,
+                        FakeFiles.defaultAudioFilepath(ctx), timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration(1000 * 10);
             } else if(i%7 == 1){
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, incoming,
+                        FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.file);
             }
             else if(i%8 == 1){
                 //photo
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, incoming,
+                        FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
-                item.setPlaceHolderFilePath(ctx.getCacheDir() + "/mrbean_blur.jpg");
+                item.setPlaceHolderFilePath(FakeFiles.defaultImageBlurFilepath(ctx));
             }
             else {
                 //text
@@ -100,12 +101,12 @@ public class SlowMessageLoader  {
 
         //photo with errors
         MessageItem item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, false,
+                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, false,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/mrbean_blur.jpg", timestamp, timestamp, true,
+                FakeFiles.defaultImageBlurFilepath(ctx), timestamp, timestamp, true,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
@@ -122,12 +123,12 @@ public class SlowMessageLoader  {
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
         item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, false,
+                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, false,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/mrbean.jpg", timestamp, timestamp, true,
+                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, true,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
@@ -135,9 +136,6 @@ public class SlowMessageLoader  {
         return arrayList;
     }
 
-    public String getAudioFilePath(Context ctx){
-        return ctx.getCacheDir() + "/barney.aac";
-    }
     public void execute(){
         AsyncTask task = newAsyncTask();
         task.execute();
