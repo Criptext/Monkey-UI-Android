@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
@@ -17,6 +15,7 @@ import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyConfig;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
+import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 
@@ -65,7 +64,9 @@ public class MainActivity extends AppCompatActivity implements ChatActivity{
         linearLayoutManager.setStackFromEnd(true);
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
-        voiceNotePlayer = new DefaultVoiceNotePlayer(adapter, recycler);
+        AudioUIUpdater uiUpdater = new AudioUIUpdater(recycler);
+        voiceNotePlayer = new DefaultVoiceNotePlayer(this, uiUpdater);
+        adapter.setVoiceNotePlayer(voiceNotePlayer);
         initInputView();
 
         sensorHandler = new SensorHandler(voiceNotePlayer, this);

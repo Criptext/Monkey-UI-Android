@@ -52,7 +52,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
      * Handles all media playback of voice notes. MonkeyAdapter must notify the audioHandler whenever
      * the user wants to play/pause a voice note.
      */
-    var audioHandler : VoiceNotePlayer?
+    var voiceNotePlayer: VoiceNotePlayer?
 
     /**
      * Listener to do an action when user clicks a photo. Default action should be open a photo viewer
@@ -70,7 +70,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         mContext = ctx
         messagesList = list
         selectedMessage = null
-        audioHandler = null
+        voiceNotePlayer = null
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
                 val intent = Intent(mContext, PhotoViewActivity::class.java)
@@ -319,12 +319,12 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
     open protected fun bindMonkeyAudioHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val audioHolder = holder as MonkeyAudioHolder
         val target = File(item.getFilePath())
-        val playingAudio = audioHandler?.currentlyPlayingItem?.item
+        val playingAudio = voiceNotePlayer?.currentlyPlayingItem?.item
 
         val playAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
-                        audioHandler?.onPlayButtonClicked(item)
+                        voiceNotePlayer?.onPlayButtonClicked(item)
                     }
 
                     override fun onActionLongClicked() {
@@ -335,7 +335,7 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
         val pauseAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
-                        audioHandler?.onPauseButtonClicked()
+                        voiceNotePlayer?.onPauseButtonClicked()
                     }
 
                     override fun onActionLongClicked() {
@@ -349,9 +349,9 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             audioHolder.setWaitingForDownload()
         } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
             audioHolder.setReadyForPlayback()
-            audioHolder.updateAudioProgress(audioHandler?.playbackProgress ?: 0,
-                        audioHandler?.playbackPosition?.toLong() ?: 0)
-            if(audioHandler?.isPlayingAudio ?: false){ // Message is playing
+            audioHolder.updateAudioProgress(voiceNotePlayer?.playbackProgress ?: 0,
+                        voiceNotePlayer?.playbackPosition?.toLong() ?: 0)
+            if(voiceNotePlayer?.isPlayingAudio ?: false){ // Message is playing
                 audioHolder.updatePlayPauseButton(true)
                 audioHolder.setAudioActions(pauseAction)
             } else { // Message is paused
@@ -360,20 +360,20 @@ open class MonkeyAdapter(ctx: Context, list : ArrayList<MonkeyItem>) : RecyclerV
             }
             audioHolder.setOnSeekBarChangeListener(object : CircularAudioView.OnCircularAudioViewChangeListener{
                 val isThisMonkeyItemPlaying : Boolean
-                get() = item.getMessageTimestamp() == audioHandler?.currentlyPlayingItem?.item?.getMessageTimestamp()
+                get() = item.getMessageTimestamp() == voiceNotePlayer?.currentlyPlayingItem?.item?.getMessageTimestamp()
                 override fun onStartTrackingTouch(seekBar: CircularAudioView?) {
                     if(isThisMonkeyItemPlaying)
-                        audioHandler?.updateProgressEnabled = false
+                        voiceNotePlayer?.updateProgressEnabled = false
                 }
 
                 override fun onStopTrackingTouch(seekBar: CircularAudioView?) {
                     if(isThisMonkeyItemPlaying)
-                        audioHandler?.updateProgressEnabled = true
+                        voiceNotePlayer?.updateProgressEnabled = true
                 }
 
                 override fun onProgressChanged(CircularAudioView: CircularAudioView?, progress: Int, fromUser: Boolean) {
                     if(fromUser && isThisMonkeyItemPlaying && progress > -1 && progress < 100)
-                        audioHandler?.onProgressManuallyChanged(item, progress)
+                        voiceNotePlayer?.onProgressManuallyChanged(item, progress)
                 }
             })
         } else { //Message is available for playback but not prepared in the MediaPlayer

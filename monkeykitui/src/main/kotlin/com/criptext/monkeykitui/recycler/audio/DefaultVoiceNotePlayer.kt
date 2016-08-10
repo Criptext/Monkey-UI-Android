@@ -1,18 +1,11 @@
 package com.criptext.monkeykitui.recycler.audio
 
+import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.View
-import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
-import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
-import com.innovative.circularaudioview.CircularAudioView
-import org.jetbrains.annotations.NotNull
 import java.io.File
 import java.io.IOException
 
@@ -22,16 +15,11 @@ import java.io.IOException
  * Created by gesuwall on 4/15/16.
  */
 
-open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: RecyclerView) : VoiceNotePlayer(){
+open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     val handler : Handler
-
+    var uiUpdater: AudioUIUpdater?
     lateinit private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
-    private set
-
-    var recycler : RecyclerView
-    private set
-    var adapter : MonkeyAdapter
     private set
 
     override val isPlayingAudio: Boolean
@@ -56,14 +44,14 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
     get() = player.currentPosition
 
     init {
-        recycler = recyclerView
-        this.adapter = monkeyAdapter
-        adapter.audioHandler = this
         updateProgressEnabled = true
         player = MediaPlayer()
         handler = Handler()
+        uiUpdater = null
+    }
 
-
+    constructor(ctx: Context, uiUpdater: AudioUIUpdater): this(ctx){
+        this.uiUpdater = uiUpdater
     }
 
     private fun restorePreviousPlayback(prevPlayingItem: PlayingItem){
@@ -83,18 +71,19 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         player.prepareAsync()
     }
 
+    private fun createNewUIRunnable() = object : Runnable {
+        override fun run() {
+            if (isPlayingAudio) {
+                if(updateProgressEnabled) uiUpdater?.updateAudioProgress(currentlyPlayingItem!!.item,
+                        playbackProgress, player.currentPosition.toLong())
+                handler.postDelayed(this, 67)
+            }
+        }
+    }
 
     override fun initPlayer(){
         player = MediaPlayer()
-        playerRunnable = object : Runnable {
-            override fun run() {
-                if (isPlayingAudio) {
-                    if(updateProgressEnabled) updateAudioSeekbar(playbackProgress,
-                            player.currentPosition.toLong())
-                    handler.postDelayed(this, 67)
-                }
-            }
-        }
+        playerRunnable = createNewUIRunnable()
 
         val playingTrack = currentlyPlayingItem
         if(playingTrack != null)
@@ -108,15 +97,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
     override fun initPlayerWithFrontSpeaker(){
         player = MediaPlayer()
         player.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-        playerRunnable = object : Runnable {
-            override fun run() {
-                if (isPlayingAudio) {
-                    if(updateProgressEnabled) updateAudioSeekbar(playbackProgress,
-                            player.currentPosition.toLong())
-                    handler.postDelayed(this, 67)
-                }
-            }
-        }
+        playerRunnable = createNewUIRunnable()
 
         val playingTrack = currentlyPlayingItem
         if(playingTrack != null)
@@ -140,7 +121,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
             //Start from beggining
             safelyResetPlayer()
             try {
-                player.setDataSource(adapter.mContext, Uri.fromFile(File(item.getFilePath())));
+                player.setDataSource(ctx, Uri.fromFile(File(item.getFilePath())));
                 startAudioHolderPlayer(PlayingItem(item))
             } catch (ex: IOException) {
                 ex.printStackTrace();
@@ -164,7 +145,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         currentlyPlayingItem = newPlayingItem
         startAudioHolderPlayer()
         if(lastPlayedItem != null)
-            rebindAudioHolder(lastPlayedItem)
+            uiUpdater?.rebindAudioHolder(lastPlayedItem)
     }
     /**
      * Starts media playback and rebinds the currently playing item to its MonkeyAudioHolder so that
@@ -177,17 +158,11 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         player.prepareAsync()
     }
 
-    private fun rebindAudioHolder(monkeyItem: MonkeyItem){
-        val adapterPosition = adapter.getItemPositionByTimestamp(monkeyItem)
-        val audioHolder = getAudioHolder(adapterPosition)
-        if (audioHolder != null)
-            adapter.onBindViewHolder(audioHolder, adapterPosition)
-    }
 
     private fun rebindCurrentAudioHolder(){
         val currentMonkeyItem = currentlyPlayingItem?.item ?: null
         if(currentMonkeyItem != null)
-            rebindAudioHolder(currentMonkeyItem)
+            uiUpdater?.rebindAudioHolder(currentMonkeyItem)
     }
 
     private fun startPlayback(){
@@ -203,26 +178,6 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         rebindCurrentAudioHolder()
     }
 
-    private fun updateAudioSeekbar(percentage: Int, progress: Long){
-        val audioHolder = getAudioHolder()
-        audioHolder?.updateAudioProgress(percentage, progress)
-    }
-
-    /**
-     * Returns a MonkeyAudioHolder object that holds the UI for the currently playing audio message.
-     * @return if there is no item being currently playing or maybe it is not visible, null will be
-     * returned. Otherwise, a valid MonkeyAudioHolder object is returned
-     */
-    open protected fun getAudioHolder(adapterPosition: Int):MonkeyAudioHolder?{
-        return recycler.findViewHolderForAdapterPosition(adapterPosition) as MonkeyAudioHolder?
-    }
-
-    open protected fun getAudioHolder(): MonkeyAudioHolder? {
-        val currentMonkeyItem = currentlyPlayingItem?.item ?: return null
-        val adapterPosition = adapter.getItemPositionByTimestamp(currentMonkeyItem)
-        return getAudioHolder(adapterPosition)
-    }
-
     /**
      * If there is audio being actively played, notifies the adapter that all messages of type audio
      * should show the play button and have the seekbar at 0
@@ -231,7 +186,7 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         if(!isPlayingAudio && currentlyPlayingItem != null) {
             val lastPlayingItem = currentlyPlayingItem!!.item
             currentlyPlayingItem = null
-            rebindAudioHolder(lastPlayingItem)
+            uiUpdater?.rebindAudioHolder(lastPlayingItem)
         }
     }
 
@@ -247,7 +202,6 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
         try{
             if(isPlayingAudio) {
                 player.release();
-                recycler.removeCallbacks(playerRunnable);
                 notifyPlaybackStopped();
             }
         }catch (ex: IllegalStateException) {
