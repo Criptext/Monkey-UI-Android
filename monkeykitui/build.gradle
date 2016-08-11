@@ -61,6 +61,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }
 
 task copyLibs(type: Copy) {

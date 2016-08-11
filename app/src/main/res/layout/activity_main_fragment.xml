@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BaseChatActivity">
+    <!-- android:name="com.criptext.monkeykitui.MonkeyChatFragment" -->
     <fragment
-        android:name="com.criptext.monkeykitui.MonkeyChatFragment"
-        android:id="@+id/chat_fragment"
+        android:name="com.criptext.monkeykitui.MonkeyConversationsFragment"
+        android:id="@+id/monkey_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

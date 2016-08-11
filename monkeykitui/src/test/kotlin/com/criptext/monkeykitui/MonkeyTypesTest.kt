@@ -2,6 +2,8 @@ package com.criptext.monkeykitui
 
 
 import android.app.Activity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import com.criptext.monkeykitui.recycler.ChatActivity
@@ -27,6 +29,7 @@ import java.util.*
 class MonkeyTypesTest {
     lateinit var adapter: MonkeyAdapter
     var activity: Activity? = null
+    var recycler: RecyclerView? = null
     lateinit var messagesList : ArrayList<MonkeyItem>
 
     val contactSessionId : String = "fakecontactsession"
@@ -40,7 +43,10 @@ class MonkeyTypesTest {
         if(activity == null){
             val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
             messagesList = ArrayList()
-            adapter = MonkeyAdapter(newActivity, messagesList)
+            adapter = MonkeyAdapter(newActivity)
+            adapter.addOldMessages(messagesList, true)
+            recycler = RecyclerView(newActivity)
+            recycler!!.layoutManager = LinearLayoutManager(newActivity)
             activity = newActivity
         }
     }
@@ -49,6 +55,9 @@ class MonkeyTypesTest {
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getMessageTimestampOrder() = newTimestamp
+
+            override fun getOldMessageId() = newTimestamp.toString()
 
             override fun getAudioDuration(): Long { throw UnsupportedOperationException() }
 
@@ -77,6 +86,7 @@ class MonkeyTypesTest {
 
     fun createViewHolder(newMessage: MonkeyItem): MonkeyHolder {
         messagesList.add(newMessage)
+        adapter.smoothlyAddNewItem(newMessage, recycler!!)
         return adapter.onCreateViewHolder(null, adapter.getItemViewType(messagesList.lastIndex))!!
     }
 
@@ -107,6 +117,9 @@ class MonkeyTypesTest {
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getMessageTimestampOrder() = newTimestamp
+
+            override fun getOldMessageId() = newTimestamp.toString()
 
             override fun getAudioDuration(): Long = 5000L
 
@@ -158,6 +171,9 @@ class MonkeyTypesTest {
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getMessageTimestampOrder() = newTimestamp
+
+            override fun getOldMessageId() = newTimestamp.toString()
 
             override fun getAudioDuration(): Long {throw UnsupportedOperationException() }
 
@@ -210,6 +226,9 @@ class MonkeyTypesTest {
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getMessageTimestampOrder() = newTimestamp
+
+            override fun getOldMessageId() = newTimestamp.toString()
 
             override fun getAudioDuration(): Long {throw UnsupportedOperationException() }
 

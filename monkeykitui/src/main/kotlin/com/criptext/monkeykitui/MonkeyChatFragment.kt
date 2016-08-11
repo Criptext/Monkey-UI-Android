@@ -81,6 +81,17 @@ open class MonkeyChatFragment: Fragment() {
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        voiceNotePlayer?.initPlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        voiceNotePlayer?.releasePlayer()
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode != Activity.RESULT_OK)
             return

@@ -31,7 +31,7 @@ import java.util.*
 
 open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
-    val messagesList: ArrayList<MonkeyItem>
+    private val messagesList: ArrayList<MonkeyItem>
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
