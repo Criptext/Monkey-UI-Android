@@ -129,8 +129,8 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     }
 
-    override fun onProgressManuallyChanged(item: MonkeyItem, newProgress: Int) {
-            player.seekTo(newProgress * player.duration / 100)
+    override fun onProgressManuallyChanged(item: MonkeyItem, newPlaybackPosition: Int) {
+            player.seekTo(newPlaybackPosition * player.duration / 100)
     }
 
     /**

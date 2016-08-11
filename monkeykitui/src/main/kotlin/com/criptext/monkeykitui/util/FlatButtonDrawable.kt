@@ -20,7 +20,7 @@ class FlatButtonDrawable {
         private fun getDarkerFactor(color: Int, darkFactor: Double): Int{
             var hsv = FloatArray(3)
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.75f;
+            hsv[2] *= darkFactor.toFloat();
             return Color.HSVToColor(hsv);
         }
         fun getDarkerColor(color: Int, darkFactor: Double): Int{

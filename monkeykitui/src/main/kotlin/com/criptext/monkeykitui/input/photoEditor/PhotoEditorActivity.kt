@@ -192,7 +192,6 @@ class PhotoEditorActivity : AppCompatActivity() {
                 }
             }
             R.id.action_rot -> {
-                val bitmapUri = bitmapUri
                 val fromDegs = retainedFragment.degrees
                 val toDegs = fromDegs - 90
                 rotateImageView(fromDegs, toDegs)

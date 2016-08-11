@@ -44,8 +44,8 @@ open class MediaInputView : AudioInputView {
             super.inputListener = value
         }
 
-    override fun setLeftButton(a : TypedArray) : SideButton?{
-        val attachBtn = AttachmentButton(context, a)
+    override fun setLeftButton(typedArray : TypedArray) : SideButton?{
+        val attachBtn = AttachmentButton(context, typedArray)
         return SideButton(attachBtn, attachBtn.diameter)
     }
 

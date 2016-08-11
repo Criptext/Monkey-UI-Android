@@ -10,8 +10,8 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-import com.innovative.circularaudioview.AudioActions
-import com.innovative.circularaudioview.CircularAudioView
+import com.criptext.monkeykitui.cav.AudioActions
+import com.criptext.monkeykitui.cav.CircularAudioView
 
 
 /**
@@ -68,14 +68,14 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         sendingProgressBar?.visibility = View.INVISIBLE
     }
 
-    override fun setErrorInDownload(clickListener: View.OnClickListener){
+    override fun setErrorInDownload(listener: View.OnClickListener){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
-                R.drawable.ic_play_down), clickListener)
+                R.drawable.ic_play_down), listener)
     }
 
-    override fun setErrorInUpload(clickListener: View.OnClickListener){
+    override fun setErrorInUpload(listener: View.OnClickListener){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
-                R.drawable.ic_play_up), clickListener)
+                R.drawable.ic_play_up), listener)
         checkmarkImageView?.visibility = View.INVISIBLE
     }
     open fun updatePlayPauseButton(isPlaying: Boolean){

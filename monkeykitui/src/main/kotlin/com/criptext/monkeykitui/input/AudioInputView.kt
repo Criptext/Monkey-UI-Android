@@ -46,7 +46,7 @@ open class AudioInputView : TextInputView {
     fun setSendAudioDrawable(customDrawable: Drawable){
         recBtn.setImageDrawable(customDrawable)
     }
-    override fun setRightButton(a : TypedArray): SideButton? {
+    override fun setRightButton(typedArray : TypedArray): SideButton? {
         val view = inflate(context, R.layout.right_audio_btn, null);
         val defaultInputViewHeight = context.resources.getDimension(R.dimen.audio_btn_expanded_height)
         val params = LayoutParams(LayoutParams.MATCH_PARENT, defaultInputViewHeight.toInt())
@@ -57,8 +57,8 @@ open class AudioInputView : TextInputView {
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)
 
-        val customTextDrawable = a.getDrawable(R.styleable.InputView_sendTextDrawable)
-        val customAudioDrawable = a.getDrawable(R.styleable.InputView_sendAudioDrawable)
+        val customTextDrawable = typedArray.getDrawable(R.styleable.InputView_sendTextDrawable)
+        val customAudioDrawable = typedArray.getDrawable(R.styleable.InputView_sendAudioDrawable)
         if (customTextDrawable != null)
             setSendTextDrawable(customTextDrawable)
         if (customAudioDrawable != null)
