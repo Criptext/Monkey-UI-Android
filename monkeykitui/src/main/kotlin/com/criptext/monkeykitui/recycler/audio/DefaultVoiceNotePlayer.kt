@@ -11,7 +11,7 @@ import android.view.View
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
-import com.innovative.circularaudioview.CircularAudioView
+import com.criptext.monkeykitui.cav.CircularAudioView
 import org.jetbrains.annotations.NotNull
 import java.io.File
 import java.io.IOException
@@ -149,8 +149,8 @@ open class DefaultVoiceNotePlayer(monkeyAdapter : MonkeyAdapter, recyclerView: R
 
     }
 
-    override fun onProgressManuallyChanged(item: MonkeyItem, newProgress: Int) {
-            player.seekTo(newProgress * player.duration / 100)
+    override fun onProgressManuallyChanged(item: MonkeyItem, newPlaybackPosition: Int) {
+            player.seekTo(newPlaybackPosition * player.duration / 100)
     }
 
     /**

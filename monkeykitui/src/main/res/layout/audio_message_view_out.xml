@@ -24,7 +24,7 @@
             android:textColor="@color/mk_black_ochenta_cuatro"
             android:textSize="12sp" />
 
-        <com.innovative.circularaudioview.CircularAudioView
+        <com.criptext.monkeykitui.cav.CircularAudioView
             android:id="@+id/seek_bar"
             android:layout_width="120dp"
             android:layout_height="match_parent"

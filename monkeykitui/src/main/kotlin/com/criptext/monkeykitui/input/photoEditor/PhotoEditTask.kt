@@ -35,7 +35,7 @@ class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver) : Asy
         var bitmap : Bitmap? = null
         try {
             val degrees = if(params.size == 0) 0 else params[0] ?: 0
-            var bitmap = BitmapProcessing.getBitmapFromUri(sourceUri, resolver)
+            bitmap = BitmapProcessing.getBitmapFromUri(sourceUri, resolver)
             if (bitmap != null) {
                 bitmap = BitmapProcessing.rotateBitmap(bitmap, degrees)
                 var destFile = File(destPath)

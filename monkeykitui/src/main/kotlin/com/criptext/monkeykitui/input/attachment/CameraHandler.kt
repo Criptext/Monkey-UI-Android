@@ -122,18 +122,18 @@ class CameraHandler constructor(ctx : Context){
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        var requestCode = requestCode
-
         if (resultCode != Activity.RESULT_OK) {
             return
         }
-
+        val newReqCode: Int
         if (requestCode == Crop.REQUEST_PICK)
-            requestCode = RequestType.openGallery.requestCode
-        if (requestCode == Crop.REQUEST_CROP)
-            requestCode = RequestType.cropPhoto.requestCode
+            newReqCode = RequestType.openGallery.requestCode
+        else if (requestCode == Crop.REQUEST_CROP)
+            newReqCode = RequestType.cropPhoto.requestCode
+        else
+            newReqCode = requestCode
 
-        when (RequestType.fromCode(requestCode)) {
+        when (RequestType.fromCode(newReqCode)) {
             RequestType.openGallery -> {
                 try {
                     val ei = ExifInterface(getTempFile().absolutePath)

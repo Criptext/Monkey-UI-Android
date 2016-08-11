@@ -18,8 +18,8 @@ import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
-import com.innovative.circularaudioview.AudioActions
-import com.innovative.circularaudioview.CircularAudioView
+import com.criptext.monkeykitui.cav.AudioActions
+import com.criptext.monkeykitui.cav.CircularAudioView
 import java.io.File
 import java.util.*
 
