@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
-import com.criptext.monkeykitui.input.BaseInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -19,8 +18,8 @@ import java.util.ArrayList;
 public abstract class BaseChatActivity extends AppCompatActivity implements ChatActivity {
 
     private Handler handler = new Handler();
-    SlowMessageLoader loader;
-    FakeFiles fakeFiles;
+    SlowMessageLoader loader; //loads fake messages
+    FakeFiles fakeFiles; //manages fake photos and voice notes.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +35,8 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     }
 
     public InputListener createInputListener(){
+        //Everytime a new item is composed with the input view, create a new MessageItem instance of it
+        //and add it to the recyclerView.
         return new InputListener() {
                 @Override
                 public void onNewItem(@NotNull MonkeyItem item) {
@@ -64,13 +65,15 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
         Runnable errorCallback = new Runnable() {
             @Override
             public void run() {
+                //message could not be downloaded/uploaded, set status as error and update the UI
                 if (message.getDeliveryStatus() == MonkeyItem.DeliveryStatus.sending) {
                     message.setDeliveryStatus(MonkeyItem.DeliveryStatus.error);
                     rebindMonkeyItem(message);
                 }
             }
         };
-
+        //We are not actually making any network requests so if the message is not in 'sending' status
+        //mark it as 'sending' and rebind. after 3 seconds mark it as error.
         if (message.getDeliveryStatus() != MonkeyItem.DeliveryStatus.sending) {
             message.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
             rebindMonkeyItem(message);
@@ -78,10 +81,23 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             handler.postDelayed(errorCallback, 3000);
     }
 
+    /**
+     * updates the UI of a MonkeyItem that is displayed in the RecyclerView
+     * @param message The message whose ViewHolder we want to update.
+     */
     abstract void rebindMonkeyItem(MonkeyItem message);
 
+    /**
+     * Adds a list of messages to the beginning of the RecyclerView.
+     * @param messages list of messages to add
+     * @param hasReachedEnd true if the are no more old messages that can be added to this conversation
+     */
     abstract void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd);
 
+    /**
+     * Adds a MonkeyItem to the RecyclerView at the last position with a smooth animation.
+     * @param message the monkeyItem to add
+     */
     abstract void smoothlyAddNewItem(MonkeyItem message);
 
     @Override

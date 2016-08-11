@@ -21,7 +21,9 @@ public class MainFragmentActivity extends BaseChatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_fragment);
         chatFragment = (MonkeyChatFragment) getSupportFragmentManager().findFragmentById(R.id.chat_fragment);
+        //set an input listener to the chat fragment so that the user can compose and send messages
         chatFragment.setInputListener(createInputListener());
+        //instantiate an object to play voice notes and pass it to the fragment
         vnPlayer = new DefaultVoiceNotePlayer(this);
         chatFragment.setVoiceNotePlayer(vnPlayer);
     }
@@ -29,12 +31,14 @@ public class MainFragmentActivity extends BaseChatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //The default voice note player needs to be initialized in the onStart() callback
         vnPlayer.initPlayer();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        //The default voice note player needs to be released in the onStart() callback
         vnPlayer.releasePlayer();
     }
 
@@ -57,6 +61,7 @@ public class MainFragmentActivity extends BaseChatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Activity must manually call chatFragments on activityResult. it's not automatic.
+        //This makes sure that the inputListener receives the edited photos that the user wants to send
         if(chatFragment != null)
             chatFragment.onActivityResult(requestCode, resultCode, data);
     }
