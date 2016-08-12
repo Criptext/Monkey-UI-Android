@@ -6,4 +6,6 @@
     <string name="mk_action_rot">Rotate</string>
     <string name="mk_commit_photo_changes">Use</string>
     <string name="mk_edit_photo">Edit Photo</string>
+    <string name="mk_empty_conversation_text">Write to this contact</string>
+    <string name="mk_empty_group_text">Write to this group</string>
 </resources>

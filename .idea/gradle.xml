@@ -10,7 +10,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/circularAudioView" />
             <option value="$PROJECT_DIR$/monkeykitui" />
           </set>
         </option>
@@ -18,7 +17,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/circularAudioView" />
             <option value="$PROJECT_DIR$/monkeykitui" />
           </set>
         </option>

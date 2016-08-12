@@ -74,6 +74,7 @@
         android:layout_marginTop="4dp"
         android:background="@drawable/yellow_badge"
         android:gravity="center"
+        android:visibility="gone"
         android:minWidth="22dp"
         android:text="1"
         android:paddingLeft="3dp"

@@ -2,7 +2,6 @@ package com.criptext.uisample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
@@ -30,17 +29,26 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //The content layout must have a FrameLayout as container of the fragments. using
-        // different layouts like RelativeLayout may have weird results.
-        setContentView(R.layout.activity_main_fragment);
-        initConversationsFragment();
+        // different layouts like RelativeLayout may have weird results. It's best to use
+        // our mk_fragment_container
+        setContentView(R.layout.mk_fragment_container);
+        if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
+            initConversationsFragment();
     }
 
+    /**
+     * Add a new Conversations fragment to the activity.
+     */
     private void initConversationsFragment(){
         MonkeyConversationsFragment convFragment = new MonkeyConversationsFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.fragment_container, convFragment);
         ft.commit();
     }
+
+    /**
+     * Add a new Chat fragment to the activtity with a slide animation.
+     */
     private void initChatFragment(){
         MonkeyChatFragment chatFragment = new MonkeyChatFragment();
         //set an input listener to the chat fragment so that the user can compose and send messages
