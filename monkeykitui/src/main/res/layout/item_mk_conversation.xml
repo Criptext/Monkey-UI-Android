@@ -9,6 +9,7 @@
         android:layout_height="52dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
         android:background="@drawable/mk_default_user_img"
         android:tag="2"/>
@@ -80,4 +81,11 @@
         android:textColor="@android:color/white"
         android:textSize="13sp" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#e2e2e2"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="10dp"/>
 </RelativeLayout>

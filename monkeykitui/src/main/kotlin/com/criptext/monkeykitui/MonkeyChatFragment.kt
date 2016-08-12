@@ -6,13 +6,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.transition.Slide
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
@@ -91,6 +95,16 @@ open class MonkeyChatFragment: Fragment() {
         voiceNotePlayer?.releasePlayer()
     }
 
+    override fun onAttach(activity: Activity?) {
+        val chatActivty = activity as? ChatActivity
+        chatActivty?.setChatFragment(this)
+        super.onAttach(activity)
+    }
+
+    override fun onDetach() {
+        (activity as ChatActivity).setChatFragment(null)
+        super.onDetach()
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode != Activity.RESULT_OK)
@@ -110,6 +124,11 @@ open class MonkeyChatFragment: Fragment() {
 
     fun smoothlyAddNewItem(message: MonkeyItem){
         monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        return if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
+            else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
     }
 
 }

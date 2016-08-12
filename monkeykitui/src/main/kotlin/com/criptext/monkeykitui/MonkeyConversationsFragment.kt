@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -32,7 +33,8 @@ open class MonkeyConversationsFragment: Fragment(){
      * @return the RecyclerView object of this fragment ready to set an adapter with data.
      */
     open protected fun initRecyclerView(view: View): RecyclerView {
-        val recycler = view as RecyclerView
+        //RecyclerView must be inside a container http://stackoverflow.com/a/32695034/5207721
+        val recycler = view.findViewById(R.id.recycler) as RecyclerView
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         recycler.layoutManager = linearLayoutManager;
         return recycler
@@ -50,6 +52,18 @@ open class MonkeyConversationsFragment: Fragment(){
         super.onStart()
         (activity as ConversationsActivity).requestConversations()
     }
+
+    override fun onAttach(activity: Activity?) {
+        val conversationsActivty = activity as? ConversationsActivity
+        conversationsActivty?.setConversationsFragment(this)
+        super.onAttach(activity)
+    }
+
+    override fun onDetach() {
+        (activity as ConversationsActivity).setConversationsFragment(null)
+        super.onDetach()
+    }
+
     fun insertConversations(conversations: ArrayList<MonkeyConversation>){
         conversationsAdapter.insertConversations(conversations)
     }

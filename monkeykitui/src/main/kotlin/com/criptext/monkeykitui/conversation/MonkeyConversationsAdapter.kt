@@ -2,11 +2,13 @@ package com.criptext.monkeykitui.conversation
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.util.Utils
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -20,9 +22,20 @@ import java.util.*
 open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyConversationsAdapter.ConversationHolder>() {
 
     private val conversationsList: ArrayList<MonkeyConversation>
+    val mSelectableItemBg: Int
+
+    private val conversationsActivity: ConversationsActivity
+    get() = mContext as ConversationsActivity
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
+        //get that clickable background
+        val mTypedValue = TypedValue();
+        mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
+        mSelectableItemBg = mTypedValue.resourceId
+        mContext as? ConversationsActivity ?:
+                throw IllegalArgumentException(
+                        "The context of this MonkeConversationsAdapter must implement ConversationsActivity!")
     }
 
     override fun getItemCount() = conversationsList.size
@@ -35,12 +48,17 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             holder.setDate(Utils.getHoraVerdadera(conversation.getDatetime()))
             holder.setTotalNewMessages(conversation.getTotalNewMessages())
             holder.setAvatar(conversation.getAvatarFilePath(), conversation.isGroup())
+
+            holder.itemView.setOnClickListener {
+                conversationsActivity.onConversationClicked(conversation)
+            }
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationHolder? {
         val mView = LayoutInflater.from(mContext).inflate(R.layout.item_mk_conversation, null)
+        mView.setBackgroundResource(mSelectableItemBg)
         return ConversationHolder(mView)
     }
 

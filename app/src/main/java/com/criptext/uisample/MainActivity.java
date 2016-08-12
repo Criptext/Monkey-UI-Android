@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -20,6 +21,7 @@ import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -136,5 +138,10 @@ public class MainActivity extends BaseChatActivity{
     @Override
     void smoothlyAddNewItem(MonkeyItem message) {
         adapter.smoothlyAddNewItem(message, recycler);
+    }
+
+    @Override
+    public void setChatFragment(@Nullable MonkeyChatFragment chatFragment) {
+        //This activity doesn't use fragments so there is nothing to do
     }
 }

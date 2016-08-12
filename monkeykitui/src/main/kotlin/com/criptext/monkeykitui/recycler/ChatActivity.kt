@@ -1,11 +1,14 @@
 package com.criptext.monkeykitui.recycler
 
+import com.criptext.monkeykitui.MonkeyChatFragment
+
 /**
  * Created by gesuwall on 4/5/16.
  */
 
 interface ChatActivity {
 
+    fun setChatFragment(chatFragment: MonkeyChatFragment?)
     /**
      * If a file instantiated with MonkeyItem.getFilePath() does not exist, this method will be called
      * &nbsp\ to download the neccesary file. Once the download is complete the adapter should be notified
