@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.transition.Slide
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +26,7 @@ import java.util.*
  * Created by Gabriel on 8/10/16.
  */
 
-open class MonkeyChatFragment: Fragment() {
+open class MonkeyChatFragment(): Fragment() {
     open val chatLayout: Int
         get() = R.layout.monkey_chat_layout
 
@@ -35,6 +34,8 @@ open class MonkeyChatFragment: Fragment() {
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
     private lateinit var inputView: BaseInputView
+    lateinit var conversationId: String
+    private set
 
     var inputListener: InputListener? = null
     set(value) {
@@ -52,6 +53,22 @@ open class MonkeyChatFragment: Fragment() {
             }
             field = value
         }
+
+
+    companion object {
+        val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
+        val chatConversationId = "MonkeyChatFragment.conversationId"
+
+        fun newInstance(conversationId: String, hasReachedEnd: Boolean): MonkeyChatFragment{
+            val newInstance = MonkeyChatFragment()
+            val newBundle = Bundle()
+            newBundle.putString(chatConversationId, conversationId)
+            newBundle.putBoolean(chatHasReachedEnd, hasReachedEnd)
+            newInstance.arguments = newBundle
+            return newInstance
+        }
+    }
+
     /**
      * finds the RecyclerView in the view layout of the current fragment, ands sets an appropiate
      * LayoutManager.
@@ -67,21 +84,33 @@ open class MonkeyChatFragment: Fragment() {
         return recycler
     }
 
+    private fun setInitialMessages(){
+        val args = arguments
+        conversationId = args.getString(chatConversationId)
+        val reachedEnd = args.getBoolean(chatHasReachedEnd)
+        val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
+        if(initialMessages != null){
+            monkeyAdapter.addOldMessages(initialMessages, reachedEnd)
+        } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
+        else
+            (activity as ChatActivity).onLoadMoreData(0)
+
+    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(chatLayout, null)
 
         recyclerView = initRecyclerView(view)
         monkeyAdapter = MonkeyAdapter(activity)
-        recyclerView.adapter = monkeyAdapter
-        audioUIUpdater = AudioUIUpdater(recyclerView)
-
-        monkeyAdapter.voiceNotePlayer = voiceNotePlayer
-        voiceNotePlayer?.uiUpdater = audioUIUpdater
 
         inputView = view.findViewById(R.id.inputView) as BaseInputView
         inputView.inputListener = this.inputListener
 
-        monkeyAdapter.chatActivity.onLoadMoreData(0)
+        setInitialMessages()
+        recyclerView.adapter = monkeyAdapter
+        audioUIUpdater = AudioUIUpdater(recyclerView)
+        monkeyAdapter.voiceNotePlayer = voiceNotePlayer
+        voiceNotePlayer?.uiUpdater = audioUIUpdater
+
         return view
     }
 
@@ -106,6 +135,11 @@ open class MonkeyChatFragment: Fragment() {
         super.onDetach()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as ChatActivity).retainMessages(this.conversationId, monkeyAdapter.messagesList)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode != Activity.RESULT_OK)
             return
@@ -113,6 +147,8 @@ open class MonkeyChatFragment: Fragment() {
         val mediaInputView = inputView as? MediaInputView
         mediaInputView?.cameraHandler?.onActivityResult(requestCode, resultCode, data)
     }
+
+    fun findMonkeyItemById(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemById(id)
 
     fun rebindMonkeyItem(message: MonkeyItem){
         monkeyAdapter.rebindMonkeyItem(message, recyclerView)
@@ -126,9 +162,14 @@ open class MonkeyChatFragment: Fragment() {
         monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
     }
 
+    fun clearMessages(){
+        monkeyAdapter.clear()
+    }
+
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
             else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
     }
+
 
 }

@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class MainActivity extends BaseChatActivity{
 
@@ -143,5 +144,11 @@ public class MainActivity extends BaseChatActivity{
     @Override
     public void setChatFragment(@Nullable MonkeyChatFragment chatFragment) {
         //This activity doesn't use fragments so there is nothing to do
+    }
+
+
+    @Override
+    public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+
     }
 }

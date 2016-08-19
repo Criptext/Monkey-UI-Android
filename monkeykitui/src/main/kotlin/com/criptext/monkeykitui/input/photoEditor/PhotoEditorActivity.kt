@@ -278,10 +278,9 @@ class PhotoEditorActivity : AppCompatActivity() {
         progressBar?.visibility = View.VISIBLE
         sendButton?.isEnabled = false
         processing = true
-        Log.d("PhotoEditor", "export source: ${bitmapUri.path} dest: $photoFilePath, degs: $editedDegrees")
+        //Log.d("PhotoEditor", "export source: ${bitmapUri.path} dest: $photoFilePath, degs: $editedDegrees")
         processTask.setOnBitmapProcessedCallback(Runnable {
             val intent = Intent()
-            Log.d("PhotoEditor", "exported")
             setResult(Activity.RESULT_OK, intent)
             finish()
         })

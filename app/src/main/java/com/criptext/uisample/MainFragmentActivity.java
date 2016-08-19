@@ -2,21 +2,23 @@ package com.criptext.uisample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
 import com.criptext.monkeykitui.conversation.ConversationsActivity;
 import com.criptext.monkeykitui.conversation.MonkeyConversation;
+import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
+import com.criptext.monkeykitui.util.MonkeyFragmentManager;
 import com.criptext.uisample.conversation.FakeConversations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by gesuwall on 8/10/16.
@@ -25,47 +27,17 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     MonkeyChatFragment chatFragment;
     MonkeyConversationsFragment convFragment;
     VoiceNotePlayer vnPlayer;
+    InputListener inputListener;
+    MonkeyFragmentManager fragmentManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //The content layout must have a FrameLayout as container of the fragments. using
-        // different layouts like RelativeLayout may have weird results. It's best to use
-        // our mk_fragment_container
-        setContentView(R.layout.mk_fragment_container);
-        if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
-            initConversationsFragment();
+        fragmentManager = new MonkeyFragmentManager(this);
+        fragmentManager.setContentLayout(savedInstanceState);
     }
 
-    /**
-     * Add a new Conversations fragment to the activity.
-     */
-    private void initConversationsFragment(){
-        MonkeyConversationsFragment convFragment = new MonkeyConversationsFragment();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.fragment_container, convFragment);
-        ft.commit();
-    }
 
-    /**
-     * Add a new Chat fragment to the activtity with a slide animation.
-     */
-    private void initChatFragment(){
-        MonkeyChatFragment chatFragment = new MonkeyChatFragment();
-        //set an input listener to the chat fragment so that the user can compose and send messages
-        chatFragment.setInputListener(createInputListener());
-        //instantiate an object to play voice notes and pass it to the fragment
-        vnPlayer = new DefaultVoiceNotePlayer(this);
-        chatFragment.setVoiceNotePlayer(vnPlayer);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        //animations must be set before adding or replacing fragments
-        ft.setCustomAnimations(R.anim.mk_fragment_slide_right_in,
-                R.anim.mk_fragment_slide_left_out,
-                R.anim.mk_fragment_slide_left_in,
-                R.anim.mk_fragment_slide_right_out);
-        ft.replace(R.id.fragment_container, chatFragment);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
+
 
     @Override
     protected void onStart() {
@@ -105,7 +77,12 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void onConversationClicked(@NotNull MonkeyConversation conversation) {
-        initChatFragment();
+        if(inputListener == null)
+            inputListener = createInputListener();
+        if(vnPlayer == null)
+            vnPlayer = new DefaultVoiceNotePlayer(this);
+        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", false);
+        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
     }
 
     @Override
@@ -122,5 +99,10 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     public void setConversationsFragment(@Nullable MonkeyConversationsFragment monkeyConversationsFragment) {
         convFragment = monkeyConversationsFragment;
+    }
+
+    @Override
+    public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+
     }
 }

@@ -42,4 +42,20 @@ interface ChatActivity {
      */
     fun onLoadMoreData(loadedItems : Int)
 
+    /**
+     * MonkeyChatFragment will call this method to instantly retrieve the first messages to display.
+     * @param conversationId unique identifier of the conversation of this chat activity
+     * @return A collection of MonkeyItems that will be displayed in the chat as soon as it renders.
+     * if there are no messages available returns null
+     */
+    fun getInitialMessages(conversationId: String): Collection<MonkeyItem>?
+
+    /**
+     * MonkeyChatFragment will call this method in the onDestroy callback. chat activity should try
+     * to persist the messages of the conversations to retain state on configuration change
+     * @param conversationId unique identifier of the chat's conversation
+     * @param messages list of messages to retain
+     */
+    fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>)
+
 }

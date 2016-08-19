@@ -9,8 +9,10 @@ import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by gesuwall on 8/10/16.
@@ -113,5 +115,11 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     @Override
     public void onLoadMoreData(int loadedItems) {
         loader.execute();
+    }
+
+    @Nullable
+    @Override
+    public Collection<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
+        return null;
     }
 }

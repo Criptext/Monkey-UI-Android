@@ -31,7 +31,7 @@ import java.util.*
 
 open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
-    private val messagesList: ArrayList<MonkeyItem>
+    val messagesList: ArrayList<MonkeyItem>
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
@@ -426,7 +426,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * then when the user scrolls to the beginning of the list, the adapter should attempt to load the
      * remaining items and show a view that tells the user that it is loading messages.
      */
-    fun addOldMessages(newData : ArrayList<MonkeyItem>, reachedEnd: Boolean){
+    fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean){
 
         fun addOldMessagesToAdapter(){
             removeEndOfRecyclerView()
@@ -569,6 +569,12 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             })
 
     /**
+     * Looks for a monkey item with a specified Id, starting by the most recent ones.
+     * @return the message with the requested Id. returns null if the message does not exist
+     */
+    fun findMonkeyItemById(id: String) = messagesList.findLast { it.getMessageId() == id }
+
+    /**
      * Adds a new item to the RecyclerView with a smooth scrolling animation
      * @param item MonkeyItem to add. It will be added at the end of the messagesList, so it should
      * have a higher timestamp than the other messages.
@@ -583,6 +589,15 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         if(last >= messagesList.size - 2) {
             recyclerView.scrollToPosition(messagesList.size - 1);
         }
+    }
+
+    /**
+     * removes all messages from the adapter and clears the RecyclerView
+     */
+    fun clear(){
+        val totalMessages = messagesList.size
+        messagesList.clear()
+        notifyItemRangeRemoved(0, totalMessages)
     }
 
 }
