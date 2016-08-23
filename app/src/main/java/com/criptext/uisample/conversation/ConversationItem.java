@@ -11,6 +11,9 @@ public class ConversationItem implements MonkeyConversation {
     private String id;
     private String name;
     private String lastMessage;
+
+
+    private String groupMembers;
     private long datetime;
     private int newMessages;
     private int status;
@@ -86,4 +89,15 @@ public class ConversationItem implements MonkeyConversation {
     public int getStatus() {
         return status;
     }
+
+    @NotNull
+    @Override
+    public String getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(String groupMembers) {
+        this.groupMembers = groupMembers;
+    }
+
 }

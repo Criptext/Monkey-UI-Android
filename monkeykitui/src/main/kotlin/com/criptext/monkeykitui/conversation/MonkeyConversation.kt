@@ -39,6 +39,11 @@ interface MonkeyConversation{
     fun isGroup(): Boolean
 
     /**
+     * @return String with the monkey ID's of the group members separated by commas
+     */
+    fun getGroupMembers(): String
+
+    /**
      * @return a string with the filepath of this conversation's avatar. If it is null, then
      * a default image is used.
      */

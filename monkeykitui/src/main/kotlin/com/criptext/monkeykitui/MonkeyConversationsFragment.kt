@@ -67,4 +67,10 @@ open class MonkeyConversationsFragment: Fragment(){
     fun insertConversations(conversations: ArrayList<MonkeyConversation>){
         conversationsAdapter.insertConversations(conversations)
     }
+
+    fun addNewConversation(newConversation: MonkeyConversation){
+        val list = conversationsAdapter.conversationsList
+        list.add(newConversation)
+        conversationsAdapter.notifyItemInserted(list.size - 1)
+    }
 }

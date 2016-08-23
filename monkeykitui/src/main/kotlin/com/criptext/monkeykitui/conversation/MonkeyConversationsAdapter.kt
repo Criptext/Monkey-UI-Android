@@ -121,6 +121,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         conversationsList.addAll(conversations)
         notifyDataSetChanged()
     }
+
+    
     class ConversationHolder: RecyclerView.ViewHolder {
 
         val nameTextView: TextView
