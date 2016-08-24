@@ -64,13 +64,14 @@ open class MonkeyConversationsFragment: Fragment(){
         super.onDetach()
     }
 
-    fun insertConversations(conversations: ArrayList<MonkeyConversation>){
-        conversationsAdapter.insertConversations(conversations)
+    fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
+        conversationsAdapter.insertConversations(conversations, hasReachedEnd)
     }
 
+    fun addOldConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
+        conversationsAdapter.addOldConversations(conversations, hasReachedEnd)
+    }
     fun addNewConversation(newConversation: MonkeyConversation){
-        val list = conversationsAdapter.conversationsList
-        list.add(newConversation)
-        conversationsAdapter.notifyItemInserted(list.size - 1)
+        conversationsAdapter.addNewConversation(newConversation)
     }
 }

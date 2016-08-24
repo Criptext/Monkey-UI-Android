@@ -41,7 +41,7 @@ interface MonkeyConversation{
     /**
      * @return String with the monkey ID's of the group members separated by commas
      */
-    fun getGroupMembers(): String
+    fun getGroupMembers(): String?
 
     /**
      * @return a string with the filepath of this conversation's avatar. If it is null, then
@@ -56,6 +56,23 @@ interface MonkeyConversation{
     fun getStatus(): Int
 
     enum class ConversationStatus {
-        empty, receivedMessage, sendingMessage, deliveredMessage, sentMessageRead;
+        moreConversations, empty, receivedMessage, sendingMessage, deliveredMessage, sentMessageRead;
+    }
+
+    companion object {
+        fun endItem(): MonkeyConversation = object : MonkeyConversation {
+            override fun getAvatarFilePath(): String? = null
+
+            override fun getDatetime() = 0L
+            override fun getGroupMembers() = null
+            override fun getId() = "0"
+            override fun getName() = "0"
+            override fun getStatus() = ConversationStatus.moreConversations.ordinal
+            override fun getSecondaryText() = ""
+            override fun getTotalNewMessages() = 0
+            override fun isGroup() = false
+
+        }
+
     }
 }

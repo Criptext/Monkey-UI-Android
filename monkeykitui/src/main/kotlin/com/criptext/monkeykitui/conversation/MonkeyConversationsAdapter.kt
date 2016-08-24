@@ -6,11 +6,15 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.conversation.holder.ConversationHolder
+import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.Utils
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -21,13 +25,30 @@ import java.util.*
  * Created by gesuwall on 8/11/16.
  */
 
-open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyConversationsAdapter.ConversationHolder>() {
+open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adapter<ConversationHolder>() {
 
     val conversationsList: ArrayList<MonkeyConversation>
     val mSelectableItemBg: Int
 
     private val conversationsActivity: ConversationsActivity
     get() = mContext as ConversationsActivity
+
+    var hasReachedEnd : Boolean = true
+        set(value) {
+            if(!value && field != value) {
+                conversationsList.add(MonkeyConversation.endItem())
+                notifyItemInserted(conversationsList.size - 1)
+                //Log.d("MonkeyConversationsAdapter", "End item added")
+            }
+            field = value
+        }
+
+
+    val dataLoader : SlowRecyclerLoader
+
+    var loadingDelay: Long
+        get() =  dataLoader.delayTime
+        set(value) { dataLoader.delayTime = value }
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
@@ -38,6 +59,16 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         mContext as? ConversationsActivity ?:
                 throw IllegalArgumentException(
                         "The context of this MonkeConversationsAdapter must implement ConversationsActivity!")
+        dataLoader = SlowRecyclerLoader(true, mContext)
+    }
+
+    override fun onViewAttachedToWindow(holder: ConversationHolder?) {
+        super.onViewAttachedToWindow(holder)
+        val endHolder = holder as? ConversationHolder.EndHolder
+        if(endHolder != null) {
+            //endHolder.setOnClickListener {  }
+            dataLoader.delayNewBatch(conversationsList.size)
+        }
     }
 
     override fun getItemCount() = conversationsList.size
@@ -51,7 +82,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
     override fun onBindViewHolder(holder: ConversationHolder?, position: Int) {
         val conversation = conversationsList[position]
-        if(holder != null){
+        if(holder != null && conversation.getStatus() >
+                MonkeyConversation.ConversationStatus.moreConversations.ordinal){
             holder.setName(conversation.getName())
             holder.setSecondaryText(conversation.getSecondaryText())
             holder.setDate(Utils.getHoraVerdadera(conversation.getDatetime()))
@@ -63,22 +95,21 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             }
 
             val holderType = getItemViewType(position)
-            when(ConversationHolder.ConversationHolderTypes.values()[holderType]){
-                ConversationHolder.ConversationHolderTypes.empty -> {
+            when(ConversationHolder.ViewTypes.values()[holderType]){
+                ConversationHolder.ViewTypes.empty -> {
                     holder.setSecondaryText( mContext.getString(
                             if(conversation.isGroup()) R.string.mk_empty_group_text
                             else R.string.mk_empty_conversation_text))
                     holder.setSecondaryTextLeftDrawable(0)
                 }
-                ConversationHolder.ConversationHolderTypes.sentMessage ->{
+                ConversationHolder.ViewTypes.sentMessage ->{
                     holder.setSecondaryTextLeftDrawable(getSentMessageCheckmark(
                             MonkeyConversation.ConversationStatus.values()[conversation.getStatus()]))
                 }
 
-                ConversationHolder.ConversationHolderTypes.newMessages -> {
+                ConversationHolder.ViewTypes.newMessages -> {
                     holder.setTotalNewMessages(conversation.getTotalNewMessages())
                 }
-
 
             }
         }
@@ -87,27 +118,38 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
     override fun getItemViewType(position: Int): Int {
         val conversation = conversationsList[position]
-        when (MonkeyConversation.ConversationStatus.values()[conversation.getStatus()]){
+        return when (MonkeyConversation.ConversationStatus.values()[conversation.getStatus()]){
             MonkeyConversation.ConversationStatus.empty ->
-                return ConversationHolder.ConversationHolderTypes.empty.ordinal
+                ConversationHolder.ViewTypes.empty.ordinal
 
             MonkeyConversation.ConversationStatus.receivedMessage ->
                 if(conversation.getTotalNewMessages() > 0)
-                    return ConversationHolder.ConversationHolderTypes.newMessages.ordinal
+                    ConversationHolder.ViewTypes.newMessages.ordinal
                 else
-                return ConversationHolder.ConversationHolderTypes.receivedMessage.ordinal
+                    ConversationHolder.ViewTypes.receivedMessage.ordinal
 
             MonkeyConversation.ConversationStatus.sendingMessage,
             MonkeyConversation.ConversationStatus.deliveredMessage,
             MonkeyConversation.ConversationStatus.sentMessageRead ->
-                return ConversationHolder.ConversationHolderTypes.sentMessage.ordinal
+                ConversationHolder.ViewTypes.sentMessage.ordinal
+
+            MonkeyConversation.ConversationStatus.moreConversations ->
+                ConversationHolder.ViewTypes.moreConversations.ordinal
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationHolder? {
-        val mView = LayoutInflater.from(mContext).inflate(R.layout.item_mk_conversation, null)
-        mView.setBackgroundResource(mSelectableItemBg)
-        return ConversationHolder(mView, ConversationHolder.ConversationHolderTypes.values()[viewType])
+        val isLoadingView = viewType == ConversationHolder.ViewTypes.moreConversations.ordinal
+        val mView: View
+        if(isLoadingView){
+            mView = LayoutInflater.from(mContext).inflate(R.layout.end_of_recycler_view, null)
+            return ConversationHolder.EndHolder(mView)
+
+        } else {
+            mView = LayoutInflater.from(mContext).inflate(R.layout.item_mk_conversation, null)
+            mView.setBackgroundResource(mSelectableItemBg)
+            return ConversationHolder(mView, ConversationHolder.ViewTypes.values()[viewType])
+        }
     }
 
     /**
@@ -115,72 +157,40 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * will be removed.
      * @param conversations a list of conversations to add. After calling this function, the adapter
      * will contain ONLY the conversations in this list.
+     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
+     * loading view when the user scrolls to the end
      */
-    fun insertConversations(conversations: ArrayList<MonkeyConversation>){
+    fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsList.clear()
         conversationsList.addAll(conversations)
         notifyDataSetChanged()
+        this.hasReachedEnd = hasReachedEnd
+    }
+
+    /**
+     * adds a conversation to the top of the adapter's list. The changes are then notified to the UI
+     * @param newConversation conversation to add
+     */
+    fun addNewConversation(newConversation: MonkeyConversation){
+        conversationsList.add(0, newConversation)
+        notifyItemInserted(0)
+    }
+
+    /**
+     * adds a collection of conversations to the bottom of the adapter's list. The changes are then
+     * notified to the UI
+     * @param oldConversations conversations to add
+     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
+     * loading view when the user scrolls to the end
+     */
+    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
+        val startPoint = conversationsList.size
+        conversationsList.addAll(oldConversations)
+        notifyItemRangeInserted(startPoint, oldConversations.size)
+        this.hasReachedEnd = hasReachedEnd
     }
 
     
-    class ConversationHolder: RecyclerView.ViewHolder {
-
-        val nameTextView: TextView
-        val secondaryTextView: TextView
-        val dateTextView: TextView
-        val badge: TextView
-        val avatarImageView: CircleImageView
-
-        constructor(view : View) : super(view) {
-            nameTextView = view.findViewById(R.id.conv_name) as TextView
-            secondaryTextView = view.findViewById(R.id.conv_secondary_txt) as TextView
-            dateTextView = view.findViewById(R.id.conv_date) as TextView
-            badge = view.findViewById(R.id.conv_badge) as TextView
-            avatarImageView = view.findViewById(R.id.conv_avatar) as CircleImageView
-        }
-
-        constructor(view: View, type: ConversationHolderTypes): this(view){
-            if(type == ConversationHolderTypes.newMessages) {
-                badge.visibility = View.VISIBLE
-                dateTextView.setTextColor(view.context.resources.getColor(R.color.mk_yellow_highlight))
-            }
-        }
-
-        fun setName(name: String){
-            nameTextView.text = name
-        }
-
-        fun setSecondaryText(text: String){
-            secondaryTextView.text = text
-        }
-
-        fun setDate(dateString: String){
-            dateTextView.text = dateString
-        }
-
-        fun setSecondaryTextLeftDrawable(drawable: Int){
-            secondaryTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0)
-        }
-
-        fun setTotalNewMessages(totalNewMessages: Int){
-            badge.text = totalNewMessages.toString()
-        }
-
-        fun setAvatar(filepath: String?, isGroup: Boolean){
-            if(filepath != null)
-                Picasso.with(avatarImageView.context)
-                    .load(File(filepath))
-                    .into(avatarImageView)
-            else
-                avatarImageView.setImageResource(if(isGroup) R.drawable.mk_default_group_avatar else
-                    R.drawable.mk_default_user_img)
-        }
-
-        enum class ConversationHolderTypes {
-            empty, receivedMessage, sentMessage, newMessages;
-        }
-    }
-
 
 
 }

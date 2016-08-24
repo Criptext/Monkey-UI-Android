@@ -13,4 +13,6 @@ interface ConversationsActivity {
     fun requestConversations()
 
     fun onConversationClicked(conversation: MonkeyConversation)
+
+    fun onLoadMoreConversations(loadedConversations: Int)
 }

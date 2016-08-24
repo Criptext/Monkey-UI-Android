@@ -88,7 +88,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     public void requestConversations() {
         if(convFragment != null)
-            convFragment.insertConversations(new FakeConversations().getAll(this));
+            convFragment.insertConversations(new FakeConversations().getAll(this), true);
     }
 
     @Override
@@ -103,6 +103,11 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+
+    }
+
+    @Override
+    public void onLoadMoreConversations(int loadedItems) {
 
     }
 }

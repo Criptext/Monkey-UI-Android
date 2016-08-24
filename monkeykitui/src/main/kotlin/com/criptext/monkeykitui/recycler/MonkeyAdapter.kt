@@ -57,12 +57,12 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      */
     var imageListener : ImageListener?
 
-    //MessageLoading
-    var requestmessagesTimestamp = 0L
-    val DEFAULT_MESSAGE_LOAD_TIME = 500
-    var messageLoadTime =  DEFAULT_MESSAGE_LOAD_TIME
 
-    val handler = Handler()
+    val dataLoader : SlowRecyclerLoader
+
+    var loadingDelay: Long
+        get() =  dataLoader.delayTime
+        set(value) { dataLoader.delayTime = value }
 
     init{
         messagesList = ArrayList<MonkeyItem>()
@@ -78,6 +78,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         }
         monkeyConfig = MonkeyConfig()
         setHasStableIds(true)
+        dataLoader = SlowRecyclerLoader(false, mContext)
 
     }
 
@@ -120,9 +121,8 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         super.onViewAttachedToWindow(holder)
         val endHolder = holder as? MonkeyEndHolder
         if(endHolder != null) {
-            endHolder.setOnClickListener {  }
-            requestmessagesTimestamp = System.currentTimeMillis();
-            chatActivity.onLoadMoreData(messagesList.size)
+            //endHolder.setOnClickListener {  }
+            dataLoader.delayNewBatch(messagesList.size)
         }
     }
 
@@ -146,9 +146,6 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         val item = messagesList[position]
 
         if(holder is MonkeyEndHolder) {
-            holder.setOnClickListener({
-                chatActivity.onLoadMoreData(messagesList.size)
-            })
             return
         }
 
@@ -427,20 +424,10 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * remaining items and show a view that tells the user that it is loading messages.
      */
     fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean){
-
-        fun addOldMessagesToAdapter(){
-            removeEndOfRecyclerView()
-            messagesList.addAll(0, newData)
-            notifyItemRangeInserted(0, newData.size)
-            hasReachedEnd = reachedEnd
-        }
-        val elapsedTime = System.currentTimeMillis() - requestmessagesTimestamp
-        if (elapsedTime > messageLoadTime)
-            addOldMessagesToAdapter()
-        else{
-            handler.postDelayed(Runnable { addOldMessagesToAdapter() },
-                    messageLoadTime - elapsedTime)
-        }
+        removeEndOfRecyclerView()
+        messagesList.addAll(0, newData)
+        notifyItemRangeInserted(0, newData.size)
+        hasReachedEnd = reachedEnd
     }
 
     /**

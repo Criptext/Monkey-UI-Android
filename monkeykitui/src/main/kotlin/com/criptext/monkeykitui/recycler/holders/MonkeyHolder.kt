@@ -41,7 +41,7 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
     /* COMMON IMAGE & FILE & AUDIO */
     var filesizeTextView : TextView? = null
 
-    constructor(view : View) : super(getViewWithRecyclerLayoutParams(view)) {
+    constructor(view : View) : super(Utils.getViewWithRecyclerLayoutParams(view)) {
         datetimeTextView = view.findViewById(R.id.datetime) as TextView?
         bubbleLayout = view.findViewById(R.id.content_message) as ViewGroup?
         tailImageView = view.findViewById(R.id.tail) as ImageView?
@@ -155,19 +155,5 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         val bgShape = bubbleLayout!!.background.current as GradientDrawable
         bgShape.setColor(color)
     }
-    companion object {
-        /**
-         * Adds a RecyclerView.LayoutParams to a view
-         * @param view view to set the new layout params
-         * @return the view with a RecyclerView.LayoutParams object as its layout params
-         *
-         */
-        fun getViewWithRecyclerLayoutParams(view: View) : View{
-            val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            view.layoutParams = RecyclerView.LayoutParams(params)
-            return view
-        }
 
-    }
-
-    }
+}
