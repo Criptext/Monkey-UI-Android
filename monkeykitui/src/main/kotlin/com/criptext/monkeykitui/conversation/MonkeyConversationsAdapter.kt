@@ -152,6 +152,19 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
+    protected fun removeEndOfRecyclerView(){
+        if(conversationsList.isEmpty())
+            return;
+
+        val lastPosition = conversationsList.size - 1
+        val lastItem = conversationsList[lastPosition]
+        if(lastItem.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal){
+            conversationsList.remove(lastItem)
+            notifyItemRemoved(lastPosition)
+            hasReachedEnd = true
+        }
+
+    }
     /**
      * adds a list of conversations to this adapter. If there were already any conversations, they
      * will be removed.
@@ -162,6 +175,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsList.clear()
+        removeEndOfRecyclerView()
         conversationsList.addAll(conversations)
         notifyDataSetChanged()
         this.hasReachedEnd = hasReachedEnd
@@ -184,6 +198,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * loading view when the user scrolls to the end
      */
     fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
+        removeEndOfRecyclerView()
         val startPoint = conversationsList.size
         conversationsList.addAll(oldConversations)
         notifyItemRangeInserted(startPoint, oldConversations.size)
