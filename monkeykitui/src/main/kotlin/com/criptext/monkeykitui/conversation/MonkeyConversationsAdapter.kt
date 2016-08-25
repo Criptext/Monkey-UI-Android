@@ -205,7 +205,40 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         this.hasReachedEnd = hasReachedEnd
     }
 
-    
+    /**
+     * updates a conversation in the recyclerView. calls notifyItemChanged with the updated conversation's
+     * position.
+     * @param updatedConversation the updated conversation. this object replaces the existing conversation
+     * in the adapter.
+     */
+    fun updateConversation(updatedConversation: MonkeyConversation){
+        val position = getConversationPositionByTimestamp(updatedConversation)
+        if(position > -1){
+            conversationsList[position] = updatedConversation
+            notifyItemChanged(position)
+        }
+    }
 
+    /**
+     * Finds the adapter position by the MonkeyConversation's timestamp.
+     * @param targetId the timestamp of the MonkeyConversation whose adapter position will be searched. This
+     * timestamp must belong to an existing MonkeyConversation in this adapter.
+     * @return The adapter position of the MonkeyItem. If the item was not found returns
+     * the negated expected position.
+     */
+    fun getConversationPositionByTimestamp(item: MonkeyConversation) = conversationsList.binarySearch(item,
+            Comparator { t1, t2 ->
+                if(t1.getDatetime() < t2.getDatetime()) {
+                    -1
+                }else if (t1.getDatetime() > t2.getDatetime()) {
+                    1
+                } else t1.getId().compareTo(t2.getId())
+            })
+
+    /**
+     * Looks for a monkey conversation with a specified Id, starting by the most recent ones.
+     * @return the message with the requested Id. returns null if the conversation does not exist
+     */
+    fun findConversationItemById(id: String) = conversationsList.find { it.getId() == id }
 
 }

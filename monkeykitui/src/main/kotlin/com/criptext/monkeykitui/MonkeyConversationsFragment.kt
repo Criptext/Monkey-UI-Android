@@ -64,13 +64,77 @@ open class MonkeyConversationsFragment: Fragment(){
         super.onDetach()
     }
 
+    /**
+     * adds a list of conversations to this adapter. If there were already any conversations, they
+     * will be removed.
+     * @param conversations a list of conversations to add. After calling this function, the adapter
+     * will contain ONLY the conversations in this list.
+     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
+     * loading view when the user scrolls to the end
+     */
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsAdapter.insertConversations(conversations, hasReachedEnd)
     }
 
+
+    /**
+     * Uses binary search to find a conversation with a given identifier and timestamp.
+     * @param id unique identifier of the conversation to search
+     * @param timestamp long with the timestamp of the conversation to search
+     * @return A conversation in the adapter that matches the id and timestamp. null if it does not exists
+     */
+    fun findConversation(id: String, timestamp: Long){
+        conversationsAdapter.getConversationPositionByTimestamp(object: MonkeyConversation {
+            override fun getGroupMembers() = null
+            override fun getId() = id
+            override fun getDatetime() = timestamp
+            override fun getAvatarFilePath() = null
+            override fun getName() = ""
+            override fun getSecondaryText() = ""
+            override fun getStatus() = 0
+            override fun getTotalNewMessages() = 0
+            override fun isGroup() = false
+        })
+    }
+
+    /**
+     * Looks for a conversation with a given id using linear search. Search start with the latest
+     * conversations
+     * @param id A string with an unique identifier of the conversation to search
+     * @result the conversation with the matching identifier. null if it does not exist
+     */
+    fun findConversationById(id: String) = conversationsAdapter.findConversationItemById(id)
+
+    /**
+     * Updates the view of an existing conversation.
+     * @position the position in the adapter of the conversation to update
+     */
+    fun updateConversation(position: Int){
+        conversationsAdapter.notifyItemChanged(position)
+    }
+
+    /**
+     * Updates the view of an existing conversation. Uses binary search to find the conversation's
+     * position in the adapter.
+     */
+    fun updateConversation(conversationItem: MonkeyConversation){
+        conversationsAdapter.updateConversation(conversationItem)
+    }
+
+    /**
+     * adds a collection of conversations to the bottom of the adapter's list. The changes are then
+     * notified to the UI
+     * @param conversations conversations to add
+     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
+     * loading view when the user scrolls to the end
+     */
     fun addOldConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsAdapter.addOldConversations(conversations, hasReachedEnd)
     }
+    /**
+     * adds a conversation to the top of the recycler view.
+     * @param newConversation conversation to add
+     */
     fun addNewConversation(newConversation: MonkeyConversation){
         conversationsAdapter.addNewConversation(newConversation)
     }
