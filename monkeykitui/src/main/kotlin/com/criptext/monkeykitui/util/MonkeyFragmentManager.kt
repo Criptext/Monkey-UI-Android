@@ -1,12 +1,23 @@
 package com.criptext.monkeykitui.util
 
+import android.accounts.AccountManager
+import android.animation.Animator
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
+import de.hdodenhof.circleimageview.CircleImageView
+import java.util.*
 
 /**
  * Created by gesuwall on 8/15/16.
@@ -40,6 +51,15 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var conversationsFragmentOutAnimation: Int
 
     /**
+     * View to show connectivity status to the user.
+     */
+    var viewStatus: FrameLayout?
+    var handlerStatus: Handler?
+    var runnableStatus: Runnable?
+    var pendingAction: Runnable?
+    var lastColor: Int?
+
+    /**
      * resource id of the animation to use when the conversations fragment reenters the activity,
      * replacing the chat fragment
      */
@@ -51,6 +71,11 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         conversationsFragmentOutAnimation = R.anim.mk_fragment_slide_left_out
         chatFragmentOutAnimation = R.anim.mk_fragment_slide_right_out
         conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
+        viewStatus = null
+        handlerStatus = null
+        runnableStatus = null
+        pendingAction = null
+        lastColor = android.R.color.white
     }
 
     /**
@@ -73,6 +98,87 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         activity.setContentView(fragmentContainerLayout)
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
+        initStatusBar()
+    }
+
+    fun initStatusBar(){
+        viewStatus = activity.findViewById(R.id.viewStatus) as FrameLayout?
+        viewStatus!!.tag = "iddle"
+        handlerStatus = Handler()
+        runnableStatus = Runnable { closeStatusNotification() }
+    }
+
+    fun changeColorAnimated(targetView: View, colorFrom: Int, colorTo: Int){
+        ObjectAnimator.ofObject(targetView, "backgroundColor", ArgbEvaluator(), colorFrom, colorTo).setDuration(500).start()
+        lastColor = colorTo
+    }
+
+    fun showStatusNotification(status: Utils.ConnectionStatus) {
+
+        if(viewStatus == null)
+            return
+
+        if (viewStatus!!.tag == "closing") {
+            pendingAction = Runnable { showStatusNotification(status) }
+            return
+        }
+
+        if(handlerStatus!=null)
+            handlerStatus!!.removeCallbacks(runnableStatus)
+
+        when(status){
+            Utils.ConnectionStatus.connected->{
+                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_connected)
+                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connected))
+                handlerStatus!!.postDelayed(runnableStatus, 3000)
+            }
+            Utils.ConnectionStatus.disconnected -> {
+                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_disconnected)
+                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_disconnected))
+            }
+            Utils.ConnectionStatus.connecting -> {
+                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_connecting)
+                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
+            }
+            Utils.ConnectionStatus.waiting_for_network -> {
+                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_no_network)
+                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_no_network))
+            }
+        }
+
+        if (viewStatus!!.tag != "opening" && viewStatus!!.tag != "closing" && viewStatus!!.tag != "opened") {
+            viewStatus!!.tag = "opening"
+            viewStatus!!.animate().translationYBy(activity.resources.getDimension(R.dimen.status_height)).alpha(1.0f).setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                }
+                override fun onAnimationEnd(animation: Animator) {
+                    viewStatus!!.tag = "opened"
+                }
+                override fun onAnimationCancel(animation: Animator) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator) {
+                }
+            })
+        }
+    }
+
+    fun closeStatusNotification() {
+        if (viewStatus != null && viewStatus!!.tag != "closing") {
+            viewStatus!!.tag = "closing"
+            viewStatus!!.animate().translationYBy((-activity.resources.getDimension(R.dimen.status_height)).toFloat()).alpha(0f).setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                }
+                override fun onAnimationEnd(animation: Animator) {
+                    viewStatus!!.tag = "iddle"
+                    handlerStatus!!.post(pendingAction)
+                }
+                override fun onAnimationCancel(animation: Animator) {
+                }
+                override fun onAnimationRepeat(animation: Animator) {
+                }
+            })
+        }
     }
 
     /**

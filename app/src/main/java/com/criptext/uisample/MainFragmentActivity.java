@@ -2,6 +2,7 @@ package com.criptext.uisample;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
@@ -12,6 +13,7 @@ import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
+import com.criptext.monkeykitui.util.Utils;
 import com.criptext.uisample.conversation.FakeConversations;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +36,15 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         super.onCreate(savedInstanceState);
         fragmentManager = new MonkeyFragmentManager(this);
         fragmentManager.setContentLayout(savedInstanceState);
+        fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
+        //Simulating connectivity status
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentManager.showStatusNotification(Utils.ConnectionStatus.connected);
+            }
+        }, 2000);
     }
 
 

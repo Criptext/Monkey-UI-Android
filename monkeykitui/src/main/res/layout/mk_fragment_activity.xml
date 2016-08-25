@@ -3,7 +3,32 @@
 RelativeLayout has an issue that doesn't render the RecyclerView with the whole size of its
 container linear layout.
 The only viable solution is FrameLayout -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_container"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/viewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="-35dp"
+        android:background="@color/mk_status_connected">
+
+            <TextView
+                android:id="@+id/textViewStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mk_status_connected"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+</RelativeLayout>

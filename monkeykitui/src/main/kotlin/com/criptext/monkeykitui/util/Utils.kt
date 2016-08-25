@@ -14,4 +14,7 @@ class Utils {
             return fechaPaelUser.replace("P.M.".toRegex(), "PM").replace("A.M.".toRegex(), "AM")
         }
     }
+    enum class ConnectionStatus {
+        disconnected, connected, connecting, waiting_for_network;
+    }
 }

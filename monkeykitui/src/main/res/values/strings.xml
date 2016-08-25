@@ -8,4 +8,8 @@
     <string name="mk_edit_photo">Edit Photo</string>
     <string name="mk_empty_conversation_text">Write to this contact</string>
     <string name="mk_empty_group_text">Write to this group</string>
+    <string name="mk_status_disconnected">Disconnected</string>
+    <string name="mk_status_connecting">Connecting</string>
+    <string name="mk_status_connected">Connected</string>
+    <string name="mk_status_no_network">Waiting for network</string>
 </resources>
