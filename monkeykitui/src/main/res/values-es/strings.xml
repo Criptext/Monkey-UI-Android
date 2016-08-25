@@ -6,4 +6,8 @@
     <string name="mk_action_crop">Recortar</string>
     <string name="mk_rotate_crop">Rotar</string>
     <string name="mk_edit_photo">Editar Foto</string>
+    <string name="mk_status_disconnected">Desconectado</string>
+    <string name="mk_status_connecting">Conectando</string>
+    <string name="mk_status_connected">Conectado</string>
+    <string name="mk_status_no_network">Esperando la red</string>
 </resources>

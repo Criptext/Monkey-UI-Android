@@ -2,6 +2,9 @@ package com.criptext.uisample;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
@@ -12,6 +15,7 @@ import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
+import com.criptext.monkeykitui.util.Utils;
 import com.criptext.uisample.conversation.FakeConversations;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +37,30 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = new MonkeyFragmentManager(this);
+        //ProgressBar progressBar = new ProgressBar(this);
+        //fragmentManager.setViewStatusCont(progressBar);
         fragmentManager.setContentLayout(savedInstanceState);
+        fragmentManager.setConversationsTitle("UI Sample");
+        fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
+        //Simulating connectivity status
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentManager.showStatusNotification(Utils.ConnectionStatus.connected);
+            }
+        }, 2000);
     }
 
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onStart() {
@@ -83,6 +106,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             vnPlayer = new DefaultVoiceNotePlayer(this);
         MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", false);
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
+        getSupportActionBar().setTitle(conversation.getName());
     }
 
     @Override

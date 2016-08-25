@@ -29,4 +29,7 @@ class Utils {
             return view
         }
     }
+    enum class ConnectionStatus {
+        disconnected, connected, connecting, waiting_for_network;
+    }
 }

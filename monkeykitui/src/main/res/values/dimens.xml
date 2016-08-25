@@ -12,4 +12,6 @@
     <dimen name="audio_btn_expanded_height">50dp</dimen>
     <dimen name="monkey_image_size">200dp</dimen>
     <dimen name="conversation_item_height">90dp</dimen>
+    <dimen name="status_height">35dp</dimen>
+    <dimen name="status_inverse_height">-35dp</dimen>
 </resources>
