@@ -3,6 +3,7 @@ package com.criptext.uisample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
@@ -36,6 +37,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         super.onCreate(savedInstanceState);
         fragmentManager = new MonkeyFragmentManager(this);
         fragmentManager.setContentLayout(savedInstanceState);
+        fragmentManager.setConversationsTitle("UI Sample");
         fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
         //Simulating connectivity status
         final Handler handler = new Handler();
@@ -47,8 +49,15 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         }, 2000);
     }
 
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onStart() {
@@ -94,6 +103,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             vnPlayer = new DefaultVoiceNotePlayer(this);
         MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", false);
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
+        getSupportActionBar().setTitle(conversation.getName());
     }
 
     @Override

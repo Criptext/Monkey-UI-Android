@@ -1,6 +1,5 @@
 package com.criptext.monkeykitui.util
 
-import android.accounts.AccountManager
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
@@ -9,15 +8,12 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
-import de.hdodenhof.circleimageview.CircleImageView
-import java.util.*
 
 /**
  * Created by gesuwall on 8/15/16.
@@ -51,13 +47,18 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var conversationsFragmentOutAnimation: Int
 
     /**
-     * View to show connectivity status to the user.
+     * Components to show connectivity status to the user.
      */
     var viewStatus: FrameLayout?
     var handlerStatus: Handler?
     var runnableStatus: Runnable?
     var pendingAction: Runnable?
     var lastColor: Int?
+
+    /**
+     * Title of the conversations fragment.
+     */
+    var conversationsTitle: String = "UI Sample"
 
     /**
      * resource id of the animation to use when the conversations fragment reenters the activity,
@@ -99,6 +100,18 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         initStatusBar()
+        addOnBackStackChangedListener()
+    }
+
+    fun addOnBackStackChangedListener(){
+        activity.supportFragmentManager.addOnBackStackChangedListener({
+            if (activity.supportFragmentManager.backStackEntryCount > 0) {
+                activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            } else {
+                activity.supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+                activity.supportActionBar!!.title = conversationsTitle
+            }
+        })
     }
 
     fun initStatusBar(){
