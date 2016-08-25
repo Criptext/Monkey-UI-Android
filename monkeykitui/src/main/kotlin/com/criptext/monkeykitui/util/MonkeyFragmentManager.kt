@@ -3,9 +3,12 @@ package com.criptext.monkeykitui.util
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -49,6 +52,14 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     /**
      * Components to show connectivity status to the user.
      */
+    var viewStatusCont: View? = null
+    set (value){
+        viewStatus?.removeAllViews()
+        if(value != null){
+            viewStatus?.addView(value)
+        }
+        field = value
+    }
     var viewStatus: FrameLayout?
     var handlerStatus: Handler?
     var runnableStatus: Runnable?
@@ -72,6 +83,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         conversationsFragmentOutAnimation = R.anim.mk_fragment_slide_left_out
         chatFragmentOutAnimation = R.anim.mk_fragment_slide_right_out
         conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
+        viewStatusCont = getDefaultViewForStatus()
         viewStatus = null
         handlerStatus = null
         runnableStatus = null
@@ -103,6 +115,15 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         addOnBackStackChangedListener()
     }
 
+    fun getDefaultViewForStatus(): TextView{
+        var textview = TextView(activity)
+        textview.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+        textview.setTextColor(Color.WHITE)
+        textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        textview.gravity = Gravity.CENTER
+        return textview
+    }
+
     fun addOnBackStackChangedListener(){
         activity.supportFragmentManager.addOnBackStackChangedListener({
             if (activity.supportFragmentManager.backStackEntryCount > 0) {
@@ -116,6 +137,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
 
     fun initStatusBar(){
         viewStatus = activity.findViewById(R.id.viewStatus) as FrameLayout?
+        viewStatus!!.addView(viewStatusCont)
         viewStatus!!.tag = "iddle"
         handlerStatus = Handler()
         runnableStatus = Runnable { closeStatusNotification() }
@@ -141,20 +163,24 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
 
         when(status){
             Utils.ConnectionStatus.connected->{
-                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_connected)
+                if(viewStatusCont is TextView)
+                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connected)
                 changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connected))
-                handlerStatus!!.postDelayed(runnableStatus, 3000)
+                handlerStatus!!.postDelayed(runnableStatus, 1000)
             }
             Utils.ConnectionStatus.disconnected -> {
-                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_disconnected)
+                if(viewStatusCont is TextView)
+                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_disconnected)
                 changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_disconnected))
             }
             Utils.ConnectionStatus.connecting -> {
-                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_connecting)
+                if(viewStatusCont is TextView)
+                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connecting)
                 changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
             }
             Utils.ConnectionStatus.waiting_for_network -> {
-                (viewStatus!!.findViewById(R.id.textViewStatus) as TextView).text = activity.getString(R.string.mk_status_no_network)
+                if(viewStatusCont is TextView)
+                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_no_network)
                 changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_no_network))
             }
         }

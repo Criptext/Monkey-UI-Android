@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
@@ -36,6 +37,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = new MonkeyFragmentManager(this);
+        //ProgressBar progressBar = new ProgressBar(this);
+        //fragmentManager.setViewStatusCont(progressBar);
         fragmentManager.setContentLayout(savedInstanceState);
         fragmentManager.setConversationsTitle("UI Sample");
         fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
