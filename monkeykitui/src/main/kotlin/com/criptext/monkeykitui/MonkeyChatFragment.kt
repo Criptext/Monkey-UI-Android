@@ -176,4 +176,6 @@ open class MonkeyChatFragment(): Fragment() {
     }
 
     fun getLastMessage(): MonkeyItem? = monkeyAdapter.getLastItem()
+
+    fun getFirstMessage(): MonkeyItem? = monkeyAdapter.getFirstItem()
 }
