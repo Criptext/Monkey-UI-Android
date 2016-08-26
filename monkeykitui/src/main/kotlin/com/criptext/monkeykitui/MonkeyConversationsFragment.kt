@@ -146,10 +146,5 @@ open class MonkeyConversationsFragment: Fragment(){
         conversationsAdapter.addNewConversation(newConversation)
     }
 
-    fun getLastConversation(): MonkeyConversation?{
-        if(conversationsAdapter.conversationsList.size > 1){
-            return conversationsAdapter.conversationsList[conversationsAdapter.conversationsList.size-2]
-        }
-        return null
-    }
+    fun getLastConversation(): MonkeyConversation? = conversationsAdapter.getLastConversation()
 }

@@ -600,6 +600,8 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         }
     }
 
+    fun getLastItem(): MonkeyItem? = messagesList.lastOrNull()
+
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
 
         val manager = recyclerView.layoutManager as LinearLayoutManager

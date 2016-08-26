@@ -232,6 +232,20 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
+    fun getLastConversation(): MonkeyConversation? {
+        if(conversationsList.size > 1) {
+            val last = conversationsList[conversationsList.size - 1]
+            if (last != null && last.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal)
+                return conversationsList[conversationsList.size - 2]
+            else
+                return last
+        } else if(conversationsList.size == 1
+                && conversationsList.last().getStatus() != MonkeyConversation.ConversationStatus.moreConversations.ordinal)
+            return conversationsList.last()
+
+        return null
+    }
+
     fun takeAllConversations(): Collection<MonkeyConversation>{
         removeEndOfRecyclerView(true)
         return conversationsList
