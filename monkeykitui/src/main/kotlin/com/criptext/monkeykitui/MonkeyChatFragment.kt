@@ -171,5 +171,9 @@ open class MonkeyChatFragment(): Fragment() {
             else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
     }
 
-
+    fun getLastMessage(): MonkeyItem?{
+        if(monkeyAdapter.messagesList.size == 0)
+            return null
+        return monkeyAdapter.messagesList[monkeyAdapter.messagesList.size - 1]
+    }
 }
