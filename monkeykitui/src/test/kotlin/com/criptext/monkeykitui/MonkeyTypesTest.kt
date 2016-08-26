@@ -148,6 +148,7 @@ class MonkeyTypesTest {
 
     fun testThatMessageGetsAMonkeyAudioHolder(incoming: Boolean, status: MonkeyItem.DeliveryStatus) {
         val newItem = newVoiceNote(incoming, status)
+        adapter.smoothlyAddNewItem(newItem, recycler!!)
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyAudioHolder)
     }
