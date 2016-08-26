@@ -234,6 +234,12 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
     }
 
 
+    /**
+     * Common binding for all files, including audio and phot. Callse the correct network method
+     * to download or upload the file if necessary
+     * @param item The monkeyItem to bind. It  must of type file, audio o photo
+     * @param fileHolder The fileHolder to display the item's UI
+     */
     open protected fun bindMonkeyFile(item: MonkeyItem, fileHolder: MonkeyFile){
         if(item.isIncomingMessage()){
             when(item.getDeliveryStatus()){
@@ -247,14 +253,21 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
                 }
             }
         } else {
+            val fileExists = File(item.getFilePath()).exists()
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->
                     fileHolder.setErrorInUpload(View.OnClickListener {
-                        chatActivity.onFileUploadRequested(item)
+                        if(fileExists)
+                            chatActivity.onFileUploadRequested(item)
+                        else
+                            chatActivity.onFileDownloadRequested(item)
                     })
                 MonkeyItem.DeliveryStatus.sending -> {
                     fileHolder.setWaitingForUpload()
-                    chatActivity.onFileUploadRequested(item)
+                    if(fileExists)
+                        chatActivity.onFileUploadRequested(item)
+                    else
+                        chatActivity.onFileDownloadRequested(item)
                 }
             }
         }

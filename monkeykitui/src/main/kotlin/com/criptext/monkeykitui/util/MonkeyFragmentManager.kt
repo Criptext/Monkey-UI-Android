@@ -15,6 +15,7 @@ import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 
@@ -221,21 +222,28 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     }
 
     /**
-     * Add a new Chat fragment to the activity with a slide animation.
+     * Add a new Chat fragment to the activity with a slide animation replacing any existant
+     * conversations fragment
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
-    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer){
+    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer)
+            : Collection<MonkeyConversation>{
         val chatFragment = MonkeyChatFragment()
-        setChatFragment(chatFragment, inputListener, voiceNotePlayer)
+        return setChatFragment(chatFragment, inputListener, voiceNotePlayer)
     }
 
     /**
-     * Add a Chat fragment to the activity with a slide animation.
+     * Add a Chat fragment to the activity with a slide animation replacing any existant
+     * conversations fragment
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
-    fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer){
+    fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
+                        voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
+        val conversationsFragment = activity.supportFragmentManager.findFragmentById(
+                fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
+        val list = conversationsFragment.getAllConversations()
         chatFragment.inputListener = inputListener
         //instantiate an object to play voice notes and pass it to the fragment
         chatFragment.voiceNotePlayer = voiceNotePlayer
@@ -248,6 +256,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         ft.replace(fragmentContainerId, chatFragment)
         ft.addToBackStack(null)
         ft.commit()
+
+        return list
     }
 
 }

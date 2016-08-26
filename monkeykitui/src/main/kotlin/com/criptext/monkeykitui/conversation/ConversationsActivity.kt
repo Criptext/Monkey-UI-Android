@@ -15,4 +15,6 @@ interface ConversationsActivity {
     fun onConversationClicked(conversation: MonkeyConversation)
 
     fun onLoadMoreConversations(loadedConversations: Int)
+
+    fun retainConversations(conversations: Collection<MonkeyConversation>)
 }

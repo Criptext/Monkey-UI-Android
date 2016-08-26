@@ -134,4 +134,9 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     public void onLoadMoreConversations(int loadedItems) {
 
     }
+
+    @Override
+    public void retainConversations(@NotNull Collection<? extends MonkeyConversation> conversations) {
+
+    }
 }

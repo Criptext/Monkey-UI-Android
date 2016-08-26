@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,6 +65,12 @@ open class MonkeyConversationsFragment: Fragment(){
         super.onDetach()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as ConversationsActivity).retainConversations(conversationsAdapter.conversationsList)
+    }
+
+    fun getAllConversations(): Collection<MonkeyConversation> = conversationsAdapter.conversationsList
     /**
      * adds a list of conversations to this adapter. If there were already any conversations, they
      * will be removed.
