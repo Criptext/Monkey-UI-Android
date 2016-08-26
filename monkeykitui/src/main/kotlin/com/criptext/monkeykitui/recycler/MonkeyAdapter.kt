@@ -591,6 +591,17 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         }
     }
 
+    fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
+
+        val manager = recyclerView.layoutManager as LinearLayoutManager
+        val last = manager.findLastVisibleItemPosition()
+        messagesList.addAll(newData);
+        notifyItemInserted(messagesList.size);
+        if(last >= messagesList.size - 2) {
+            recyclerView.scrollToPosition(messagesList.size - 1);
+        }
+    }
+
     /**
      * removes all messages from the adapter and clears the RecyclerView
      */

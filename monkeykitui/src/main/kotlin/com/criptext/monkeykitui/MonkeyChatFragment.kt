@@ -162,6 +162,10 @@ open class MonkeyChatFragment(): Fragment() {
         monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
     }
 
+    fun smoothlyAddNewItems(messages: ArrayList<MonkeyItem>){
+        monkeyAdapter.smoothlyAddNewItems(messages, recyclerView)
+    }
+
     fun clearMessages(){
         monkeyAdapter.clear()
     }
