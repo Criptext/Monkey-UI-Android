@@ -31,7 +31,7 @@ import java.util.*
 
 open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
-    val messagesList: ArrayList<MonkeyItem>
+    private val messagesList: ArrayList<MonkeyItem>
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
@@ -411,10 +411,14 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         }
     }
 
+    protected fun removeEndOfRecyclerView(){
+        removeEndOfRecyclerView(false)
+    }
+
     /**
      *removes the more messages view
      */
-    protected fun removeEndOfRecyclerView(){
+    protected fun removeEndOfRecyclerView(silent: Boolean){
         if(messagesList.isEmpty())
             return;
 
@@ -543,6 +547,11 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             MonkeyItem.MonkeyItemType.MoreMessages -> return createMoreMessagesView()
         }
         return null
+    }
+
+    fun takeAllMessages() : Collection<MonkeyItem>{
+        removeEndOfRecyclerView(true)
+        return messagesList
     }
 
 

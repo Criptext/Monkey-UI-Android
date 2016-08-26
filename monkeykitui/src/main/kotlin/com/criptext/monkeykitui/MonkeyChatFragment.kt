@@ -137,7 +137,7 @@ open class MonkeyChatFragment(): Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as ChatActivity).retainMessages(this.conversationId, monkeyAdapter.messagesList)
+        (activity as ChatActivity).retainMessages(this.conversationId, monkeyAdapter.takeAllMessages())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

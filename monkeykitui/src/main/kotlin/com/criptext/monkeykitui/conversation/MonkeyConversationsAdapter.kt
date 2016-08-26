@@ -27,7 +27,7 @@ import java.util.*
 
 open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adapter<ConversationHolder>() {
 
-    val conversationsList: ArrayList<MonkeyConversation>
+    private val conversationsList: ArrayList<MonkeyConversation>
     val mSelectableItemBg: Int
 
     private val conversationsActivity: ConversationsActivity
@@ -45,10 +45,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
 
     val dataLoader : SlowRecyclerLoader
-
-    var loadingDelay: Long
-        get() =  dataLoader.delayTime
-        set(value) { dataLoader.delayTime = value }
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
@@ -153,6 +149,9 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     protected fun removeEndOfRecyclerView(){
+        removeEndOfRecyclerView(false)
+    }
+    protected fun removeEndOfRecyclerView(silent: Boolean){
         if(conversationsList.isEmpty())
             return;
 
@@ -160,7 +159,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val lastItem = conversationsList[lastPosition]
         if(lastItem.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal){
             conversationsList.remove(lastItem)
-            notifyItemRemoved(lastPosition)
+            if(!silent)
+                notifyItemRemoved(lastPosition)
             hasReachedEnd = true
         }
 
@@ -219,6 +219,23 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
+    /**
+     * remove a conversation from the recyclerView, calls notifyItemRemoved with the removed conversation's
+     * position
+     * @param conversation the conversation to remove.
+     */
+    fun removeConversation(conversation: MonkeyConversation){
+        val position = getConversationPositionByTimestamp(conversation)
+        if(position > -1) {
+            conversationsList.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    fun takeAllConversations(): Collection<MonkeyConversation>{
+        removeEndOfRecyclerView(true)
+        return conversationsList
+    }
     /**
      * Finds the adapter position by the MonkeyConversation's timestamp.
      * @param targetId the timestamp of the MonkeyConversation whose adapter position will be searched. This

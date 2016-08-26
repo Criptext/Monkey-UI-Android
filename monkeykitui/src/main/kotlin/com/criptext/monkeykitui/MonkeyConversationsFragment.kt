@@ -67,10 +67,10 @@ open class MonkeyConversationsFragment: Fragment(){
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as ConversationsActivity).retainConversations(conversationsAdapter.conversationsList)
+        (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
     }
 
-    fun getAllConversations(): Collection<MonkeyConversation> = conversationsAdapter.conversationsList
+    fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter.takeAllConversations()
     /**
      * adds a list of conversations to this adapter. If there were already any conversations, they
      * will be removed.

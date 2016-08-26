@@ -243,7 +243,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
                         voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
-        val list = conversationsFragment.getAllConversations()
+        val list = conversationsFragment.takeAllConversations()
         chatFragment.inputListener = inputListener
         //instantiate an object to play voice notes and pass it to the fragment
         chatFragment.voiceNotePlayer = voiceNotePlayer
