@@ -1,0 +1,67 @@
+package com.criptext.monkeykitui
+
+import android.app.Activity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import com.criptext.monkeykitui.recycler.ChatActivity
+import com.criptext.monkeykitui.recycler.MonkeyAdapter
+import com.criptext.monkeykitui.recycler.MonkeyItem
+import org.junit.Before
+import org.robolectric.Robolectric
+import java.util.*
+
+/**
+ * Created by gesuwall on 8/26/16.
+ */
+
+open class AdapterTestCase {
+lateinit var adapter: MonkeyAdapter
+    var activity: Activity? = null
+    var recycler: RecyclerView? = null
+    lateinit var messagesList : ArrayList<MonkeyItem>
+
+    val contactSessionId : String = "fakecontactsession"
+    val mySessionId = "mysession"
+
+    val FAKE_AUDIO = "myAudio.m4a"
+    val FAKE_PHOTO = "myPhoto.jpg"
+    val FAKE_FILE = "myFile.zip"
+    @Before
+    fun initAdapter(){
+        if(activity == null){
+            val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
+            messagesList = ArrayList()
+            adapter = MonkeyAdapter(newActivity)
+            adapter.addOldMessages(messagesList, true)
+            recycler = RecyclerView(newActivity)
+            recycler!!.layoutManager = LinearLayoutManager(newActivity)
+            activity = newActivity
+        }
+    }
+    class MonkeyActivity: Activity(), ChatActivity {
+        override fun getInitialMessages(conversationId: String): Collection<MonkeyItem> {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun setChatFragment(chatFragment: MonkeyChatFragment?) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun isOnline() = true
+
+        override fun onFileDownloadRequested(item: MonkeyItem) {
+        }
+
+        override fun onFileUploadRequested(item: MonkeyItem) {
+        }
+
+        override fun onLoadMoreData(loadedItems: Int) {
+        }
+
+    }
+
+}

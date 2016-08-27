@@ -32,6 +32,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
     open fun setDownloadedImage(file : File, context : Context){
         photoLoadingView?.visibility = View.GONE
+        photoImageView?.setImageDrawable(null)
         Picasso.with(context)
                 .load(file)
                 .resize(200, 200)
@@ -41,7 +42,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
     override fun setWaitingForDownload(){
 
-        photoImageView!!.setImageBitmap(null)
+        photoImageView!!.setImageDrawable(null)
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout?.visibility = View.INVISIBLE
         retryUploadLayout?.visibility = View.INVISIBLE

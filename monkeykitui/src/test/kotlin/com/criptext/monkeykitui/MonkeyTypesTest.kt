@@ -1,23 +1,14 @@
 package com.criptext.monkeykitui
 
 
-import android.app.Activity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
-import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.EndItem
-import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.holders.*
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.junit.runner.RunWith
 import org.junit.Test
-import org.junit.Before
-import java.util.*
 
 /**
  * Created by gesuwall on 7/19/16.
@@ -26,30 +17,8 @@ import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
-class MonkeyTypesTest {
-    lateinit var adapter: MonkeyAdapter
-    var activity: Activity? = null
-    var recycler: RecyclerView? = null
-    lateinit var messagesList : ArrayList<MonkeyItem>
+class MonkeyTypesTest: AdapterTestCase(){
 
-    val contactSessionId : String = "fakecontactsession"
-    val mySessionId = "mysession"
-
-    val FAKE_AUDIO = "myAudio.m4a"
-    val FAKE_PHOTO = "myPhoto.jpg"
-    val FAKE_FILE = "myFile.zip"
-    @Before
-    fun initAdapter(){
-        if(activity == null){
-            val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
-            messagesList = ArrayList()
-            adapter = MonkeyAdapter(newActivity)
-            adapter.addOldMessages(messagesList, true)
-            recycler = RecyclerView(newActivity)
-            recycler!!.layoutManager = LinearLayoutManager(newActivity)
-            activity = newActivity
-        }
-    }
 
     fun newTextMessage(incoming: Boolean, status: MonkeyItem.DeliveryStatus): MonkeyItem{
         val newTimestamp = System.currentTimeMillis()
@@ -304,31 +273,6 @@ class MonkeyTypesTest {
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyEndHolder)
         adapter.bindViewHolder(newHolder, messagesList.lastIndex)
-
-    }
-    class MonkeyActivity: Activity(), ChatActivity {
-        override fun getInitialMessages(conversationId: String): Collection<MonkeyItem> {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun setChatFragment(chatFragment: MonkeyChatFragment?) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun isOnline() = true
-
-        override fun onFileDownloadRequested(item: MonkeyItem) {
-        }
-
-        override fun onFileUploadRequested(item: MonkeyItem) {
-        }
-
-        override fun onLoadMoreData(loadedItems: Int) {
-        }
 
     }
 

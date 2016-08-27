@@ -67,7 +67,11 @@ open class MonkeyConversationsFragment: Fragment(){
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
+        try {
+            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
     }
 
     fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter.takeAllConversations()
