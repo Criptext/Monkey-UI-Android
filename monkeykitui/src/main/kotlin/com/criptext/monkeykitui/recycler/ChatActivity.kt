@@ -58,4 +58,11 @@ interface ChatActivity {
      */
     fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>)
 
+    /**
+     * MonkeyChatFragment will call this method to retrieve the groupChat.
+     * @param conversationId unique identifier of the conversation of this chat activity
+     * @return A GroupChat to handle group functions
+     */
+    fun getGroupChat(conversationId: String, membersIds: String): GroupChat?
+
 }
