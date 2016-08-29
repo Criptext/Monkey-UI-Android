@@ -38,4 +38,33 @@ class InsertionSort<T>(val list: ArrayList<T>, val comparator: Comparator<T>) {
             list[j - 1] = temp
         }
     }
+
+   fun insertAtCorrectPosition(item: T, insertAtEnd: Boolean): Int{
+        if(list.isEmpty()){
+            list.add(item)
+            return 0
+        }
+
+        if(insertAtEnd) {
+            var actualPosition = list.size
+            while (actualPosition > 0 && comparator.compare(list[actualPosition - 1], item) == 1)
+                actualPosition--
+            actualPosition = Math.max(0, actualPosition)
+            list.add(actualPosition, item);
+            return actualPosition
+        } else { //insert at position 0
+
+            if(comparator.compare(item, list.first()) == -1){
+                list.add(0, item)
+                return 0
+            }
+
+            var actualPosition = 0
+            while (actualPosition < list.size && comparator.compare(list[actualPosition], item) == -1)
+                actualPosition++
+            actualPosition = Math.min(list.size, actualPosition)
+            list.add(actualPosition, item);
+            return actualPosition
+        }
+    }
 }

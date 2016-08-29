@@ -140,7 +140,7 @@ open class MonkeyConversationsFragment: Fragment(){
      * loading view when the user scrolls to the end
      */
     fun addOldConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsAdapter.addOldConversations(conversations, hasReachedEnd)
+        conversationsAdapter.addOldConversations(conversations, hasReachedEnd, recyclerView)
     }
     /**
      * adds a conversation to the top of the recycler view.

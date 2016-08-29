@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.conversation
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.TypedValue
@@ -15,6 +16,7 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
+import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.Utils
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -177,6 +179,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         conversationsList.clear()
         removeEndOfRecyclerView()
         conversationsList.addAll(conversations)
+        Collections.sort(conversationsList, Comparator { t1, t2 -> itemCmp(t1, t2) })
         notifyDataSetChanged()
         this.hasReachedEnd = hasReachedEnd
     }
@@ -187,6 +190,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     fun addNewConversation(newConversation: MonkeyConversation){
         conversationsList.add(0, newConversation)
+        InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
+                .insertAtCorrectPosition(newConversation, insertAtEnd = false)
         notifyItemInserted(0)
     }
 
@@ -197,11 +202,16 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
      * loading view when the user scrolls to the end
      */
-    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
+    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean,
+                            recyclerView: RecyclerView){
         removeEndOfRecyclerView()
-        val startPoint = conversationsList.size
-        conversationsList.addAll(oldConversations)
-        notifyItemRangeInserted(startPoint, oldConversations.size)
+        if(oldConversations.size > 0) {
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            val firstNewIndex = conversationsList.size
+            conversationsList.addAll(oldConversations)
+            InsertionSort(conversationsList, Comparator { it1, it2 -> itemCmp(it1, it2) }, Math.max(1, firstNewIndex)).sort()
+            notifyItemRangeInserted(firstNewIndex, oldConversations.size);
+        }
         this.hasReachedEnd = hasReachedEnd
     }
 
@@ -258,13 +268,15 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * the negated expected position.
      */
     fun getConversationPositionByTimestamp(item: MonkeyConversation) = conversationsList.binarySearch(item,
-            Comparator { t1, t2 ->
-                if(t1.getDatetime() < t2.getDatetime()) {
-                    -1
-                }else if (t1.getDatetime() > t2.getDatetime()) {
-                    1
-                } else t1.getId().compareTo(t2.getId())
-            })
+            Comparator { t1, t2 -> itemCmp(t1, t2) })
+
+
+    protected fun itemCmp(t1: MonkeyConversation, t2: MonkeyConversation) =
+        if(t1.getDatetime() > t2.getDatetime()) {
+                -1
+            }else if (t1.getDatetime() < t2.getDatetime()) {
+                1
+            } else t1.getId().compareTo(t2.getId())
 
     /**
      * Looks for a monkey conversation with a specified Id, starting by the most recent ones.
