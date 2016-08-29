@@ -70,7 +70,7 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
         newPage.add(newTextMessage(time + 2, "129"))
         newPage.add(newTextMessage(time + 1, "130"))
 
-        adapter.addOldMessages(newPage, true)
+        adapter.addOldMessages(newPage, true, recycler!!)
         val list = adapter.takeAllMessages()
         assertThatListIsOrdered(list as ArrayList<MonkeyItem>)
     }

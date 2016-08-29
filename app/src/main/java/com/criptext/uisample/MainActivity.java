@@ -52,11 +52,11 @@ public class MainActivity extends BaseChatActivity{
         loader = new SlowMessageLoader(this);
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
         adapter = new MonkeyAdapter(this);
-        adapter.addOldMessages(messages, false);
+        recycler = (RecyclerView) findViewById(R.id.recycler);
+        adapter.addOldMessages(messages, false, recycler);
         //configureMonkeyAdapter();
         adapter.setHasReachedEnd(false);
 
-        recycler = (RecyclerView) findViewById(R.id.recycler);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -133,7 +133,7 @@ public class MainActivity extends BaseChatActivity{
 
     @Override
     void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd) {
-        adapter.addOldMessages(messages, hasReachedEnd);
+        adapter.addOldMessages(messages, hasReachedEnd, recycler);
     }
 
     @Override

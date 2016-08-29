@@ -32,8 +32,8 @@ lateinit var adapter: MonkeyAdapter
             val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
             messagesList = ArrayList()
             adapter = MonkeyAdapter(newActivity)
-            adapter.addOldMessages(messagesList, true)
-            recycler = RecyclerView(newActivity)
+            recycler = RecyclerView(newActivity);
+            adapter.addOldMessages(messagesList, true, recycler!!);
             recycler!!.layoutManager = LinearLayoutManager(newActivity)
             activity = newActivity
         }
