@@ -17,6 +17,7 @@ import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.ChatActivity
+import com.criptext.monkeykitui.recycler.GroupChat
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
@@ -59,11 +60,13 @@ open class MonkeyChatFragment(): Fragment() {
     companion object {
         val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
         val chatConversationId = "MonkeyChatFragment.conversationId"
+        val chatmembersGroupIds = "MonkeyChatFragment.membersIds"
 
-        fun newInstance(conversationId: String, hasReachedEnd: Boolean): MonkeyChatFragment{
+        fun newInstance(conversationId: String, membersIds: String, hasReachedEnd: Boolean): MonkeyChatFragment{
             val newInstance = MonkeyChatFragment()
             val newBundle = Bundle()
             newBundle.putString(chatConversationId, conversationId)
+            newBundle.putString(chatmembersGroupIds, membersIds)
             newBundle.putBoolean(chatHasReachedEnd, hasReachedEnd)
             newInstance.arguments = newBundle
             return newInstance
@@ -95,7 +98,10 @@ open class MonkeyChatFragment(): Fragment() {
         } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
         else
             (activity as ChatActivity).onLoadMoreData(0)
-
+        val groupChat = (activity as ChatActivity).getGroupChat(conversationId, args.getString(chatmembersGroupIds))
+        if(groupChat!=null){
+            monkeyAdapter.groupChat = groupChat
+        }
     }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(chatLayout, null)
@@ -169,6 +175,10 @@ open class MonkeyChatFragment(): Fragment() {
 
     fun clearMessages(){
         monkeyAdapter.clear()
+    }
+
+    fun reloadAllMessages(){
+        monkeyAdapter.notifyDataSetChanged()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

@@ -112,8 +112,9 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      * @param color The color that the text of the user's name should have.
      */
     open fun setSenderName(name : String, color : Int){
-        contactNameTextView!!.text = name
-        contactNameTextView!!.setTextColor(color)
+        senderNameTextView!!.visibility = View.VISIBLE
+        senderNameTextView!!.text = name
+        senderNameTextView!!.setTextColor(color)
     }
 
 
