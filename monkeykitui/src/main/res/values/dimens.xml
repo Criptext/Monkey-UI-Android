@@ -14,4 +14,5 @@
     <dimen name="conversation_item_height">90dp</dimen>
     <dimen name="status_height">35dp</dimen>
     <dimen name="status_inverse_height">-35dp</dimen>
+    <dimen name="scroll_offset">20dp</dimen>
 </resources>

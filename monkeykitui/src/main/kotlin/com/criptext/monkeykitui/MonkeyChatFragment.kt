@@ -91,7 +91,7 @@ open class MonkeyChatFragment(): Fragment() {
         val reachedEnd = args.getBoolean(chatHasReachedEnd)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
-            monkeyAdapter.addOldMessages(initialMessages, reachedEnd)
+            monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
         } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
         else
             (activity as ChatActivity).onLoadMoreData(0)
@@ -156,7 +156,7 @@ open class MonkeyChatFragment(): Fragment() {
     }
 
     fun addOldMessages(messages: ArrayList<MonkeyItem>, hasReachedEnd:  Boolean){
-        monkeyAdapter.addOldMessages(messages, hasReachedEnd)
+        monkeyAdapter.addOldMessages(messages, hasReachedEnd, recyclerView)
     }
 
     fun smoothlyAddNewItem(message: MonkeyItem){

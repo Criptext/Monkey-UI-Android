@@ -20,6 +20,7 @@ import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.cav.AudioActions
 import com.criptext.monkeykitui.cav.CircularAudioView
+import com.criptext.monkeykitui.util.InsertionSort
 import java.io.File
 import java.util.*
 
@@ -420,9 +421,9 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         val lastItem = messagesList[0]
         if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
             messagesList.remove(lastItem)
-            notifyItemRemoved(0)
+            if(!silent)
+                notifyItemRemoved(0)
             hasReachedEnd = true
-            //Log.d("adapter", "remove end")
         }
 
     }
@@ -435,13 +436,19 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * then when the user scrolls to the beginning of the list, the adapter should attempt to load the
      * remaining items and show a view that tells the user that it is loading messages.
      */
-    fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean){
+    fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean, recyclerView: RecyclerView){
         removeEndOfRecyclerView()
-        var minPos = 0
-        for(oldMsg in newData.reversed()){
-            minPos = insertAtExpectedPosition(oldMsg, insertAtEnd = false)
+        if(newData.size > 0) {
+            messagesList.addAll(0, newData)
+            val lastNewIndex = newData.size - 1
+            InsertionSort(messagesList, Comparator { t1, t2 -> itemCmp(t1, t2) }, lastNewIndex).sortBackwards()
+            notifyItemRangeInserted(0, newData.size)
+            if(messagesList.size - newData.size > 0) {
+                val manager = recyclerView.layoutManager as LinearLayoutManager
+                manager.scrollToPositionWithOffset(newData.size,
+                        mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
+            }
         }
-        notifyItemRangeInserted(minPos, newData.size)
         hasReachedEnd = reachedEnd
     }
 
@@ -640,15 +647,17 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
 
-        val manager = recyclerView.layoutManager as LinearLayoutManager
-        val last = manager.findLastVisibleItemPosition()
-        var minPosition = 0
-        for(newMsg in newData){
-            minPosition = insertAtExpectedPosition(newMsg, insertAtEnd = true)
-        }
-        notifyItemRangeInserted(minPosition, newData.size);
-        if(last >= messagesList.size - 2) {
-            recyclerView.scrollToPosition(messagesList.size - 1);
+        if(newData.size > 0) {
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            val firstNewIndex = messagesList.size
+            messagesList.addAll(newData)
+            InsertionSort(messagesList, Comparator { it1, it2 -> itemCmp(it1, it2) }, Math.max(1, firstNewIndex)).sort()
+            notifyItemRangeInserted(firstNewIndex, newData.size);
+            /*
+            if(last >= messagesList.size - 2) {
+                recyclerView.scrollToPosition(messagesList.size - 1);
+            }
+            */
         }
     }
 
