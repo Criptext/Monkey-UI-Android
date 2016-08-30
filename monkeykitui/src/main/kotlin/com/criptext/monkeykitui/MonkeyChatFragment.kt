@@ -123,11 +123,13 @@ open class MonkeyChatFragment(): Fragment() {
 
     override fun onStart() {
         super.onStart()
+        (activity as ChatActivity).onStartChatFragment(conversationId)
         voiceNotePlayer?.initPlayer()
     }
 
     override fun onStop() {
         super.onStop()
+        (activity as ChatActivity).onStopChatFragment(conversationId)
         voiceNotePlayer?.releasePlayer()
     }
 

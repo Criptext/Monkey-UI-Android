@@ -65,4 +65,13 @@ interface ChatActivity {
      */
     fun getGroupChat(conversationId: String, membersIds: String): GroupChat?
 
+    /**
+     * When the chat fragment is started
+     */
+    fun onStartChatFragment(conversationId: String)
+
+    /**
+     * When the chat fragment is stopped
+     */
+    fun onStopChatFragment(conversationId: String)
 }
