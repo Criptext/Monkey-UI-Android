@@ -204,9 +204,13 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         return actualPosition
     }
 
-    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int){
+    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int, recyclerView: RecyclerView){
         val newPosition = addNewConversation(movedConversation, silent = true)
         notifyItemMoved(oldPosition, newPosition)
+        if(oldPosition == newPosition)
+            notifyItemChanged(newPosition)
+        else
+            recyclerView.scrollToPosition(newPosition) //bug in android https://code.google.com/p/android/issues/detail?id=99047
     }
 
     /**
@@ -235,12 +239,12 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param updatedConversation the updated conversation. this object replaces the existing conversation
      * in the adapter.
      */
-    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction){
+    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction, recyclerView: RecyclerView){
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1){
             conversationsList.removeAt(position)
             transaction.updateConversation(conversation)
-            swapConversationPosition(conversation, position)
+            swapConversationPosition(conversation, position, recyclerView)
         } else throw IllegalArgumentException("Conversation with ID: ${conversation.getId()} and " +
                 "timestamp: ${conversation.getDatetime()} not found in adapter.")
     }

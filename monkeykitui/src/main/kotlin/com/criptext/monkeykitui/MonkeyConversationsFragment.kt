@@ -124,7 +124,7 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param transaction a ConversationTransaction object that updates the conversation item
      */
     fun updateConversation(conversationItem: MonkeyConversation, transaction: ConversationTransaction){
-        conversationsAdapter.updateConversation(conversationItem, transaction)
+        conversationsAdapter.updateConversation(conversationItem, transaction, recyclerView)
     }
 
     /**
