@@ -15,6 +15,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
+import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.Utils
@@ -187,12 +188,21 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     /**
      * adds a conversation to the top of the adapter's list. The changes are then notified to the UI
      * @param newConversation conversation to add
+     * @return the position at which the conversation was inserted. It should be zero, unless there is
+     * a more recent conversation
      */
-    fun addNewConversation(newConversation: MonkeyConversation){
+    fun addNewConversation(newConversation: MonkeyConversation): Int{
         conversationsList.add(0, newConversation)
-        InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
+        val actualPosition = InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
                 .insertAtCorrectPosition(newConversation, insertAtEnd = false)
-        notifyItemInserted(0)
+        notifyItemInserted(actualPosition)
+
+        return actualPosition
+    }
+
+    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int){
+        val newPosition = addNewConversation(movedConversation)
+        notifyItemMoved(oldPosition, newPosition)
     }
 
     /**
@@ -221,12 +231,14 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param updatedConversation the updated conversation. this object replaces the existing conversation
      * in the adapter.
      */
-    fun updateConversation(updatedConversation: MonkeyConversation){
-        val position = getConversationPositionByTimestamp(updatedConversation)
+    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction){
+        val position = getConversationPositionByTimestamp(conversation)
         if(position > -1){
-            conversationsList[position] = updatedConversation
-            notifyItemChanged(position)
-        }
+            conversationsList.removeAt(position)
+            transaction.updateConversation(conversation)
+            swapConversationPosition(conversation, position)
+        } else throw IllegalArgumentException("Conversation with ID: ${conversation.getId()} and " +
+                "timestamp: ${conversation.getDatetime()} not found in adapter.")
     }
 
     /**

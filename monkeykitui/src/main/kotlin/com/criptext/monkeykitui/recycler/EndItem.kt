@@ -6,9 +6,7 @@ package com.criptext.monkeykitui.recycler
 
 class EndItem : MonkeyItem {
 
-    override fun getMessageTimestampOrder(): Long {
-        throw UnsupportedOperationException()
-    }
+    override fun getMessageTimestampOrder() = 0L
 
     override fun getOldMessageId(): String {
         throw UnsupportedOperationException()

@@ -117,14 +117,6 @@ open class MonkeyConversationsFragment: Fragment(){
     fun findConversationById(id: String) = conversationsAdapter.findConversationItemById(id)
 
     /**
-     * Updates the view of an existing conversation.
-     * @position the position in the adapter of the conversation to update
-     */
-    fun updateConversation(position: Int){
-        conversationsAdapter.notifyItemChanged(position)
-    }
-
-    /**
      * Updates the view of an existing conversation. Uses binary search to find the conversation's
      * position in the adapter.
      */

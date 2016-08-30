@@ -75,6 +75,8 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
     open fun setOnClickListener(listener : View.OnClickListener?){
         photoImageView!!.setOnClickListener(listener)
+        retryDownloadLayout?.setOnClickListener(null)
+        retryUploadLayout?.setOnClickListener(null)
     }
 
 }
