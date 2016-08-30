@@ -13,6 +13,8 @@
     android:paddingRight="50dp"
     android:orientation="vertical">
 
+    <include layout="@layout/include_member_name"/>
+
     <RelativeLayout
         android:id="@+id/content_message"
         android:layout_width="wrap_content"

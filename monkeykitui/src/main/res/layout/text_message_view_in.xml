@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- VIEW TEXTO IN -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="7dp"
     android:clickable="false"
+    android:orientation="vertical"
     android:gravity="left|bottom"
     android:paddingRight="50dp">
 
+    <include layout="@layout/include_member_name"/>
 
     <LinearLayout
         android:id="@+id/content_message"
@@ -64,4 +66,4 @@
             android:layout_toRightOf="@+id/content_row_messages_in"
             android:layout_marginLeft="-22dp"/> -->
 
-</FrameLayout>
+</LinearLayout>

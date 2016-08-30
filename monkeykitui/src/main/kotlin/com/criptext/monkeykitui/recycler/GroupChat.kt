@@ -5,8 +5,8 @@ package com.criptext.monkeykitui.recycler
  */
 
 interface GroupChat {
-    fun getMemberName(sessionId : String) : String
+    fun getMemberName(monkeyId : String) : String
 
-    fun getMemberColor(sessionId: String) : Int
+    fun getMemberColor(monkeyId: String) : Int
 
 }
