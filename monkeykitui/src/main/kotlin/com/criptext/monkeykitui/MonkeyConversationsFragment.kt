@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
+import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import java.util.*
 
 /**
@@ -119,9 +120,11 @@ open class MonkeyConversationsFragment: Fragment(){
     /**
      * Updates the view of an existing conversation. Uses binary search to find the conversation's
      * position in the adapter.
+     * @param conversationItem the conversation to update. it must not be updated yet
+     * @param transaction a ConversationTransaction object that updates the conversation item
      */
-    fun updateConversation(conversationItem: MonkeyConversation){
-        conversationsAdapter.updateConversation(conversationItem)
+    fun updateConversation(conversationItem: MonkeyConversation, transaction: ConversationTransaction){
+        conversationsAdapter.updateConversation(conversationItem, transaction)
     }
 
     /**

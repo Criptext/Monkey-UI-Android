@@ -185,23 +185,27 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         this.hasReachedEnd = hasReachedEnd
     }
 
+    fun addNewConversation(newConversation: MonkeyConversation): Int{
+        return addNewConversation(newConversation, silent = false)
+    }
+
     /**
      * adds a conversation to the top of the adapter's list. The changes are then notified to the UI
      * @param newConversation conversation to add
      * @return the position at which the conversation was inserted. It should be zero, unless there is
      * a more recent conversation
      */
-    fun addNewConversation(newConversation: MonkeyConversation): Int{
-        conversationsList.add(0, newConversation)
+    private fun addNewConversation(newConversation: MonkeyConversation, silent: Boolean): Int{
         val actualPosition = InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
                 .insertAtCorrectPosition(newConversation, insertAtEnd = false)
-        notifyItemInserted(actualPosition)
+        if(!silent)
+            notifyItemInserted(actualPosition)
 
         return actualPosition
     }
 
     private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int){
-        val newPosition = addNewConversation(movedConversation)
+        val newPosition = addNewConversation(movedConversation, silent = true)
         notifyItemMoved(oldPosition, newPosition)
     }
 
