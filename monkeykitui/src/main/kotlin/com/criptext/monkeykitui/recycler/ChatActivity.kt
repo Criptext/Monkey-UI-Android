@@ -74,4 +74,5 @@ interface ChatActivity {
      * When the chat fragment is stopped
      */
     fun onStopChatFragment(conversationId: String)
+
 }
