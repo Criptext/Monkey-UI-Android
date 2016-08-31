@@ -59,6 +59,15 @@ open class MonkeyConversationsFragment: Fragment(){
         (activity as ConversationsActivity).requestConversations()
     }
 
+    override fun onStop() {
+        super.onStop()
+        try {
+            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
+    }
+
     override fun onAttach(activity: Activity?) {
         val conversationsActivty = activity as? ConversationsActivity
         conversationsActivty?.setConversationsFragment(this)
