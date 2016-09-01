@@ -14,7 +14,8 @@ import android.widget.ImageView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.attachment.CameraHandler
-import com.criptext.monkeykitui.input.attachment.AttachmentOption
+import com.criptext.monkeykitui.dialog.DialogOption
+import com.criptext.monkeykitui.dialog.SimpleDialog
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
@@ -32,7 +33,7 @@ open class AttachmentButton : ImageView {
     var cameraOptionLabel = defaultCameraOptionLabel
     var galleryOptionLabel = defaultGalleryOptionLabel
 
-    lateinit var attachmentOptions: ArrayList<AttachmentOption>
+    lateinit var attachmentOptions: ArrayList<DialogOption>
     private set
 
     constructor(context: Context): super(context){
@@ -55,7 +56,7 @@ open class AttachmentButton : ImageView {
         attachmentOptions = ArrayList(2)
         cameraOptionLabel = typedArray?.getString(R.styleable.InputView_cameraOptionLabel) ?: defaultCameraOptionLabel
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
-            attachmentOptions.add(object : AttachmentOption(cameraOptionLabel) {
+            attachmentOptions.add(object : DialogOption(cameraOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.takePicture()
                 }
@@ -63,7 +64,7 @@ open class AttachmentButton : ImageView {
 
         galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?: defaultGalleryOptionLabel
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
-            attachmentOptions.add(object : AttachmentOption(galleryOptionLabel) {
+            attachmentOptions.add(object : DialogOption(galleryOptionLabel) {
                 override fun onOptionSelected() {
                     cameraHandler.pickFromGallery()
                 }
@@ -86,17 +87,7 @@ open class AttachmentButton : ImageView {
                 }
             })
 
-            val adapter = ArrayAdapter<AttachmentOption>(context, android.R.layout.select_dialog_item, attachmentOptions)
-            val builder = AlertDialog.Builder(context)
-
-            builder.setCancelable(true)
-            val dialog = builder.setAdapter(adapter, { dialog, item ->
-                val selectedOption = attachmentOptions[item]
-                selectedOption.onOptionSelected()
-            }).show()
-            if(android.os.Build.VERSION.SDK_INT < 20)
-                dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
-            dialog.setCanceledOnTouchOutside(true)
+            SimpleDialog(attachmentOptions).show(context)
         })
     }
 

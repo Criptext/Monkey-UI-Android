@@ -1,27 +1,20 @@
 package com.criptext.monkeykitui.conversation
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.Utils
-import com.squareup.picasso.Picasso
-import de.hdodenhof.circleimageview.CircleImageView
-import java.io.File
 import java.util.*
 
 /**
@@ -36,6 +29,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     private val conversationsActivity: ConversationsActivity
     get() = mContext as ConversationsActivity
 
+
     var hasReachedEnd : Boolean = true
         set(value) {
             if(!value && field != value) {
@@ -49,6 +43,17 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     val dataLoader : SlowRecyclerLoader
 
     var maxTextWidth: Int? = null
+
+    var recyclerView: RecyclerView? = null
+
+    var groupToExit: MonkeyConversation? = null
+    set(value) {
+        val oldValue = field
+        if(oldValue != null){
+            conversationsActivity.onGroupLeft(oldValue)
+        }
+        field = value
+    }
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
@@ -93,6 +98,11 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             holder.itemView.setOnClickListener {
                 conversationsActivity.onConversationClicked(conversation)
             }
+
+            holder.itemView.setOnLongClickListener({
+                removeConversationFromRecycler(conversation)
+                true
+            })
 
             val holderType = getItemViewType(position)
             when(ConversationHolder.ViewTypes.values()[holderType]){
@@ -208,13 +218,55 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         return actualPosition
     }
 
-    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int, recyclerView: RecyclerView){
+    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int){
         val newPosition = addNewConversation(movedConversation, silent = true)
         notifyItemMoved(oldPosition, newPosition)
         if(oldPosition == newPosition)
             notifyItemChanged(newPosition)
         else
-            recyclerView.scrollToPosition(newPosition) //bug in android https://code.google.com/p/android/issues/detail?id=99047
+            recyclerView?.scrollToPosition(newPosition) //bug in android https://code.google.com/p/android/issues/detail?id=99047
+    }
+
+
+    /**
+     * Removes a conversation from the recyclerview, animating the removal and displaying a snackbar
+     * with an undo action. If the conversation is a group, a OnAttachStateChange listener is added
+     * so that when the snackbar is removed from the view, the onGroupLeft callback of
+     * ConversationsActivity is called. the group is temporarily stored in the groupToExit attribute
+     * so that in case that the listener is never called, we still have the reference to the group
+     * that must be exited. MonkeyConversationsFragment should check the groupToExit variable on stop
+     * to make sure that the user leaves it.
+     */
+    private fun removeConversationFromRecycler(conversation: MonkeyConversation){
+        val pos = getConversationPositionByTimestamp(conversation)
+        if(pos > -1){
+            conversationsList.removeAt(pos)
+            notifyItemRemoved(pos)
+            val recycler = recyclerView
+            if(recycler != null){
+                val snack = Snackbar.make(recycler.rootView, "${conversation.getName()} deleted", Snackbar.LENGTH_LONG)
+                snack.setAction("Undo",  {
+                    addNewConversation(conversation)
+                })
+                if(conversation.isGroup()){//If it is a group, need to wait until snackbar dismissed to leave
+                    groupToExit = conversation
+                    snack.view.addOnAttachStateChangeListener(object  : View.OnAttachStateChangeListener{
+                        override fun onViewAttachedToWindow(p0: View?) { }
+
+                        override fun onViewDetachedFromWindow(p0: View?) {
+                            val group = groupToExit
+                            if(group != null && group == conversation){
+                                conversationsActivity.onGroupLeft(group)
+                                groupToExit = null
+                            }
+                        }
+
+                    })
+                }
+
+                snack.show()
+            }
+        }
     }
 
     /**
@@ -243,12 +295,12 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param updatedConversation the updated conversation. this object replaces the existing conversation
      * in the adapter.
      */
-    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction, recyclerView: RecyclerView){
+    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction){
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1){
             conversationsList.removeAt(position)
             transaction.updateConversation(conversation)
-            swapConversationPosition(conversation, position, recyclerView)
+            swapConversationPosition(conversation, position)
         } else throw IllegalArgumentException("Conversation with ID: ${conversation.getId()} and " +
                 "timestamp: ${conversation.getDatetime()} not found in adapter.")
     }

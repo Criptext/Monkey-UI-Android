@@ -12,7 +12,10 @@ import android.view.ViewGroup
 import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
+import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
+import com.criptext.monkeykitui.conversation.dialog.OnConversationLongClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
+import com.criptext.monkeykitui.dialog.DialogOption
 import java.util.*
 
 /**
@@ -46,6 +49,7 @@ open class MonkeyConversationsFragment: Fragment(){
         val view = inflater!!.inflate(conversationsLayout, null)
         recyclerView = initRecyclerView(view)
         conversationsAdapter = MonkeyConversationsAdapter(activity)
+        conversationsAdapter.recyclerView = recyclerView
         recyclerView!!.adapter = conversationsAdapter
         return view
     }
@@ -64,6 +68,14 @@ open class MonkeyConversationsFragment: Fragment(){
     override fun onDetach() {
         (activity as ConversationsActivity).setConversationsFragment(null)
         super.onDetach()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val pendingGroupToLeave = conversationsAdapter.groupToExit
+        if(pendingGroupToLeave != null)
+            (activity as ConversationsActivity).onGroupLeft(pendingGroupToLeave)
+        conversationsAdapter.groupToExit = null
     }
 
     override fun onDestroy() {
@@ -124,7 +136,7 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param transaction a ConversationTransaction object that updates the conversation item
      */
     fun updateConversation(conversationItem: MonkeyConversation, transaction: ConversationTransaction){
-        conversationsAdapter.updateConversation(conversationItem, transaction, recyclerView)
+        conversationsAdapter.updateConversation(conversationItem, transaction)
     }
 
     /**

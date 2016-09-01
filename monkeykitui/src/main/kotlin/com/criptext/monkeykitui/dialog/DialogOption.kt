@@ -1,10 +1,10 @@
-package com.criptext.monkeykitui.input.attachment
+package com.criptext.monkeykitui.dialog
 
 /**
  * Created by daniel on 5/9/16.
  */
 
-abstract class AttachmentOption(label: String) {
+abstract class DialogOption(label: String) {
     var label: String
 
     init {
@@ -16,7 +16,7 @@ abstract class AttachmentOption(label: String) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if(other is AttachmentOption)
+        if(other is DialogOption)
             return label == other.label
         return false
     }

@@ -21,25 +21,25 @@ public class FakeConversations {
                 timestamp, MonkeyConversation.ConversationStatus.empty.ordinal());
         conversations.add(0, newConversation);
 
-        timestamp = System.currentTimeMillis();
+        timestamp += 1;
         newConversation = new ConversationItem("G:235", "Devlab",
                 timestamp, MonkeyConversation.ConversationStatus.deliveredMessage.ordinal());
         newConversation.setLastMessage("Donde estan?");
         conversations.add(0, newConversation);
 
-        timestamp = System.currentTimeMillis();
+        timestamp += 1;
         newConversation = new ConversationItem("w34tef35y67", "Alberto Vera",
                 timestamp, MonkeyConversation.ConversationStatus.sentMessageRead.ordinal());
         newConversation.setLastMessage("ok!");
         conversations.add(0, newConversation);
 
-        timestamp = System.currentTimeMillis();
+        timestamp += 1;
         newConversation = new ConversationItem("gsdfgsrtr5e2e", "Luis Loaiza",
                 timestamp, MonkeyConversation.ConversationStatus.receivedMessage.ordinal());
         newConversation.setLastMessage("Sigues en la misma pantalla!?");
         conversations.add(0, newConversation);
 
-        timestamp = System.currentTimeMillis();
+        timestamp += 1;
         newConversation = new ConversationItem("gstehsfhty34vf", "Mayer Mizrachi",
                 timestamp, MonkeyConversation.ConversationStatus.receivedMessage.ordinal());
         newConversation.setNewMessages(4);

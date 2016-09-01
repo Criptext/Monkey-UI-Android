@@ -17,4 +17,6 @@ interface ConversationsActivity {
     fun onLoadMoreConversations(loadedConversations: Int)
 
     fun retainConversations(conversations: Collection<MonkeyConversation>)
+
+    fun onGroupLeft(group: MonkeyConversation)
 }

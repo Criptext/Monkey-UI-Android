@@ -156,4 +156,9 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     public void onStopChatFragment(@NotNull String conversationId) {
 
     }
+
+    @Override
+    public void onGroupLeft(@NotNull MonkeyConversation group) {
+
+    }
 }
