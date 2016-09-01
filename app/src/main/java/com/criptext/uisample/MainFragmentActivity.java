@@ -11,6 +11,7 @@ import com.criptext.monkeykitui.MonkeyConversationsFragment;
 import com.criptext.monkeykitui.conversation.ConversationsActivity;
 import com.criptext.monkeykitui.conversation.MonkeyConversation;
 import com.criptext.monkeykitui.input.listeners.InputListener;
+import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
@@ -104,7 +105,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             inputListener = createInputListener();
         if(vnPlayer == null)
             vnPlayer = new DefaultVoiceNotePlayer(this);
-        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", false);
+        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "", false);
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
         getSupportActionBar().setTitle(conversation.getName());
     }
@@ -137,6 +138,22 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void retainConversations(@NotNull Collection<? extends MonkeyConversation> conversations) {
+
+    }
+
+    @Nullable
+    @Override
+    public GroupChat getGroupChat(@NotNull String conversationId, @NotNull String membersIds) {
+        return null;
+    }
+
+    @Override
+    public void onStartChatFragment(@NotNull String conversationId) {
+
+    }
+
+    @Override
+    public void onStopChatFragment(@NotNull String conversationId) {
 
     }
 }

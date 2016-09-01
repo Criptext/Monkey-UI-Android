@@ -21,15 +21,20 @@ open class ConversationHolder: RecyclerView.ViewHolder {
     val badge: TextView?
     val avatarImageView: CircleImageView?
 
-    constructor(view : View) : super(Utils.getViewWithRecyclerLayoutParams(view)) {
+    constructor(view : View, textMaxWidth: Int) : super(Utils.getViewWithRecyclerLayoutParams(view)) {
         nameTextView = view.findViewById(R.id.conv_name) as TextView?
         secondaryTextView = view.findViewById(R.id.conv_secondary_txt) as TextView?
         dateTextView = view.findViewById(R.id.conv_date) as TextView?
         badge = view.findViewById(R.id.conv_badge) as TextView?
         avatarImageView = view.findViewById(R.id.conv_avatar) as CircleImageView?
+
+        nameTextView?.maxWidth = textMaxWidth
+        secondaryTextView?.maxWidth = textMaxWidth
+
+
     }
 
-    constructor(view: View, type: ViewTypes): this(view){
+    constructor(view: View, type: ViewTypes, textMaxWidth: Int): this(view, textMaxWidth){
         if(type == ViewTypes.newMessages) {
             badge!!.visibility = View.VISIBLE
             dateTextView!!.setTextColor(view.context.resources.getColor(R.color.mk_yellow_highlight))
@@ -73,7 +78,7 @@ open class ConversationHolder: RecyclerView.ViewHolder {
         moreConversations, empty, receivedMessage, sentMessage, newMessages;
     }
 
-    class EndHolder(view: View) : ConversationHolder(view);
+    class EndHolder(view: View) : ConversationHolder(view, 0);
 }
 
 

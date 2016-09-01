@@ -46,8 +46,9 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             field = value
         }
 
-
     val dataLoader : SlowRecyclerLoader
+
+    var maxTextWidth: Int? = null
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
@@ -138,6 +139,9 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ConversationHolder? {
+        if(maxTextWidth == null)
+            maxTextWidth = parent!!.width - mContext.resources.getDimension(R.dimen.mk_avatar_size).toInt() * 11 / 4
+
         val isLoadingView = viewType == ConversationHolder.ViewTypes.moreConversations.ordinal
         val mView: View
         if(isLoadingView){
@@ -147,7 +151,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         } else {
             mView = LayoutInflater.from(mContext).inflate(R.layout.item_mk_conversation, null)
             mView.setBackgroundResource(mSelectableItemBg)
-            return ConversationHolder(mView, ConversationHolder.ViewTypes.values()[viewType])
+            return ConversationHolder(mView, ConversationHolder.ViewTypes.values()[viewType], maxTextWidth!!)
         }
     }
 

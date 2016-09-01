@@ -13,6 +13,7 @@ import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.input.MediaInputView;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
+import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyConfig;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -149,6 +150,22 @@ public class MainActivity extends BaseChatActivity{
 
     @Override
     public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+
+    }
+
+    @Nullable
+    @Override
+    public GroupChat getGroupChat(@NotNull String conversationId, @NotNull String membersIds) {
+        return null;
+    }
+
+    @Override
+    public void onStartChatFragment(@NotNull String conversationId) {
+
+    }
+
+    @Override
+    public void onStopChatFragment(@NotNull String conversationId) {
 
     }
 }

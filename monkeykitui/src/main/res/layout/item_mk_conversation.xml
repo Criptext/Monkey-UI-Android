@@ -5,8 +5,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/conv_avatar"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="@dimen/mk_avatar_size"
+        android:layout_height="@dimen/mk_avatar_size"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
