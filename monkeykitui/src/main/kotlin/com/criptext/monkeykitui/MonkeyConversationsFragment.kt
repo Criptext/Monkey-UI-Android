@@ -136,7 +136,11 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param id A string with an unique identifier of the conversation to search
      * @result the conversation with the matching identifier. null if it does not exist
      */
-    fun findConversationById(id: String) = conversationsAdapter.findConversationItemById(id)
+    fun findConversationById(id: String): MonkeyConversation? {
+        if(conversationsAdapter!=null)
+            conversationsAdapter.findConversationItemById(id)
+        return null
+    }
 
     /**
      * Updates the view of an existing conversation. Uses binary search to find the conversation's
@@ -162,8 +166,10 @@ open class MonkeyConversationsFragment: Fragment(){
      * adds a conversation to the top of the recycler view.
      * @param newConversation conversation to add
      */
-    fun addNewConversation(newConversation: MonkeyConversation){
+    fun addNewConversation(newConversation: MonkeyConversation, scrollToFirst: Boolean){
         conversationsAdapter.addNewConversation(newConversation)
+        if(scrollToFirst)
+            recyclerView.smoothScrollToPosition(0)
     }
 
     fun getLastConversation(): MonkeyConversation? = conversationsAdapter.getLastConversation()
