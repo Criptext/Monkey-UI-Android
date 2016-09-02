@@ -50,7 +50,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     set(value) {
         val oldValue = field
         if(oldValue != null){
-            conversationsActivity.onGroupLeft(oldValue)
+            conversationsActivity.onConversationDeleted(oldValue)
         }
         field = value
     }
@@ -231,7 +231,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     /**
      * Removes a conversation from the recyclerview, animating the removal and displaying a snackbar
      * with an undo action. If the conversation is a group, a OnAttachStateChange listener is added
-     * so that when the snackbar is removed from the view, the onGroupLeft callback of
+     * so that when the snackbar is removed from the view, the onConversationDeleted callback of
      * ConversationsActivity is called. the group is temporarily stored in the groupToExit attribute
      * so that in case that the listener is never called, we still have the reference to the group
      * that must be exited. MonkeyConversationsFragment should check the groupToExit variable on stop
@@ -256,7 +256,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                         override fun onViewDetachedFromWindow(p0: View?) {
                             val group = groupToExit
                             if(group != null && group == conversation){
-                                conversationsActivity.onGroupLeft(group)
+                                conversationsActivity.onConversationDeleted(group)
                                 groupToExit = null
                             }
                         }

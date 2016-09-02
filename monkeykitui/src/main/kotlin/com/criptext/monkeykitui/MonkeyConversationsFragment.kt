@@ -74,7 +74,7 @@ open class MonkeyConversationsFragment: Fragment(){
         super.onStop()
         val pendingGroupToLeave = conversationsAdapter.groupToExit
         if(pendingGroupToLeave != null)
-            (activity as ConversationsActivity).onGroupLeft(pendingGroupToLeave)
+            (activity as ConversationsActivity).onConversationDeleted(pendingGroupToLeave)
         try {
             (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
         } catch (ex: UninitializedPropertyAccessException){

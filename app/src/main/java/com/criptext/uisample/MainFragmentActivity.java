@@ -159,7 +159,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void onGroupLeft(@NotNull MonkeyConversation group) {
+    public void onConversationDeleted(@NotNull MonkeyConversation group) {
 
     }
 }
