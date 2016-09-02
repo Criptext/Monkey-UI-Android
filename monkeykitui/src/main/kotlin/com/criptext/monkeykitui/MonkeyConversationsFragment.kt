@@ -133,8 +133,11 @@ open class MonkeyConversationsFragment: Fragment(){
      * @result the conversation with the matching identifier. null if it does not exist
      */
     fun findConversationById(id: String): MonkeyConversation? {
-        if(conversationsAdapter!=null)
-            conversationsAdapter.findConversationItemById(id)
+        try{
+            return conversationsAdapter.findConversationItemById(id)
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
         return null
     }
 
