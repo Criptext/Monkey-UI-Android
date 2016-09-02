@@ -117,7 +117,9 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         senderNameTextView!!.setTextColor(color)
     }
 
-
+    open fun hideSenderName(){
+        senderNameTextView!!.visibility = View.GONE
+    }
     /**
      * Makes this MonkeyHolder display the date in which the the bound
      * MonkeyItem was sent.

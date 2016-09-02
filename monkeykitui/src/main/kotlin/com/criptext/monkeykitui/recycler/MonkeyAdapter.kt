@@ -182,6 +182,12 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         }
     }
 
+    fun isFollowupMessage(position: Int): Boolean{
+        if(position > 0 && messagesList[position].getContactSessionId()
+                    == messagesList[position - 1].getContactSessionId())
+                return true
+        return false
+    }
     /**
      * Binds an existing MonkeyHolder with a MonkeyItem. This method is called before type specific
      * methods like bindMonkeyTextView or bindMonkeyAudio. Common attributes for all MonkeyItem types
@@ -196,10 +202,11 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
             val group = groupChat
-            if (group != null) {
+            if (group != null && !isFollowupMessage(position)) {
                 holder.setSenderName(group.getMemberName(item.getContactSessionId()),
                         group.getMemberColor(item.getContactSessionId()))
-            }
+            } else
+                holder.hideSenderName()
         } else { //stuff for outgoing messages
            holder.updateReadStatus(item.getDeliveryStatus())
            holder.updateSendingStatus(item.getDeliveryStatus(), chatActivity.isOnline(), item.getMessageTimestamp())
