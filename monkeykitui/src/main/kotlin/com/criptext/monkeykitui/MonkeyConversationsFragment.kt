@@ -75,6 +75,11 @@ open class MonkeyConversationsFragment: Fragment(){
         val pendingGroupToLeave = conversationsAdapter.groupToExit
         if(pendingGroupToLeave != null)
             (activity as ConversationsActivity).onGroupLeft(pendingGroupToLeave)
+        try {
+            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
         conversationsAdapter.groupToExit = null
     }
 
@@ -127,7 +132,14 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param id A string with an unique identifier of the conversation to search
      * @result the conversation with the matching identifier. null if it does not exist
      */
-    fun findConversationById(id: String) = conversationsAdapter.findConversationItemById(id)
+    fun findConversationById(id: String): MonkeyConversation? {
+        try{
+            return conversationsAdapter.findConversationItemById(id)
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
+        return null
+    }
 
     /**
      * Updates the view of an existing conversation. Uses binary search to find the conversation's
@@ -153,8 +165,10 @@ open class MonkeyConversationsFragment: Fragment(){
      * adds a conversation to the top of the recycler view.
      * @param newConversation conversation to add
      */
-    fun addNewConversation(newConversation: MonkeyConversation){
+    fun addNewConversation(newConversation: MonkeyConversation, scrollToFirst: Boolean){
         conversationsAdapter.addNewConversation(newConversation)
+        if(scrollToFirst)
+            recyclerView.smoothScrollToPosition(0)
     }
 
     fun getLastConversation(): MonkeyConversation? = conversationsAdapter.getLastConversation()
