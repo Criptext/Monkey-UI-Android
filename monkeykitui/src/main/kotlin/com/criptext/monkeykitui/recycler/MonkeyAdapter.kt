@@ -453,14 +453,31 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             val lastNewIndex = newData.size - 1
             InsertionSort(messagesList, Comparator { t1, t2 -> itemCmp(t1, t2) }, lastNewIndex).sortBackwards()
             notifyItemRangeInserted(0, newData.size)
-            if(messagesList.size - newData.size > 0) {
-                val manager = recyclerView.layoutManager as LinearLayoutManager
+
+            //Scroll only if position is not in the last position
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            if(messagesList.size - newData.size > 0 && !isLastItemDisplaying(manager)) {
                 manager.scrollToPositionWithOffset(newData.size,
                         mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
             }
         }
 
         hasReachedEnd = reachedEnd
+    }
+
+    /**
+     * Check whether the last item in RecyclerView is being displayed or not
+     * @param manager LinearLayoutManager
+     * @return true if last position was Visible and false Otherwise
+     */
+    private fun isLastItemDisplaying(manager: LinearLayoutManager): Boolean {
+        val visibleItemCount = manager.childCount
+        val totalItemCount = manager.itemCount
+        val pastVisiblesItems = manager.findFirstVisibleItemPosition()
+        if (pastVisiblesItems > 0 && visibleItemCount > 0 && totalItemCount > 0) {
+            return true
+        }
+        return false
     }
 
     /**
@@ -632,10 +649,15 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
         if(newData.size > 0) {
             val manager = recyclerView.layoutManager as LinearLayoutManager
+            val last = manager.findLastVisibleItemPosition()
             val firstNewIndex = messagesList.size
             messagesList.addAll(newData)
             InsertionSort(messagesList, Comparator { it1, it2 -> itemCmp(it1, it2) }, Math.max(1, firstNewIndex)).sort()
             notifyItemRangeInserted(firstNewIndex, newData.size);
+            //Only scroll if this is the latest message
+            if(firstNewIndex == (messagesList.size - 1) && last >= messagesList.size - 2) {
+                recyclerView.scrollToPosition(messagesList.size - 1);
+            }
         }
     }
 

@@ -212,6 +212,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
                 override fun onAnimationEnd(animation: Animator) {
                     viewStatus!!.tag = "iddle"
                     handlerStatus!!.post(pendingAction)
+                    pendingAction = null
                 }
                 override fun onAnimationCancel(animation: Animator) {
                 }

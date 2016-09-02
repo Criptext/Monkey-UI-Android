@@ -183,6 +183,10 @@ open class MonkeyChatFragment(): Fragment() {
         monkeyAdapter.notifyDataSetChanged()
     }
 
+    fun getAllMessages(): Collection<MonkeyItem> {
+        return monkeyAdapter.takeAllMessages()
+    }
+
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         return if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
             else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
