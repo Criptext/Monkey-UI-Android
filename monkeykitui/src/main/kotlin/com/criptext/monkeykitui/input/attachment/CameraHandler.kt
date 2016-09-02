@@ -186,7 +186,7 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getMessageTimestamp(): Long {
-                        return System.currentTimeMillis()
+                        return System.currentTimeMillis()/1000
                     }
 
                     override fun getMessageId(): String {

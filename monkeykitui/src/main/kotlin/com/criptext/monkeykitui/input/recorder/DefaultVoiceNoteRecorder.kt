@@ -116,7 +116,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
                 }
 
                 override fun getMessageTimestamp(): Long {
-                    return timestamp
+                    return timestamp/1000
                 }
 
                 override fun getMessageType(): Int {

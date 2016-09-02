@@ -4,8 +4,8 @@
         android:layout_height="60dp" >
      <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/progressBarImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:indeterminateTint="#014766"/>
 

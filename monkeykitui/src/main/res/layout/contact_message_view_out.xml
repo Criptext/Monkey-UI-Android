@@ -1,126 +1,132 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="@android:color/white"
-    android:gravity="right"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
+    <include layout="@layout/include_date_header"/>
 
     <RelativeLayout
-        android:id="@+id/content_message"
-        android:layout_width="wrap_content"
-        android:layout_height="63dp"
-        android:paddingTop="3dp"
-        android:background="@drawable/mk_bubble_outgoing"
-        android:longClickable="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_toLeftOf="@+id/tail">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/photo_msg_friend"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp"
-            android:tag="1dp" />
-
-        <TextView
-            android:id="@+id/fullname_friend"
+        <RelativeLayout
+            android:id="@+id/content_message"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_gravity="bottom|left"
-            android:minWidth="70dp"
-            android:layout_marginTop="3dp"
-            android:ellipsize="end"
-            android:freezesText="false"
-            android:gravity="left|bottom"
-            android:lines="1"
-            android:maxLines="1"
-            android:maxLength="18"
-            android:singleLine="true"
-            android:text="Daniel"
-            android:paddingRight="10dp"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_toRightOf="@id/photo_msg_friend"
-            android:textStyle="bold" />
+            android:layout_height="63dp"
+            android:paddingTop="3dp"
+            android:background="@drawable/mk_bubble_outgoing"
+            android:longClickable="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toLeftOf="@+id/tail">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_below="@+id/fullname_friend"
-            android:layout_alignRight="@id/fullname_friend"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="10dp">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleSmall"
-                android:id="@+id/sendingWheel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="2dp"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/imageViewCheckmark"
-                android:layout_width="13dp"
-                android:layout_height="10dp"
-                android:src="@drawable/mk_checkmark_sent"
-                android:layout_marginRight="2dp"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/photo_msg_friend"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:tag="1dp" />
 
             <TextView
-                android:id="@+id/datetime"
+                android:id="@+id/fullname_friend"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_gravity="bottom|left"
+                android:minWidth="70dp"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:freezesText="false"
+                android:gravity="left|bottom"
+                android:lines="1"
+                android:maxLines="1"
+                android:maxLength="18"
+                android:singleLine="true"
+                android:text="Daniel"
+                android:paddingRight="10dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:layout_toRightOf="@id/photo_msg_friend"
+                android:textStyle="bold" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="left|center_vertical"
-                android:maxLines="1"
-                android:text="datetime"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/mk_grey_letters"
-                android:textSize="12sp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_below="@+id/fullname_friend"
+                android:layout_alignRight="@id/fullname_friend"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="10dp">
 
-        </LinearLayout>
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:id="@+id/sendingWheel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/imageViewCheckmark"
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/mk_checkmark_sent"
+                    android:layout_marginRight="2dp"/>
+
+                <TextView
+                    android:id="@+id/datetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="left|center_vertical"
+                    android:maxLines="1"
+                    android:text="datetime"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/mk_grey_letters"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageViewChecked"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/mk_contact_checked"
+            android:layout_alignTop="@+id/content_message"
+            android:layout_toRightOf="@+id/content_message"
+            android:layout_marginLeft="-16dp"
+            android:layout_marginRight="5dp"/>
+
+        <ImageView
+            android:id="@+id/tail"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="2dp"
+            android:src="@drawable/mk_piko_der"
+            android:layout_alignBottom="@+id/content_message"
+            android:layout_toLeftOf="@+id/net_error"/>
+
+        <ImageView
+            android:id="@+id/net_error"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_alert"
+            android:visibility="visible"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/imageViewChecked"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:src="@drawable/mk_contact_checked"
-        android:layout_alignTop="@+id/content_message"
-        android:layout_toRightOf="@+id/content_message"
-        android:layout_marginLeft="-16dp"
-        android:layout_marginRight="5dp"/>
-
-    <ImageView
-        android:id="@+id/tail"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_gravity="bottom"
-        android:layout_marginRight="2dp"
-        android:src="@drawable/mk_piko_der"
-        android:layout_alignBottom="@+id/content_message"
-        android:layout_toLeftOf="@+id/net_error"/>
-
-    <ImageView
-        android:id="@+id/net_error"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginRight="12dp"
-        android:src="@drawable/ic_alert"
-        android:visibility="visible"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"/>
-
-</RelativeLayout>
+</LinearLayout>

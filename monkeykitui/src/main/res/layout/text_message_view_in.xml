@@ -6,8 +6,9 @@
     android:layout_marginBottom="7dp"
     android:clickable="false"
     android:orientation="vertical"
-    android:gravity="left|bottom"
-    android:paddingRight="50dp">
+    android:gravity="left|bottom">
+
+    <include layout="@layout/include_date_header"/>
 
     <include layout="@layout/include_member_name"/>
 
@@ -16,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="50dp"
         android:layout_marginLeft="15dp"
         android:layout_toRightOf="@id/tail"
         android:background="@drawable/mk_bubble_incoming"

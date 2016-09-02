@@ -72,7 +72,7 @@ open class TextInputView : BaseInputView {
                     }
 
                     override fun getMessageTimestamp(): Long {
-                        return System.currentTimeMillis()
+                        return System.currentTimeMillis()/1000
                     }
 
                     override fun getMessageId(): String {

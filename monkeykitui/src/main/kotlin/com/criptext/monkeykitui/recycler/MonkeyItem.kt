@@ -15,7 +15,7 @@ interface MonkeyItem {
     /*COMMON*/
 
     /**
-     * @return the timestamp according with the server.
+     * @return the timestamp according with the server in seconds.
      * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
      * &nbsp\ display it to the user.
      *
@@ -23,7 +23,7 @@ interface MonkeyItem {
     fun getMessageTimestamp() : Long
 
     /**
-     * @return the timestamp with the date in which the message was created.
+     * @return the timestamp with the date in which the message was created in milliseconds.
      * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
      * &nbsp\ display it to the user.
      *
