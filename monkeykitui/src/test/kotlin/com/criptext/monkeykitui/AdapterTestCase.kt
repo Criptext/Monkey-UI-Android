@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.criptext.monkeykitui.recycler.ChatActivity
+import com.criptext.monkeykitui.recycler.GroupChat
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import org.junit.Before
@@ -39,6 +40,18 @@ lateinit var adapter: MonkeyAdapter
         }
     }
     class MonkeyActivity: Activity(), ChatActivity {
+        override fun getGroupChat(conversationId: String, membersIds: String): GroupChat {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onStartChatFragment(conversationId: String) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onStopChatFragment(conversationId: String) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
         override fun getInitialMessages(conversationId: String): Collection<MonkeyItem> {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }

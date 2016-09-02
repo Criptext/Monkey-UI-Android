@@ -578,7 +578,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             return String.format("%.2f", (totalBytes / 1000000).toDouble())+" MB";
     }
 
-    protected fun itemCmp(t1: MonkeyItem, t2: MonkeyItem) =
+    internal fun itemCmp(t1: MonkeyItem, t2: MonkeyItem) =
 
             if(t1.getMessageTimestampOrder() < t2.getMessageTimestampOrder()) {
               -1
