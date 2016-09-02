@@ -332,7 +332,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         return null
     }
 
-    fun takeAllConversations(): Collection<MonkeyConversation>{
+    fun takeAllConversations(): List<MonkeyConversation>{
         removeEndOfRecyclerView(true)
         return conversationsList
     }

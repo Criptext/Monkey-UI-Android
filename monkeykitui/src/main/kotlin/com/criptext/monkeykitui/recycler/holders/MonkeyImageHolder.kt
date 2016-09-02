@@ -38,14 +38,20 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
                 .resize(200, 200)
                 .centerCrop()
                 .into(photoImageView)
+        retryDownloadLayout?.isClickable = false
+        retryUploadLayout?.isClickable = false
+        photoImageView?.isClickable = true
     }
 
     override fun setWaitingForDownload(){
 
         photoImageView!!.setImageDrawable(null)
+        photoImageView?.isClickable = false
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout?.visibility = View.INVISIBLE
         retryUploadLayout?.visibility = View.INVISIBLE
+        retryDownloadLayout?.isClickable = false
+        retryUploadLayout?.isClickable = false
         retryUploadLayout?.setOnClickListener(null)
         retryDownloadLayout?.setOnClickListener(null)
 
@@ -54,12 +60,15 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
         retryUploadLayout!!.visibility = View.GONE
         sendingProgressBar?.visibility = View.VISIBLE
+        retryDownloadLayout?.isClickable = false
+        retryUploadLayout?.isClickable = false
 
     }
     override fun setErrorInUpload(listener: View.OnClickListener){
 
         //photoLoadingView?.visibility = View.GONE
         retryUploadLayout!!.visibility = View.VISIBLE
+        retryUploadLayout?.isClickable = true
         retryUploadLayout!!.setOnClickListener(listener)
         sendingProgressBar?.visibility = View.INVISIBLE
 
@@ -69,6 +78,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
         photoLoadingView!!.visibility = View.GONE
         retryDownloadLayout!!.visibility = View.VISIBLE
+        retryDownloadLayout?.isClickable = true
         retryDownloadLayout!!.setOnClickListener(listener)
 
     }

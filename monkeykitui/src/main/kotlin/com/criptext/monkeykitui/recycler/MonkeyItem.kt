@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.view.View
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
+import java.util.*
 
 /**
  * Created by gesuwall on 4/4/16.
@@ -98,6 +99,43 @@ interface MonkeyItem {
     /*CONTACT */
 
     fun getContactSessionId() : String
+
+    companion object {
+
+        /**
+         * Compares two MonkeyItem elements. Start by comparing the order timestamp. If they are equal, it
+         * falls back to comparing ID's which should be unique.
+         */
+        val defaultComparator = Comparator<MonkeyItem> { t1, t2 ->
+            if (t1.getMessageTimestampOrder() < t2.getMessageTimestampOrder()) {
+                -1
+            } else if (t1.getMessageTimestampOrder() > t2.getMessageTimestampOrder()) {
+                1
+            } else t1.getMessageId().compareTo(t2.getMessageId())
+        }
+
+        fun findItemPositionInList(monkeyItem: MonkeyItem, list: List<MonkeyItem>) =
+                list.binarySearch(monkeyItem, defaultComparator)
+
+        fun findItemPositionInList(id: String, dateorder: Long, list: List<MonkeyItem>): Int {
+            val searchItem = object : MonkeyItem {
+                override fun getAudioDuration() = 0L
+                override fun getDeliveryStatus() = DeliveryStatus.sending
+                override fun getContactSessionId() = ""
+                override fun getFileSize() = 0L
+                override fun getFilePath() = ""
+                override fun getMessageId() = id
+                override fun getMessageText() = ""
+                override fun getMessageTimestamp() = dateorder
+                override fun getMessageTimestampOrder() = dateorder
+                override fun getMessageType() = 0
+                override fun getOldMessageId() = ""
+                override fun getPlaceholderFilePath() = ""
+                override fun isIncomingMessage() = true
+            }
+            return findItemPositionInList(searchItem, list)
+        }
+    }
 
     /**
      * enum class that holds the state of a message sent by the user. {@see MonkeyAdapter} will display

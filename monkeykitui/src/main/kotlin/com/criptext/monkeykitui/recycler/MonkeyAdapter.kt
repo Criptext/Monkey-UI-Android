@@ -359,6 +359,8 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
         if(!target.exists()){ //Message does not exist, needs to be downloaded
+            if(!item.isIncomingMessage())
+                Log.d("AudioBind", "download: ${item.getFilePath()}")
             chatActivity.onFileDownloadRequested(item)
             audioHolder.updatePlayPauseButton(false)
             audioHolder.setWaitingForDownload()
@@ -392,6 +394,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
                 }
             })
         } else { //Message is available for playback but not prepared in the MediaPlayer
+            if(!item.isIncomingMessage())
             audioHolder.setReadyForPlayback()
             audioHolder.updatePlayPauseButton(false)
             audioHolder.updateAudioProgress(0, item.getAudioDuration())
@@ -451,7 +454,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         if(newData.size > 0) {
             messagesList.addAll(0, newData)
             val lastNewIndex = newData.size - 1
-            InsertionSort(messagesList, Comparator { t1, t2 -> itemCmp(t1, t2) }, lastNewIndex).sortBackwards()
+            InsertionSort(messagesList, MonkeyItem.defaultComparator, lastNewIndex).sortBackwards()
             notifyItemRangeInserted(0, newData.size)
 
             //Scroll only if position is not in the last position
@@ -582,7 +585,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         return null
     }
 
-    fun takeAllMessages() : Collection<MonkeyItem>{
+    fun takeAllMessages() : List<MonkeyItem>{
         removeEndOfRecyclerView(true)
         return messagesList
     }
@@ -595,13 +598,6 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             return String.format("%.2f", (totalBytes / 1000000).toDouble())+" MB";
     }
 
-    internal fun itemCmp(t1: MonkeyItem, t2: MonkeyItem) =
-
-            if(t1.getMessageTimestampOrder() < t2.getMessageTimestampOrder()) {
-              -1
-           }else if (t1.getMessageTimestampOrder() > t2.getMessageTimestampOrder()) {
-               1
-           } else t1.getMessageId().compareTo(t2.getMessageId())
     /**
      * Finds the adapter position by the MonkeyItem's timestamp.
      * @param targetId the timestamp of the MonkeyItem whose adapter position will be searched. This
@@ -609,9 +605,39 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * @return The adapter position of the MonkeyItem. If the item was not found returns
      * the negated expected position.
      */
-    fun getItemPositionByTimestamp(item: MonkeyItem) = messagesList.binarySearch(item,
-            Comparator { t1, t2 -> itemCmp(t1, t2) })
+    fun getItemPositionByTimestamp(item: MonkeyItem) = MonkeyItem.findItemPositionInList(item, messagesList)
 
+    /**
+     * finds a message using the order timestamp and the ID with a binary search algorithm.
+     * @param searchItem a monkeyItem containing the requested item's ID and order timestamp.
+     * @return the requested item. Null if the item was not found.
+     */
+    fun getItemByTimestamp(searchItem: MonkeyItem): MonkeyItem?{
+        val position = getItemPositionByTimestamp(searchItem)
+        if(position > -1)
+            return messagesList[position]
+
+        return null
+    }
+
+    /**
+     * finds a message using the order timestamp and the ID with a binary search algorithm, then
+     * updates it using a MonkeyItemTransaction object.
+     * @param searchItem a monkeyItem containing the requested item's ID and order timestamp.
+     * @return the requested item. Null if the item was not found.
+     */
+    fun updateMessage(searchItem: MonkeyItem, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
+        val position = getItemPositionByTimestamp(searchItem)
+        if(position > -1) {
+            val old = messagesList.removeAt(position)
+            var temp = transaction.invoke(old)
+            messagesList[position] = temp
+            if(temp.getDeliveryStatus() != old.getDeliveryStatus())
+                notifyItemChanged(position)
+            else
+                rebindMonkeyItem(temp, recyclerView)
+        }
+    }
 
     /**
      * Looks for a monkey item with a specified Id, starting by the most recent ones.
@@ -631,7 +657,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         val last = manager.findLastVisibleItemPosition()
 
         //make sure it goes to the right position!
-        var newPos = InsertionSort(messagesList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
+        var newPos = InsertionSort(messagesList, MonkeyItem.defaultComparator)
                 .insertAtCorrectPosition (item, insertAtEnd = true)
         notifyItemInserted(newPos)
 
@@ -652,7 +678,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             val last = manager.findLastVisibleItemPosition()
             val firstNewIndex = messagesList.size
             messagesList.addAll(newData)
-            InsertionSort(messagesList, Comparator { it1, it2 -> itemCmp(it1, it2) }, Math.max(1, firstNewIndex)).sort()
+            InsertionSort(messagesList, MonkeyItem.defaultComparator, Math.max(1, firstNewIndex)).sort()
             notifyItemRangeInserted(firstNewIndex, newData.size);
             //Only scroll if this is the latest message
             if(firstNewIndex == (messagesList.size - 1) && last >= messagesList.size - 2) {

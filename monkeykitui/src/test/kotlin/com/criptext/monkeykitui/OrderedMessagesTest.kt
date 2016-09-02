@@ -35,7 +35,7 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
 
     fun assertThatListIsOrdered(list: ArrayList<MonkeyItem>){
         for(i in 1..(list.size-1))
-            assert(adapter.itemCmp(list[i - 1], list[i]) != 1)
+            assert(MonkeyItem.defaultComparator.compare(list[i - 1], list[i]) != 1)
             //System.out.println("${list[i].getMessageTimestampOrder()}")
     }
 
