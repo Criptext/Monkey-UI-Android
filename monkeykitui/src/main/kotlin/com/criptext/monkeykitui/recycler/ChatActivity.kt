@@ -48,7 +48,7 @@ interface ChatActivity {
      * @return A collection of MonkeyItems that will be displayed in the chat as soon as it renders.
      * if there are no messages available returns null
      */
-    fun getInitialMessages(conversationId: String): Collection<MonkeyItem>?
+    fun getInitialMessages(conversationId: String): List<MonkeyItem>?
 
     /**
      * MonkeyChatFragment will call this method in the onDestroy callback. chat activity should try
@@ -56,7 +56,7 @@ interface ChatActivity {
      * @param conversationId unique identifier of the chat's conversation
      * @param messages list of messages to retain
      */
-    fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>)
+    fun retainMessages(conversationId: String, messages: List<MonkeyItem>)
 
     /**
      * MonkeyChatFragment will call this method to retrieve the groupChat.

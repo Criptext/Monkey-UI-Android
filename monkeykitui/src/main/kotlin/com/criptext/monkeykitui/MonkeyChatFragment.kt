@@ -16,10 +16,7 @@ import android.view.animation.AnimationUtils
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener
-import com.criptext.monkeykitui.recycler.ChatActivity
-import com.criptext.monkeykitui.recycler.GroupChat
-import com.criptext.monkeykitui.recycler.MonkeyAdapter
-import com.criptext.monkeykitui.recycler.MonkeyItem
+import com.criptext.monkeykitui.recycler.*
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import java.util.*
@@ -185,6 +182,25 @@ open class MonkeyChatFragment(): Fragment() {
 
     fun getAllMessages(): Collection<MonkeyItem> {
         return monkeyAdapter.takeAllMessages()
+    }
+
+    fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
+        val searchItem = object: MonkeyItem {
+            override fun getAudioDuration() = 0L
+            override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.sending
+            override fun getContactSessionId() = ""
+            override fun getFileSize() = 0L
+            override fun getFilePath() = ""
+            override fun getMessageId() = messageId
+            override fun getMessageText() = ""
+            override fun getMessageTimestamp() = messageTimestamp
+            override fun getMessageTimestampOrder() = messageTimestamp
+            override fun getMessageType() = 0
+            override fun getOldMessageId() = ""
+            override fun getPlaceholderFilePath() = ""
+            override fun isIncomingMessage() = true
+        }
+        monkeyAdapter.updateMessage(searchItem, transaction, recyclerView)
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

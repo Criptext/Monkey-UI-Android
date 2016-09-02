@@ -43,12 +43,14 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
 
     open fun setReadyForPlayback(){
         playButtonView!!.visibility = View.VISIBLE
+        playButtonView!!.isClickable = false //this should only be clickable to download
         downloadProgressView?.visibility = View.GONE
     }
 
     override fun setWaitingForDownload(){
         playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
+        playButtonView!!.isClickable = false
         playButtonView!!.setOnClickListener(null)
     }
 
@@ -57,6 +59,7 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         sendingProgressBar?.visibility = View.VISIBLE
         playButtonView!!.setImageDrawable(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.audio_play_in))
+        playButtonView!!.isClickable = false
         playButtonView!!.setOnClickListener(null)
     }
 
@@ -64,6 +67,7 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         playButtonView!!.visibility = View.VISIBLE
         downloadProgressView?.visibility = View.INVISIBLE
         playButtonView!!.setImageDrawable(retryDrawable)
+        playButtonView!!.isClickable = true
         playButtonView!!.setOnClickListener(retryListener)
         sendingProgressBar?.visibility = View.INVISIBLE
     }

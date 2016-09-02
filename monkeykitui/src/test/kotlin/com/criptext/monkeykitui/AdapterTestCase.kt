@@ -40,6 +40,15 @@ lateinit var adapter: MonkeyAdapter
         }
     }
     class MonkeyActivity: Activity(), ChatActivity {
+
+        override fun getInitialMessages(conversationId: String): List<MonkeyItem> {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun retainMessages(conversationId: String, messages: List<MonkeyItem>) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
         override fun getGroupChat(conversationId: String, membersIds: String): GroupChat {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
@@ -52,15 +61,7 @@ lateinit var adapter: MonkeyAdapter
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun getInitialMessages(conversationId: String): Collection<MonkeyItem> {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
         override fun setChatFragment(chatFragment: MonkeyChatFragment?) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun retainMessages(conversationId: String, messages: Collection<MonkeyItem>) {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
