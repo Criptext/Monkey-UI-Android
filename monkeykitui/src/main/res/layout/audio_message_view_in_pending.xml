@@ -10,6 +10,8 @@
     android:clickable="false"
     android:orientation="vertical" >
 
+    <include layout="@layout/include_date_header"/>
+
     <include layout="@layout/include_member_name"/>
 
     <RelativeLayout

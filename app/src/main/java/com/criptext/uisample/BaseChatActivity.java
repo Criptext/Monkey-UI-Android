@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by gesuwall on 8/10/16.
@@ -120,7 +121,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
 
     @Nullable
     @Override
-    public Collection<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
+    public List<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
         return null;
     }
 }

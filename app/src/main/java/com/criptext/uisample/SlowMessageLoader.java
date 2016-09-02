@@ -73,18 +73,18 @@ public class SlowMessageLoader  {
             if(i%6 == 1){
                 //audio
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        FakeFiles.defaultAudioFilepath(ctx), timestamp, timestamp, incoming,
+                        FakeFiles.defaultAudioFilepath(ctx), timestamp/1000, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.audio);
                 item.setDuration(1000 * 10);
             } else if(i%7 == 1){
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, incoming,
+                        FakeFiles.defaultImageFilepath(ctx), timestamp/1000, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.file);
             }
             else if(i%8 == 1){
                 //photo
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, incoming,
+                        FakeFiles.defaultImageFilepath(ctx), timestamp/1000, timestamp, incoming,
                         MonkeyItem.MonkeyItemType.photo);
                 item.setPlaceHolderFilePath(FakeFiles.defaultImageBlurFilepath(ctx));
             }
@@ -92,7 +92,7 @@ public class SlowMessageLoader  {
                 //text
                 String message = messages[r.nextInt(messages.length)];
                 item = new MessageItem(incoming ? "1":"0", "" + timestamp, "-" + timestamp,
-                        message, timestamp, timestamp, incoming, MonkeyItem.MonkeyItemType.text);
+                        message, timestamp/1000, timestamp, incoming, MonkeyItem.MonkeyItemType.text);
             }
 
             timestamp += r.nextInt(1000 * 60 * 10);
@@ -101,34 +101,34 @@ public class SlowMessageLoader  {
 
         //photo with errors
         MessageItem item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
-                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, false,
+                FakeFiles.defaultImageFilepath(ctx), timestamp/1000, timestamp, false,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
-                FakeFiles.defaultImageBlurFilepath(ctx), timestamp, timestamp, true,
+                FakeFiles.defaultImageBlurFilepath(ctx), timestamp/1000, timestamp, true,
                 MonkeyItem.MonkeyItemType.photo);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
 
         //audio with errors
         item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/barneyfake.aac", timestamp, timestamp, false,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp/1000, timestamp, false,
                 MonkeyItem.MonkeyItemType.audio);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
-                ctx.getCacheDir() + "/barneyfake.aac", timestamp, timestamp, true,
+                ctx.getCacheDir() + "/barneyfake.aac", timestamp/1000, timestamp, true,
                 MonkeyItem.MonkeyItemType.audio);
         item.setStatus(MonkeyItem.DeliveryStatus.error);
         arrayList.add(item);
         item = new MessageItem("0", "" + timestamp++,"-" + timestamp,
-                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, false,
+                FakeFiles.defaultImageFilepath(ctx), timestamp/1000, timestamp, false,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);
         item = new MessageItem("1", "" + timestamp++,"-" + timestamp,
-                FakeFiles.defaultImageFilepath(ctx), timestamp, timestamp, true,
+                FakeFiles.defaultImageFilepath(ctx), timestamp/1000, timestamp, true,
                 MonkeyItem.MonkeyItemType.file);
         item.setDeliveryStatus(MonkeyItem.DeliveryStatus.sending);
         arrayList.add(item);

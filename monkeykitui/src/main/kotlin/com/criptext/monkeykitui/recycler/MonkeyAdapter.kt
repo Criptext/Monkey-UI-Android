@@ -197,8 +197,11 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * @param holder The MonkeyHolder that will hold the UI for this MonkeyItem
      */
     open protected fun bindCommonMonkeyHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
+
         //set message date
-        holder.setMessageDate(item.getMessageTimestamp())
+        holder.setMessageDate(item.getMessageTimestamp()*1000)
+        //set date separator
+        holder.setSeparatorText(position, item, messagesList)
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
             val group = groupChat

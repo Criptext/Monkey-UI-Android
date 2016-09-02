@@ -13,4 +13,6 @@
     <string name="mk_status_connected">Connected</string>
     <string name="mk_status_no_network">Waiting for network</string>
     <string name="mk_delete_conversation">Delete conversation</string>
+    <string name="mk_label_today">Today</string>
+    <string name="mk_label_yesterday">Yesterday</string>
 </resources>

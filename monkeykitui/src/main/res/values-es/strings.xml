@@ -10,4 +10,6 @@
     <string name="mk_status_connecting">Conectando</string>
     <string name="mk_status_connected">Conectado</string>
     <string name="mk_status_no_network">Esperando la red</string>
+    <string name="mk_label_today">Hoy</string>
+    <string name="mk_label_yesterday">Ayer</string>
 </resources>

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class MainActivity extends BaseChatActivity{
 
@@ -149,7 +150,7 @@ public class MainActivity extends BaseChatActivity{
 
 
     @Override
-    public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+    public void retainMessages(@NotNull String conversationId, @NotNull List<? extends MonkeyItem> messages) {
 
     }
 

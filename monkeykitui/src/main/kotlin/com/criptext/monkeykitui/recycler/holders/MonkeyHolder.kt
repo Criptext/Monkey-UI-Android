@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.Utils
+import java.util.*
 
 /**
  * Created by gesuwall on 4/11/16.
@@ -23,6 +24,8 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
     var bubbleLayout : ViewGroup? = null
     var tailImageView : ImageView? = null
     var selectedImageView : ImageView? = null
+    var dateSeparatorTextview: TextView? = null
+    var layoutDateHeader: LinearLayout? = null
     /* COMMON OUTGOING */
     var checkmarkImageView : ImageView? = null
     var errorImageView : ImageView? = null
@@ -46,6 +49,8 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         bubbleLayout = view.findViewById(R.id.content_message) as ViewGroup?
         tailImageView = view.findViewById(R.id.tail) as ImageView?
         selectedImageView = view.findViewById(R.id.imageViewChecked) as ImageView?
+        dateSeparatorTextview = view.findViewById(R.id.textViewDay) as TextView?
+        layoutDateHeader = view.findViewById(R.id.layoutDateHeader) as LinearLayout?
 
         senderNameTextView = view.findViewById(R.id.sender_name) as TextView?
 
@@ -135,6 +140,23 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      */
     open fun setOnLongClickListener(listener: View.OnLongClickListener){
         bubbleLayout?.setOnLongClickListener(listener)
+    }
+
+    open fun setSeparatorText(position: Int, item: MonkeyItem, messagesList: ArrayList<MonkeyItem>) {
+
+        layoutDateHeader?.visibility = View.GONE
+
+        if (position > 0) {
+            val previousMessage = messagesList[position - 1]
+            if (!Utils.isTheSameDay(item.getMessageTimestamp() * 1000, previousMessage.getMessageTimestamp() * 1000)) {
+                dateSeparatorTextview?.text = Utils.getFormattedDay(item.getMessageTimestamp() * 1000, dateSeparatorTextview?.context)
+                layoutDateHeader?.visibility = View.VISIBLE
+            }
+        } else if (position == 0) {
+            dateSeparatorTextview?.text = Utils.getFormattedDay(item.getMessageTimestamp() * 1000, dateSeparatorTextview?.context)
+            layoutDateHeader?.visibility = View.VISIBLE
+        }
+
     }
 
     /**

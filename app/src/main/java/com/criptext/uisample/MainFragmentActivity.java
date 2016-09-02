@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by gesuwall on 8/10/16.
@@ -127,7 +128,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void retainMessages(@NotNull String conversationId, @NotNull Collection<? extends MonkeyItem> messages) {
+    public void retainMessages(@NotNull String conversationId, @NotNull List<? extends MonkeyItem> messages) {
 
     }
 
@@ -137,7 +138,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void retainConversations(@NotNull Collection<? extends MonkeyConversation> conversations) {
+    public void retainConversations(@NotNull List<? extends MonkeyConversation> conversations) {
 
     }
 

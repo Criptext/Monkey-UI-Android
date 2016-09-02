@@ -5,94 +5,102 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="right"
     android:clickable="false"
     android:layout_marginBottom="5dp"
-    android:orientation="horizontal"
-    android:paddingLeft="50dp">
+    android:orientation="vertical">
+
+    <include layout="@layout/include_date_header"/>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/content_message"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/mk_bubble_outgoing"
-        android:orientation="vertical"
-        android:layout_marginRight="12dp"
-        android:longClickable="true"
-        android:minHeight="42dp"
-        android:minWidth="90dp"
-        android:layout_marginBottom="5dp">
-
-        <TextView
-            android:id="@+id/text_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoLink="all"
-            android:gravity="fill"
-            android:linksClickable="true"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:text=" a oskdaosp kopak dsaopdk spo kksapodsk adk oasodaopk aas dasp kdaspk aps a"
-            android:lineSpacingExtra="0.8dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColorLink="@color/mk_blue"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+        android:orientation="horizontal"
+        android:gravity="right"
+        android:paddingLeft="50dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/content_message"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="right|center_vertical"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="10dp">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleSmall"
-                android:id="@+id/sendingWheel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="2dp"
-                android:indeterminateTint="#014766"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/imageViewCheckmark"
-                android:layout_width="13dp"
-                android:layout_height="10dp"
-                android:src="@drawable/mk_checkmark_sent"
-                android:layout_marginRight="2dp"
-                android:visibility="visible"/>
+            android:background="@drawable/mk_bubble_outgoing"
+            android:orientation="vertical"
+            android:layout_marginRight="12dp"
+            android:longClickable="true"
+            android:minHeight="42dp"
+            android:minWidth="90dp"
+            android:layout_marginBottom="5dp">
 
             <TextView
-                android:id="@+id/datetime"
+                android:id="@+id/text_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:text="datetime"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/mk_grey_letters"
-                android:textSize="12sp" />
+                android:autoLink="all"
+                android:gravity="fill"
+                android:linksClickable="true"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:text=" a oskdaosp kopak dsaopdk spo kksapodsk adk oasodaopk aas dasp kdaspk aps a"
+                android:lineSpacingExtra="0.8dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColorLink="@color/mk_blue"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right|center_vertical"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="10dp">
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleSmall"
+                    android:id="@+id/sendingWheel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dp"
+                    android:indeterminateTint="#014766"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/imageViewCheckmark"
+                    android:layout_width="13dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/mk_checkmark_sent"
+                    android:layout_marginRight="2dp"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/datetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="datetime"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/mk_grey_letters"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/imageViewChecked"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/mk_contact_checked"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="-28dp"
+            android:layout_marginRight="5dp"/>
+
+        <include layout="@layout/include_net_error" />
+
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageViewChecked"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:src="@drawable/mk_contact_checked"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="-28dp"
-        android:layout_marginRight="5dp"/>
-
-    <include layout="@layout/include_net_error" />
-
 
 </LinearLayout>
 
