@@ -59,15 +59,6 @@ open class MonkeyConversationsFragment: Fragment(){
         (activity as ConversationsActivity).requestConversations()
     }
 
-    override fun onStop() {
-        super.onStop()
-        try {
-            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
-        } catch (ex: UninitializedPropertyAccessException){
-            Log.e("ConversationsFragment", "Uninitialized adapter")
-        }
-    }
-
     override fun onAttach(activity: Activity?) {
         val conversationsActivty = activity as? ConversationsActivity
         conversationsActivty?.setConversationsFragment(this)
@@ -84,6 +75,11 @@ open class MonkeyConversationsFragment: Fragment(){
         val pendingGroupToLeave = conversationsAdapter.groupToExit
         if(pendingGroupToLeave != null)
             (activity as ConversationsActivity).onGroupLeft(pendingGroupToLeave)
+        try {
+            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
+        } catch (ex: UninitializedPropertyAccessException){
+            Log.e("ConversationsFragment", "Uninitialized adapter")
+        }
         conversationsAdapter.groupToExit = null
     }
 
