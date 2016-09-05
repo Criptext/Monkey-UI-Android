@@ -428,6 +428,19 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
     }
 
     /**
+     * Iterate array and create a new array without duplicates
+     */
+    fun removeIfExist(messages: ArrayList<MonkeyItem>): ArrayList<MonkeyItem>{
+        val withoutDuplicates: ArrayList<MonkeyItem> = ArrayList()
+        messages.map {
+            if(!existMessage(it)) {
+                withoutDuplicates.add(it)
+            }
+        }
+        return withoutDuplicates
+    }
+
+    /**
      *removes the more messages view
      */
     protected fun removeEndOfRecyclerView(silent: Boolean){
@@ -454,20 +467,21 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      */
     fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean, recyclerView: RecyclerView){
         removeEndOfRecyclerView()
-        if(newData.size > 0) {
-            messagesList.addAll(0, newData)
-            val lastNewIndex = newData.size - 1
+        val filteredData = removeIfExist(ArrayList(newData))
+        if(filteredData.size > 0) {
+            messagesList.addAll(0, filteredData)
+            val lastNewIndex = filteredData.size - 1
             InsertionSort(messagesList, MonkeyItem.defaultComparator, lastNewIndex).sortBackwards()
-            notifyItemRangeInserted(0, newData.size)
+            notifyItemRangeInserted(0, filteredData.size)
 
             //Scroll only if position is not in the last position
             val manager = recyclerView.layoutManager as LinearLayoutManager
-            if(messagesList.size - newData.size > 0 && !isLastItemDisplaying(manager)) {
-                manager.scrollToPositionWithOffset(newData.size,
+            if(messagesList.size - filteredData.size > 0 && !isLastItemDisplaying(manager)) {
+                manager.scrollToPositionWithOffset(filteredData.size,
                         mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
             }
 
-            for(item: MonkeyItem in newData){
+            for(item: MonkeyItem in filteredData){
                 messagesMap.put(item.getMessageId(), true)
             }
         }
@@ -689,18 +703,19 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
     fun getFirstItem(): MonkeyItem? = messagesList.firstOrNull()
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
-        if(newData.size > 0) {
+        val filteredData = removeIfExist(ArrayList(newData))
+        if(filteredData.size > 0) {
             val manager = recyclerView.layoutManager as LinearLayoutManager
             val last = manager.findLastVisibleItemPosition()
             val firstNewIndex = messagesList.size
-            messagesList.addAll(newData)
+            messagesList.addAll(filteredData)
             InsertionSort(messagesList, MonkeyItem.defaultComparator, Math.max(1, firstNewIndex)).sort()
-            notifyItemRangeInserted(firstNewIndex, newData.size);
+            notifyItemRangeInserted(firstNewIndex, filteredData.size);
             //Only scroll if this is the latest message
             if(firstNewIndex == (messagesList.size - 1) && last >= messagesList.size - 2) {
                 recyclerView.scrollToPosition(messagesList.size - 1);
             }
-            for(item: MonkeyItem in newData){
+            for(item: MonkeyItem in filteredData){
                 messagesMap.put(item.getMessageId(), true)
             }
         }
