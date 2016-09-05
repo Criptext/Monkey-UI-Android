@@ -33,6 +33,7 @@ import java.util.*
 open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
     private val messagesList: ArrayList<MonkeyItem>
+    private val messagesMap: HashMap<String, Boolean>
     var hasReachedEnd : Boolean = true
     set(value) {
         if(!value && field != value) {
@@ -67,6 +68,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
     init{
         messagesList = ArrayList<MonkeyItem>()
+        messagesMap = HashMap()
         selectedMessage = null
         voiceNotePlayer = null
         imageListener = object : ImageListener {
@@ -464,6 +466,10 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
                 manager.scrollToPositionWithOffset(newData.size,
                         mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
             }
+
+            for(item: MonkeyItem in newData){
+                messagesMap.put(item.getMessageId(), true)
+            }
         }
 
         hasReachedEnd = reachedEnd
@@ -654,19 +660,28 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      */
     fun smoothlyAddNewItem(item : MonkeyItem, recyclerView: RecyclerView){
 
-        val manager = recyclerView.layoutManager as LinearLayoutManager
-        val last = manager.findLastVisibleItemPosition()
+        if(!existMessage(item)) {
+            val manager = recyclerView.layoutManager as LinearLayoutManager
+            val last = manager.findLastVisibleItemPosition()
 
-        //make sure it goes to the right position!
-        var newPos = InsertionSort(messagesList, MonkeyItem.defaultComparator)
-                .insertAtCorrectPosition (item, insertAtEnd = true)
-        notifyItemInserted(newPos)
+            //make sure it goes to the right position!
+            var newPos = InsertionSort(messagesList, MonkeyItem.defaultComparator)
+                    .insertAtCorrectPosition(item, insertAtEnd = true)
+            notifyItemInserted(newPos)
 
-        //Only scroll if this is the latest message
-        if(newPos == (messagesList.size - 1) && last >= messagesList.size - 2) {
-            recyclerView.scrollToPosition(messagesList.size - 1);
+            messagesMap.put(item.getMessageId(), true)
+
+            //Only scroll if this is the latest message
+            if (newPos == (messagesList.size - 1) && last >= messagesList.size - 2) {
+                recyclerView.scrollToPosition(messagesList.size - 1);
+            }
         }
+    }
 
+    fun existMessage(item: MonkeyItem): Boolean{
+        if(messagesMap.get(item.getMessageId())!=null || messagesMap.get(item.getOldMessageId())!=null)
+            return true
+        return false
     }
 
     fun getLastItem(): MonkeyItem? = messagesList.lastOrNull()
@@ -684,6 +699,9 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
             //Only scroll if this is the latest message
             if(firstNewIndex == (messagesList.size - 1) && last >= messagesList.size - 2) {
                 recyclerView.scrollToPosition(messagesList.size - 1);
+            }
+            for(item: MonkeyItem in newData){
+                messagesMap.put(item.getMessageId(), true)
             }
         }
     }

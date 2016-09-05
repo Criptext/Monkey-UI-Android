@@ -160,8 +160,18 @@ open class MonkeyChatFragment(): Fragment() {
         monkeyAdapter.rebindMonkeyItem(message, recyclerView)
     }
 
+    fun removeIfExist(messages: ArrayList<MonkeyItem>): ArrayList<MonkeyItem>{
+        val withoutDuplicates: ArrayList<MonkeyItem> = ArrayList()
+        messages.map {
+            if(!monkeyAdapter.existMessage(it)) {
+                withoutDuplicates.add(it)
+            }
+        }
+        return withoutDuplicates
+    }
+
     fun addOldMessages(messages: ArrayList<MonkeyItem>, hasReachedEnd:  Boolean){
-        monkeyAdapter.addOldMessages(messages, hasReachedEnd, recyclerView)
+        monkeyAdapter.addOldMessages(removeIfExist(messages), hasReachedEnd, recyclerView)
     }
 
     fun smoothlyAddNewItem(message: MonkeyItem){
@@ -169,7 +179,7 @@ open class MonkeyChatFragment(): Fragment() {
     }
 
     fun smoothlyAddNewItems(messages: ArrayList<MonkeyItem>){
-        monkeyAdapter.smoothlyAddNewItems(messages, recyclerView)
+        monkeyAdapter.smoothlyAddNewItems(removeIfExist(messages), recyclerView)
     }
 
     fun clearMessages(){
