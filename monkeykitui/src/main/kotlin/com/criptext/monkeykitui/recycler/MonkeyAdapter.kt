@@ -71,7 +71,6 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
         voiceNotePlayer = null
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
-                Log.d("PhotoHolder", "clicked $position with ${item.getDeliveryStatus()}")
                 val intent = Intent(mContext, PhotoViewActivity::class.java)
                 intent.putExtra(PhotoViewActivity.IMAGE_DATA_PATH, item.getFilePath())
                 mContext.startActivity(intent)
@@ -247,7 +246,6 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
      * @param fileHolder The fileHolder to display the item's UI
      */
     open protected fun bindMonkeyFile(item: MonkeyItem, fileHolder: MonkeyFile){
-        Log.d("PhotoHolder", "status ${item.getDeliveryStatus()}")
         if(item.isIncomingMessage()){
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->

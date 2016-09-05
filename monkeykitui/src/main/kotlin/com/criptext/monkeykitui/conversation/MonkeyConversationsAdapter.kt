@@ -46,7 +46,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
     var recyclerView: RecyclerView? = null
 
-    var groupToExit: MonkeyConversation? = null
+    var conversationToDelete: MonkeyConversation? = null
     set(value) {
         val oldValue = field
         if(oldValue != null){
@@ -246,23 +246,23 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             if(recycler != null){
                 val snack = Snackbar.make(recycler.rootView, "${conversation.getName()} deleted", Snackbar.LENGTH_LONG)
                 snack.setAction("Undo",  {
+                    conversationToDelete = null
                     addNewConversation(conversation)
                 })
-                if(conversation.isGroup()){//If it is a group, need to wait until snackbar dismissed to leave
-                    groupToExit = conversation
-                    snack.view.addOnAttachStateChangeListener(object  : View.OnAttachStateChangeListener{
-                        override fun onViewAttachedToWindow(p0: View?) { }
+                //need to wait until snackbar dismissed to leave
+                conversationToDelete = conversation
+                snack.view.addOnAttachStateChangeListener(object  : View.OnAttachStateChangeListener{
+                    override fun onViewAttachedToWindow(p0: View?) { }
 
-                        override fun onViewDetachedFromWindow(p0: View?) {
-                            val group = groupToExit
-                            if(group != null && group == conversation){
-                                conversationsActivity.onConversationDeleted(group)
-                                groupToExit = null
-                            }
+                    override fun onViewDetachedFromWindow(p0: View?) {
+                        val deleted = conversationToDelete
+                        if(deleted != null && deleted == conversation){
+                            conversationsActivity.onConversationDeleted(deleted)
+                            conversationToDelete = null
                         }
+                    }
 
-                    })
-                }
+                })
 
                 snack.show()
             }

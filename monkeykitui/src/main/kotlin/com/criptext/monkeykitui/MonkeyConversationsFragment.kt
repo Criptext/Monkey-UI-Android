@@ -72,15 +72,15 @@ open class MonkeyConversationsFragment: Fragment(){
 
     override fun onStop() {
         super.onStop()
-        val pendingGroupToLeave = conversationsAdapter.groupToExit
-        if(pendingGroupToLeave != null)
-            (activity as ConversationsActivity).onConversationDeleted(pendingGroupToLeave)
+        val pendingConversationToDelete = conversationsAdapter.conversationToDelete
+        if(pendingConversationToDelete != null)
+            (activity as ConversationsActivity).onConversationDeleted(pendingConversationToDelete)
         try {
             (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
         } catch (ex: UninitializedPropertyAccessException){
             Log.e("ConversationsFragment", "Uninitialized adapter")
         }
-        conversationsAdapter.groupToExit = null
+        conversationsAdapter.conversationToDelete = null
     }
 
     override fun onDestroy() {

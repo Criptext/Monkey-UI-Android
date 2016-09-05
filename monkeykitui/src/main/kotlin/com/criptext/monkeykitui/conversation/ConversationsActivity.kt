@@ -3,13 +3,26 @@ package com.criptext.monkeykitui.conversation
 import com.criptext.monkeykitui.MonkeyConversationsFragment
 
 /**
- * Created by gesuwall on 8/11/16.
+ * Interface that host activities' of MonkeyConversationsFragment must implement.
+ * MonkeyConversationsAdapter also casts its context reference to this interface to interact with
+ * the activity.
+ * Created by Gabriel on 8/11/16.
  */
 
 interface ConversationsActivity {
 
+    /**
+     * This callback is executed on the onAttach() and onDetach() callbacks of the Conversations
+     * fragment, the purpose is to update the activity's reference to the Conversation Fragment.
+     * The activity should only have a reference to the fragment while it is attached.
+     */
     fun setConversationsFragment(conversationsFragment: MonkeyConversationsFragment?)
 
+    /**
+     * This method is called by the Conversations fragment when it is initializing to retrieve the
+     * list of conversations. loading the conversations should be asynchronous, so when you are done
+     * call the fragment's insertConversations() method.
+     */
     fun requestConversations()
 
     /**
