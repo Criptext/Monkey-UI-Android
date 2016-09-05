@@ -33,7 +33,6 @@ open class MonkeyChatFragment(): Fragment() {
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
     private lateinit var inputView: BaseInputView
-    lateinit var conversationId: String
     private set
 
     var inputListener: InputListener? = null
@@ -87,14 +86,15 @@ open class MonkeyChatFragment(): Fragment() {
 
     private fun setInitialMessages(){
         val args = arguments
-        conversationId = args.getString(chatConversationId)
+        val conversationId = args.getString(chatConversationId)
         val reachedEnd = args.getBoolean(chatHasReachedEnd)
+        monkeyAdapter = MonkeyAdapter(activity, conversationId)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
             monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
         } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
         else
-            (activity as ChatActivity).onLoadMoreData(0)
+            (activity as ChatActivity).onLoadMoreData(conversationId)
         val groupChat = (activity as ChatActivity).getGroupChat(conversationId, args.getString(chatmembersGroupIds))
         if(groupChat!=null){
             monkeyAdapter.groupChat = groupChat
@@ -104,7 +104,6 @@ open class MonkeyChatFragment(): Fragment() {
         val view = inflater!!.inflate(chatLayout, null)
 
         recyclerView = initRecyclerView(view)
-        monkeyAdapter = MonkeyAdapter(activity)
 
         inputView = view.findViewById(R.id.inputView) as BaseInputView
         inputView.inputListener = this.inputListener
@@ -120,13 +119,13 @@ open class MonkeyChatFragment(): Fragment() {
 
     override fun onStart() {
         super.onStart()
-        (activity as ChatActivity).onStartChatFragment(conversationId)
+        (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
         voiceNotePlayer?.initPlayer()
     }
 
     override fun onStop() {
         super.onStop()
-        (activity as ChatActivity).onStopChatFragment(conversationId)
+        (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
         voiceNotePlayer?.releasePlayer()
     }
 
@@ -143,7 +142,7 @@ open class MonkeyChatFragment(): Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as ChatActivity).retainMessages(this.conversationId, monkeyAdapter.takeAllMessages())
+        (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -182,6 +181,10 @@ open class MonkeyChatFragment(): Fragment() {
 
     fun getAllMessages(): Collection<MonkeyItem> {
         return monkeyAdapter.takeAllMessages()
+    }
+
+    fun getConversationId(): String{
+        return monkeyAdapter.conversationId
     }
 
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){

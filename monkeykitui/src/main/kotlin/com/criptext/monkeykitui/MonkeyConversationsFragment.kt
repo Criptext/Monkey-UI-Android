@@ -151,6 +151,10 @@ open class MonkeyConversationsFragment: Fragment(){
         conversationsAdapter.updateConversation(conversationItem, transaction)
     }
 
+    fun updateConversation(conversationItem: MonkeyConversation){
+        conversationsAdapter.updateConversation(conversationItem)
+    }
+
     /**
      * adds a collection of conversations to the bottom of the adapter's list. The changes are then
      * notified to the UI

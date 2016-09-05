@@ -45,9 +45,9 @@ interface ChatActivity {
      * When the user scrolls to the to the end, but there are still more messages to display, this
      * &nbsp\ method will be called to load the next batch of old messages. Once the messages are
      * &nbsp\ ready they should be added to the adapter using the addOldMessages() method.
-     * @param loadedItems the number of messages that the adapter currently displays.
+     * @param conversationId
      */
-    fun onLoadMoreData(loadedItems : Int)
+    fun onLoadMoreData(conversationId: String)
 
     /**
      * MonkeyChatFragment will call this method to instantly retrieve the first messages to display.

@@ -30,7 +30,7 @@ import java.util.*
  * Created by gesuwall on 4/4/16.
  */
 
-open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
+open class MonkeyAdapter(val mContext: Context, val conversationId: String) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
     private val messagesList: ArrayList<MonkeyItem>
     private val messagesMap: HashMap<String, Boolean>
@@ -80,7 +80,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
         }
         monkeyConfig = MonkeyConfig()
-        dataLoader = SlowRecyclerLoader(false, mContext)
+        dataLoader = SlowRecyclerLoader(conversationId, mContext)
 
     }
 

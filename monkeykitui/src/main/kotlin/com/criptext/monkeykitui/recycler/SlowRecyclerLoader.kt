@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference
  * Created by gesuwall on 8/24/16.
  */
 
-class SlowRecyclerLoader(val loadConversations: Boolean, recyclerActivity: Context): Handler() {
+class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context): Handler() {
 
     var requestmessagesTimestamp = 0L
     val DEFAULT_DELAY_TIME = 300L
@@ -24,12 +24,12 @@ class SlowRecyclerLoader(val loadConversations: Boolean, recyclerActivity: Conte
 
     fun delayNewBatch(loadedItems: Int){
         postDelayed( Runnable {
-            if(loadConversations){
+            if(conversationId == null){
                 val conversationsActivity = activityRef.get() as? ConversationsActivity
                 conversationsActivity?.onLoadMoreConversations(loadedItems)
             } else {
                 val chatActivity = activityRef.get() as? ChatActivity
-                chatActivity?.onLoadMoreData(loadedItems)
+                chatActivity?.onLoadMoreData(conversationId)
             }
         }, delayTime)
     }

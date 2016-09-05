@@ -64,7 +64,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         mContext as? ConversationsActivity ?:
                 throw IllegalArgumentException(
                         "The context of this MonkeConversationsAdapter must implement ConversationsActivity!")
-        dataLoader = SlowRecyclerLoader(true, mContext)
+        dataLoader = SlowRecyclerLoader(null, mContext)
     }
 
     override fun onViewAttachedToWindow(holder: ConversationHolder?) {
@@ -303,6 +303,14 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             swapConversationPosition(conversation, position)
         } else throw IllegalArgumentException("Conversation with ID: ${conversation.getId()} and " +
                 "timestamp: ${conversation.getDatetime()} not found in adapter.")
+    }
+
+    fun updateConversation(conversation: MonkeyConversation){
+        val position = getConversationPositionByTimestamp(conversation)
+        if(position > -1) {
+            conversationsList.removeAt(position)
+            notifyItemChanged(position)
+        }
     }
 
     /**
