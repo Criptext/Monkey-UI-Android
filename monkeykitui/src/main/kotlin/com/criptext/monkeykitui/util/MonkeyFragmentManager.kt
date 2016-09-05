@@ -154,6 +154,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         if(viewStatus == null)
             return
 
+        if (viewStatus!!.tag == "iddle" && status==Utils.ConnectionStatus.connected){
+            return
+        }
+
         if (viewStatus!!.tag == "closing") {
             pendingAction = Runnable { showStatusNotification(status) }
             return
