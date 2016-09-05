@@ -49,7 +49,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     var conversationToDelete: MonkeyConversation? = null
     set(value) {
         val oldValue = field
-        if(oldValue != null){
+        if(oldValue != null && value!=null){
             conversationsActivity.onConversationDeleted(oldValue)
         }
         field = value
