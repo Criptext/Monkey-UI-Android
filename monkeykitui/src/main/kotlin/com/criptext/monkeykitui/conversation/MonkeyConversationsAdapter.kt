@@ -244,7 +244,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
-                val snack = Snackbar.make(recycler.rootView, "${conversation.getName()} deleted", Snackbar.LENGTH_LONG)
+                val snack = Snackbar.make(recycler, "${conversation.getName()} deleted", Snackbar.LENGTH_LONG)
                 snack.setAction("Undo",  {
                     conversationToDelete = null
                     addNewConversation(conversation)
