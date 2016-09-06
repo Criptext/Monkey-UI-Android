@@ -96,7 +96,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * Add a new Conversations fragment to the activity.
      */
     private fun setConversationsFragment() {
-        activity.supportActionBar!!.title = conversationsTitle
+        activity.supportActionBar?.title = conversationsTitle
         val convFragment = MonkeyConversationsFragment()
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
@@ -131,10 +131,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     fun addOnBackStackChangedListener(){
         activity.supportFragmentManager.addOnBackStackChangedListener({
             if (activity.supportFragmentManager.backStackEntryCount > 0) {
-                activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             } else {
-                activity.supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-                activity.supportActionBar!!.title = conversationsTitle
+                activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                activity.supportActionBar?.title = conversationsTitle
             }
         })
     }
