@@ -96,6 +96,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * Add a new Conversations fragment to the activity.
      */
     private fun setConversationsFragment() {
+        activity.supportActionBar!!.title = conversationsTitle
         val convFragment = MonkeyConversationsFragment()
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
