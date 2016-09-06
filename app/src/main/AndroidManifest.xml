@@ -22,13 +22,11 @@
         </activity>
 
         <activity
-            android:name="com.criptext.monkeykitui.photoview.PhotoViewActivity"
-            android:theme="@style/Theme.CustomTranslucent"/>
+            android:name="com.criptext.monkeykitui.photoview.PhotoViewActivity" />
 
         <!-- Crop Image -->
         <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
-            android:theme="@style/CustomTheme"/>
+            android:name="com.soundcloud.android.crop.CropImageActivity" />
         <!-- Edit Image -->
         <activity
             android:name="com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity"
