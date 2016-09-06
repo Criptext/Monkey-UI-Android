@@ -700,7 +700,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     fun getLastItem(): MonkeyItem? = messagesList.lastOrNull()
 
-    fun getFirstItem(): MonkeyItem? = messagesList.firstOrNull()
+    fun getFirstItem(): MonkeyItem?{
+        if(messagesList.firstOrNull() is EndItem) {
+            return messagesList.getOrNull(1)
+        }
+        else {
+            return messagesList.firstOrNull()
+        }
+    }
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
         val filteredData = removeIfExist(ArrayList(newData))

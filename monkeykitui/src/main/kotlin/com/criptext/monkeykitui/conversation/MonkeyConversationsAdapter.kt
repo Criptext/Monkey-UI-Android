@@ -308,7 +308,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     fun updateConversation(conversation: MonkeyConversation){
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1) {
-            conversationsList.removeAt(position)
             notifyItemChanged(position)
         }
     }
