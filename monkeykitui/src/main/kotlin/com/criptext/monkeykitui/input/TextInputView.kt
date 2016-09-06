@@ -111,7 +111,7 @@ open class TextInputView : BaseInputView {
                         throw UnsupportedOperationException()
                     }
 
-                    override fun getContactSessionId(): String {
+                    override fun getSenderId(): String {
                         throw UnsupportedOperationException()
                     }
 

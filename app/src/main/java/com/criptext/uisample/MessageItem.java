@@ -51,7 +51,7 @@ public class MessageItem  implements MonkeyItem {
     }
     @NotNull
     @Override
-    public String getContactSessionId() {
+    public String getSenderId() {
         return senderSessionId;
     }
 

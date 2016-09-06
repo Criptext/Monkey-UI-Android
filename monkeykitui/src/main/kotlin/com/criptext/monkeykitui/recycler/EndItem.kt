@@ -42,6 +42,6 @@ class EndItem : MonkeyItem {
         throw UnsupportedOperationException()
     }
 
-    override fun getContactSessionId(): String = ""
+    override fun getSenderId(): String = ""
 
 }

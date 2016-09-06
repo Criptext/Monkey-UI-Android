@@ -225,7 +225,7 @@ class CameraHandler constructor(ctx : Context){
                         return 0
                     }
 
-                    override fun getContactSessionId(): String {
+                    override fun getSenderId(): String {
                         return ""
                     }
 

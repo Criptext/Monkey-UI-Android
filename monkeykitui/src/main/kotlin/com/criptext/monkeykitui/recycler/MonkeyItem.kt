@@ -15,7 +15,7 @@ interface MonkeyItem {
     /*COMMON*/
 
     /**
-     * @return the timestamp according with the server in seconds.
+     * @return the message's timestamp according with the server in seconds.
      * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
      * &nbsp\ display it to the user.
      *
@@ -23,15 +23,17 @@ interface MonkeyItem {
     fun getMessageTimestamp() : Long
 
     /**
-     * @return the timestamp with the date in which the message was created in milliseconds.
-     * &nbsp{@see MonkeyAdapter}&nbsp will convert this value to a human readable string and
-     * &nbsp\ display it to the user.
+     * @return the message's timestamp with the date in which the message was created in miliseconds.
+     * &nbsp{@see MonkeyAdapter}&nbsp will guarantee that messages displayed will be sorted using
+     * this value. If two messages have the same timestamp then it falls back to compare the messages
+     * by ID, which must be unique.
      *
      */
     fun getMessageTimestampOrder() : Long
 
     /**
-     * @return a unique identifier for this item.
+     * @return a unique identifier for this item. MonkeyAdapter will ensure that no two messages
+     * have the same ID.
      */
     fun getMessageId() : String
 
@@ -47,8 +49,8 @@ interface MonkeyItem {
     fun isIncomingMessage() : Boolean
 
     /**
-     * @return the status of a message sent by the user. See {@see OutgoingMessageStatus}
-     * &nbsp\ for possible values
+     * @return the status of a message. It could be any of the following DeliveryStatus values:
+     * sending, error, delivered or read. See {@see DeliveryStatus}
      */
     fun getDeliveryStatus() : DeliveryStatus
 
@@ -83,7 +85,8 @@ interface MonkeyItem {
 
     /**
      * @return a long with the size of the file in bytes. It is recommended to have this value cached
-     * &nbsp\ instead of measuring it every time it is needed.
+     * &nbsp\ instead of measuring it every time it is needed. Only used for messages of type audio,
+     * photo and file.
      */
     fun getFileSize() : Long
 
@@ -96,9 +99,10 @@ interface MonkeyItem {
      */
     fun getAudioDuration() : Long
 
-    /*CONTACT */
-
-    fun getContactSessionId() : String
+    /**
+     * @return a String with an unique identifier of the user that sent this message.
+     */
+    fun getSenderId() : String
 
     companion object {
 
@@ -121,7 +125,7 @@ interface MonkeyItem {
             val searchItem = object : MonkeyItem {
                 override fun getAudioDuration() = 0L
                 override fun getDeliveryStatus() = DeliveryStatus.sending
-                override fun getContactSessionId() = ""
+                override fun getSenderId() = ""
                 override fun getFileSize() = 0L
                 override fun getFilePath() = ""
                 override fun getMessageId() = id

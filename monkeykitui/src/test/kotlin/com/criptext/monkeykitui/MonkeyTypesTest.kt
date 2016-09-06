@@ -30,7 +30,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
             override fun getAudioDuration(): Long { throw UnsupportedOperationException() }
 
-            override fun getContactSessionId(): String = monkeyId
+            override fun getSenderId(): String = monkeyId
 
             override fun getDeliveryStatus() = status
 
@@ -92,7 +92,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
             override fun getAudioDuration(): Long = 5000L
 
-            override fun getContactSessionId(): String = monkeyId
+            override fun getSenderId(): String = monkeyId
 
             override fun getDeliveryStatus() = status
 
@@ -147,7 +147,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
             override fun getAudioDuration(): Long {throw UnsupportedOperationException() }
 
-            override fun getContactSessionId(): String = monkeyId
+            override fun getSenderId(): String = monkeyId
 
             override fun getDeliveryStatus() = status
 
@@ -202,7 +202,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
             override fun getAudioDuration(): Long {throw UnsupportedOperationException() }
 
-            override fun getContactSessionId(): String = monkeyId
+            override fun getSenderId(): String = monkeyId
 
             override fun getDeliveryStatus() = status
 

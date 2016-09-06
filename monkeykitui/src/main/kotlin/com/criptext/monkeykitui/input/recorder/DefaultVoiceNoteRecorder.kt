@@ -95,7 +95,7 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
                     return duration
                 }
 
-                override fun getContactSessionId(): String {
+                override fun getSenderId(): String {
                     return ""
                 }
 

@@ -53,7 +53,7 @@ public class MainActivity extends BaseChatActivity{
 
         loader = new SlowMessageLoader(this);
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
-        adapter = new MonkeyAdapter(this);
+        adapter = new MonkeyAdapter(this, "mirror");
         recycler = (RecyclerView) findViewById(R.id.recycler);
         adapter.addOldMessages(messages, false, recycler);
         //configureMonkeyAdapter();

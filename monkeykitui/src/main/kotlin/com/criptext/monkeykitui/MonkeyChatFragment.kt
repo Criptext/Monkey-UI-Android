@@ -191,7 +191,7 @@ open class MonkeyChatFragment(): Fragment() {
         val searchItem = object: MonkeyItem {
             override fun getAudioDuration() = 0L
             override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.sending
-            override fun getContactSessionId() = ""
+            override fun getSenderId() = ""
             override fun getFileSize() = 0L
             override fun getFilePath() = ""
             override fun getMessageId() = messageId

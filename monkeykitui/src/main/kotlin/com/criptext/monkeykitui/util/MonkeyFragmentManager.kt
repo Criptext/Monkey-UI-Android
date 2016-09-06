@@ -103,7 +103,9 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     }
     /**
      * Set a layout with a FrameLayout as fragment container in the activity. this fragment
-     * container will be used by all the UI Kit's fragments
+     * container will be used by all the UI Kit's fragments. If this is the first time that the
+     * activity is being created.
+     * @oaram savedInstanceState the bundle passed in the onCreate() callback
      */
     fun setContentLayout(savedInstanceState: Bundle?){
         //The content layout must have a FrameLayout as container of the fragments. using

@@ -20,7 +20,7 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
             override fun getMessageTimestampOrder() = timestamp
             override fun getOldMessageId() = timestamp.toString()
             override fun getAudioDuration(): Long { throw UnsupportedOperationException() }
-            override fun getContactSessionId(): String = "0"
+            override fun getSenderId(): String = "0"
             override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.delivered
             override fun getFilePath(): String { throw UnsupportedOperationException() }
             override fun getFileSize(): Long { throw UnsupportedOperationException() }

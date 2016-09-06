@@ -184,8 +184,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun isFollowupMessage(position: Int): Boolean{
-        if(position > 0 && messagesList[position].getContactSessionId()
-                    == messagesList[position - 1].getContactSessionId())
+        if(position > 0 && messagesList[position].getSenderId()
+                    == messagesList[position - 1].getSenderId())
                 return true
         return false
     }
@@ -207,8 +207,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         if (item.isIncomingMessage()) { //stuff for incoming messages
             val group = groupChat
             if (group != null && !isFollowupMessage(position)) {
-                holder.setSenderName(group.getMemberName(item.getContactSessionId()),
-                        group.getMemberColor(item.getContactSessionId()))
+                holder.setSenderName(group.getMemberName(item.getSenderId()),
+                        group.getMemberColor(item.getSenderId()))
             } else
                 holder.hideSenderName()
         } else { //stuff for outgoing messages

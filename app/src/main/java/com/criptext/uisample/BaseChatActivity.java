@@ -115,7 +115,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     }
 
     @Override
-    public void onLoadMoreData(int loadedItems) {
+    public void onLoadMoreData(String conversationId) {
         loader.execute();
     }
 

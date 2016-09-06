@@ -29,7 +29,7 @@ interface MonkeyConversation{
 
     /**
      * @return the total amount of new unread messages. This value is used to display a badge in the
-     * conversation's UI
+     * conversation's view
      */
     fun getTotalNewMessages(): Int
 

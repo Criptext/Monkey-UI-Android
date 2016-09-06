@@ -39,10 +39,9 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = new MonkeyFragmentManager(this);
-        //ProgressBar progressBar = new ProgressBar(this);
-        //fragmentManager.setViewStatusCont(progressBar);
         fragmentManager.setContentLayout(savedInstanceState);
         fragmentManager.setConversationsTitle("UI Sample");
+
         fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
         //Simulating connectivity status
         final Handler handler = new Handler();
