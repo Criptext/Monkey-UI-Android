@@ -30,7 +30,7 @@ import java.util.*
  * Created by gesuwall on 4/4/16.
  */
 
-open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHolder>() {
+open class MonkeyAdapter(val mContext: Context, val conversationId: String) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
     private val messagesList: ArrayList<MonkeyItem>
     private val messagesMap: HashMap<String, Boolean>
@@ -80,7 +80,7 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
         }
         monkeyConfig = MonkeyConfig()
-        dataLoader = SlowRecyclerLoader(false, mContext)
+        dataLoader = SlowRecyclerLoader(conversationId, mContext)
 
     }
 
@@ -700,7 +700,14 @@ open class MonkeyAdapter(val mContext: Context) : RecyclerView.Adapter<MonkeyHol
 
     fun getLastItem(): MonkeyItem? = messagesList.lastOrNull()
 
-    fun getFirstItem(): MonkeyItem? = messagesList.firstOrNull()
+    fun getFirstItem(): MonkeyItem?{
+        if(messagesList.firstOrNull() is EndItem) {
+            return messagesList.getOrNull(1)
+        }
+        else {
+            return messagesList.firstOrNull()
+        }
+    }
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
         val filteredData = removeIfExist(ArrayList(newData))
