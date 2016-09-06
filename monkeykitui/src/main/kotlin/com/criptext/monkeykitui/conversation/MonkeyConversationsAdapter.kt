@@ -76,6 +76,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
+
     override fun getItemCount() = conversationsList.size
 
     private fun getSentMessageCheckmark(status: MonkeyConversation.ConversationStatus): Int{
@@ -182,6 +183,16 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
 
     }
+
+    private fun assertConversationIsNotEndItem(newConversation: MonkeyConversation){
+        if(newConversation.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal) {
+            val invalidStatus = newConversation.getStatus()
+            throw IllegalArgumentException("New conversations can never have status = $invalidStatus\n" +
+                    "It is currently used by Conversation status = ${MonkeyConversation.ConversationStatus.values()[invalidStatus]}\n" +
+                    "Please check the docs for valid status values.")
+        }
+    }
+
     /**
      * adds a list of conversations to this adapter. If there were already any conversations, they
      * will be removed.
@@ -193,6 +204,10 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsList.clear()
         removeEndOfRecyclerView()
+        //sanity check
+        for(conv in conversations)
+            assertConversationIsNotEndItem(conv)
+
         conversationsList.addAll(conversations)
         Collections.sort(conversationsList, Comparator { t1, t2 -> itemCmp(t1, t2) })
         notifyDataSetChanged()
@@ -210,6 +225,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * a more recent conversation
      */
     private fun addNewConversation(newConversation: MonkeyConversation, silent: Boolean): Int{
+        assertConversationIsNotEndItem(newConversation)
         val actualPosition = InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
                 .insertAtCorrectPosition(newConversation, insertAtEnd = false)
         if(!silent)
@@ -280,6 +296,11 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                             recyclerView: RecyclerView){
         removeEndOfRecyclerView()
         if(oldConversations.size > 0) {
+
+            //sanity check
+            for(conv in oldConversations)
+                assertConversationIsNotEndItem(conv)
+
             val manager = recyclerView.layoutManager as LinearLayoutManager
             val firstNewIndex = conversationsList.size
             conversationsList.addAll(oldConversations)
@@ -340,7 +361,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     fun takeAllConversations(): List<MonkeyConversation>{
-        removeEndOfRecyclerView(true)
+        removeEndOfRecyclerView(true) //never pass EndItem to developer
         return conversationsList
     }
     /**
