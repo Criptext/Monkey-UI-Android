@@ -13,12 +13,12 @@ import java.util.*
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
-class OrderedMessagesTest: AdapterTestCase() {
+class SortedMessagesTest : AdapterTestCase() {
 
-fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
+    fun newTextMessage(timestamp: Long, id: String, oldId: String?, incoming: Boolean): MonkeyItem {
         return object : MonkeyItem {
             override fun getMessageTimestampOrder() = timestamp
-            override fun getOldMessageId() = timestamp.toString()
+            override fun getOldMessageId() = oldId
             override fun getAudioDuration(): Long { throw UnsupportedOperationException() }
             override fun getSenderId(): String = "0"
             override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.delivered
@@ -29,19 +29,33 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
             override fun getMessageText() = "Hello this is a text message"
             override fun getMessageType() = MonkeyItem.MonkeyItemType.text.ordinal
             override fun getPlaceholderFilePath(): String { throw UnsupportedOperationException() }
-            override fun isIncomingMessage() = true
+            override fun isIncomingMessage() = incoming
         }
     }
 
-    fun assertThatListIsOrdered(list: ArrayList<MonkeyItem>){
+    fun newTextMessage(timestamp: Long, id: String) = newTextMessage(timestamp, id, null, true)
+    fun newSentTextMessage(timestamp: Long, id: String) = newTextMessage(timestamp, id, null, false)
+    fun newSentTextMessage(timestamp: Long, id: String, oldId: String) = newTextMessage(timestamp, id, oldId, false)
+
+    fun assertThatListIsSorted(list: ArrayList<MonkeyItem>){
         for(i in 1..(list.size-1))
             assert(MonkeyItem.defaultComparator.compare(list[i - 1], list[i]) != 1)
             //System.out.println("${list[i].getMessageTimestampOrder()}")
     }
 
+    fun assertThatMessagesAreNotRepeated(list: ArrayList<MonkeyItem>){
+
+        for(i in 0..(list.size-2))
+            for(j in (i+1)..(list.size-1)) {
+                assert(list[i].getMessageId() != list[j].getMessageId())
+                assert(list[i].getMessageId() != list[j].getOldMessageId())
+                assert(list[i].getOldMessageId() != list[j].getMessageId())
+            }
+    }
+
     @Test
     @Throws (Exception::class)
-    fun newMessagesAddedAreOrdered() {
+    fun newMessagesAddedAreSorted() {
         val time = System.currentTimeMillis()
         adapter.smoothlyAddNewItem(newTextMessage(time, "123"), recycler!!)
         adapter.smoothlyAddNewItem(newTextMessage(time + 1, "124"), recycler!!)
@@ -53,13 +67,13 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
         adapter.smoothlyAddNewItem(newTextMessage(time + 3, "128"), recycler!!)
 
         val list = adapter.takeAllMessages()
-        assertThatListIsOrdered(list as ArrayList<MonkeyItem>)
+        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
 
     }
 
     @Test
     @Throws (Exception::class)
-    fun oldMessagesAddedAreOrdered() {
+    fun oldMessagesAddedAreSorted() {
         val newPage = ArrayList<MonkeyItem>()
         val time = System.currentTimeMillis()
         newPage.add(newTextMessage(time + 1, "124"))
@@ -72,19 +86,19 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
 
         adapter.addOldMessages(newPage, true, recycler!!)
         val list = adapter.takeAllMessages()
-        assertThatListIsOrdered(list as ArrayList<MonkeyItem>)
+        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
     }
 
     @Test
     @Throws (Exception::class)
-    fun newMessageBatchIsOrdered() {
+    fun newMessageBatchIsSorted() {
         val newPage = ArrayList<MonkeyItem>()
         val time = System.currentTimeMillis()
         newPage.add(newTextMessage(time + 1, "124"))
         newPage.add(newTextMessage(time + 2, "125"))
         newPage.add(newTextMessage(time + 2, "126"))
         newPage.add(newTextMessage(time + 3, "127"))
-        newPage.add(newTextMessage(time + 3, "127"))
+        newPage.add(newTextMessage(time + 3, "132"))
         newPage.add(newTextMessage(time + 4, "128"))
         newPage.add(newTextMessage(time + 2, "129"))
         newPage.add(newTextMessage(time + 1, "130"))
@@ -92,6 +106,30 @@ fun newTextMessage(timestamp: Long, id: String): MonkeyItem {
 
         adapter.smoothlyAddNewItems(newPage, recycler!!)
         val list = adapter.takeAllMessages()
-        assertThatListIsOrdered(list as ArrayList<MonkeyItem>)
+        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
+        assertThatMessagesAreNotRepeated(list)
+    }
+
+
+    @Test
+    @Throws (Exception::class)
+    fun messagesCantBeRepeated() {
+        val time = System.currentTimeMillis()
+        adapter.smoothlyAddNewItem(newSentTextMessage(time, "151"), recycler!!)
+        adapter.smoothlyAddNewItem(newSentTextMessage(time + 1 , "152"), recycler!!)
+        adapter.smoothlyAddNewItem(newSentTextMessage(time + 2 , "-153"), recycler!!)
+
+        val newPage = ArrayList<MonkeyItem>()
+        newPage.add(newTextMessage(time - 5, "146"))
+        newPage.add(newTextMessage(time - 4, "147"))
+        newPage.add(newTextMessage(time - 3, "148"))
+        newPage.add(newSentTextMessage(time - 2, "151"))
+        newPage.add(newSentTextMessage(time - 1, "152"))
+        newPage.add(newSentTextMessage(time, "154", "-153")) //message with old id
+
+        adapter.addOldMessages(newPage, true, recycler!!)
+        val list = adapter.takeAllMessages()
+        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
+        assertThatMessagesAreNotRepeated(list)
     }
 }

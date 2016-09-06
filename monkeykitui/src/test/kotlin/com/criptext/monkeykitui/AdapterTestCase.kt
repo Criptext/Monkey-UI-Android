@@ -19,7 +19,6 @@ open class AdapterTestCase {
 lateinit var adapter: MonkeyAdapter
     var activity: Activity? = null
     var recycler: RecyclerView? = null
-    lateinit var messagesList : ArrayList<MonkeyItem>
 
     val contactSessionId : String = "fakecontactsession"
     val mySessionId = "mysession"
@@ -31,15 +30,16 @@ lateinit var adapter: MonkeyAdapter
     fun initAdapter(){
         if(activity == null){
             val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
-            messagesList = ArrayList()
-            adapter = MonkeyAdapter(newActivity)
+            adapter = MonkeyAdapter(newActivity, "mirror")
             recycler = RecyclerView(newActivity);
-            adapter.addOldMessages(messagesList, true, recycler!!);
             recycler!!.layoutManager = LinearLayoutManager(newActivity)
             activity = newActivity
         }
     }
     class MonkeyActivity: Activity(), ChatActivity {
+
+        override fun onLoadMoreData(conversationId: String) {
+        }
 
         override fun getInitialMessages(conversationId: String): List<MonkeyItem> {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -71,9 +71,6 @@ lateinit var adapter: MonkeyAdapter
         }
 
         override fun onFileUploadRequested(item: MonkeyItem) {
-        }
-
-        override fun onLoadMoreData(loadedItems: Int) {
         }
 
     }

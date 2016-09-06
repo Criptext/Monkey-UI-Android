@@ -1,5 +1,7 @@
 package com.criptext.monkeykitui.conversation
 
+import java.util.*
+
 /**
  * Created by gesuwall on 8/11/16.
  */
@@ -60,6 +62,15 @@ interface MonkeyConversation{
     }
 
     companion object {
+
+        val defaultComparator = Comparator<MonkeyConversation> { t1, t2 ->
+            if(t1.getDatetime() > t2.getDatetime()) {
+                -1
+            }else if (t1.getDatetime() < t2.getDatetime()) {
+                1
+            } else t1.getId().compareTo(t2.getId()) * (-1)
+
+        }
         fun endItem(): MonkeyConversation = object : MonkeyConversation {
             override fun getAvatarFilePath(): String? = null
 

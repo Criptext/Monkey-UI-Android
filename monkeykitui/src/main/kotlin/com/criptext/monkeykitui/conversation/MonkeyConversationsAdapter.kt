@@ -209,7 +209,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             assertConversationIsNotEndItem(conv)
 
         conversationsList.addAll(conversations)
-        Collections.sort(conversationsList, Comparator { t1, t2 -> itemCmp(t1, t2) })
+        Collections.sort(conversationsList, MonkeyConversation.defaultComparator)
         notifyDataSetChanged()
         this.hasReachedEnd = hasReachedEnd
     }
@@ -226,7 +226,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     private fun addNewConversation(newConversation: MonkeyConversation, silent: Boolean): Int{
         assertConversationIsNotEndItem(newConversation)
-        val actualPosition = InsertionSort(conversationsList, Comparator { t1, t2 ->  itemCmp(t1, t2) })
+        val actualPosition = InsertionSort(conversationsList, MonkeyConversation.defaultComparator)
                 .insertAtCorrectPosition(newConversation, insertAtEnd = false)
         if(!silent)
             notifyItemInserted(actualPosition)
@@ -304,7 +304,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             val manager = recyclerView.layoutManager as LinearLayoutManager
             val firstNewIndex = conversationsList.size
             conversationsList.addAll(oldConversations)
-            InsertionSort(conversationsList, Comparator { it1, it2 -> itemCmp(it1, it2) }, Math.max(1, firstNewIndex)).sort()
+            InsertionSort(conversationsList, MonkeyConversation.defaultComparator, Math.max(1, firstNewIndex)).sort()
             notifyItemRangeInserted(firstNewIndex, oldConversations.size);
         }
         this.hasReachedEnd = hasReachedEnd
@@ -372,15 +372,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * the negated expected position.
      */
     fun getConversationPositionByTimestamp(item: MonkeyConversation) = conversationsList.binarySearch(item,
-            Comparator { t1, t2 -> itemCmp(t1, t2) })
-
-
-    protected fun itemCmp(t1: MonkeyConversation, t2: MonkeyConversation) =
-        if(t1.getDatetime() > t2.getDatetime()) {
-                -1
-            }else if (t1.getDatetime() < t2.getDatetime()) {
-                1
-            } else t1.getId().compareTo(t2.getId()) * (-1)
+            MonkeyConversation.defaultComparator)
 
     /**
      * Looks for a monkey conversation with a specified Id, starting by the most recent ones.

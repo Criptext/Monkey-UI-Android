@@ -54,9 +54,8 @@ class MonkeyTypesTest: AdapterTestCase(){
     }
 
     fun createViewHolder(newMessage: MonkeyItem): MonkeyHolder {
-        messagesList.add(newMessage)
         adapter.smoothlyAddNewItem(newMessage, recycler!!)
-        return adapter.onCreateViewHolder(null, adapter.getItemViewType(messagesList.lastIndex))!!
+        return adapter.onCreateViewHolder(null, adapter.getItemViewType(adapter.itemCount - 1))!!
     }
 
     fun testThatMessageGetsAMonkeyTextHolder(incoming: Boolean, status: MonkeyItem.DeliveryStatus){
@@ -64,7 +63,7 @@ class MonkeyTypesTest: AdapterTestCase(){
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyTextHolder)
         val textHolder = newHolder as MonkeyTextHolder
-        adapter.bindViewHolder(textHolder, messagesList.lastIndex)
+        adapter.bindViewHolder(textHolder, adapter.itemCount - 1)
     }
 
     @Test
@@ -174,7 +173,7 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newItem = newPhoto(incoming, status)
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyImageHolder)
-        adapter.onBindViewHolder(newHolder, messagesList.lastIndex)
+        adapter.onBindViewHolder(newHolder, adapter.itemCount - 1)
     }
 
     @Test
@@ -229,7 +228,7 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newItem = newFileMessage(incoming, status)
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyFileHolder)
-        adapter.onBindViewHolder(newHolder, messagesList.lastIndex)
+        adapter.onBindViewHolder(newHolder, adapter.itemCount - 1)
         val fileHolder = newHolder as MonkeyFileHolder
 
         if(incoming) {
@@ -272,7 +271,7 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newItem = EndItem()
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyEndHolder)
-        adapter.bindViewHolder(newHolder, messagesList.lastIndex)
+        adapter.bindViewHolder(newHolder, adapter.itemCount - 1)
 
     }
 
