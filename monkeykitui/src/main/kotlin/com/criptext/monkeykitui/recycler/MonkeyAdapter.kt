@@ -693,8 +693,13 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun existMessage(item: MonkeyItem): Boolean{
-        if(messagesMap.get(item.getMessageId())!=null || messagesMap.get(item.getOldMessageId())!=null)
+        if(messagesMap[item.getMessageId()] !=null)
             return true
+        else if(!item.isIncomingMessage()){
+            val oldId = item.getOldMessageId()
+            if(oldId != null && messagesMap[oldId] != null)
+                return true
+        }
         return false
     }
 

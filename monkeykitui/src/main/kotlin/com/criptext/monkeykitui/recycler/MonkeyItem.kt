@@ -40,7 +40,7 @@ interface MonkeyItem {
     /**
      * @return server or old identifier for this item.
      */
-    fun getOldMessageId() : String
+    fun getOldMessageId() : String?
 
     /**
      * @return true if the message was received or false if it was sent by the user. This decides the
