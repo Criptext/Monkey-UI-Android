@@ -359,7 +359,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 -1
             }else if (t1.getDatetime() < t2.getDatetime()) {
                 1
-            } else t1.getId().compareTo(t2.getId())
+            } else t1.getId().compareTo(t2.getId()) * (-1)
 
     /**
      * Looks for a monkey conversation with a specified Id, starting by the most recent ones.
