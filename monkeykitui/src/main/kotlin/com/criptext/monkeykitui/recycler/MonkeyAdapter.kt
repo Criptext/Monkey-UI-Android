@@ -311,6 +311,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             chatActivity.onFileDownloadRequested(item)
             imageHolder.setOnClickListener(null)
         }else {
+            Log.d("PhotoHolder", "bind ${item.getFilePath()} ${item.getFileSize()}")
             imageHolder.setDownloadedImage(file, chatActivity as Context)
             imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
         }

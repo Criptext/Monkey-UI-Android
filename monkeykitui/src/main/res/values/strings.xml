@@ -15,4 +15,6 @@
     <string name="mk_delete_conversation">Delete conversation</string>
     <string name="mk_label_today">Today</string>
     <string name="mk_label_yesterday">Yesterday</string>
+    <string name="mk_take_picture">Take Picture</string>
+    <string name="mk_choose_picture">Choose Picture</string>
 </resources>

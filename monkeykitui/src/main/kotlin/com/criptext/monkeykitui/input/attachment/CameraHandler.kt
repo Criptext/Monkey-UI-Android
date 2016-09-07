@@ -32,10 +32,11 @@ class CameraHandler constructor(ctx : Context){
 
     internal var mPhotoFileName: String? = null
     internal var mPhotoFile: File? = null
+    var photoDirName = "/MonkeyKitPhotos/"
 
     var context : Context? = ctx
 
-    val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
+    val TEMP_PHOTO_FILE_NAME = "mk_sent_photo.jpg"
     val CONTENT_URI = Uri.parse("content://com.criptext.uisample/")
 
     var orientationImage: Int = 0
@@ -58,12 +59,10 @@ class CameraHandler constructor(ctx : Context){
     }
 
     private fun initTemporaryPhotoFile() {
-        val state = Environment.getExternalStorageState()
-        if (Environment.MEDIA_MOUNTED == state) {
-            mPhotoFile = File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME)
-        } else {
-            mPhotoFile = File(context?.filesDir, TEMP_PHOTO_FILE_NAME)
-        }
+        val photoDir = File(context!!.cacheDir.absolutePath + photoDirName)
+        if(!photoDir.exists())
+            photoDir.mkdirs()
+        mPhotoFile = File(photoDir, TEMP_PHOTO_FILE_NAME)
     }
 
     fun setCameraListen(cameraList : CameraListener){
@@ -72,7 +71,7 @@ class CameraHandler constructor(ctx : Context){
 
     fun startPhotoEditor(photoUri: Uri?){
         val intent = Intent(context, PhotoEditorActivity::class.java)
-        intent.putExtra(PhotoEditorActivity.destinationPath, getTempFile().absolutePath)
+        intent.putExtra(PhotoEditorActivity.destinationPath, getOutputFile().absolutePath)
         intent.data = photoUri
         startActivity(intent, RequestType.editPhoto.requestCode)
     }
@@ -106,18 +105,11 @@ class CameraHandler constructor(ctx : Context){
         Crop.pickImage(context as Activity)
     }
 
-    fun getTempFile(): File {
-
-        val state = Environment.getExternalStorageState()
-
+    fun getOutputFile(): File {
         if (mPhotoFileName == null)
             mPhotoFileName = "${System.currentTimeMillis() / 1000}$TEMP_PHOTO_FILE_NAME"
 
-        if (Environment.MEDIA_MOUNTED == state) {
-            return File(Environment.getExternalStorageDirectory(), mPhotoFileName)
-        } else {
-            return File(context!!.filesDir, mPhotoFileName)
-        }
+        return File(File(context!!.cacheDir, photoDirName), mPhotoFileName)
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,13 +128,13 @@ class CameraHandler constructor(ctx : Context){
         when (RequestType.fromCode(newReqCode)) {
             RequestType.openGallery -> {
                 try {
-                    val ei = ExifInterface(getTempFile().absolutePath)
+                    val ei = ExifInterface(getOutputFile().absolutePath)
                     orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
                 } catch (e: IOException) {
                     Log.e("error", "Exif error")
                 }
 
-                //Crop.of(data?.data, Uri.fromFile(getTempFile())).start(context as Activity)
+                //Crop.of(data?.data, Uri.fromFile(getOutputFile())).start(context as Activity)
                 startPhotoEditor(data?.data)
 
 
@@ -156,23 +148,25 @@ class CameraHandler constructor(ctx : Context){
                 }
 
                 startPhotoEditor(Uri.fromFile(mPhotoFile))
-                //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getTempFile())).start(context as Activity)
+                //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getOutputFile())).start(context as Activity)
             }
             RequestType.editPhoto -> {
-                
-                Log.d("CameraHandler", "decoding: " + getTempFile().absolutePath)
-                val bmp = BitmapFactory.decodeFile(getTempFile().absolutePath)
+
+                val outputPhotoFile = getOutputFile()
+                val bmp = BitmapFactory.decodeFile(outputPhotoFile.absolutePath)
 
                 try {
                     val bos = ByteArrayOutputStream()
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos)
                     val bitmapdata = bos.toByteArray()
-                    val fos = FileOutputStream(getTempFile())
+                    val fos = FileOutputStream(outputPhotoFile)
                     fos.write(bitmapdata)
                     fos.flush()
                     fos.close()
                 } catch (e: Exception) {
                     e.printStackTrace()
+                } finally {
+                    bmp.recycle()
                 }
 
                 var monkeyItem = object : MonkeyItem {
@@ -214,11 +208,11 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getFilePath(): String {
-                        return getTempFile().absolutePath
+                        return outputPhotoFile.absolutePath
                     }
 
                     override fun getFileSize(): Long {
-                        return getTempFile().length()
+                        return outputPhotoFile.length()
                     }
 
                     override fun getAudioDuration(): Long {
@@ -232,7 +226,7 @@ class CameraHandler constructor(ctx : Context){
                 }
 
                 cameraListener?.onNewItem(monkeyItem)
-                mPhotoFileName = null
+                mPhotoFileName = null //Clear output file
 
             }
         }

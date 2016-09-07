@@ -30,8 +30,8 @@ open class AttachmentButton : ImageView {
     lateinit var cameraHandler: CameraHandler
     var inputListener: InputListener? = null
 
-    var cameraOptionLabel = defaultCameraOptionLabel
-    var galleryOptionLabel = defaultGalleryOptionLabel
+    lateinit var cameraOptionLabel: String
+    lateinit var galleryOptionLabel: String
 
     lateinit var attachmentOptions: ArrayList<DialogOption>
     private set
@@ -54,7 +54,8 @@ open class AttachmentButton : ImageView {
         cameraHandler = CameraHandler(context)
 
         attachmentOptions = ArrayList(2)
-        cameraOptionLabel = typedArray?.getString(R.styleable.InputView_cameraOptionLabel) ?: defaultCameraOptionLabel
+        cameraOptionLabel = typedArray?.getString(R.styleable.InputView_cameraOptionLabel) ?:
+                resources.getString(R.string.mk_take_picture)
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
             attachmentOptions.add(object : DialogOption(cameraOptionLabel) {
                 override fun onOptionSelected() {
@@ -62,7 +63,8 @@ open class AttachmentButton : ImageView {
                 }
             })
 
-        galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?: defaultGalleryOptionLabel
+        galleryOptionLabel = typedArray?.getString(R.styleable.InputView_galleryOptionLabel) ?:
+                resources.getString(R.string.mk_choose_picture)
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
             attachmentOptions.add(object : DialogOption(galleryOptionLabel) {
                 override fun onOptionSelected() {
@@ -94,9 +96,4 @@ open class AttachmentButton : ImageView {
     open val diameter: Int
     get() = context.resources.getDimension(R.dimen.circle_button_diameter).toInt()
 
-    companion object {
-        val defaultCameraOptionLabel = "Take Picture"
-        val defaultGalleryOptionLabel = "Choose Picture"
-
-    }
 }
