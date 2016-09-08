@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -42,7 +43,12 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
         //Everytime a new item is composed with the input view, create a new MessageItem instance of it
         //and add it to the recyclerView.
         return new InputListener() {
-                @Override
+            @Override
+            public void onNewItemFileError(@NotNull String filepath, @NotNull Exception ex) {
+                Toast.makeText(BaseChatActivity.this, "Error writing file: " + filepath, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
                 public void onNewItem(@NotNull MonkeyItem item) {
                     MessageItem newItem = new MessageItem("0", item.getMessageId(), item.getOldMessageId(),
                             item.getMessageText(), item.getMessageTimestamp(), item.getMessageTimestampOrder(),

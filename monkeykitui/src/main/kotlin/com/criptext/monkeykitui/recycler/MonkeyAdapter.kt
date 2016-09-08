@@ -134,7 +134,11 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         if(monkeyHolder != null)
             onBindViewHolder(monkeyHolder, position)
         else //sometimes recyclerview cant find the viewholder, and never rebind the holder. this may fix it...
-            notifyItemChanged(position)
+            recyclerView.post(Runnable {
+             //Need to post it because this method should not be called while Recycler is computing layout
+             val position = getItemPositionByTimestamp(monkeyItem)
+             notifyItemChanged(position)
+            })
     }
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {

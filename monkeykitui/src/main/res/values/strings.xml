@@ -17,4 +17,5 @@
     <string name="mk_label_yesterday">Yesterday</string>
     <string name="mk_take_picture">Take Picture</string>
     <string name="mk_choose_picture">Choose Picture</string>
+    <string name="mk_file_error">An error occurred saving your data. Do you have enough space available?</string>
 </resources>

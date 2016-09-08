@@ -83,12 +83,7 @@ open class AttachmentButton : ImageView {
 
         layoutParams = params
         setOnClickListener({
-            cameraHandler.setCameraListen(object : CameraListener {
-                override fun onNewItem(item: MonkeyItem) {
-                    inputListener?.onNewItem(item)
-                }
-            })
-
+            cameraHandler.inputListener = inputListener
             SimpleDialog(attachmentOptions).show(context)
         })
     }

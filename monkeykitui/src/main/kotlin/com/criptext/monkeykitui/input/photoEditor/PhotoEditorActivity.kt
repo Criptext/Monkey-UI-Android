@@ -23,11 +23,13 @@ import android.view.animation.RotateAnimation
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.Toast
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.util.FlatButtonDrawable
 
 import com.soundcloud.android.crop.Crop
 import java.io.File
+import java.io.IOException
 
 
 /**
@@ -49,6 +51,8 @@ class PhotoEditorActivity : AppCompatActivity() {
             field?.cancel(true)
         field = value
     }
+
+    private var callback: PhotoEditTask.OnTaskFinished? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,20 +160,26 @@ class PhotoEditorActivity : AppCompatActivity() {
 
 
     /**
-     * Realiza la transformacion de rotacion en el archivo, y posteriormente manda el mismo archivo
-     * al Activity que hace Crop.
-     * @param origin Uri del archivo a rotar y recortar
+     * Saves rotation changes to file before opening Crop activity.
+     * @param origin Uri of file to save rotated bitmap and crop
      */
     fun cropAfterRotatingBitmapFile(origin: Uri){
-        val rotationTask = PhotoEditTask(origin, tempFile.absolutePath, contentResolver)
-        rotationTask.setOnBitmapProcessedCallback(Runnable {
+
+        val newCallback = object: PhotoEditTask.OnTaskFinished {
+            override fun invoke(p1: IOException?) {
                 val destination = Uri.fromFile(tempFile)
                 retainedFragment.isEdited = true
                 retainedFragment.degrees = 0
                 Crop.of(destination, destination).start(this@PhotoEditorActivity)
-        })
+            }
+        }
+
+        val rotationTask = PhotoEditTask(origin, tempFile.absolutePath, contentResolver, newCallback)
         runningTask = rotationTask
         rotationTask.execute(editedDegrees)
+
+
+        callback = newCallback
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -268,24 +278,34 @@ class PhotoEditorActivity : AppCompatActivity() {
                 return intent.data
         }
 
+
     /**
      * Callback de click del boton de Use/Send. Exporta la foto editada al archivo temporal y termina
      * el activity
      * @param view Boton que recibio el Click
      */
     fun done(view: View) {
-        val processTask = PhotoEditTask(bitmapUri, photoFilePath, contentResolver)
+        val newCallback = object: PhotoEditTask.OnTaskFinished {
+            override fun invoke(ex: IOException?) {
+                if(ex == null){
+                    val intent = Intent()
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                } else
+                    Toast.makeText(this@PhotoEditorActivity, R.string.mk_file_error,
+                            Toast.LENGTH_LONG).show()
+            }
+
+        }
+        val processTask = PhotoEditTask(bitmapUri, photoFilePath, contentResolver, newCallback)
         progressBar?.visibility = View.VISIBLE
         sendButton?.isEnabled = false
         processing = true
         //Log.d("PhotoEditor", "export source: ${bitmapUri.path} dest: $photoFilePath, degs: $editedDegrees")
-        processTask.setOnBitmapProcessedCallback(Runnable {
-            val intent = Intent()
-            setResult(Activity.RESULT_OK, intent)
-            finish()
-        })
         runningTask = processTask
         processTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, editedDegrees)
+
+        callback = newCallback
     }
 
     protected val editedDegrees: Int

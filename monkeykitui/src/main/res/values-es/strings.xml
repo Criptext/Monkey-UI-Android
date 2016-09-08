@@ -12,4 +12,7 @@
     <string name="mk_status_no_network">Esperando la red</string>
     <string name="mk_label_today">Hoy</string>
     <string name="mk_label_yesterday">Ayer</string>
+    <string name="mk_take_picture">Tomar Foto</string>
+    <string name="mk_choose_picture">Abrir Galería</string>
+    <string name="mk_file_error">Ocurrió un error guardando tus datos. Tienes suficente espacio disponible?</string>
 </resources>

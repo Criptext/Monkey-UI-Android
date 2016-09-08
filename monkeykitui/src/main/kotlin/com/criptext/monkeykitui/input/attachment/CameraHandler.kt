@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity
 import com.criptext.monkeykitui.input.listeners.CameraListener
+import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.soundcloud.android.crop.Crop
 import java.io.ByteArrayOutputStream
@@ -28,15 +29,16 @@ import java.util.*
 
 class CameraHandler constructor(ctx : Context){
 
-    var cameraListener : CameraListener? = null
+    var inputListener: InputListener? = null
 
     internal var mPhotoFileName: String? = null
     internal var mPhotoFile: File? = null
-    var photoDirName = "/MonkeyKitPhotos/"
 
     var context : Context? = ctx
 
-    val TEMP_PHOTO_FILE_NAME = "mk_sent_photo.jpg"
+    val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
+    var photoDirName = "MonkeyKit Sent Photos"
+    var photoSuffix = "mk_photo.jpg"
     val CONTENT_URI = Uri.parse("content://com.criptext.uisample/")
 
     var orientationImage: Int = 0
@@ -58,15 +60,22 @@ class CameraHandler constructor(ctx : Context){
         (context as? Activity)?.startActivityForResult(intent, requestCode)
     }
 
+    /**
+     * Creates a temporary photo file in mPhotoFile. If the photo directory does not exist, it creates it.
+     */
     private fun initTemporaryPhotoFile() {
-        val photoDir = File(context!!.cacheDir.absolutePath + photoDirName)
-        if(!photoDir.exists())
-            photoDir.mkdirs()
-        mPhotoFile = File(photoDir, TEMP_PHOTO_FILE_NAME)
-    }
+        val state = Environment.getExternalStorageState()
+        val tempDir: File
 
-    fun setCameraListen(cameraList : CameraListener){
-        cameraListener=cameraList
+        if (Environment.MEDIA_MOUNTED == state)
+            tempDir = File(Environment.getExternalStorageDirectory(), photoDirName)
+         else
+            tempDir = File(context?.filesDir, photoDirName)
+
+        if(!tempDir.exists())
+            tempDir.mkdir()
+
+        mPhotoFile = File(tempDir, TEMP_PHOTO_FILE_NAME)
     }
 
     fun startPhotoEditor(photoUri: Uri?){
@@ -106,10 +115,17 @@ class CameraHandler constructor(ctx : Context){
     }
 
     fun getOutputFile(): File {
-        if (mPhotoFileName == null)
-            mPhotoFileName = "${System.currentTimeMillis() / 1000}$TEMP_PHOTO_FILE_NAME"
 
-        return File(File(context!!.cacheDir, photoDirName), mPhotoFileName)
+        val state = Environment.getExternalStorageState()
+
+        if (mPhotoFileName == null)
+            mPhotoFileName = "$photoDirName/${System.currentTimeMillis() / 1000}$photoSuffix"
+
+        if (Environment.MEDIA_MOUNTED == state) {
+            return File(Environment.getExternalStorageDirectory(), mPhotoFileName)
+        } else {
+            return File(context!!.filesDir, mPhotoFileName)
+        }
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -151,22 +167,28 @@ class CameraHandler constructor(ctx : Context){
                 //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(getOutputFile())).start(context as Activity)
             }
             RequestType.editPhoto -> {
-
-                val outputPhotoFile = getOutputFile()
-                val bmp = BitmapFactory.decodeFile(outputPhotoFile.absolutePath)
+                
+                //Log.d("CameraHandler", "decoding: " + getOutputFile().absolutePath)
+                val bmp = BitmapFactory.decodeFile(getOutputFile().absolutePath)
+                var exception: Exception? = null
 
                 try {
                     val bos = ByteArrayOutputStream()
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos)
                     val bitmapdata = bos.toByteArray()
-                    val fos = FileOutputStream(outputPhotoFile)
+                    val fos = FileOutputStream(getOutputFile())
                     fos.write(bitmapdata)
                     fos.flush()
                     fos.close()
-                } catch (e: Exception) {
+                } catch (e: IOException) {
                     e.printStackTrace()
+                    Log.e("CameraHandler", e.message)
+                    exception = e
+                } catch (e: NullPointerException){
+                    Log.e("CameraHandler", "Edited bitmap is null!")
+                    exception = e
                 } finally {
-                    bmp.recycle()
+                    bmp?.recycle()
                 }
 
                 var monkeyItem = object : MonkeyItem {
@@ -208,11 +230,11 @@ class CameraHandler constructor(ctx : Context){
                     }
 
                     override fun getFilePath(): String {
-                        return outputPhotoFile.absolutePath
+                        return getOutputFile().absolutePath
                     }
 
                     override fun getFileSize(): Long {
-                        return outputPhotoFile.length()
+                        return getOutputFile().length()
                     }
 
                     override fun getAudioDuration(): Long {
@@ -225,8 +247,11 @@ class CameraHandler constructor(ctx : Context){
 
                 }
 
-                cameraListener?.onNewItem(monkeyItem)
-                mPhotoFileName = null //Clear output file
+                if(exception != null)
+                    inputListener?.onNewItemFileError(getOutputFile().absolutePath, exception)
+                else
+                    inputListener?.onNewItem(monkeyItem)
+                mPhotoFileName = null
 
             }
         }

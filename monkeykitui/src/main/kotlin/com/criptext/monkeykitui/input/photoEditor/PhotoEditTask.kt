@@ -6,15 +6,16 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import java.io.File
+import java.io.IOException
 import java.lang.ref.WeakReference
 
 /**
  * Created by gesuwall on 5/4/16.
  */
 
-class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver) : AsyncTask<Int, Int, Int>() {
-    private var listener : Runnable? = null
-
+class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver, callback: OnTaskFinished):
+        AsyncTask<Int, Int, IOException>() {
+    private var callbackRef: WeakReference<OnTaskFinished>
     var sourceUri : Uri
     var resolver : ContentResolver
     var destPath: String
@@ -23,13 +24,10 @@ class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver) : Asy
         this.sourceUri = uri
         this.resolver = resolver
         this.destPath = filePath
+        callbackRef = WeakReference(callback)
     }
 
-    fun setOnBitmapProcessedCallback(listener: Runnable){
-        this.listener = listener
-    }
-
-    override fun doInBackground(vararg params: Int?): Int? {
+    override fun doInBackground(vararg params: Int?): IOException? {
         if(params[0] == null)
             throw IllegalArgumentException();
         var bitmap : Bitmap? = null
@@ -41,25 +39,31 @@ class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver) : Asy
                 var destFile = File(destPath)
                 destFile.delete()
                 BitmapProcessing.saveBitmapToFile(bitmap, destFile, 85)
-                return 1
+                return null
             }
-        } finally {
+        } catch (ex: IOException){
+            return ex
+        }
+        finally {
             bitmap?.recycle()
         }
 
-        return 0
+        //This should never happen
+        return null
 
     }
 
     override fun onCancelled() {
         Log.d("RotationTask", "cancelled")
-        listener = null
     }
 
 
-    override fun onPostExecute(result: Int?) {
+    override fun onPostExecute(result: IOException?) {
         Log.d("RotationTask", "result: $result")
-        listener?.run()
+        callbackRef.get()?.invoke(result)
     }
+
+
+    interface OnTaskFinished: (IOException?) -> Unit
 
 }
