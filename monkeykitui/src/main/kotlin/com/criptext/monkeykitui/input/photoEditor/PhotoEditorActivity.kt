@@ -40,7 +40,17 @@ class PhotoEditorActivity : AppCompatActivity() {
     private var photo: ImageView? = null
     private var sendButton: Button? = null
     private var progressBar: ProgressBar? = null
-    private var processing: Boolean? = false
+    private var processing: Boolean = false
+    set(value) {
+        if(value) {
+            progressBar?.visibility = View.VISIBLE
+            sendButton?.isEnabled = false
+        } else {
+            progressBar?.visibility = View.INVISIBLE
+            sendButton?.isEnabled = true
+        }
+        field = value
+    }
     private lateinit var retainedFragment: RetainEditPhoto
     private lateinit var tempFile : File
     lateinit var photoFilePath: String
@@ -166,17 +176,23 @@ class PhotoEditorActivity : AppCompatActivity() {
     fun cropAfterRotatingBitmapFile(origin: Uri){
 
         val newCallback = object: PhotoEditTask.OnTaskFinished {
-            override fun invoke(p1: IOException?) {
-                val destination = Uri.fromFile(tempFile)
-                retainedFragment.isEdited = true
-                retainedFragment.degrees = 0
-                Crop.of(destination, destination).start(this@PhotoEditorActivity)
+            override fun invoke(success: Boolean) {
+                if(success) {
+                    val destination = Uri.fromFile(tempFile)
+                    retainedFragment.isEdited = true
+                    retainedFragment.degrees = 0
+                    Crop.of(destination, destination).start(this@PhotoEditorActivity)
+                } else
+                    Toast.makeText(this@PhotoEditorActivity, R.string.mk_file_error,
+                            Toast.LENGTH_LONG).show()
+                processing = false
             }
         }
 
         val rotationTask = PhotoEditTask(origin, tempFile.absolutePath, contentResolver, newCallback)
         runningTask = rotationTask
         rotationTask.execute(editedDegrees)
+        processing = true
 
 
         callback = newCallback
@@ -286,22 +302,21 @@ class PhotoEditorActivity : AppCompatActivity() {
      */
     fun done(view: View) {
         val newCallback = object: PhotoEditTask.OnTaskFinished {
-            override fun invoke(ex: IOException?) {
-                if(ex == null){
+            override fun invoke(success: Boolean) {
+                if(success){
                     val intent = Intent()
+                    intent.putExtra(destinationPath, photoFilePath)
                     setResult(Activity.RESULT_OK, intent)
                     finish()
                 } else
                     Toast.makeText(this@PhotoEditorActivity, R.string.mk_file_error,
                             Toast.LENGTH_LONG).show()
+                processing = false
             }
 
         }
         val processTask = PhotoEditTask(bitmapUri, photoFilePath, contentResolver, newCallback)
-        progressBar?.visibility = View.VISIBLE
-        sendButton?.isEnabled = false
         processing = true
-        //Log.d("PhotoEditor", "export source: ${bitmapUri.path} dest: $photoFilePath, degs: $editedDegrees")
         runningTask = processTask
         processTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, editedDegrees)
 

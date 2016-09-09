@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import android.util.Log
 import java.io.*
 
 /**
@@ -81,23 +82,19 @@ class BitmapProcessing {
         }
 
         /**
-         * Guarda un bitmap en el archivo temporal
-         * @param source bitmap a guardar
+         * stores a compressed bitamp to a file
+         * @param source bitmap to save
          * *
-         * @param dest referencia al File donde se guarda
+         * @param dest reference to the file in which the bitmap will be saved
+         * @return true if the bitmap was successfully compressed and stored in the requested file
          */
-        fun saveBitmapToFile(source: Bitmap, dest: File, quality: Int) {
+        fun saveBitmapToFile(source: Bitmap, dest: File, quality: Int): Boolean {
             var fout : FileOutputStream? = null
-            try {
-                fout = FileOutputStream(dest)
-                source.compress(Bitmap.CompressFormat.PNG, quality, fout)
-                fout.flush()
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-            } finally {
-                fout?.close()
-            }
-
+            fout = FileOutputStream(dest)
+            val result = source.compress(Bitmap.CompressFormat.PNG, quality, fout)
+            fout.flush()
+            fout.close()
+            return result
         }
     }
 }

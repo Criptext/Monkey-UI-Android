@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import java.io.File
-import java.io.IOException
 import java.lang.ref.WeakReference
 
 /**
@@ -14,7 +13,7 @@ import java.lang.ref.WeakReference
  */
 
 class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver, callback: OnTaskFinished):
-        AsyncTask<Int, Int, IOException>() {
+        AsyncTask<Int, Int, Boolean>() {
     private var callbackRef: WeakReference<OnTaskFinished>
     var sourceUri : Uri
     var resolver : ContentResolver
@@ -27,43 +26,27 @@ class PhotoEditTask(uri: Uri, filePath: String, resolver: ContentResolver, callb
         callbackRef = WeakReference(callback)
     }
 
-    override fun doInBackground(vararg params: Int?): IOException? {
+    override fun doInBackground(vararg params: Int?): Boolean? {
         if(params[0] == null)
             throw IllegalArgumentException();
         var bitmap : Bitmap? = null
-        try {
-            val degrees = if(params.size == 0) 0 else params[0] ?: 0
-            bitmap = BitmapProcessing.getBitmapFromUri(sourceUri, resolver)
-            if (bitmap != null) {
-                bitmap = BitmapProcessing.rotateBitmap(bitmap, degrees)
-                var destFile = File(destPath)
-                destFile.delete()
-                BitmapProcessing.saveBitmapToFile(bitmap, destFile, 85)
-                return null
-            }
-        } catch (ex: IOException){
-            return ex
+        val degrees = if(params.size == 0) 0 else params[0] ?: 0
+        bitmap = BitmapProcessing.getBitmapFromUri(sourceUri, resolver)
+        if (bitmap != null) {
+            bitmap = BitmapProcessing.rotateBitmap(bitmap, degrees)
+            var destFile = File(destPath)
+            destFile.delete()
+            val res = BitmapProcessing.saveBitmapToFile(bitmap, destFile, 85)
+            bitmap.recycle()
+            return res
         }
-        finally {
-            bitmap?.recycle()
-        }
-
-        //This should never happen
-        return null
-
+       return false
     }
 
-    override fun onCancelled() {
-        Log.d("RotationTask", "cancelled")
+    override fun onPostExecute(result: Boolean?) {
+        callbackRef.get()?.invoke(result!!)
     }
 
-
-    override fun onPostExecute(result: IOException?) {
-        Log.d("RotationTask", "result: $result")
-        callbackRef.get()?.invoke(result)
-    }
-
-
-    interface OnTaskFinished: (IOException?) -> Unit
+    interface OnTaskFinished: (Boolean) -> Unit
 
 }
