@@ -105,7 +105,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             inputListener = createInputListener();
         if(vnPlayer == null)
             vnPlayer = new DefaultVoiceNotePlayer(this);
-        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "", false);
+        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "",
+                conversation.getName(), false);
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
         getSupportActionBar().setTitle(conversation.getName());
     }

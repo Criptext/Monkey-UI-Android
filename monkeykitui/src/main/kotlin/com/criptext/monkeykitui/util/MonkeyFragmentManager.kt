@@ -96,7 +96,6 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * Add a new Conversations fragment to the activity.
      */
     private fun setConversationsFragment() {
-        activity.supportActionBar?.title = conversationsTitle
         val convFragment = MonkeyConversationsFragment()
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
@@ -113,6 +112,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
+        activity.supportActionBar?.title = conversationsTitle
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         initStatusBar()

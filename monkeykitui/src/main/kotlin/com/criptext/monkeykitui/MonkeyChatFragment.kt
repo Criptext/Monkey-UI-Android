@@ -3,8 +3,10 @@ package com.criptext.monkeykitui
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -13,19 +15,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import android.widget.LinearLayout
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.*
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
+import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
+import com.etiennelawlor.imagegallery.library.adapters.FullScreenImageGalleryAdapter
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import java.io.File
 import java.util.*
 
 /**
  * Created by Gabriel on 8/10/16.
  */
 
-open class MonkeyChatFragment(): Fragment() {
+open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullScreenImageLoader{
+
     open val chatLayout: Int
         get() = R.layout.monkey_chat_layout
 
@@ -57,12 +67,14 @@ open class MonkeyChatFragment(): Fragment() {
         val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
         val chatConversationId = "MonkeyChatFragment.conversationId"
         val chatmembersGroupIds = "MonkeyChatFragment.membersIds"
+        val chatTitleName = "MonkeyChatFragment.titleName"
 
-        fun newInstance(conversationId: String, membersIds: String, hasReachedEnd: Boolean): MonkeyChatFragment{
+        fun newInstance(conversationId: String, membersIds: String, chatTitle: String, hasReachedEnd: Boolean): MonkeyChatFragment{
             val newInstance = MonkeyChatFragment()
             val newBundle = Bundle()
             newBundle.putString(chatConversationId, conversationId)
             newBundle.putString(chatmembersGroupIds, membersIds)
+            newBundle.putString(chatTitleName, chatTitle)
             newBundle.putBoolean(chatHasReachedEnd, hasReachedEnd)
             newInstance.arguments = newBundle
             return newInstance
@@ -113,6 +125,11 @@ open class MonkeyChatFragment(): Fragment() {
         audioUIUpdater = AudioUIUpdater(recyclerView)
         monkeyAdapter.voiceNotePlayer = voiceNotePlayer
         voiceNotePlayer?.uiUpdater = audioUIUpdater
+
+        (activity as AppCompatActivity).supportActionBar?.title = getChatTitle()
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        FullScreenImageGalleryActivity.setFullScreenImageLoader(this)
 
         return view
     }
@@ -187,6 +204,11 @@ open class MonkeyChatFragment(): Fragment() {
         return monkeyAdapter.conversationId
     }
 
+    fun getChatTitle(): String{
+        val args = arguments
+        return args.getString(chatTitleName)
+    }
+
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
         val searchItem = object: MonkeyItem {
             override fun getAudioDuration() = 0L
@@ -214,4 +236,12 @@ open class MonkeyChatFragment(): Fragment() {
     fun getLastMessage(): MonkeyItem? = monkeyAdapter.getLastItem()
 
     fun getFirstMessage(): MonkeyItem? = monkeyAdapter.getFirstItem()
+
+    override fun loadFullScreenImage(iv: ImageView?, imageUrl: String?, width: Int, bglinearLayout: LinearLayout?) {
+        if (imageUrl?.length != 0) {
+            Picasso.with(iv?.context).load(File(imageUrl)).resize(width, 0).into(iv)
+        } else {
+            iv?.setImageDrawable(null)
+        }
+    }
 }
