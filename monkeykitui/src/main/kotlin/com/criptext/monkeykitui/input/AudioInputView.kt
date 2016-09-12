@@ -87,7 +87,7 @@ open class AudioInputView : TextInputView {
     }
 
     private fun setDefaultRecorder(){
-        val recorder = DefaultVoiceNoteRecorder(context)
+        val recorder = DefaultVoiceNoteRecorder(context, 1000000L) //1 MB as max size
         this.recorder = recorder
     }
 

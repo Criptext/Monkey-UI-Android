@@ -4,7 +4,9 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import com.criptext.monkeykitui.util.OutputFile
 import java.io.File
 
 /**
@@ -13,46 +15,56 @@ import java.io.File
  * Created by gesuwall on 4/29/16.
  */
 
-class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
+class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : VoiceNoteRecorder() {
 
-    private lateinit var mAudioFileName: String
+    private var mAudioFileName: String? = null
     private lateinit var mRecorder: MediaRecorder
     private val ctx : Context
     private var startTime : Long = 0
 
     companion object {
-        val TEMP_AUDIO_FILE_NAME = "temp_audio.m4a";
+        val TEMP_AUDIO_FILE_NAME = "audio.m4a";
     }
 
     init {
         this.ctx = ctx
     }
 
-    override fun startRecording(){
+    override fun startRecording(): Boolean{
 
         try {
-            mAudioFileName = ctx.cacheDir.toString() + "/" + (System.currentTimeMillis()/1000) + TEMP_AUDIO_FILE_NAME;
-            mRecorder = MediaRecorder()
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            mRecorder.setOutputFile(mAudioFileName)
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            //TO MAKE AUDIO LOW QUALITY
-            mRecorder.setAudioSamplingRate(22050)//8khz-92khz
-            mRecorder.setAudioEncodingBitRate(22050)//8000
-            mRecorder.prepare()
-            mRecorder.setOnErrorListener { mr, what, extra ->
-                if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-                    mr.release()
+            val outputFile = OutputFile.create(ctx, "MonkeyKit Files", TEMP_AUDIO_FILE_NAME)
+            if(outputFile != null && outputFile.freeSpace > maxRecordingSize * 1.5){
+                mAudioFileName = outputFile.absolutePath
+                mRecorder = MediaRecorder()
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                mRecorder.setOutputFile(mAudioFileName)
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                //TO MAKE AUDIO LOW QUALITY
+                mRecorder.setAudioSamplingRate(22050)//8khz-92khz
+                mRecorder.setAudioEncodingBitRate(22050)//8000
+                mRecorder.prepare()
+                mRecorder.setOnErrorListener { mr, what, extra ->
+                    if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+                        mr.release()
+                    } else if(what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN){
+                        //Log.d("DefaultVoiceNoteRec", "delete file size: ${File(mAudioFileName).length()} || free space: ${outputFile.freeSpace}")
+                        File(mAudioFileName).delete()
+                        mAudioFileName = null
+                    }
                 }
+                startTime = System.currentTimeMillis()
+                mRecorder.start()
+                return true
+            } else {
+                Log.e("DefaultVoiceNoteRec", "Can't write to file")
             }
-            startTime = System.currentTimeMillis()
-            mRecorder.start()
         }
         catch(e: Exception){
             e.printStackTrace();
         }
-
+        return false
     }
 
      fun releaseRecorder() {
@@ -65,20 +77,23 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
     }
 
     override fun stopRecording() {
-        releaseRecorder()
+        if(mAudioFileName != null)
+            releaseRecorder()
         sendAudioFile()
     }
 
     override fun cancelRecording() {
         releaseRecorder()
-        val file = File(mAudioFileName)
-        if(file.exists())
-            file.delete()
+        if(mAudioFileName != null) {
+            val file = File(mAudioFileName)
+            if (file.exists())
+                file.delete()
+        }
     }
 
     fun sendAudioFile(){
-        val file = File(mAudioFileName);
-        if(file.exists()) {
+        if(mAudioFileName != null){
+            val file = File(mAudioFileName);
             val timestamp = System.currentTimeMillis() //- 1000 * 60 * 60 * 48
             val duration = timestamp - startTime
             val newItem = object : MonkeyItem {
@@ -137,7 +152,8 @@ class DefaultVoiceNoteRecorder(ctx : Context) : VoiceNoteRecorder() {
 
             }
             inputListener?.onNewItem(newItem)
-        }
+        } else
+            inputListener?.onNewItemFileError(MonkeyItem.MonkeyItemType.audio.ordinal)
     }
 
 }

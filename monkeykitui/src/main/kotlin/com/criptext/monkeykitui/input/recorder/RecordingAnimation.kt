@@ -1,8 +1,11 @@
 package com.criptext.monkeykitui.input.recorder
 
+import android.graphics.Typeface
 import android.os.Handler
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
+import com.criptext.monkeykitui.R
 
 /**
  * Created by gesuwall on 4/26/16.
@@ -56,6 +59,9 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
     }
 
     fun start(){
+        val leftImage = recordingMic as? ImageView
+        leftImage?.setImageResource(R.drawable.btn_mic_red)
+
         counter = 0L
         watch.text = "00:00"
         recordingMic.alpha = 1f
@@ -67,6 +73,11 @@ class RecordingAnimation(recordingMic: View, watch: TextView){
         cancel = true
         handler.removeCallbacks(updateRunnable)
         watch.text = "00:00"
+    }
+
+    fun error(){
+        val leftImage = recordingMic as? ImageView
+        leftImage?.setImageResource(R.drawable.ic_error_red_32dp)
     }
 
 

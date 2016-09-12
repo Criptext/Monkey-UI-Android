@@ -4,23 +4,17 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity
-import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.OutputFile
 import com.soundcloud.android.crop.Crop
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
@@ -65,9 +59,14 @@ class CameraHandler constructor(ctx : Context){
     fun startPhotoEditor(photoUri: Uri?){
         val intent = Intent(context, PhotoEditorActivity::class.java)
         outputFile = initOutputFile()
-        intent.putExtra(PhotoEditorActivity.destinationPath, outputFile!!.absolutePath)
-        intent.data = photoUri
-        startActivity(intent, RequestType.editPhoto.requestCode)
+        if(outputFile != null) {
+            intent.putExtra(PhotoEditorActivity.destinationPath, outputFile!!.absolutePath)
+            intent.data = photoUri
+            startActivity(intent, RequestType.editPhoto.requestCode)
+        } else {
+            inputListener?.onNewItemFileError(MonkeyItem.MonkeyItemType.photo.ordinal)
+            Log.d("DefaultVoiceNoteRec", "output file is null")
+        }
     }
 
     fun takePicture() {
@@ -100,11 +99,28 @@ class CameraHandler constructor(ctx : Context){
         Crop.pickImage(context as Activity)
     }
 
+    fun handleFileFromIntent(fileFromIntent: File?, photoUri: Uri?){
+        try {
+            if(fileFromIntent != null) {
+                val ei = ExifInterface(fileFromIntent.absolutePath)
+                orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            } else {
+                inputListener?.onNewItemFileError(MonkeyItem.MonkeyItemType.photo.ordinal)
+            }
+            startPhotoEditor(photoUri)
+        } catch (e: IOException) {
+            Log.e("error", "Exif error")
+            inputListener?.onNewItemFileError(MonkeyItem.MonkeyItemType.photo.ordinal)
+        }
+
+    }
+
+
     /**
      * Creates a temporary photo file in mPhotoFile. If the photo directory does not exist, it creates it.
      */
     private fun initTemporaryPhotoFile() {
-        tempFile = OutputFile.create(context!!, photoDirName, photoSuffix)
+        tempFile = OutputFile.createTemp(context!!, photoDirName, photoSuffix)
     }
 
     fun initOutputFile() = OutputFile.create(context!!, photoDirName, photoSuffix)
@@ -123,33 +139,11 @@ class CameraHandler constructor(ctx : Context){
             newReqCode = requestCode
 
         when (RequestType.fromCode(newReqCode)) {
-            RequestType.openGallery -> {
-                try {
-                    val ei = ExifInterface(initOutputFile().absolutePath)
-                    orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-                } catch (e: IOException) {
-                    Log.e("error", "Exif error")
-                }
+            RequestType.openGallery -> startPhotoEditor(data?.data)
+            RequestType.takePicture -> startPhotoEditor(Uri.fromFile(tempFile))
 
-                //Crop.of(data?.data, Uri.fromFile(initOutputFile())).start(context as Activity)
-                startPhotoEditor(data?.data)
-
-
-            }
-            RequestType.takePicture -> {
-                try {
-                    val ei = ExifInterface(tempFile!!.absolutePath)
-                    orientationImage = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-                } catch (e: IOException) {
-                    Log.e("error", "Exif error")
-                }
-
-                startPhotoEditor(Uri.fromFile(tempFile))
-                //Crop.of(Uri.fromFile(mPhotoFile), Uri.fromFile(initOutputFile())).start(context as Activity)
-            }
             RequestType.editPhoto -> {
                 
-                //Log.d("CameraHandler", "decoding: " + initOutputFile().absolutePath)
                 val output = File(data!!.getStringExtra(PhotoEditorActivity.destinationPath))
 
                 var monkeyItem = object : MonkeyItem {
@@ -211,6 +205,7 @@ class CameraHandler constructor(ctx : Context){
                 inputListener?.onNewItem(monkeyItem)
                 mPhotoFileName = null
                 tempFile = null
+                outputFile = null
 
             }
         }

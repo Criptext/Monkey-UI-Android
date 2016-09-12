@@ -13,8 +13,9 @@ abstract class VoiceNoteRecorder {
 
     /**
      * This method is called when the user wants to start recording a new voice note.
+     * @return true if there is enough space in internal storage to record.
      */
-    abstract fun startRecording()
+    abstract fun startRecording(): Boolean
 
     /**
      * This method is called when the user stops the voice note recording. The implementation should

@@ -182,8 +182,11 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
                 dragger?.fadeView = slideMsg
                 dragger?.textStartX = slideMsgStartX
 
-                recordingAnimation?.start()
-                audioRecorder?.startRecording()
+                val startedRecording = audioRecorder?.startRecording() ?: false
+                if(startedRecording)
+                    recordingAnimation?.start()
+                else
+                    recordingAnimation?.error()
             }
 
             override fun onAnimationStart() {

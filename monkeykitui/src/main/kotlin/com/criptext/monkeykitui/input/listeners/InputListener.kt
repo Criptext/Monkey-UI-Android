@@ -9,5 +9,5 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
 interface InputListener {
     fun onNewItem(item : MonkeyItem)
 
-    fun onNewItemFileError(filepath: String, ex: Exception)
+    fun onNewItemFileError(type: Int)
 }
