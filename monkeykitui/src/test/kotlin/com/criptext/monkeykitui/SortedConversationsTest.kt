@@ -19,7 +19,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
             override fun getAvatarFilePath() = ""
             override fun getDatetime() = timestamp
             override fun getGroupMembers() = ""
-            override fun getId() = id
+            override fun getConvId() = id
             override fun getSecondaryText() = ""
             override fun getName() = ""
             override fun getStatus() = status
@@ -41,7 +41,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
 
         for(i in 0..(list.size-2))
             for(j in (i+1)..(list.size-1)) {
-                assert(list[i].getId() != list[j].getId())
+                assert(list[i].getConvId() != list[j].getConvId())
             }
     }
 
