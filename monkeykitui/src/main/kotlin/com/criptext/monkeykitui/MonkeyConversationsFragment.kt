@@ -13,7 +13,7 @@ import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
 import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
-import com.criptext.monkeykitui.conversation.dialog.OnConversationLongClicked
+import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.dialog.DialogOption
 import java.util.*

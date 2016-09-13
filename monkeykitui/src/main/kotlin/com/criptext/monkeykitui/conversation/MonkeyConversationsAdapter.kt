@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
+import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
@@ -55,6 +57,10 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         field = value
     }
 
+    val conversationOptions: MutableList<OnConversationOptionClicked>
+    val groupOptions: MutableList<OnConversationOptionClicked>
+    var onConversationLongClicked: OnConversationLongClicked
+
     init {
         conversationsList = ArrayList<MonkeyConversation>()
         //get that clickable background
@@ -65,6 +71,29 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 throw IllegalArgumentException(
                         "The context of this MonkeConversationsAdapter must implement ConversationsActivity!")
         dataLoader = SlowRecyclerLoader(null, mContext)
+
+        conversationOptions = mutableListOf(
+                object: OnConversationOptionClicked(mContext.getString(R.string.mk_delete_conversation)){
+                    override fun invoke(conv: MonkeyConversation) {
+                        removeConversationFromRecycler(conv)
+                    }
+                })
+
+        groupOptions = mutableListOf(
+                object: OnConversationOptionClicked(mContext.getString(R.string.mk_exit_group)) {
+                    override fun invoke(conv: MonkeyConversation) {
+                        removeConversationFromRecycler(conv)
+                    }
+                })
+
+        onConversationLongClicked = object : OnConversationLongClicked {
+            override fun invoke(p1: MonkeyConversation) {
+                val options = if(p1.isGroup()) groupOptions else conversationOptions
+                val dialog = ConversationOptionsDialog(options, p1)
+                dialog.show(mContext)
+            }
+
+        }
     }
 
     override fun onViewAttachedToWindow(holder: ConversationHolder?) {
@@ -101,7 +130,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             }
 
             holder.itemView.setOnLongClickListener({
-                removeConversationFromRecycler(conversation)
+                onConversationLongClicked.invoke(conversation)
                 true
             })
 
@@ -252,6 +281,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * so that in case that the listener is never called, we still have the reference to the group
      * that must be exited. MonkeyConversationsFragment should check the groupToExit variable on stop
      * to make sure that the user leaves it.
+     * @param conversation the conversation to remove
      */
     private fun removeConversationFromRecycler(conversation: MonkeyConversation){
         val pos = getConversationPositionByTimestamp(conversation)
@@ -260,8 +290,11 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
-                val snack = Snackbar.make(recycler, "${conversation.getName()} deleted", Snackbar.LENGTH_LONG)
-                snack.setAction("Undo",  {
+                val name = conversation.getName()
+                val msg = if(conversation.isGroup()) "${mContext.getString(R.string.mk_exit_group_msg)} \"$name\""
+                        else "${mContext.getString(R.string.mk_delete_conversation_msg)} $name"
+                val snack = Snackbar.make(recycler, msg, Snackbar.LENGTH_LONG)
+                snack.setAction(mContext.getString(R.string.mk_undo),  {
                     conversationToDelete = null
                     addNewConversation(conversation)
                 })

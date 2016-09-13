@@ -6,15 +6,24 @@
     <string name="mk_action_rot">Rotate</string>
     <string name="mk_commit_photo_changes">Use</string>
     <string name="mk_edit_photo">Edit Photo</string>
+    <string name="mk_undo">Undo</string>
+
     <string name="mk_empty_conversation_text">Write to this contact</string>
     <string name="mk_empty_group_text">Write to this group</string>
+
     <string name="mk_status_disconnected">Disconnected</string>
     <string name="mk_status_connecting">Connecting</string>
     <string name="mk_status_connected">Connected</string>
     <string name="mk_status_no_network">Waiting for network</string>
+
     <string name="mk_delete_conversation">Delete conversation</string>
+    <string name="mk_exit_group">Leave group</string>
+    <string name="mk_delete_conversation_msg">Deleted conversation with </string>
+    <string name="mk_exit_group_msg">Left group: </string>
+
     <string name="mk_label_today">Today</string>
     <string name="mk_label_yesterday">Yesterday</string>
+
     <string name="mk_take_picture">Take Picture</string>
     <string name="mk_choose_picture">Choose Picture</string>
 
@@ -23,5 +32,6 @@
     <string name="mk_sent_audio_dir">Sent Voice Notes</string>
     <string name="mk_photo_suffix">photo.jpg</string>
     <string name="mk_audio_suffix">audio.m4a</string>
+
     <string name="mk_file_error">An error occurred saving your data. Do you have enough space available?</string>
 </resources>

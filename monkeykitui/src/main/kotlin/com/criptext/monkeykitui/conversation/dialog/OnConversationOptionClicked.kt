@@ -6,7 +6,7 @@ import com.criptext.monkeykitui.conversation.MonkeyConversation
  * Created by gesuwall on 9/1/16.
  */
 
-abstract class OnConversationLongClicked(val label: String): (MonkeyConversation) -> Unit {
+abstract class OnConversationOptionClicked(val label: String): (MonkeyConversation) -> Unit {
 
     override fun toString() = label
 

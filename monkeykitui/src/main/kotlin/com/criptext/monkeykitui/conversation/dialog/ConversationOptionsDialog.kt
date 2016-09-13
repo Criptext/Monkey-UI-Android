@@ -7,10 +7,10 @@ import com.criptext.monkeykitui.dialog.AbstractDialog
  * Created by gesuwall on 9/1/16.
  */
 
-class ConversationOptionsDialog(options: MutableList<OnConversationLongClicked>,
-     val conversation: MonkeyConversation) : AbstractDialog<OnConversationLongClicked>(options) {
+class ConversationOptionsDialog(options: MutableList<OnConversationOptionClicked>,
+                                val conversation: MonkeyConversation) : AbstractDialog<OnConversationOptionClicked>(options) {
 
-    override fun executeCallback(selectedOption: OnConversationLongClicked) {
+    override fun executeCallback(selectedOption: OnConversationOptionClicked) {
         selectedOption.invoke(conversation)
     }
 
