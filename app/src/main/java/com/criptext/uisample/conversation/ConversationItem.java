@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Created by gesuwall on 8/11/16.
  */
 public class ConversationItem implements MonkeyConversation {
+
     private String id;
     private String name;
     private String lastMessage;
@@ -54,7 +55,7 @@ public class ConversationItem implements MonkeyConversation {
 
     @NotNull
     @Override
-    public String getId() {
+    public String getConvId() {
         return id;
     }
 
