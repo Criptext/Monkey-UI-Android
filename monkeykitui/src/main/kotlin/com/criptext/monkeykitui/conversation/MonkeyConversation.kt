@@ -11,7 +11,7 @@ interface MonkeyConversation{
     /**
      * @return an unique identifier for this conversation.
      */
-    fun getId(): String
+    fun getConvId(): String
 
     /**
      * @return a name for this conversation
@@ -68,7 +68,7 @@ interface MonkeyConversation{
                 -1
             }else if (t1.getDatetime() < t2.getDatetime()) {
                 1
-            } else t1.getId().compareTo(t2.getId()) * (-1)
+            } else t1.getConvId().compareTo(t2.getConvId()) * (-1)
 
         }
         fun endItem(): MonkeyConversation = object : MonkeyConversation {
@@ -76,7 +76,7 @@ interface MonkeyConversation{
 
             override fun getDatetime() = 0L
             override fun getGroupMembers() = null
-            override fun getId() = "0"
+            override fun getConvId() = "0"
             override fun getName() = "0"
             override fun getStatus() = ConversationStatus.moreConversations.ordinal
             override fun getSecondaryText() = ""
