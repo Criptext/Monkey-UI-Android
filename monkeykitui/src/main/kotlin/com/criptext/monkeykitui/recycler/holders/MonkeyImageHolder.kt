@@ -58,7 +58,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
     }
     override fun setWaitingForUpload(){
 
-        retryUploadLayout!!.visibility = View.GONE
+        retryUploadLayout?.visibility = View.GONE
         sendingProgressBar?.visibility = View.VISIBLE
         retryDownloadLayout?.isClickable = false
         retryUploadLayout?.isClickable = false
@@ -67,9 +67,9 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
     override fun setErrorInUpload(listener: View.OnClickListener){
 
         //photoLoadingView?.visibility = View.GONE
-        retryUploadLayout!!.visibility = View.VISIBLE
+        retryUploadLayout?.visibility = View.VISIBLE
         retryUploadLayout?.isClickable = true
-        retryUploadLayout!!.setOnClickListener(listener)
+        retryUploadLayout?.setOnClickListener(listener)
         sendingProgressBar?.visibility = View.INVISIBLE
 
     }

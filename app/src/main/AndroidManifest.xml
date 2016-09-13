@@ -21,8 +21,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Photo View -->
         <activity
-            android:name="com.criptext.monkeykitui.photoview.PhotoViewActivity" />
+            android:name="com.etiennelawlor.imagegallery.library.activities.ImageGalleryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            android:theme="@style/ImageGalleryTheme" />
 
         <!-- Crop Image -->
         <activity

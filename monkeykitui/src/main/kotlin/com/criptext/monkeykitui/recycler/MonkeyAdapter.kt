@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,6 +22,8 @@ import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.cav.AudioActions
 import com.criptext.monkeykitui.cav.CircularAudioView
 import com.criptext.monkeykitui.util.InsertionSort
+import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
+import com.etiennelawlor.imagegallery.library.activities.ImageGalleryActivity
 import java.io.File
 import java.util.*
 
@@ -73,8 +76,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         voiceNotePlayer = null
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
-                val intent = Intent(mContext, PhotoViewActivity::class.java)
-                intent.putExtra(PhotoViewActivity.IMAGE_DATA_PATH, item.getFilePath())
+                val intent = Intent(mContext, FullScreenImageGalleryActivity::class.java)
+                val images = arrayOf(item.getFilePath()).toMutableList()
+                val bundle = Bundle()
+                bundle.putStringArrayList(FullScreenImageGalleryActivity.KEY_IMAGES, ArrayList(images))
+                bundle.putInt(FullScreenImageGalleryActivity.KEY_POSITION, 0)
+                intent.putExtras(bundle)
                 mContext.startActivity(intent)
             }
 

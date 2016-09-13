@@ -322,7 +322,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             conversationsList.removeAt(position)
             transaction.updateConversation(conversation)
             swapConversationPosition(conversation, position)
-        } else throw IllegalArgumentException("Conversation with ID: ${conversation.getId()} and " +
+        } else throw IllegalArgumentException("Conversation with ID: ${conversation.getConvId()} and " +
                 "timestamp: ${conversation.getDatetime()} not found in adapter.")
     }
 
@@ -378,6 +378,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * Looks for a monkey conversation with a specified Id, starting by the most recent ones.
      * @return the message with the requested Id. returns null if the conversation does not exist
      */
-    fun findConversationItemById(id: String) = conversationsList.find { it.getId() == id }
+    fun findConversationItemById(id: String) = conversationsList.find { it.getConvId() == id }
 
 }

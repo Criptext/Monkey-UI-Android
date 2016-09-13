@@ -115,7 +115,7 @@ open class MonkeyConversationsFragment: Fragment(){
     fun findConversation(id: String, timestamp: Long){
         conversationsAdapter.getConversationPositionByTimestamp(object: MonkeyConversation {
             override fun getGroupMembers() = null
-            override fun getId() = id
+            override fun getConvId() = id
             override fun getDatetime() = timestamp
             override fun getAvatarFilePath() = null
             override fun getName() = ""
