@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
+import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.OutputFile
 import java.io.File
@@ -22,18 +23,19 @@ class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : Voic
     private val ctx : Context
     private var startTime : Long = 0
 
-    companion object {
-        val TEMP_AUDIO_FILE_NAME = "audio.m4a";
-    }
-
     init {
         this.ctx = ctx
     }
 
+    constructor(ctx: Context): this(ctx, 1000000)
+
     override fun startRecording(): Boolean{
 
         try {
-            val outputFile = OutputFile.create(ctx, "MonkeyKit Files", TEMP_AUDIO_FILE_NAME)
+            val res = ctx.resources
+            val outputFile = OutputFile.create(ctx,"${res.getString(R.string.mk_file_dir)}/" +
+                    res.getString(R.string.mk_sent_audio_dir),
+                    res.getString(R.string.mk_audio_suffix))
             if(outputFile != null && outputFile.freeSpace > maxRecordingSize * 1.5){
                 mAudioFileName = outputFile.absolutePath
                 mRecorder = MediaRecorder()
