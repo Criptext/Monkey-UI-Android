@@ -21,6 +21,8 @@ import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.cav.AudioActions
 import com.criptext.monkeykitui.cav.CircularAudioView
+import com.criptext.monkeykitui.dialog.AbstractDialog
+import com.criptext.monkeykitui.recycler.listeners.OnMessageOptionClicked
 import com.criptext.monkeykitui.util.InsertionSort
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import com.etiennelawlor.imagegallery.library.activities.ImageGalleryActivity
@@ -30,7 +32,7 @@ import java.util.*
 /**
  * Adapter class for displaying MonkeyItem messages on a RecyclerView.
  * Displays 3 kinds of messages, Text, Audio, and Photos.
- * Created by gesuwall on 4/4/16.
+ * Created by Gabriel on 4/4/16.
  */
 
 open class MonkeyAdapter(val mContext: Context, val conversationId: String) : RecyclerView.Adapter<MonkeyHolder>() {
@@ -65,6 +67,9 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     val dataLoader : SlowRecyclerLoader
 
+    val receivedMessageOptions: HashMap<Int, MutableList<OnMessageOptionClicked>>
+    val sentMessageOptions: HashMap<Int, MutableList<OnMessageOptionClicked>>
+
     var loadingDelay: Long
         get() =  dataLoader.delayTime
         set(value) { dataLoader.delayTime = value }
@@ -74,10 +79,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         messagesMap = HashMap()
         selectedMessage = null
         voiceNotePlayer = null
+        receivedMessageOptions = DefaultNameOptions.initReceivedMessageOptions(mContext.resources)
+        sentMessageOptions = DefaultNameOptions.initSentMessageOptions(mContext.resources)
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
                 val intent = Intent(mContext, FullScreenImageGalleryActivity::class.java)
-                val images = arrayOf(item.getFilePath()).toMutableList()
+                val images = mutableListOf(item.getFilePath())
                 val bundle = Bundle()
                 bundle.putStringArrayList(FullScreenImageGalleryActivity.KEY_IMAGES, ArrayList(images))
                 bundle.putInt(FullScreenImageGalleryActivity.KEY_POSITION, 0)
@@ -194,6 +201,22 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
+    protected fun getMessageLongClickOptions(item: MonkeyItem): MutableList<OnMessageOptionClicked>?{
+        val monkeyType = item.getMessageType()
+        val optionsMap = if(item.isIncomingMessage()) receivedMessageOptions else sentMessageOptions
+        return optionsMap[monkeyType]
+    }
+
+    protected fun bindMessageLongClickListener(item: MonkeyItem, targetView: View){
+        val options = getMessageLongClickOptions(item)
+        if(options?.isNotEmpty() ?: false)
+            targetView.setOnLongClickListener {
+                MessageOptionsDialog(options!!, item).show(mContext)
+                true
+            }
+        else targetView.setOnLongClickListener(null)
+    }
+
     fun isFollowupMessage(position: Int): Boolean{
         if(position > 0 && messagesList[position].getSenderId()
                     == messagesList[position - 1].getSenderId())
@@ -227,9 +250,9 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
            holder.updateSendingStatus(item.getDeliveryStatus(), chatActivity.isOnline(), item.getMessageTimestamp())
         }
 
-        //selected status
-        val selected = selectedMessage
-        holder.updateSelectedStatus(selected != null && selected.getMessageId() == item.getMessageId())
+        val bubbleLayout = holder.bubbleLayout
+        if(bubbleLayout != null)
+        bindMessageLongClickListener(item, bubbleLayout)
     }
     /**
      * Binds an existing MonkeyHolder with a MonkeyItem of type Text. This method is called on the
@@ -241,6 +264,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     open protected fun bindMonkeyTextHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder){
         val textHolder = holder as MonkeyTextHolder
         textHolder.setText(item.getMessageText())
+        /*
         textHolder.setOnLongClickListener(View.OnLongClickListener {
             val act = chatActivity as Activity
             val clipboard =  act.getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
@@ -249,6 +273,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             Toast.makeText(act, "Message copied to Clipboard", Toast.LENGTH_SHORT).show()
             true
         })
+        */
     }
 
 
@@ -325,6 +350,9 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             Log.d("PhotoHolder", "bind ${item.getFilePath()} ${item.getFileSize()}")
             imageHolder.setDownloadedImage(file, chatActivity as Context)
             imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+            val imageView = imageHolder.photoImageView
+            if(imageView != null)
+                bindMessageLongClickListener(item, imageView)
         }
 
     }
@@ -350,7 +378,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val audioHolder = holder as MonkeyAudioHolder
         val target = File(item.getFilePath())
         val playingAudio = voiceNotePlayer?.currentlyPlayingItem?.item
-
+        val longClickOptions = getMessageLongClickOptions(item)
         val playAction = object : AudioActions() {
                     override fun onActionClicked() {
                         super.onActionClicked()
@@ -359,6 +387,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
+                        if(longClickOptions?.isNotEmpty() ?: false)
+                            MessageOptionsDialog(longClickOptions!!, item).show(mContext)
                     }
                 }
 
@@ -370,6 +400,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
                     override fun onActionLongClicked() {
                         super.onActionLongClicked()
+                        if(longClickOptions?.isNotEmpty() ?: false)
+                            MessageOptionsDialog(longClickOptions!!, item).show(mContext)
                     }
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
@@ -752,6 +784,13 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val totalMessages = messagesList.size
         messagesList.clear()
         notifyItemRangeRemoved(0, totalMessages)
+    }
+
+    class MessageOptionsDialog(options: MutableList<OnMessageOptionClicked>,
+                                    val item: MonkeyItem) : AbstractDialog<OnMessageOptionClicked>(options) {
+        override fun executeCallback(selectedOption: OnMessageOptionClicked) {
+            selectedOption.invoke(item)
+        }
     }
 
 }

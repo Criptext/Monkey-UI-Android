@@ -5,8 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="false"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="6dp"
     android:orientation="vertical">
 
     <include layout="@layout/include_date_header"/>
@@ -15,18 +14,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:clickable="false"
         android:gravity="right"
         android:paddingLeft="50dp">
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clickable="false"
             android:id="@+id/content_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/mk_bubble_outgoing"
             android:orientation="vertical"
             android:layout_marginRight="12dp"
-            android:longClickable="true"
             android:minHeight="42dp"
             android:minWidth="90dp"
             android:layout_marginBottom="5dp">
@@ -35,6 +35,7 @@
                 android:id="@+id/text_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="false"
                 android:autoLink="all"
                 android:gravity="fill"
                 android:linksClickable="true"
@@ -88,15 +89,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/imageViewChecked"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@drawable/mk_contact_checked"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="-28dp"
-            android:layout_marginRight="5dp"/>
 
         <include layout="@layout/include_net_error" />
 

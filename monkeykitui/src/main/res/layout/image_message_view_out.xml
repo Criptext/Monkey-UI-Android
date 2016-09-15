@@ -9,91 +9,75 @@
 
     <include layout="@layout/include_date_header"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <FrameLayout
+        android:id="@+id/content_message"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:minWidth="100dp"
+        android:orientation="vertical"
+        android:longClickable="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="5dp"
+        android:clickable="false"
+        android:paddingBottom="5dp"
         android:gravity="right"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/content_message"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:minWidth="100dp"
-            android:orientation="vertical"
-            android:longClickable="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginBottom="5dp"
-            android:clickable="false"
-            android:paddingBottom="5dp"
-            android:gravity="right"
-            android:layout_marginTop="5dp">
-
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:background="#e1e1e1"
-                android:longClickable="true"
-                android:scaleType="centerCrop"/>
-
-            <ProgressBar
-                android:id="@+id/progressBarImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminateTint="#014766"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:gravity="right|center_vertical"
-                android:layout_gravity="bottom"
-                android:background="#000000"
-                android:alpha="0.60">
-
-                <ProgressBar
-                    style="?android:attr/progressBarStyleSmall"
-                    android:id="@+id/sendingWheel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:layout_marginRight="2dp" />
-
-                <ImageView
-                    android:id="@+id/imageViewCheckmark"
-                    android:layout_width="13dp"
-                    android:layout_height="10dp"
-                    android:src="@drawable/mk_checkmark_sent"
-                    android:layout_marginRight="2dp"/>
-
-                <TextView
-                    android:id="@+id/datetime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="datetime"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/white"
-                    android:padding="0dp"
-                    android:textSize="12sp"
-                    android:layout_margin="5dp"/>
-
-            </LinearLayout>
-
-        </FrameLayout>
+        android:layout_marginTop="5dp">
 
         <ImageView
-            android:id="@+id/imageViewChecked"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@drawable/mk_contact_checked"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="-22dp"/>
+            android:id="@+id/image_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:background="#e1e1e1"
+            android:longClickable="true"
+            android:scaleType="centerCrop"/>
 
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progressBarImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="#014766"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="right|center_vertical"
+            android:layout_gravity="bottom"
+            android:background="#000000"
+            android:alpha="0.60">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:id="@+id/sendingWheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginRight="2dp" />
+
+            <ImageView
+                android:id="@+id/imageViewCheckmark"
+                android:layout_width="13dp"
+                android:layout_height="10dp"
+                android:src="@drawable/mk_checkmark_sent"
+                android:layout_marginRight="2dp"/>
+
+            <TextView
+                android:id="@+id/datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="datetime"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/white"
+                android:padding="0dp"
+                android:textSize="12sp"
+                android:layout_margin="5dp"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

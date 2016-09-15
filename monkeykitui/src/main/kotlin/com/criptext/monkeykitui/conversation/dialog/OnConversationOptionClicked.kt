@@ -7,7 +7,5 @@ import com.criptext.monkeykitui.conversation.MonkeyConversation
  */
 
 abstract class OnConversationOptionClicked(val label: String): (MonkeyConversation) -> Unit {
-
     override fun toString() = label
-
 }

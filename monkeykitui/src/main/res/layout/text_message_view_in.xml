@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="7dp"
-    android:clickable="false"
     android:orientation="vertical"
     android:gravity="left|bottom">
 
@@ -21,7 +20,7 @@
         android:layout_marginLeft="15dp"
         android:layout_toRightOf="@id/tail"
         android:background="@drawable/mk_bubble_incoming"
-        android:longClickable="true"
+        android:clickable="false"
         android:minHeight="42dp"
         android:minWidth="90dp"
         android:orientation="vertical">
