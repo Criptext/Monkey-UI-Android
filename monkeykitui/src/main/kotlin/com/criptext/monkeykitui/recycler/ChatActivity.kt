@@ -54,7 +54,7 @@ interface ChatActivity {
      * &nbsp\ ready they should be added to the adapter using the addOldMessages() method.
      * @param conversationId
      */
-    fun onLoadMoreData(conversationId: String)
+    fun onLoadMoreMessages(conversationId: String)
 
     /**
      * MonkeyChatFragment will call this method to instantly retrieve the first messages to display.

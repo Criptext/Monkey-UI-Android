@@ -65,9 +65,7 @@ open class ConversationHolder: RecyclerView.ViewHolder {
         val imageView = avatarImageView
         if(imageView != null) {
             if (filepath != null && filepath.length > 0)
-                Picasso.with(imageView.context)
-                        .load(filepath)
-                        .into(imageView)
+                Utils.setAvatarAsync(imageView.context, imageView, filepath, !isGroup, null)
             else
                 imageView.setImageResource(if (isGroup) R.drawable.mk_default_group_avatar else
                     R.drawable.mk_default_user_img)

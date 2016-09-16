@@ -18,6 +18,8 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
+import com.criptext.monkeykitui.toolbar.MonkeyStatusBar
+import com.criptext.monkeykitui.toolbar.MonkeyToolbar
 
 /**
  * Created by gesuwall on 8/15/16.
@@ -44,6 +46,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * the returning conversations fragment
      */
     var chatFragmentOutAnimation: Int
+
     /**
      * resource id of the animation to use when the conversations fragment leaves the activity,
      * replaced by the chat fragment
@@ -51,21 +54,14 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var conversationsFragmentOutAnimation: Int
 
     /**
-     * Components to show connectivity status to the user.
+     * class to handle title, subtitle and avatar in the toolbar
      */
-    var viewStatusCont: View? = null
-    set (value){
-        viewStatus?.removeAllViews()
-        if(value != null){
-            viewStatus?.addView(value)
-        }
-        field = value
-    }
-    var viewStatus: FrameLayout?
-    var handlerStatus: Handler?
-    var runnableStatus: Runnable?
-    var pendingAction: Runnable?
-    var lastColor: Int?
+    var monkeyToolbar: MonkeyToolbar?
+
+    /**
+     * class to show connectivity status to the user.
+     */
+    var monkeyStatusBar: MonkeyStatusBar?
 
     /**
      * Title of the conversations fragment.
@@ -84,12 +80,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         conversationsFragmentOutAnimation = R.anim.mk_fragment_slide_left_out
         chatFragmentOutAnimation = R.anim.mk_fragment_slide_right_out
         conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
-        viewStatusCont = getDefaultViewForStatus()
-        viewStatus = null
-        handlerStatus = null
-        runnableStatus = null
-        pendingAction = null
-        lastColor = android.R.color.white
+        monkeyStatusBar = MonkeyStatusBar(activity)
+        monkeyToolbar = null
     }
 
     /**
@@ -112,121 +104,17 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
-        activity.supportActionBar?.title = conversationsTitle
+        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle)
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
-        initStatusBar()
+        monkeyStatusBar?.initStatusBar()
         addOnBackStackChangedListener()
-    }
-
-    fun getDefaultViewForStatus(): TextView{
-        var textview = TextView(activity)
-        textview.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        textview.setTextColor(Color.WHITE)
-        textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-        textview.gravity = Gravity.CENTER
-        return textview
     }
 
     fun addOnBackStackChangedListener(){
         activity.supportFragmentManager.addOnBackStackChangedListener({
-            if (activity.supportFragmentManager.backStackEntryCount > 0) {
-                activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            } else {
-                activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                activity.supportActionBar?.title = conversationsTitle
-            }
+            monkeyToolbar?.checkIfChatFragmentIsVisible()
         })
-    }
-
-    fun initStatusBar(){
-        viewStatus = activity.findViewById(R.id.viewStatus) as FrameLayout?
-        viewStatus!!.addView(viewStatusCont)
-        viewStatus!!.tag = "iddle"
-        handlerStatus = Handler()
-        runnableStatus = Runnable { closeStatusNotification() }
-    }
-
-    fun changeColorAnimated(targetView: View, colorFrom: Int, colorTo: Int){
-        ObjectAnimator.ofObject(targetView, "backgroundColor", ArgbEvaluator(), colorFrom, colorTo).setDuration(500).start()
-        lastColor = colorTo
-    }
-
-    fun showStatusNotification(status: Utils.ConnectionStatus) {
-
-        if(viewStatus == null)
-            return
-
-        if (viewStatus!!.tag == "iddle" && status==Utils.ConnectionStatus.connected){
-            return
-        }
-
-        if (viewStatus!!.tag == "closing") {
-            pendingAction = Runnable { showStatusNotification(status) }
-            return
-        }
-
-        if(handlerStatus!=null)
-            handlerStatus!!.removeCallbacks(runnableStatus)
-
-        when(status){
-            Utils.ConnectionStatus.connected->{
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connected)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connected))
-                handlerStatus!!.postDelayed(runnableStatus, 1000)
-            }
-            Utils.ConnectionStatus.disconnected -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_disconnected)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_disconnected))
-            }
-            Utils.ConnectionStatus.connecting -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connecting)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
-            }
-            Utils.ConnectionStatus.waiting_for_network -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_no_network)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_no_network))
-            }
-        }
-
-        if (viewStatus!!.tag != "opening" && viewStatus!!.tag != "closing" && viewStatus!!.tag != "opened") {
-            viewStatus!!.tag = "opening"
-            viewStatus!!.animate().translationYBy(activity.resources.getDimension(R.dimen.status_height)).alpha(1.0f).setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {
-                }
-                override fun onAnimationEnd(animation: Animator) {
-                    viewStatus!!.tag = "opened"
-                }
-                override fun onAnimationCancel(animation: Animator) {
-                }
-
-                override fun onAnimationRepeat(animation: Animator) {
-                }
-            })
-        }
-    }
-
-    fun closeStatusNotification() {
-        if (viewStatus != null && viewStatus!!.tag != "closing") {
-            viewStatus!!.tag = "closing"
-            viewStatus!!.animate().translationYBy((-activity.resources.getDimension(R.dimen.status_height)).toFloat()).alpha(0f).setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {
-                }
-                override fun onAnimationEnd(animation: Animator) {
-                    viewStatus!!.tag = "iddle"
-                    handlerStatus!!.post(pendingAction)
-                    pendingAction = null
-                }
-                override fun onAnimationCancel(animation: Animator) {
-                }
-                override fun onAnimationRepeat(animation: Animator) {
-                }
-            })
-        }
     }
 
     /**
@@ -235,10 +123,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
-    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer)
+    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String)
             : Collection<MonkeyConversation>{
         val chatFragment = MonkeyChatFragment()
-        return setChatFragment(chatFragment, inputListener, voiceNotePlayer)
+        return setChatFragment(chatFragment, inputListener, voiceNotePlayer, chatTitle, avatarURL)
     }
 
     /**
@@ -248,7 +136,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
+                        voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String): Collection<MonkeyConversation>{
+
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
         val list = conversationsFragment.takeAllConversations()
@@ -261,11 +150,28 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
                 chatFragmentOutAnimation)
-        ft.replace(fragmentContainerId, chatFragment)
+        ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
 
+        monkeyToolbar?.configureForChat(chatTitle, avatarURL)
+
         return list
+    }
+
+    fun showStatusNotification(status: Utils.ConnectionStatus) {
+        monkeyStatusBar?.showStatusNotification(status)
+    }
+
+    fun setSubtitle(subtitle: String){
+        monkeyToolbar?.setSubtitle(subtitle)
+    }
+
+    companion object {
+        /**
+         * TAG to recognize fragment from Fragment manager
+         */
+        val CHAT_FRAGMENT_TAG: String = "CHAT_TAG"
     }
 
 }

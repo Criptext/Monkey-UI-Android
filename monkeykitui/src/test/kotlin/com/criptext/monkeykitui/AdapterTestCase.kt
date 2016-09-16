@@ -38,7 +38,7 @@ lateinit var adapter: MonkeyAdapter
     }
     class MonkeyActivity: Activity(), ChatActivity {
 
-        override fun onLoadMoreData(conversationId: String) {
+        override fun onLoadMoreMessages(conversationId: String) {
         }
 
         override fun getInitialMessages(conversationId: String): List<MonkeyItem> {
