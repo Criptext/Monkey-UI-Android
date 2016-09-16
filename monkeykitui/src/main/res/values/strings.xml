@@ -8,7 +8,7 @@
     <string name="mk_action_del">Delete</string>
     <string name="mk_action_unsend">Unsend</string>
     <string name="mk_action_share">Share</string>
-    <string name="mk_action_save_gallery">Save to gallery</string>
+    <string name="mk_action_share_with">Share with...</string>
     <string name="mk_commit_photo_changes">Use</string>
     <string name="mk_edit_photo">Edit Photo</string>
     <string name="mk_undo">Undo</string>

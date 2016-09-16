@@ -24,6 +24,7 @@ import com.criptext.monkeykitui.cav.CircularAudioView
 import com.criptext.monkeykitui.dialog.AbstractDialog
 import com.criptext.monkeykitui.recycler.listeners.OnMessageOptionClicked
 import com.criptext.monkeykitui.util.InsertionSort
+import com.criptext.monkeykitui.util.SnackbarUtils
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import com.etiennelawlor.imagegallery.library.activities.ImageGalleryActivity
 import java.io.File
@@ -74,13 +75,24 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         get() =  dataLoader.delayTime
         set(value) { dataLoader.delayTime = value }
 
+    var itemToDelete: MonkeyItem? = null
+    var recyclerView: RecyclerView? = null
+
     init{
         messagesList = ArrayList<MonkeyItem>()
         messagesMap = HashMap()
         selectedMessage = null
         voiceNotePlayer = null
-        receivedMessageOptions = DefaultNameOptions.initReceivedMessageOptions(mContext.resources)
-        sentMessageOptions = DefaultNameOptions.initSentMessageOptions(mContext.resources)
+        var messageOptions = MessageOptions(ctx = mContext,
+                delete = { it: MonkeyItem -> removeItem(it, false)},
+                unsend = { it: MonkeyItem ->
+                    if(it.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
+                            it.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read) {
+                        removeItem(it, true)
+                    }
+                } )
+        receivedMessageOptions = messageOptions.initReceivedMessageOptions()
+        sentMessageOptions = messageOptions.initSentMessageOptions()
         imageListener = object : ImageListener {
             override fun onImageClicked(position: Int, item: MonkeyItem) {
                 val intent = Intent(mContext, FullScreenImageGalleryActivity::class.java)
@@ -126,6 +138,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             else if(item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
                2 //incoming and delivered
             else 3 //incoming and transferring
+
         if(item.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal)
             return item.getMessageType()
 
@@ -710,6 +723,39 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
      */
     fun findMonkeyItemById(id: String) = messagesList.findLast { it.getMessageId() == id }
 
+    fun removeItem(item: MonkeyItem, unsent: Boolean){
+        val pos = getItemPositionByTimestamp(item)
+        if(pos > -1){
+            messagesList.removeAt(pos)
+            notifyItemRemoved(pos)
+            chatActivity.onItemRemoved(item, unsent)
+            /*
+            val recycler = recyclerView
+            if(recycler != null){
+                val msg = "Message deleted"
+                SnackbarUtils.showUndoMessage(recycler = recycler, msg = msg,
+                        undoAction = {
+                            itemToDelete = null
+                            var newPos = Math.abs(getItemPositionByTimestamp(item))
+                            notifyItemInserted(newPos)
+                        },
+                        attachStateChangeListener = object  : View.OnAttachStateChangeListener{
+                    override fun onViewAttachedToWindow(p0: View?) { }
+
+                    override fun onViewDetachedFromWindow(p0: View?) {
+                        val deleted = itemToDelete
+                        if(deleted != null && deleted == item){
+                            chatActivity.onItemRemoved(deleted, unsent)
+                            itemToDelete = null
+                        }
+                    }
+                })
+                //need to wait until snackbar dismissed to leave
+                itemToDelete = item
+            }
+            */
+        }
+    }
     /**
      * Adds a new item to the RecyclerView with a smooth scrolling animation
      * @param item MonkeyItem to add. It will be added at the end of the messagesList, so it should

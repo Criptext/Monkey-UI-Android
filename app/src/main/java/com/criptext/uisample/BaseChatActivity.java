@@ -131,4 +131,9 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     public List<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
         return null;
     }
+
+    @Override
+    public void onItemRemoved(@NotNull MonkeyItem item, boolean unsent) {
+
+    }
 }

@@ -121,6 +121,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         inputView.inputListener = this.inputListener
 
         setInitialMessages()
+        monkeyAdapter.recyclerView = recyclerView
         recyclerView.adapter = monkeyAdapter
         audioUIUpdater = AudioUIUpdater(recyclerView)
         monkeyAdapter.voiceNotePlayer = voiceNotePlayer

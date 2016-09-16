@@ -16,6 +16,7 @@ import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.InsertionSort
+import com.criptext.monkeykitui.util.SnackbarUtils
 import com.criptext.monkeykitui.util.Utils
 import java.util.*
 
@@ -293,14 +294,12 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 val name = conversation.getName()
                 val msg = if(conversation.isGroup()) "${mContext.getString(R.string.mk_exit_group_msg)} \"$name\""
                         else "${mContext.getString(R.string.mk_delete_conversation_msg)} $name"
-                val snack = Snackbar.make(recycler, msg, Snackbar.LENGTH_LONG)
-                snack.setAction(mContext.getString(R.string.mk_undo),  {
-                    conversationToDelete = null
-                    addNewConversation(conversation)
-                })
-                //need to wait until snackbar dismissed to leave
-                conversationToDelete = conversation
-                snack.view.addOnAttachStateChangeListener(object  : View.OnAttachStateChangeListener{
+                SnackbarUtils.showUndoMessage(recycler = recycler, msg = msg,
+                        undoAction = {
+                            conversationToDelete = null
+                            addNewConversation(conversation)
+                        },
+                        attachStateChangeListener = object  : View.OnAttachStateChangeListener{
                     override fun onViewAttachedToWindow(p0: View?) { }
 
                     override fun onViewDetachedFromWindow(p0: View?) {
@@ -310,10 +309,9 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                             conversationToDelete = null
                         }
                     }
-
                 })
-
-                snack.show()
+                //need to wait until snackbar dismissed to leave
+                conversationToDelete = conversation
             }
         }
     }

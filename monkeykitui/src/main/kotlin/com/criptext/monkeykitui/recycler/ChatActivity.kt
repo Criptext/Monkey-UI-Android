@@ -42,6 +42,13 @@ interface ChatActivity {
     fun isOnline() : Boolean
 
     /**
+     * Callback executed when the user removes an item from the Chat. Application may need to
+     * delete files from SD card.
+     * @param item the removed MonkeyItem
+     * @param unsend if true Application should request the server to remotely delete the message from all devices.
+     */
+    fun onItemRemoved(item: MonkeyItem, unsent: Boolean)
+    /**
      * When the user scrolls to the to the end, but there are still more messages to display, this
      * &nbsp\ method will be called to load the next batch of old messages. Once the messages are
      * &nbsp\ ready they should be added to the adapter using the addOldMessages() method.
@@ -83,5 +90,6 @@ interface ChatActivity {
      * @param conversationId the conversation ID of the current chat
      */
     fun onStopChatFragment(conversationId: String)
+
 
 }
