@@ -732,7 +732,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         if(pos > -1){
             messagesList.removeAt(pos)
             notifyItemRemoved(pos)
-            chatActivity.onItemRemoved(item, unsent)
+            chatActivity.onMessageRemoved(item, unsent)
             /*
             val recycler = recyclerView
             if(recycler != null){
@@ -749,7 +749,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                     override fun onViewDetachedFromWindow(p0: View?) {
                         val deleted = itemToDelete
                         if(deleted != null && deleted == item){
-                            chatActivity.onItemRemoved(deleted, unsent)
+                            chatActivity.onMessageRemoved(deleted, unsent)
                             itemToDelete = null
                         }
                     }

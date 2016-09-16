@@ -133,7 +133,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     }
 
     @Override
-    public void onItemRemoved(@NotNull MonkeyItem item, boolean unsent) {
+    public void onMessageRemoved(@NotNull MonkeyItem item, boolean unsent) {
 
     }
 }

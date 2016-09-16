@@ -163,8 +163,4 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     }
 
-    @Override
-    public void onLoadMoreMessages(@NotNull String conversationId) {
-
-    }
 }

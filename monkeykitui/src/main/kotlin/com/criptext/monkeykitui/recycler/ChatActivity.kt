@@ -47,7 +47,7 @@ interface ChatActivity {
      * @param item the removed MonkeyItem
      * @param unsend if true Application should request the server to remotely delete the message from all devices.
      */
-    fun onItemRemoved(item: MonkeyItem, unsent: Boolean)
+    fun onMessageRemoved(item: MonkeyItem, unsent: Boolean)
     /**
      * When the user scrolls to the to the end, but there are still more messages to display, this
      * &nbsp\ method will be called to load the next batch of old messages. Once the messages are
