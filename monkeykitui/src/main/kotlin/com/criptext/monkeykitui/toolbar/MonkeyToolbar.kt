@@ -48,6 +48,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             textViewTitle?.text = conversationsTitle
             imageViewAvatar?.visibility = View.GONE
+            textViewSubtitle?.visibility = View.GONE
         }
     }
 
