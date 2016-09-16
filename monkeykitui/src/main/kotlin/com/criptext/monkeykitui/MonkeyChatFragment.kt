@@ -68,13 +68,15 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val chatConversationId = "MonkeyChatFragment.conversationId"
         val chatmembersGroupIds = "MonkeyChatFragment.membersIds"
         val chatTitleName = "MonkeyChatFragment.titleName"
+        val chatAvatarUrl = "MonkeyChatFragment.avatarUrl"
 
-        fun newInstance(conversationId: String, membersIds: String, chatTitle: String, hasReachedEnd: Boolean): MonkeyChatFragment{
+        fun newInstance(conversationId: String, membersIds: String, chatTitle: String, avatarURL: String, hasReachedEnd: Boolean): MonkeyChatFragment{
             val newInstance = MonkeyChatFragment()
             val newBundle = Bundle()
             newBundle.putString(chatConversationId, conversationId)
             newBundle.putString(chatmembersGroupIds, membersIds)
             newBundle.putString(chatTitleName, chatTitle)
+            newBundle.putString(chatAvatarUrl, avatarURL)
             newBundle.putBoolean(chatHasReachedEnd, hasReachedEnd)
             newInstance.arguments = newBundle
             return newInstance
@@ -106,7 +108,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
         } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
         else
-            (activity as ChatActivity).onLoadMoreData(conversationId)
+            (activity as ChatActivity).onLoadMoreMessages(conversationId)
         val groupChat = (activity as ChatActivity).getGroupChat(conversationId, args.getString(chatmembersGroupIds))
         if(groupChat!=null){
             monkeyAdapter.groupChat = groupChat
@@ -127,8 +129,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         monkeyAdapter.voiceNotePlayer = voiceNotePlayer
         voiceNotePlayer?.uiUpdater = audioUIUpdater
 
-        (activity as AppCompatActivity).supportActionBar?.title = getChatTitle()
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //(activity as AppCompatActivity).supportActionBar?.title = getChatTitle()
+        //(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         FullScreenImageGalleryActivity.setFullScreenImageLoader(this)
 
@@ -208,6 +210,11 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     fun getChatTitle(): String{
         val args = arguments
         return args.getString(chatTitleName)
+    }
+
+    fun getAvatarURL(): String{
+        val args = arguments
+        return args.getString(chatAvatarUrl)
     }
 
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){

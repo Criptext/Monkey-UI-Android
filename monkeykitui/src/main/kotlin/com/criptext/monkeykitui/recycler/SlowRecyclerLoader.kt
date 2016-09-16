@@ -29,7 +29,7 @@ class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context)
                 conversationsActivity?.onLoadMoreConversations(loadedItems)
             } else {
                 val chatActivity = activityRef.get() as? ChatActivity
-                chatActivity?.onLoadMoreData(conversationId)
+                chatActivity?.onLoadMoreMessages(conversationId)
             }
         }, delayTime)
     }

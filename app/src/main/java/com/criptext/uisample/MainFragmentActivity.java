@@ -106,8 +106,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         if(vnPlayer == null)
             vnPlayer = new DefaultVoiceNotePlayer(this);
         MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "",
-                conversation.getName(), false);
-        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
+                conversation.getName(), conversation.getAvatarFilePath()!=null?conversation.getAvatarFilePath():"", false);
+        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer, conversation.getName(), conversation.getAvatarFilePath()!=null?conversation.getAvatarFilePath():"");
         getSupportActionBar().setTitle(conversation.getName());
     }
 
@@ -160,6 +160,11 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void onConversationDeleted(@NotNull MonkeyConversation group) {
+
+    }
+
+    @Override
+    public void onLoadMoreMessages(@NotNull String conversationId) {
 
     }
 }

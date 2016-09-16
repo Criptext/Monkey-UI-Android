@@ -9,8 +9,10 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
@@ -18,6 +20,7 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
+import de.hdodenhof.circleimageview.CircleImageView
 
 /**
  * Created by gesuwall on 8/15/16.
@@ -44,11 +47,22 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * the returning conversations fragment
      */
     var chatFragmentOutAnimation: Int
+
+
+    /**
+     * TAG to recognize fragment from Fragment manager
+     */
+    val CHAT_FRAGMENT_TAG: String = "CHAT_TAG"
+
     /**
      * resource id of the animation to use when the conversations fragment leaves the activity,
      * replaced by the chat fragment
      */
     var conversationsFragmentOutAnimation: Int
+
+    var imageViewAvatar: CircleImageView?
+    var textViewTitle: TextView?
+    var textViewSubtitle: TextView?
 
     /**
      * Components to show connectivity status to the user.
@@ -90,6 +104,9 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         runnableStatus = null
         pendingAction = null
         lastColor = android.R.color.white
+        imageViewAvatar = null
+        textViewTitle = null
+        textViewSubtitle = null
     }
 
     /**
@@ -112,11 +129,27 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
-        activity.supportActionBar?.title = conversationsTitle
+        initToolbar()
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         initStatusBar()
         addOnBackStackChangedListener()
+    }
+
+    fun initToolbar(){
+
+        val mInflater = LayoutInflater.from(activity)
+        val mCustomView = mInflater.inflate(R.layout.custom_toolbar, null)
+
+        activity.supportActionBar?.setDisplayShowTitleEnabled(false)
+        activity.supportActionBar?.customView = mCustomView
+        activity.supportActionBar?.setDisplayShowCustomEnabled(true)
+
+        imageViewAvatar = mCustomView.findViewById(R.id.imageViewAvatar) as CircleImageView
+        textViewTitle = mCustomView.findViewById(R.id.textViewTitle) as TextView
+        textViewSubtitle = mCustomView.findViewById(R.id.textViewSubTitle) as TextView
+
+        checkIfChatFragmentIsVisible()
     }
 
     fun getDefaultViewForStatus(): TextView{
@@ -130,13 +163,22 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
 
     fun addOnBackStackChangedListener(){
         activity.supportFragmentManager.addOnBackStackChangedListener({
-            if (activity.supportFragmentManager.backStackEntryCount > 0) {
-                activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            } else {
-                activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                activity.supportActionBar?.title = conversationsTitle
-            }
+            checkIfChatFragmentIsVisible()
         })
+    }
+
+    fun checkIfChatFragmentIsVisible(){
+        if (activity.supportFragmentManager.backStackEntryCount > 0) {
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
+            textViewTitle?.text = monkeyChatFragment?.getChatTitle()
+            Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, monkeyChatFragment?.getAvatarURL(), true, null)
+            imageViewAvatar?.visibility = View.VISIBLE
+        } else {
+            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            textViewTitle?.text = conversationsTitle
+            imageViewAvatar?.visibility = View.GONE
+        }
     }
 
     fun initStatusBar(){
@@ -235,10 +277,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
-    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer)
+    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String)
             : Collection<MonkeyConversation>{
         val chatFragment = MonkeyChatFragment()
-        return setChatFragment(chatFragment, inputListener, voiceNotePlayer)
+        return setChatFragment(chatFragment, inputListener, voiceNotePlayer, chatTitle, avatarURL)
     }
 
     /**
@@ -248,7 +290,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
+                        voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String): Collection<MonkeyConversation>{
+
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
         val list = conversationsFragment.takeAllConversations()
@@ -261,9 +304,13 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
                 chatFragmentOutAnimation)
-        ft.replace(fragmentContainerId, chatFragment)
+        ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
+
+        Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, true, null)
+        imageViewAvatar?.visibility = View.VISIBLE
+        textViewTitle?.text = chatTitle
 
         return list
     }

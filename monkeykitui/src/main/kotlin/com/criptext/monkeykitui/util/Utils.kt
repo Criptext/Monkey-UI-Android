@@ -4,7 +4,11 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.criptext.monkeykitui.R
+import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -91,6 +95,48 @@ class Utils {
             val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             view.layoutParams = RecyclerView.LayoutParams(params)
             return view
+        }
+
+        /**
+         * Download avatar image with file cache and mem cache.
+         * @param context contexto donde me encuentro
+         * *
+         * @param iv ImageView donde colocar el avatar
+         * *
+         * @param url url de donde descargar el avatar.
+         * *
+         * @param defaultUser true si el fallback debe de ser la imagen default user, de lo contrario usar
+         * *                    default group como fallback
+         */
+        fun setAvatarAsync(context: Context, iv: ImageView, url: String?, isPersonalConv: Boolean, runnable: Runnable?) {
+
+            if(url?.length==0)
+                return
+
+            val fallback_id = if (isPersonalConv) R.drawable.default_avatar else R.drawable.default_group_avatar
+            Picasso.with(context)
+                    .load(url)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .resize(120, 120)
+                    .centerCrop()
+                    .placeholder(fallback_id)
+                    .error(fallback_id)
+                    .into(iv, object : Callback {
+
+                        override fun onSuccess() {
+                            runnable?.run()
+                        }
+
+                        override fun onError() {
+                            Picasso.with(context)
+                                    .load(url)
+                                    .resize(120, 120)
+                                    .centerCrop()
+                                    .placeholder(fallback_id)
+                                    .error(fallback_id)
+                                    .into(iv)
+                        }
+                    })
         }
     }
     enum class ConnectionStatus {

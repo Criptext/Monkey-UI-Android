@@ -664,8 +664,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun takeAllMessages() : List<MonkeyItem>{
-        removeEndOfRecyclerView(true)
-        return messagesList
+
+        return messagesList.filterNot {
+            it-> it is EndItem
+        }
+        //removeEndOfRecyclerView(true)
+        //return messagesList
     }
 
 
