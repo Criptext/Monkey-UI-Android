@@ -163,6 +163,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         monkeyStatusBar?.showStatusNotification(status)
     }
 
+    fun setSubtitle(subtitle: String){
+        monkeyToolbar?.setSubtitle(subtitle)
+    }
+
     companion object {
         /**
          * TAG to recognize fragment from Fragment manager

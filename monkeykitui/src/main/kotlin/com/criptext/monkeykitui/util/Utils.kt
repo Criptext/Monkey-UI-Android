@@ -113,7 +113,7 @@ class Utils {
             if(url?.length==0)
                 return
 
-            val fallback_id = if (isPersonalConv) R.drawable.default_avatar else R.drawable.default_group_avatar
+            val fallback_id = if (isPersonalConv) R.drawable.mk_default_user_img else R.drawable.mk_default_group_avatar
             Picasso.with(context)
                     .load(url)
                     .networkPolicy(NetworkPolicy.OFFLINE)

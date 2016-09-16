@@ -56,4 +56,9 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         imageViewAvatar?.visibility = View.VISIBLE
         textViewTitle?.text = chatTitle
     }
+
+    fun setSubtitle(subtitle: String){
+        textViewSubtitle?.text = subtitle
+        textViewSubtitle?.visibility = View.VISIBLE
+    }
 }
