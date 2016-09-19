@@ -175,6 +175,10 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     fun findMonkeyItemById(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemById(id)
 
+    fun updateMessageDeliveryStatus(message: MonkeyItem){
+        monkeyAdapter.updateMessageDeliveryStatus(message, recyclerView)
+    }
+
     fun rebindMonkeyItem(message: MonkeyItem){
         monkeyAdapter.rebindMonkeyItem(message, recyclerView)
     }

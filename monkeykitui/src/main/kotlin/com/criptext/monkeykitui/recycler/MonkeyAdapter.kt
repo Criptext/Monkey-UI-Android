@@ -155,17 +155,26 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
+
+    fun updateMessageDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
+        recyclerView.itemAnimator.isRunning({
+            val position = getItemPositionByTimestamp(monkeyItem)
+            val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
+            monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus())
+        })
+    }
+
     fun rebindMonkeyItem(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
-        val position = getItemPositionByTimestamp(monkeyItem)
-        val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
-        if(monkeyHolder != null)
-            onBindViewHolder(monkeyHolder, position)
-        else //sometimes recyclerview cant find the viewholder, and never rebind the holder. this may fix it...
-            recyclerView.post(Runnable {
-             //Need to post it because this method should not be called while Recycler is computing layout
-             val position = getItemPositionByTimestamp(monkeyItem)
-             notifyItemChanged(position)
-            })
+        recyclerView.post {
+            val position = getItemPositionByTimestamp(monkeyItem)
+            val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
+            if(monkeyHolder != null)
+                onBindViewHolder(monkeyHolder, position)
+            else {//sometimes recyclerview cant find the viewholder, and never rebind the holder. this may fix it...
+                val position = getItemPositionByTimestamp(monkeyItem)
+                notifyItemChanged(position)
+            }
+        }
     }
 
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
@@ -178,6 +187,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
 
         bindCommonMonkeyHolder(position, item, holder)
+
+        Log.d("MonkeyAdapter", "id: ${item.getMessageId()} at $position")
 
         //type specific stuff
         if(typeClassification == 0 || typeClassification == 2) {

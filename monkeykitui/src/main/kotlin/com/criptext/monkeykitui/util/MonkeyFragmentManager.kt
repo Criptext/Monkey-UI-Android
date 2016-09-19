@@ -118,25 +118,13 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     }
 
     /**
-     * Add a new Chat fragment to the activity with a slide animation replacing any existant
-     * conversations fragment
-     * @param inputListener object that listens to the user's inputs in the chat
-     * @param voiceNotePlayer object that plays voice notes in the chat
-     */
-    fun setChatFragment(inputListener: InputListener, voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String)
-            : Collection<MonkeyConversation>{
-        val chatFragment = MonkeyChatFragment()
-        return setChatFragment(chatFragment, inputListener, voiceNotePlayer, chatTitle, avatarURL)
-    }
-
-    /**
      * Add a Chat fragment to the activity with a slide animation replacing any existant
      * conversations fragment
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer, chatTitle: String, avatarURL: String): Collection<MonkeyConversation>{
+                        voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
 
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
@@ -154,7 +142,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         ft.addToBackStack(null)
         ft.commit()
 
-        monkeyToolbar?.configureForChat(chatTitle, avatarURL)
+        monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL())
 
         return list
     }
