@@ -39,4 +39,11 @@
     <string name="mk_audio_suffix">audio.m4a</string>
 
     <string name="mk_file_error">An error occurred saving your data. Do you have enough space available?</string>
+
+    <string name="mk_text_online">Online</string>
+    <string name="mk_text_offline1">Last seen</string>
+    <string name="mk_text_offline2">Offline</string>
+    <string name="mk_text_members_online_s">member online</string>
+    <string name="mk_text_members_online_p">members online</string>
+
 </resources>
