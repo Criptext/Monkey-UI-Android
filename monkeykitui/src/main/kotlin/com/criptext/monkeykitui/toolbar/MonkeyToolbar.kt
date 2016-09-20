@@ -40,12 +40,11 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
     fun checkIfChatFragmentIsVisible(){
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(
-                    MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
-            if(monkeyChatFragment != null) {
-                configureForChat(monkeyChatFragment.getChatTitle(),
-                        monkeyChatFragment.getAvatarURL(), monkeyChatFragment.getGroupMembers() == null)
-            }
+            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
+            textViewTitle?.text = monkeyChatFragment?.getChatTitle()
+
+            Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, monkeyChatFragment?.getAvatarURL(), !(monkeyChatFragment?.isGroupConversation() ?: false), null)
+            imageViewAvatar?.visibility = View.VISIBLE
         } else {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             textViewTitle.text = conversationsTitle
@@ -54,10 +53,10 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         }
     }
 
-    fun configureForChat(chatTitle: String, avatarURL: String, isPersonalConv: Boolean){
-        Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, isPersonalConv , null)
-        imageViewAvatar.visibility = View.VISIBLE
-        textViewTitle.text = chatTitle
+    fun configureForChat(chatTitle: String, avatarURL: String, isGroup: Boolean){
+        Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, !isGroup, null)
+        imageViewAvatar?.visibility = View.VISIBLE
+        textViewTitle?.text = chatTitle
     }
 
     fun setSubtitle(subtitle: String){

@@ -261,6 +261,12 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         reloadAllMessages();
     }
 
+    fun isGroupConversation(): Boolean?{
+        val args = arguments
+        val conversationId = args.getString(chatConversationId)
+        return conversationId.contains("G:")
+    }
+
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
         val searchItem = object: MonkeyItem {
             override fun getAudioDuration() = 0L
