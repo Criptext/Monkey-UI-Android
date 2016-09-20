@@ -107,7 +107,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             vnPlayer = new DefaultVoiceNotePlayer(this);
         MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "",
                 conversation.getName(), conversation.getAvatarFilePath()!=null?conversation.getAvatarFilePath():"", false);
-        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer, conversation.getName(), conversation.getAvatarFilePath()!=null?conversation.getAvatarFilePath():"");
+        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
         getSupportActionBar().setTitle(conversation.getName());
     }
 

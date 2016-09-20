@@ -129,7 +129,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     @Nullable
     @Override
     public List<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
-        return null;
+        return loader.generateRandomMessages().subList(0, 20);
     }
 
     @Override

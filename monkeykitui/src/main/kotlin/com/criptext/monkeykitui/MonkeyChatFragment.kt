@@ -62,6 +62,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             field = value
         }
 
+    private var isTransitioning = false
+    private var runAfterTransition: Runnable? = null
 
     companion object {
         val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
@@ -200,7 +202,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     fun reloadAllMessages(){
-        monkeyAdapter.notifyDataSetChanged()
+        if(!isTransitioning)
+            monkeyAdapter.notifyDataSetChanged()
+        else {
+            runAfterTransition = Runnable {
+                monkeyAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     fun getAllMessages(): Collection<MonkeyItem> {
@@ -241,8 +249,24 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
-        return if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
+        val animation = if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
             else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationEnd(p0: Animation?) {
+                isTransitioning = false
+                runAfterTransition?.run()
+                runAfterTransition = null
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+                isTransitioning = true
+            }
+
+        })
+        return animation
     }
 
     fun getLastMessage(): MonkeyItem? = monkeyAdapter.getLastItem()
