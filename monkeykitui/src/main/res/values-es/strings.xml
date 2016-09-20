@@ -15,4 +15,10 @@
     <string name="mk_take_picture">Tomar Foto</string>
     <string name="mk_choose_picture">Abrir Galería</string>
     <string name="mk_file_error">Ocurrió un error guardando tus datos. Tienes suficente espacio disponible?</string>
+
+    <string name="mk_text_online">En línea</string>
+    <string name="mk_text_offline1">Última vez</string>
+    <string name="mk_text_offline2">Desconectado</string>
+    <string name="mk_text_members_online_s">miembro en línea</string>
+    <string name="mk_text_members_online_p">miembros en línea</string>
 </resources>

@@ -85,6 +85,43 @@ class Utils {
             return fechaPaelUser
         }
 
+        fun getFormattedDate(timestamp: Long, context: Context?): String {
+
+            val fechaMsj = java.util.Date(timestamp)
+            val fechaAct = java.util.Date()
+            var fechaPaelUser = ""
+            val fechaMensaje = Calendar.getInstance()
+            val fechaActual = Calendar.getInstance()
+            fechaMensaje.time = fechaMsj
+            fechaActual.time = fechaAct
+
+            var strAyer = "Yesterday"
+            if (context != null)
+                strAyer = context.resources.getString(R.string.mk_label_yesterday)
+
+            val diferenciaDias = Math.abs(fechaMensaje.get(Calendar.DAY_OF_MONTH) - fechaActual.get(Calendar.DAY_OF_MONTH))
+            val diferenciaMeses = fechaMensaje.get(Calendar.MONTH) - fechaActual.get(Calendar.MONTH)
+
+            if (diferenciaMeses == 0) {
+                if (diferenciaDias == 0) {
+                    fechaPaelUser = SimpleDateFormat("h:mm a").format(timestamp).toUpperCase()
+                    fechaPaelUser = fechaPaelUser.replace("P.M.".toRegex(), "PM")
+                    fechaPaelUser = fechaPaelUser.replace("A.M.".toRegex(), "AM")
+                } else if (diferenciaDias == 1 || diferenciaDias == -1) {
+                    fechaPaelUser = strAyer
+                } else if (diferenciaDias < 7 && diferenciaDias > 0) {
+                    fechaPaelUser = SimpleDateFormat("EEEE").format(timestamp)
+                    fechaPaelUser = fechaPaelUser.substring(0, 1).toUpperCase() + fechaPaelUser.substring(1).toLowerCase()
+                } else {
+                    fechaPaelUser = SimpleDateFormat("MM/dd/yy").format(timestamp)
+                }
+            } else
+                fechaPaelUser = SimpleDateFormat("MM/dd/yy").format(timestamp)
+
+            return fechaPaelUser
+        }
+
+
         /**
          * Adds a RecyclerView.LayoutParams to a view
          * @param view view to set the new layout params
