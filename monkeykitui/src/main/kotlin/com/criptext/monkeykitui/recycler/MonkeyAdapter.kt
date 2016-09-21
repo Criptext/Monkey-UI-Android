@@ -155,12 +155,24 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
+    open fun isFileMessage(item: MonkeyItem) =
+            item.getMessageType() == MonkeyItem.MonkeyItemType.file.ordinal ||
+            item.getMessageType() == MonkeyItem.MonkeyItemType.photo.ordinal ||
+            item.getMessageType() == MonkeyItem.MonkeyItemType.audio.ordinal
+
 
     fun updateMessageDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
         recyclerView.itemAnimator.isRunning({
             val position = getItemPositionByTimestamp(monkeyItem)
-            val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
-            monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus())
+            if((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
+                    monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read) && isFileMessage(monkeyItem))
+                //File messages need change MonkeyHolder
+                notifyItemChanged(position)
+            else {
+                //All non files just need tu update the checkmark
+                val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
+                monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus())
+            }
         })
     }
 
