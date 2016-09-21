@@ -165,6 +165,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         recyclerView.itemAnimator.isRunning({
             val position = getItemPositionByTimestamp(monkeyItem)
             if((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
+                monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error ||
                     monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read) && isFileMessage(monkeyItem))
                 //File messages need change MonkeyHolder
                 notifyItemChanged(position)

@@ -38,6 +38,9 @@ lateinit var adapter: MonkeyAdapter
     }
     class MonkeyActivity: Activity(), ChatActivity {
 
+        override fun onMessageRemoved(item: MonkeyItem, unsent: Boolean) {
+        }
+
         override fun onLoadMoreMessages(conversationId: String) {
         }
 
