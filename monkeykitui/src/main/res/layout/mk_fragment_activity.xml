@@ -1,20 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!-- This is a layout intended for containing MonkeyChatFragment and/or MonkeyConversationsFragment
-    RelativeLayout has an issue that doesn't render the RecyclerView with the whole size of its
-    container linear layout.
-    The only viable solution is FrameLayout -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <FrameLayout
-        android:id="@+id/viewStatus"
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp">
+
+        <!-- This is a layout intended for containing MonkeyChatFragment and/or MonkeyConversationsFragment
+        RelativeLayout has an issue that doesn't render the RecyclerView with the whole size of its
+        container linear layout.
+        The only viable solution is FrameLayout -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <FrameLayout
+            android:id="@+id/viewStatus"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/status_height"
+            android:layout_marginTop="@dimen/status_inverse_height"
+            android:background="@color/mk_status_connected"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/status_height"
-        android:layout_marginTop="@dimen/status_inverse_height"
-        android:background="@color/mk_status_connected"/>
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mt_toolbar_height"
+            android:background="@color/primary"
+            android:minHeight="@dimen/mt_toolbar_height"
+            app:title=""/>
+
+    </LinearLayout>
+
 </RelativeLayout>
+

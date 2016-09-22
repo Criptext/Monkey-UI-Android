@@ -145,7 +145,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
             ft.commit()
 
             monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
-                    chatFragment.getGroupMembers() == null)
+                    chatFragment.isGroupConversation() ?: false, chatFragment.getConversationId())
 
             return list
         }

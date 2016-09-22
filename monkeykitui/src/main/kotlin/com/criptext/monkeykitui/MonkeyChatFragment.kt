@@ -236,7 +236,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     fun getConversationId(): String{
-        return monkeyAdapter.conversationId
+        try {
+            return monkeyAdapter.conversationId
+        }
+        catch (ex: UninitializedPropertyAccessException){
+            ex.printStackTrace()
+            return ""
+        }
     }
 
     fun getGroupMembers() = arguments.getString(chatmembersGroupIds)

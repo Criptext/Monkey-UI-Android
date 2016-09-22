@@ -110,7 +110,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
                 MonkeyChatFragment.Companion.newGroupInstance("0", conversation.getName(),
                 "", false, System.currentTimeMillis(), conversation.getGroupMembers());
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
-        getSupportActionBar().setTitle(conversation.getName());
     }
 
     @Override
