@@ -55,7 +55,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
                             item.getMessageText(), item.getMessageTimestamp(), item.getMessageTimestampOrder(),
                             item.isIncomingMessage(), MonkeyItem.MonkeyItemType.values()[item.getMessageType()]);
 
-                    newItem.setStatus(MonkeyItem.DeliveryStatus.read);
+                    newItem.setStatus(MonkeyItem.DeliveryStatus.delivered);
                     switch (MonkeyItem.MonkeyItemType.values()[item.getMessageType()]) {
                         case audio: //init audio MessageItem
                             newItem.setDuration(item.getAudioDuration());

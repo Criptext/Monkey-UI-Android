@@ -105,8 +105,10 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             inputListener = createInputListener();
         if(vnPlayer == null)
             vnPlayer = new DefaultVoiceNotePlayer(this);
-        MonkeyChatFragment fragment = MonkeyChatFragment.Companion.newInstance("0", "",
-                conversation.getName(), conversation.getAvatarFilePath()!=null?conversation.getAvatarFilePath():"", false);
+        //set all messages as read, use default avatar
+        MonkeyChatFragment fragment =
+                MonkeyChatFragment.Companion.newGroupInstance("0", conversation.getName(),
+                "", false, System.currentTimeMillis(), conversation.getGroupMembers());
         fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
         getSupportActionBar().setTitle(conversation.getName());
     }
@@ -133,7 +135,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void onLoadMoreConversations(int loadedItems) {
+    public void onLoadMoreConversations(int loreturnadedItems) {
 
     }
 

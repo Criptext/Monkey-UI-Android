@@ -141,7 +141,7 @@ class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : Voic
                 }
 
                 override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus {
-                    return MonkeyItem.DeliveryStatus.read
+                    return MonkeyItem.DeliveryStatus.sending
                 }
 
                 override fun isIncomingMessage(): Boolean {

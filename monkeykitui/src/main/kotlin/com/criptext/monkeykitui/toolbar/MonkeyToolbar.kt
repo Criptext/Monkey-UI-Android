@@ -17,9 +17,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle: String){
 
-    var imageViewAvatar: CircleImageView?
-    var textViewTitle: TextView?
-    var textViewSubtitle: TextView?
+    var imageViewAvatar: CircleImageView
+    var textViewTitle: TextView
+    var textViewSubtitle: TextView
 
     init {
 
@@ -40,26 +40,28 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
     fun checkIfChatFragmentIsVisible(){
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
-            textViewTitle?.text = monkeyChatFragment?.getChatTitle()
-            Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, monkeyChatFragment?.getAvatarURL(), true, null)
-            imageViewAvatar?.visibility = View.VISIBLE
+            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(
+                    MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
+            if(monkeyChatFragment != null) {
+                configureForChat(monkeyChatFragment.getChatTitle(),
+                        monkeyChatFragment.getAvatarURL(), monkeyChatFragment.getGroupMembers() == null)
+            }
         } else {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            textViewTitle?.text = conversationsTitle
-            imageViewAvatar?.visibility = View.GONE
-            textViewSubtitle?.visibility = View.GONE
+            textViewTitle.text = conversationsTitle
+            imageViewAvatar.visibility = View.GONE
+            textViewSubtitle.visibility = View.GONE
         }
     }
 
-    fun configureForChat(chatTitle: String, avatarURL: String){
-        Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, true, null)
-        imageViewAvatar?.visibility = View.VISIBLE
-        textViewTitle?.text = chatTitle
+    fun configureForChat(chatTitle: String, avatarURL: String, isPersonalConv: Boolean){
+        Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, isPersonalConv , null)
+        imageViewAvatar.visibility = View.VISIBLE
+        textViewTitle.text = chatTitle
     }
 
     fun setSubtitle(subtitle: String){
-        textViewSubtitle?.text = subtitle
-        textViewSubtitle?.visibility = View.VISIBLE
+        textViewSubtitle.text = subtitle
+        textViewSubtitle.visibility = View.VISIBLE
     }
 }

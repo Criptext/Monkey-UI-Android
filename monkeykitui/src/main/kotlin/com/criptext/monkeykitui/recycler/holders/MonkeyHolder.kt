@@ -66,15 +66,13 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      *
      * @param status the status of the MonkeyItem bound to this holder
      */
-    open fun updateReadStatus(status : MonkeyItem.DeliveryStatus){
-        if(status == MonkeyItem.DeliveryStatus.read){
-            checkmarkImageView?.setImageDrawable(ContextCompat.getDrawable(
-                    checkmarkImageView?.context, R.drawable.mk_checkmark_read));
-            checkmarkImageView?.visibility = View.VISIBLE
-        } else if(status == MonkeyItem.DeliveryStatus.delivered){
+    open fun updateReadStatus(status : MonkeyItem.DeliveryStatus, read: Boolean){
+        if(status == MonkeyItem.DeliveryStatus.delivered){
             checkmarkImageView?.visibility = View.VISIBLE
             checkmarkImageView?.setImageDrawable(ContextCompat.getDrawable(
-                    checkmarkImageView?.context, R.drawable.mk_checkmark_sent));
+                    checkmarkImageView?.context, if(read) R.drawable.mk_checkmark_read else
+                    R.drawable.mk_checkmark_sent));
+
         } else {
             checkmarkImageView?.visibility = View.GONE
         }

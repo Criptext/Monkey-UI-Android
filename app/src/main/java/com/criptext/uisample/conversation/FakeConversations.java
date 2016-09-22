@@ -25,6 +25,7 @@ public class FakeConversations {
         newConversation = new ConversationItem("G:235", "Devlab",
                 timestamp, MonkeyConversation.ConversationStatus.deliveredMessage.ordinal());
         newConversation.setLastMessage("Donde estan?");
+        newConversation.setGroupMembers("ert34rg345, 5g45g45g5, 46hrth56");
         conversations.add(0, newConversation);
 
         timestamp += 1;

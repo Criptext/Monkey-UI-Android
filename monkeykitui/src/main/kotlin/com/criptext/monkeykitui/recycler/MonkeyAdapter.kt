@@ -1,21 +1,15 @@
 package com.criptext.monkeykitui.recycler
 
-import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.photoview.PhotoViewActivity
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
@@ -24,9 +18,7 @@ import com.criptext.monkeykitui.cav.CircularAudioView
 import com.criptext.monkeykitui.dialog.AbstractDialog
 import com.criptext.monkeykitui.recycler.listeners.OnMessageOptionClicked
 import com.criptext.monkeykitui.util.InsertionSort
-import com.criptext.monkeykitui.util.SnackbarUtils
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
-import com.etiennelawlor.imagegallery.library.activities.ImageGalleryActivity
 import java.io.File
 import java.util.*
 
@@ -78,6 +70,9 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     var itemToDelete: MonkeyItem? = null
     var recyclerView: RecyclerView? = null
 
+    var lastRead = 0L
+    private fun isRead(item: MonkeyItem) = item.getMessageTimestampOrder() <= lastRead
+
     init{
         messagesList = ArrayList<MonkeyItem>()
         messagesMap = HashMap()
@@ -86,8 +81,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         var messageOptions = MessageOptions(ctx = mContext,
                 delete = { it: MonkeyItem -> removeItem(it, false)},
                 unsend = { it: MonkeyItem ->
-                    if(it.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
-                            it.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read) {
+                    if(!it.getDeliveryStatus().isTransferring()) {
                         removeItem(it, true)
                     }
                 } )
@@ -110,6 +104,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     }
 
+    constructor(mContext: Context, conversationId: String, lastRead: Long): this(mContext, conversationId){
+        this.lastRead = lastRead
+    }
+
     val chatActivity : ChatActivity
         get() = mContext as ChatActivity
 
@@ -128,9 +126,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     override fun getItemViewType(position: Int): Int {
         val item = messagesList[position]
-        if(item.getDeliveryStatus().isTransferring()
-                &&(item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered || item.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read))
-            throw IllegalArgumentException();
         val typeConst = if(!item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
                0 //outgoing and delivered
             else if(!item.isIncomingMessage() && item.getDeliveryStatus().isTransferring())
@@ -165,14 +160,13 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         recyclerView.itemAnimator.isRunning({
             val position = getItemPositionByTimestamp(monkeyItem)
             if((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
-                monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error ||
-                    monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.read) && isFileMessage(monkeyItem))
+                monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error) && isFileMessage(monkeyItem))
                 //File messages need change MonkeyHolder
                 notifyItemChanged(position)
             else {
                 //All non files just need tu update the checkmark
                 val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
-                monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus())
+                monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus(), isRead(monkeyItem))
             }
         })
     }
@@ -201,7 +195,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
         bindCommonMonkeyHolder(position, item, holder)
 
-        Log.d("MonkeyAdapter", "id: ${item.getMessageId()} at $position")
+        //Log.d("MonkeyAdapter", "id: ${item.getMessageId()} at $position")
 
         //type specific stuff
         if(typeClassification == 0 || typeClassification == 2) {
@@ -283,7 +277,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             } else
                 holder.hideSenderName()
         } else { //stuff for outgoing messages
-           holder.updateReadStatus(item.getDeliveryStatus())
+           holder.updateReadStatus(item.getDeliveryStatus(), isRead(item))
            holder.updateSendingStatus(item.getDeliveryStatus(), chatActivity.isOnline(), item.getMessageTimestamp())
         }
 

@@ -31,7 +31,7 @@ public class MessageItem  implements MonkeyItem {
         this.itemType = itemType;
         this.placeHolderFilePath = "";
         this.duration = 0;
-        this.status = DeliveryStatus.read;
+        this.status = DeliveryStatus.delivered;
     }
 
     public void setStatus (DeliveryStatus status){

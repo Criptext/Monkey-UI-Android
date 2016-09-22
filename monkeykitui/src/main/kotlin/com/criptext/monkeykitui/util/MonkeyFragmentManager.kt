@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -142,7 +143,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         ft.addToBackStack(null)
         ft.commit()
 
-        monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL())
+        monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
+                chatFragment.getGroupMembers() == null)
 
         return list
     }

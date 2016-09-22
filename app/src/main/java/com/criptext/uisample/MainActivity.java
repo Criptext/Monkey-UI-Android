@@ -4,15 +4,11 @@ package com.criptext.uisample;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.input.MediaInputView;
-import com.criptext.monkeykitui.input.listeners.InputListener;
-import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyAdapter;
 import com.criptext.monkeykitui.recycler.MonkeyConfig;
@@ -24,12 +20,7 @@ import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MainActivity extends BaseChatActivity{
@@ -162,7 +153,6 @@ public class MainActivity extends BaseChatActivity{
 
     @Override
     public void onStartChatFragment(@NotNull String conversationId) {
-
     }
 
     @Override

@@ -22,7 +22,7 @@ class EndItem : MonkeyItem {
 
     override fun isIncomingMessage(): Boolean = true
 
-    override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus  = MonkeyItem.DeliveryStatus.read
+    override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus  = MonkeyItem.DeliveryStatus.delivered
 
     override fun getMessageType(): Int = MonkeyItem.MonkeyItemType.MoreMessages.ordinal
 

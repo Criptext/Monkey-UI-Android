@@ -1,9 +1,5 @@
 package com.criptext.monkeykitui.recycler
 
-import android.graphics.Bitmap
-import android.util.Log
-import android.view.View
-import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import java.util.*
 
 /**
@@ -151,9 +147,7 @@ interface MonkeyItem {
         /* There was an error sending the message */
         error,
         /* The message has been delivered to the server, but the recipient hasn't read it yet */
-        delivered,
-        /* The message has been read by the recipient */
-        read;
+        delivered;
 
         fun isTransferring () = this < delivered
 

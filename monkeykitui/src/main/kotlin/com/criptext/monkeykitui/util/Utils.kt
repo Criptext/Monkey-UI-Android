@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.util
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -147,10 +148,12 @@ class Utils {
          */
         fun setAvatarAsync(context: Context, iv: ImageView, url: String?, isPersonalConv: Boolean, runnable: Runnable?) {
 
-            if(url?.length==0)
-                return
-
             val fallback_id = if (isPersonalConv) R.drawable.mk_default_user_img else R.drawable.mk_default_group_avatar
+            if(url?.length==0) {
+                iv.setImageResource(fallback_id)
+                return
+            }
+
             Picasso.with(context)
                     .load(url)
                     .networkPolicy(NetworkPolicy.OFFLINE)
