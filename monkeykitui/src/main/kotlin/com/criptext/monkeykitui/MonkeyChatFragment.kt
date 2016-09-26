@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -135,6 +136,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         recyclerView = initRecyclerView(view)
 
         inputView = view.findViewById(R.id.inputView) as BaseInputView
+        (inputView as? MediaInputView)?.setDefaultRecorder()
         inputView.inputListener = this.inputListener
 
         setInitialMessages()
@@ -177,6 +179,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onDestroy() {
         super.onDestroy()
+        (inputView as? MediaInputView)?.recorder = null
         (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }
 

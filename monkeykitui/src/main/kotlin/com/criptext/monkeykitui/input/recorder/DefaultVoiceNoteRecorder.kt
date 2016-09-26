@@ -1,9 +1,12 @@
 package com.criptext.monkeykitui.input.recorder
 
+import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.recycler.MonkeyItem
@@ -58,6 +61,7 @@ class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : Voic
                 }
                 startTime = System.currentTimeMillis()
                 mRecorder.start()
+                (ctx as Activity).requestedOrientation = ctx.resources.configuration.orientation
                 return true
             } else {
                 Log.e("DefaultVoiceNoteRec", "Can't write to file")
@@ -76,6 +80,8 @@ class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : Voic
         }catch(e: Exception){
             e.printStackTrace()
         }
+
+         (ctx as Activity).requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
     }
 
     override fun stopRecording() {

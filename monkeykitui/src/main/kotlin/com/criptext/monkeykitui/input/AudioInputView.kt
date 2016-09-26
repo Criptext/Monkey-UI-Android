@@ -81,12 +81,10 @@ open class AudioInputView : TextInputView {
         touchListener.recordingAnimations = slideAnimator
         recBtn.setOnTouchListener(touchListener)
 
-        setDefaultRecorder()
         return SideButton(view, context.resources.getDimension(R.dimen.circle_button_diameter).toInt())
-
     }
 
-    private fun setDefaultRecorder(){
+    fun setDefaultRecorder(){
         val recorder = DefaultVoiceNoteRecorder(context, 1000000L) //1 MB as max size
         this.recorder = recorder
     }
