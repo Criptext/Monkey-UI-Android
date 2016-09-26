@@ -22,15 +22,13 @@ import java.util.*
  * Created by daniel on 4/21/16.
  */
 
-class CameraHandler constructor(ctx : Context){
+class CameraHandler constructor(var context : Context){
 
     var inputListener: InputListener? = null
 
     internal var mPhotoFileName: String? = null
     internal var tempFile: File? = null
     internal var outputFile: File? = null
-
-    var context : Context? = ctx
 
     val TEMP_PHOTO_FILE_NAME = "temp_photo.jpg"
     var photoDirName = "MonkeyKit/Sent Photos"
@@ -120,10 +118,10 @@ class CameraHandler constructor(ctx : Context){
      * Creates a temporary photo file in mPhotoFile. If the photo directory does not exist, it creates it.
      */
     private fun initTemporaryPhotoFile() {
-        tempFile = OutputFile.createTemp(context!!, photoDirName, photoSuffix)
+        tempFile = OutputFile.createTemp(context, photoDirName, photoSuffix)
     }
 
-    fun initOutputFile() = OutputFile.create(context!!, photoDirName, photoSuffix)
+    fun initOutputFile() = OutputFile.create(context, photoDirName, photoSuffix)
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
@@ -140,7 +138,12 @@ class CameraHandler constructor(ctx : Context){
 
         when (RequestType.fromCode(newReqCode)) {
             RequestType.openGallery -> startPhotoEditor(data?.data)
-            RequestType.takePicture -> startPhotoEditor(Uri.fromFile(tempFile))
+            RequestType.takePicture -> {
+                if(tempFile == null){ //temp file lost during config change, create a new reference to it
+                    initTemporaryPhotoFile()
+                }
+                startPhotoEditor(Uri.fromFile(tempFile))
+            }
 
             RequestType.editPhoto -> {
                 

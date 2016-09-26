@@ -24,7 +24,9 @@ class OutputFile {
         fun create(context: Context, dirName: String, suffix: String, temp: Boolean): File? {
             val state = Environment.getExternalStorageState()
 
-            val mPhotoFileName = "$dirName/${System.currentTimeMillis() / 1000}$suffix"
+            //temp file should always have the same name
+            val timeString = if(temp) "" else (System.currentTimeMillis() / 1000).toString()
+            val mPhotoFileName = "$dirName/$timeString$suffix"
             val dir: File
             if (Environment.MEDIA_MOUNTED == state) {
                 dir = File(Environment.getExternalStorageDirectory(), dirName)
@@ -40,7 +42,7 @@ class OutputFile {
             if (!dirExists) dirExists = dir.mkdirs()
             if (!dirExists) return null
 
-            val result = File(dir, "${System.currentTimeMillis() / 1000}$suffix")
+            val result = File(dir, "$timeString$suffix")
 
             if(temp && result.exists())
                 return result

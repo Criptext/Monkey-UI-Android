@@ -29,6 +29,10 @@ open class AttachmentButton : ImageView {
 
     lateinit var cameraHandler: CameraHandler
     var inputListener: InputListener? = null
+        set(value) {
+            cameraHandler.inputListener = value
+            field = value
+        }
 
     lateinit var cameraOptionLabel: String
     lateinit var galleryOptionLabel: String
@@ -83,9 +87,10 @@ open class AttachmentButton : ImageView {
 
         layoutParams = params
         setOnClickListener({
-            cameraHandler.inputListener = inputListener
             SimpleDialog(attachmentOptions).show(context)
         })
+
+        cameraHandler.inputListener = inputListener
     }
 
     open val diameter: Int

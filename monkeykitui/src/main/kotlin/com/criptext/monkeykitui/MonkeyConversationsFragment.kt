@@ -27,7 +27,7 @@ open class MonkeyConversationsFragment: Fragment(){
     open val conversationsLayout: Int
         get() = R.layout.recycler_layout
     lateinit var recyclerView: RecyclerView
-    lateinit protected var conversationsAdapter: MonkeyConversationsAdapter
+    protected var conversationsAdapter: MonkeyConversationsAdapter? = null
 
 
     /**
@@ -49,8 +49,8 @@ open class MonkeyConversationsFragment: Fragment(){
         val view = inflater!!.inflate(conversationsLayout, null)
         recyclerView = initRecyclerView(view)
         conversationsAdapter = MonkeyConversationsAdapter(activity)
-        conversationsAdapter.recyclerView = recyclerView
-        recyclerView!!.adapter = conversationsAdapter
+        conversationsAdapter!!.recyclerView = recyclerView
+        recyclerView.adapter = conversationsAdapter
         return view
     }
 
@@ -72,27 +72,27 @@ open class MonkeyConversationsFragment: Fragment(){
 
     override fun onStop() {
         super.onStop()
-        val pendingConversationToDelete = conversationsAdapter.conversationToDelete
+
+        val pendingConversationToDelete = conversationsAdapter?.conversationToDelete
         if(pendingConversationToDelete != null)
             (activity as ConversationsActivity).onConversationDeleted(pendingConversationToDelete)
-        try {
-            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
-        } catch (ex: UninitializedPropertyAccessException){
-            Log.e("ConversationsFragment", "Uninitialized adapter")
-        }
-        conversationsAdapter.conversationToDelete = null
+
+        val adapter = conversationsAdapter
+        if(adapter != null)
+            (activity as ConversationsActivity).retainConversations(adapter.takeAllConversations())
+
+        conversationsAdapter?.conversationToDelete = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            (activity as ConversationsActivity).retainConversations(conversationsAdapter.takeAllConversations())
-        } catch (ex: UninitializedPropertyAccessException){
-            Log.e("ConversationsFragment", "Uninitialized adapter")
-        }
+        val adapter = conversationsAdapter
+        if(adapter != null)
+            (activity as ConversationsActivity).retainConversations(adapter.takeAllConversations())
     }
 
-    fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter.takeAllConversations()
+    fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter?.takeAllConversations()
+                            ?: listOf()
     /**
      * adds a list of conversations to this adapter. If there were already any conversations, they
      * will be removed.
@@ -102,7 +102,7 @@ open class MonkeyConversationsFragment: Fragment(){
      * loading view when the user scrolls to the end
      */
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsAdapter.insertConversations(conversations, hasReachedEnd)
+        conversationsAdapter?.insertConversations(conversations, hasReachedEnd)
     }
 
 
@@ -111,7 +111,6 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param id unique identifier of the conversation to search
      * @param timestamp long with the timestamp of the conversation to search
      * @return A conversation in the adapter that matches the id and timestamp. null if it does not exists
-     */
     fun findConversation(id: String, timestamp: Long){
         conversationsAdapter.getConversationPositionByTimestamp(object: MonkeyConversation {
             override fun getGroupMembers() = null
@@ -125,6 +124,7 @@ open class MonkeyConversationsFragment: Fragment(){
             override fun isGroup() = false
         })
     }
+     */
 
     /**
      * Looks for a conversation with a given id using linear search. Search start with the latest
@@ -133,12 +133,7 @@ open class MonkeyConversationsFragment: Fragment(){
      * @result the conversation with the matching identifier. null if it does not exist
      */
     fun findConversationById(id: String): MonkeyConversation? {
-        try{
-            return conversationsAdapter.findConversationItemById(id)
-        } catch (ex: UninitializedPropertyAccessException){
-            Log.e("ConversationsFragment", "Uninitialized adapter")
-        }
-        return null
+        return conversationsAdapter?.findConversationItemById(id)
     }
 
     /**
@@ -148,11 +143,11 @@ open class MonkeyConversationsFragment: Fragment(){
      * @param transaction a ConversationTransaction object that updates the conversation item
      */
     fun updateConversation(conversationItem: MonkeyConversation, transaction: ConversationTransaction){
-        conversationsAdapter.updateConversation(conversationItem, transaction)
+        conversationsAdapter?.updateConversation(conversationItem, transaction)
     }
 
     fun updateConversation(conversationItem: MonkeyConversation){
-        conversationsAdapter.updateConversation(conversationItem)
+        conversationsAdapter?.updateConversation(conversationItem)
     }
 
     /**
@@ -163,17 +158,17 @@ open class MonkeyConversationsFragment: Fragment(){
      * loading view when the user scrolls to the end
      */
     fun addOldConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsAdapter.addOldConversations(conversations, hasReachedEnd, recyclerView)
+        conversationsAdapter?.addOldConversations(conversations, hasReachedEnd, recyclerView)
     }
     /**
      * adds a conversation to the top of the recycler view.
      * @param newConversation conversation to add
      */
     fun addNewConversation(newConversation: MonkeyConversation, scrollToFirst: Boolean){
-        conversationsAdapter.addNewConversation(newConversation)
+        conversationsAdapter?.addNewConversation(newConversation)
         if(scrollToFirst)
             recyclerView.smoothScrollToPosition(0)
     }
 
-    fun getLastConversation(): MonkeyConversation? = conversationsAdapter.getLastConversation()
+    fun getLastConversation(): MonkeyConversation? = conversationsAdapter?.getLastConversation()
 }

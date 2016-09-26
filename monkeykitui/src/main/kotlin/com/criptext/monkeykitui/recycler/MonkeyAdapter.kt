@@ -779,7 +779,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
     /**
-     * Adds a new item to the RecyclerView with a smooth scrolling animation
+     * Adds a new item to the RecyclerView with a smooth scrolling animation. The scrolling animation
+     * is only used in any of these 2 conditions:
+     * - The last messages are visible and the new message is added at the last position
+     * - the message was sent by the user.
      * @param item MonkeyItem to add. It will be added at the end of the messagesList, so it should
      * have a higher timestamp than the other messages.
      * @recylerview The recyclerView object that displays the messages.
@@ -797,8 +800,11 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
             messagesMap.put(item.getMessageId(), true)
 
-            //Only scroll if this is the latest message
-            if (newPos == (messagesList.size - 1) && last >= messagesList.size - 2) {
+            //Only scroll if the latest messages are visible and new message goes right next
+            //OR... message was sent by the user.
+            val latestMessagesAreVisible = last >= messagesList.size - 2
+            val newMessageIsLatest = newPos == (messagesList.size - 1)
+            if ((newMessageIsLatest && latestMessagesAreVisible) || !item.isIncomingMessage()) {
                 recyclerView.scrollToPosition(messagesList.size - 1);
             }
         }
