@@ -119,23 +119,11 @@ open class BaseInputView : FrameLayout {
      * @param customBackground drawable to set as background
      */
     fun setBarBackground(customBackground: Drawable?){
-        if(barBackground != null)
-            removeView(barBackground)
-
-        val view = View(context)
 
         if(customBackground != null) {
-             view.safelySetBackground(customBackground)
-         } else
-            view.setBackgroundColor(Color.WHITE)
-
-
-        val  params = LayoutParams(LayoutParams.MATCH_PARENT, context.resources.getDimension(R.dimen.default_inputview_height).toInt())
-        params.gravity = Gravity.BOTTOM
-        view.layoutParams = params
-        addView(view)
-
-        barBackground = view
+            safelySetBackground(customBackground)
+        } else
+            setBackgroundColor(Color.WHITE)
     }
 
     /**

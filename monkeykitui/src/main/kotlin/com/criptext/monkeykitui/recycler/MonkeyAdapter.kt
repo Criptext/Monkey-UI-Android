@@ -552,6 +552,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             //Scroll only if position is not in the last position
             val manager = recyclerView.layoutManager as LinearLayoutManager
             if(messagesList.size - filteredData.size > 0 && !isLastItemDisplaying(manager)) {
+                notifyItemChanged(filteredData.size);
                 manager.scrollToPositionWithOffset(filteredData.size,
                         mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
             }
