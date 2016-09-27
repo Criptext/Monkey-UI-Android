@@ -29,6 +29,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     private val conversationsList: ArrayList<MonkeyConversation>
     val mSelectableItemBg: Int
 
+    private val conversationsMap: HashMap<String, Boolean>
+
     private val conversationsActivity: ConversationsActivity
     get() = mContext as ConversationsActivity
 
@@ -64,6 +66,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
+        conversationsMap = HashMap()
         //get that clickable background
         val mTypedValue = TypedValue();
         mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
@@ -233,6 +236,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsList.clear()
+        conversationsMap.clear()
         removeEndOfRecyclerView()
         //sanity check
         for(conv in conversations)
@@ -261,6 +265,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         if(!silent)
             notifyItemInserted(actualPosition)
 
+        conversationsMap.put(newConversation.getConvId(), true)
         return actualPosition
     }
 
@@ -288,6 +293,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val pos = getConversationPositionByTimestamp(conversation)
         if(pos > -1){
             conversationsList.removeAt(pos)
+            conversationsMap.put(conversation.getConvId(), false)
             notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
@@ -323,20 +329,21 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
      * loading view when the user scrolls to the end
      */
-    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean,
-                            recyclerView: RecyclerView){
+    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         removeEndOfRecyclerView()
+        val filteredConversations = oldConversations.filterNot { it -> conversationsMap.contains(it.getConvId()) }
         if(oldConversations.size > 0) {
 
             //sanity check
-            for(conv in oldConversations)
+            for(conv in filteredConversations) {
                 assertConversationIsNotEndItem(conv)
+                conversationsMap.put(conv.getConvId(), true)
+            }
 
-            val manager = recyclerView.layoutManager as LinearLayoutManager
             val firstNewIndex = conversationsList.size
-            conversationsList.addAll(oldConversations)
+            conversationsList.addAll(filteredConversations)
             InsertionSort(conversationsList, MonkeyConversation.defaultComparator, Math.max(1, firstNewIndex)).sort()
-            notifyItemRangeInserted(firstNewIndex, oldConversations.size);
+            notifyItemRangeInserted(firstNewIndex, filteredConversations.size);
         }
         this.hasReachedEnd = hasReachedEnd
     }
@@ -361,19 +368,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1) {
             notifyItemChanged(position)
-        }
-    }
-
-    /**
-     * remove a conversation from the recyclerView, calls notifyItemRemoved with the removed conversation's
-     * position
-     * @param conversation the conversation to remove.
-     */
-    fun removeConversation(conversation: MonkeyConversation){
-        val position = getConversationPositionByTimestamp(conversation)
-        if(position > -1) {
-            conversationsList.removeAt(position)
-            notifyItemRemoved(position)
         }
     }
 
