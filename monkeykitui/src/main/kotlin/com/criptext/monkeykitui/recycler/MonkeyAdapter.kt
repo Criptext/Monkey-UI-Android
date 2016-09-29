@@ -709,6 +709,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     fun getItemPositionByTimestamp(item: MonkeyItem) = MonkeyItem.findItemPositionInList(item, messagesList)
 
     /**
+     * Finds the adapter position by the MonkeyItem's id.
+     * @param targetId the id of the MonkeyItem whose adapter position will be searched. This
+     * timestamp must belong to an existing MonkeyItem in this adapter.
+     * @return The adapter position of the MonkeyItem. If the item was not found returns -1
+     */
+    fun getItemPositionById(targetId: String) = MonkeyItem.findItemPositionIdInList(targetId, messagesList)
+
+    /**
      * finds a message using the order timestamp and the ID with a binary search algorithm.
      * @param searchItem a monkeyItem containing the requested item's ID and order timestamp.
      * @return the requested item. Null if the item was not found.
@@ -733,6 +741,24 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             val old = messagesList.removeAt(position)
             var temp = transaction.invoke(old)
             messagesList[position] = temp
+            if(temp.getDeliveryStatus() != old.getDeliveryStatus())
+                notifyItemChanged(position)
+            else
+                rebindMonkeyItem(temp, recyclerView)
+        }
+    }
+
+    /**
+     * finds a message using the ID with a reverse search iteration, then
+     * updates it using a MonkeyItemTransaction object.
+     * @param searchItem a String containing the requested item's ID.
+     */
+    fun updateMessageWithId(searchId: String, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
+        val position = getItemPositionById(searchId)
+        if(position > -1) {
+            val old = messagesList.removeAt(position)
+            var temp = transaction.invoke(old)
+            messagesList.add(position, temp);
             if(temp.getDeliveryStatus() != old.getDeliveryStatus())
                 notifyItemChanged(position)
             else

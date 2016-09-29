@@ -117,6 +117,22 @@ interface MonkeyItem {
         fun findItemPositionInList(monkeyItem: MonkeyItem, list: List<MonkeyItem>) =
                 list.binarySearch(monkeyItem, defaultComparator)
 
+        /**
+         * Search for a monkeyItem by its ID in a List
+         * Returns the position of the monkeyItem in the List
+         */
+        fun findItemPositionIdInList(searchId: String, list: List<MonkeyItem>): Int{
+            // Generate an iterator. Start just after the last element.
+            val li = list.listIterator(list.size)
+
+            while(li.hasPrevious()){
+                if(li.previous().getMessageId() == searchId){
+                    return li.previousIndex() + 1;
+                }
+            }
+            return -1;
+        }
+
         fun findItemPositionInList(id: String, dateorder: Long, list: List<MonkeyItem>): Int {
             val searchItem = object : MonkeyItem {
                 override fun getAudioDuration() = 0L
