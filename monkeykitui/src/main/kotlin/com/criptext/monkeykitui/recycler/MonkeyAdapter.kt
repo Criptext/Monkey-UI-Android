@@ -70,6 +70,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     var itemToDelete: MonkeyItem? = null
     var recyclerView: RecyclerView? = null
 
+    /**
+     * timestamp in miliseconds of the last time the other party read the conversation's messages.
+     * This value is used to display the read status of every message.
+     */
     var lastRead = 0L
     private fun isRead(item: MonkeyItem) = item.getMessageTimestampOrder() <= lastRead
 

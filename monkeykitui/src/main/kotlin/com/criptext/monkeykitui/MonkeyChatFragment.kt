@@ -247,7 +247,15 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         return args.getString(chatAvatarUrl)
     }
 
-    fun setLastRead(lastRead: Long) { monkeyAdapter.lastRead = lastRead }
+    /**
+     * Updates the read status of all messages according to the new conversation lastRead value
+     * @param lastRead a timestamp with the last time the the other party read the conversation's
+     * messages. All messages with a sent timestamp lower than this will be displayed as read.
+     */
+    fun setLastRead(lastRead: Long) {
+        monkeyAdapter.lastRead = lastRead
+        reloadAllMessages();
+    }
 
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
         val searchItem = object: MonkeyItem {
