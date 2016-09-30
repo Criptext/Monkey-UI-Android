@@ -303,6 +303,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     fun getFirstMessage(): MonkeyItem? = monkeyAdapter.getFirstItem()
 
+    fun removeMonkeyItem(id: String) = monkeyAdapter.removeItemById(id)
+
     override fun loadFullScreenImage(iv: ImageView?, imageUrl: String?, width: Int, bglinearLayout: LinearLayout?) {
         if (imageUrl?.length != 0) {
             Picasso.with(iv?.context).load(File(imageUrl)).resize(width, 0).into(iv)

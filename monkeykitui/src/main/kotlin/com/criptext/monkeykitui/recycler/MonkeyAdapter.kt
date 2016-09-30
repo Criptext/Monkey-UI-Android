@@ -799,6 +799,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             */
         }
     }
+
+    fun removeItemById(id: String){
+        val pos = getItemPositionById(id)
+        if(pos > -1){
+            messagesList.removeAt(pos)
+            notifyItemRemoved(pos)
+        }
+    }
     /**
      * Adds a new item to the RecyclerView with a smooth scrolling animation. The scrolling animation
      * is only used in any of these 2 conditions:
