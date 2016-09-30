@@ -15,6 +15,8 @@ import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
+import com.criptext.monkeykitui.toolbar.MonkeyToolbar;
+import com.criptext.monkeykitui.toolbar.ToolbarDelegate;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
 import com.criptext.monkeykitui.util.Utils;
 import com.criptext.uisample.conversation.FakeConversations;
@@ -29,7 +31,7 @@ import java.util.List;
 /**
  * Created by gesuwall on 8/10/16.
  */
-public class MainFragmentActivity extends BaseChatActivity implements ConversationsActivity {
+public class MainFragmentActivity extends BaseChatActivity implements ConversationsActivity, ToolbarDelegate {
     MonkeyChatFragment chatFragment;
     MonkeyConversationsFragment convFragment;
     VoiceNotePlayer vnPlayer;
@@ -164,4 +166,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     }
 
+    @Override
+    public void onClickToolbar(@NotNull String monkeyID, @NotNull String name, @NotNull String lastSeen, @NotNull String avatarURL) {
+
+    }
 }

@@ -70,6 +70,19 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var conversationsTitle: String = "UI Sample"
 
     /**
+     * Color for expanded status bar
+     */
+    var expandedToolbarColor: Int = 0
+        get() {
+        if(field == 0){
+            val value = TypedValue()
+            activity.theme.resolveAttribute(R.attr.colorPrimary, value, true)
+            return value.data
+        }
+        return field
+    }
+
+    /**
      * resource id of the animation to use when the conversations fragment reenters the activity,
      * replacing the chat fragment
      */
@@ -105,7 +118,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
-        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle)
+        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle, expandedToolbarColor)
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()

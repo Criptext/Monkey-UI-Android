@@ -22,7 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView
  * Created by daniel on 9/16/16.
  */
 
-open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle: String){
+open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle: String, var expandColor: Int){
 
     var imageViewAvatar: CircleImageView?
     var toolbar: Toolbar
@@ -83,7 +83,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         morphyToolbar?.setOnClickListener(View.OnClickListener {
             if (activity.supportFragmentManager.backStackEntryCount > 0) {
                 if (morphyToolbar?.isCollapsed ?:false) {
-                    morphyToolbar?.expand(Color.BLUE, Color.BLUE)
+                    morphyToolbar?.expand(expandColor, expandColor)
                     (activity as ToolbarDelegate).onClickToolbar(monkeyId?:"",
                             morphyToolbar?.title?:"", morphyToolbar?.subTitle?:"", avatarURL?:"")
                 } else {
