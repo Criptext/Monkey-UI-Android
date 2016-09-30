@@ -753,22 +753,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     /**
-     * finds a message using the ID with a reverse search iteration, then
-     * updates it using a MonkeyItemTransaction object.
-     * @param searchItem a String containing the requested item's ID.
+     * Looks for a monkey item with a specified Id, starting by the most recent ones.
+     * @return the message with the requested Id. returns null if the message does not exist
      */
-    fun updateMessageWithId(searchId: String, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
-        val position = getItemPositionById(searchId)
-        if(position > -1) {
-            val old = messagesList.removeAt(position)
-            var temp = transaction.invoke(old)
-            messagesList.add(position, temp);
-            if(temp.getDeliveryStatus() != old.getDeliveryStatus())
-                notifyItemChanged(position)
-            else
-                rebindMonkeyItem(temp, recyclerView)
-        }
-    }
+
+
+    fun findMonkeyItemByIdReverse(id: String) : MonkeyItem? = messagesList.get(getItemPositionById(id))
 
     /**
      * Looks for a monkey item with a specified Id, starting by the most recent ones.

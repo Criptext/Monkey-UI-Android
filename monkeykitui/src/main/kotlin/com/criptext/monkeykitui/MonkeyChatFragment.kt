@@ -193,6 +193,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     fun findMonkeyItemById(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemById(id)
 
+    fun findMonkeyItemByIdReverse(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemByIdReverse(id)
+
     fun updateMessageDeliveryStatus(message: MonkeyItem){
         monkeyAdapter.updateMessageDeliveryStatus(message, recyclerView)
     }
@@ -274,10 +276,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             override fun isIncomingMessage() = true
         }
         monkeyAdapter.updateMessage(searchItem, transaction, recyclerView)
-    }
-
-    fun updateMessageWithId(messageId: String, transaction: MonkeyItemTransaction){
-        monkeyAdapter.updateMessageWithId(messageId, transaction, recyclerView)
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
