@@ -193,8 +193,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     fun findMonkeyItemById(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemById(id)
 
-    fun findMonkeyItemByIdReverse(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemByIdReverse(id)
-
     fun updateMessageDeliveryStatus(message: MonkeyItem){
         monkeyAdapter.updateMessageDeliveryStatus(message, recyclerView)
     }

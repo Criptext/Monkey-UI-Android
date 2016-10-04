@@ -121,7 +121,7 @@ interface MonkeyItem {
          * Search for a monkeyItem by its ID in a List
          * Returns the position of the monkeyItem in the List
          */
-        fun findItemPositionIdInList(searchId: String, list: List<MonkeyItem>): Int{
+        fun findLastPositionById(searchId: String, list: List<MonkeyItem>): Int{
             // Generate an iterator. Start just after the last element.
             val li = list.listIterator(list.size)
 

@@ -718,7 +718,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
      * timestamp must belong to an existing MonkeyItem in this adapter.
      * @return The adapter position of the MonkeyItem. If the item was not found returns -1
      */
-    fun getItemPositionById(targetId: String) = MonkeyItem.findItemPositionIdInList(targetId, messagesList)
+    fun getLastItemPositionById(targetId: String) = MonkeyItem.findLastPositionById(targetId, messagesList)
 
     /**
      * finds a message using the order timestamp and the ID with a binary search algorithm.
@@ -743,22 +743,16 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val position = getItemPositionByTimestamp(searchItem)
         if(position > -1) {
             val old = messagesList.removeAt(position)
-            var temp = transaction.invoke(old)
+            val temp = transaction.invoke(old)
             messagesList[position] = temp
+            messagesMap.remove(old.getMessageId())
+            messagesMap.put(temp.getMessageId(), true)
             if(temp.getDeliveryStatus() != old.getDeliveryStatus())
                 notifyItemChanged(position)
             else
                 rebindMonkeyItem(temp, recyclerView)
         }
     }
-
-    /**
-     * Looks for a monkey item with a specified Id, starting by the most recent ones.
-     * @return the message with the requested Id. returns null if the message does not exist
-     */
-
-
-    fun findMonkeyItemByIdReverse(id: String) : MonkeyItem? = messagesList.get(getItemPositionById(id))
 
     /**
      * Looks for a monkey item with a specified Id, starting by the most recent ones.
@@ -801,9 +795,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun removeItemById(id: String){
-        val pos = getItemPositionById(id)
+        val pos = getLastItemPositionById(id)
         if(pos > -1){
             messagesList.removeAt(pos)
+            messagesMap.remove(id);
             notifyItemRemoved(pos)
         }
     }
