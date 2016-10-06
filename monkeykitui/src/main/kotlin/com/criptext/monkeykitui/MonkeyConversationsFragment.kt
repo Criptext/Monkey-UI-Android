@@ -89,6 +89,7 @@ open class MonkeyConversationsFragment: Fragment(){
         val adapter = conversationsAdapter
         if(adapter != null)
             (activity as ConversationsActivity).retainConversations(adapter.takeAllConversations())
+
     }
 
     fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter?.takeAllConversations()
@@ -148,6 +149,10 @@ open class MonkeyConversationsFragment: Fragment(){
 
     fun updateConversation(conversationItem: MonkeyConversation){
         conversationsAdapter?.updateConversation(conversationItem)
+    }
+
+    fun updateConversations(set: Set<Map.Entry<MonkeyConversation, ConversationTransaction>>) {
+        conversationsAdapter?.updateConversations(set)
     }
 
     /**

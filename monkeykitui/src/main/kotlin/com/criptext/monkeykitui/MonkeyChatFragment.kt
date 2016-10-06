@@ -209,7 +209,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
     }
 
-    fun smoothlyAddNewItems(messages: ArrayList<MonkeyItem>){
+    fun smoothlyAddNewItems(messages: List<MonkeyItem>){
         monkeyAdapter.smoothlyAddNewItems(messages, recyclerView)
     }
 

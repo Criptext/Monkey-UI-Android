@@ -371,6 +371,24 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
+    fun updateConversations(set: Set<Map.Entry<MonkeyConversation, ConversationTransaction>>) {
+        val iterator = set.iterator()
+        while(iterator.hasNext()) {
+            val entry = iterator.next()
+            val transaction = entry.value
+            val conversationPos = conversationsList.indexOfFirst { conv -> conv.getConvId() == entry.key.getConvId() }
+            if(conversationPos == -1)
+                throw IllegalArgumentException("Update failed. Conversation with ID: ${entry.key.getConvId()}" +
+                "not found in adapter.")
+            else {
+                val conversation = conversationsList.removeAt(conversationPos)
+                transaction.updateConversation(conversation)
+                addNewConversation(conversation, true)
+            }
+        }
+        notifyDataSetChanged()
+    }
+
     fun getLastConversation(): MonkeyConversation? {
         if(conversationsList.size > 1) {
             val last = conversationsList[conversationsList.size - 1]
