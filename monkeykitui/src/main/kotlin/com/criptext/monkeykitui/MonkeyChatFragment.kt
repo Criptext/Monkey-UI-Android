@@ -276,10 +276,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         monkeyAdapter.updateMessage(searchItem, transaction, recyclerView)
     }
 
-    fun updateMessageWithId(messageId: String, transaction: MonkeyItemTransaction){
-        monkeyAdapter.updateMessageWithId(messageId, transaction, recyclerView)
-    }
-
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         val animation = if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
             else AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_out)
@@ -304,6 +300,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     fun getLastMessage(): MonkeyItem? = monkeyAdapter.getLastItem()
 
     fun getFirstMessage(): MonkeyItem? = monkeyAdapter.getFirstItem()
+
+    fun removeMonkeyItem(id: String) = monkeyAdapter.removeItemById(id)
 
     override fun loadFullScreenImage(iv: ImageView?, imageUrl: String?, width: Int, bglinearLayout: LinearLayout?) {
         if (imageUrl?.length != 0) {

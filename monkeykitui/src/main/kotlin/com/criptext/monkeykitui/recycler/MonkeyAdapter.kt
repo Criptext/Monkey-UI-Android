@@ -718,7 +718,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
      * timestamp must belong to an existing MonkeyItem in this adapter.
      * @return The adapter position of the MonkeyItem. If the item was not found returns -1
      */
-    fun getItemPositionById(targetId: String) = MonkeyItem.findItemPositionIdInList(targetId, messagesList)
+    fun getLastItemPositionById(targetId: String) = MonkeyItem.findLastPositionById(targetId, messagesList)
 
     /**
      * finds a message using the order timestamp and the ID with a binary search algorithm.
@@ -743,26 +743,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val position = getItemPositionByTimestamp(searchItem)
         if(position > -1) {
             val old = messagesList.removeAt(position)
-            var temp = transaction.invoke(old)
+            val temp = transaction.invoke(old)
             messagesList[position] = temp
-            if(temp.getDeliveryStatus() != old.getDeliveryStatus())
-                notifyItemChanged(position)
-            else
-                rebindMonkeyItem(temp, recyclerView)
-        }
-    }
-
-    /**
-     * finds a message using the ID with a reverse search iteration, then
-     * updates it using a MonkeyItemTransaction object.
-     * @param searchItem a String containing the requested item's ID.
-     */
-    fun updateMessageWithId(searchId: String, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
-        val position = getItemPositionById(searchId)
-        if(position > -1) {
-            val old = messagesList.removeAt(position)
-            var temp = transaction.invoke(old)
-            messagesList.add(position, temp);
+            messagesMap.remove(old.getMessageId())
+            messagesMap.put(temp.getMessageId(), true)
             if(temp.getDeliveryStatus() != old.getDeliveryStatus())
                 notifyItemChanged(position)
             else
@@ -807,6 +791,15 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                 itemToDelete = item
             }
             */
+        }
+    }
+
+    fun removeItemById(id: String){
+        val pos = getLastItemPositionById(id)
+        if(pos > -1){
+            messagesList.removeAt(pos)
+            messagesMap.remove(id);
+            notifyItemRemoved(pos)
         }
     }
     /**
