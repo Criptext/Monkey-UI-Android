@@ -15,9 +15,11 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
+import com.criptext.monkeykitui.MonkeyInfoFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.recycler.MonkeyUser
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.toolbar.MonkeyStatusBar
 import com.criptext.monkeykitui.toolbar.MonkeyToolbar
@@ -165,6 +167,17 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         return listOf()
     }
 
+    fun setInfoFragment(infoFragment: MonkeyInfoFragment){
+        val ft = activity.supportFragmentManager.beginTransaction();
+        ft.setCustomAnimations(chatFragmentInAnimation,
+                conversationsFragmentOutAnimation,
+                conversationsFragmentInAnimation,
+                chatFragmentOutAnimation)
+        ft.add(fragmentContainerId, infoFragment)
+        ft.addToBackStack(null)
+        ft.commit()
+    }
+
     fun showStatusNotification(status: Utils.ConnectionStatus) {
         monkeyStatusBar?.showStatusNotification(status)
     }
@@ -178,6 +191,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
          * TAG to recognize fragment from Fragment manager
          */
         val CHAT_FRAGMENT_TAG: String = "CHAT_TAG"
+        val INFO_FRAGMENT_TAG: String = "INFO_TAG"
     }
 
 }

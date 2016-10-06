@@ -117,7 +117,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val conversationId = args.getString(chatConversationId)
         val reachedEnd = args.getBoolean(chatHasReachedEnd)
         val lastRead = args.getLong(initalLastReadValue)
-       monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
+        monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
             monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
