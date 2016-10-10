@@ -360,7 +360,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             conversationsList.removeAt(position)
             transaction.updateConversation(conversation)
             swapConversationPosition(conversation, position)
-        } else throw IllegalArgumentException("Conversation with ID: ${conversation.getConvId()} and " +
+        } else Log.e("ConversationsAdapter", "Conversation with ID: ${conversation.getConvId()} and " +
                 "timestamp: ${conversation.getDatetime()} not found in adapter.")
     }
 
@@ -378,7 +378,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             val transaction = entry.value
             val conversationPos = conversationsList.indexOfFirst { conv -> conv.getConvId() == entry.key.getConvId() }
             if(conversationPos == -1)
-                throw IllegalArgumentException("Update failed. Conversation with ID: ${entry.key.getConvId()}" +
+                Log.e("ConversationsAdapter", "Update failed. Conversation with ID: ${entry.key.getConvId()}" +
                 "not found in adapter.")
             else {
                 val conversation = conversationsList.removeAt(conversationPos)

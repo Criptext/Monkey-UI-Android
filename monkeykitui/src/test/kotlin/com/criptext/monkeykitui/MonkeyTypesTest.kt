@@ -70,8 +70,6 @@ class MonkeyTypesTest: AdapterTestCase(){
     @Throws (Exception::class)
     fun textMessagesShouldHaveAMonkeyTextHolder() {
 
-        testThatMessageGetsAMonkeyTextHolder(incoming = true, status = MonkeyItem.DeliveryStatus.read)
-        testThatMessageGetsAMonkeyTextHolder(incoming = false, status = MonkeyItem.DeliveryStatus.read)
         testThatMessageGetsAMonkeyTextHolder(incoming = true, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyTextHolder(incoming = false, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyTextHolder(incoming = true, status = MonkeyItem.DeliveryStatus.sending)
@@ -125,8 +123,6 @@ class MonkeyTypesTest: AdapterTestCase(){
     @Throws (Exception::class)
     fun voiceNotesShouldHaveAMonkeyAudioHolder() {
 
-        testThatMessageGetsAMonkeyAudioHolder(incoming = true, status = MonkeyItem.DeliveryStatus.read)
-        testThatMessageGetsAMonkeyAudioHolder(incoming = false, status = MonkeyItem.DeliveryStatus.read)
         testThatMessageGetsAMonkeyAudioHolder(incoming = true, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyAudioHolder(incoming = false, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyAudioHolder(incoming = true, status = MonkeyItem.DeliveryStatus.sending)
@@ -180,8 +176,6 @@ class MonkeyTypesTest: AdapterTestCase(){
     @Throws (Exception::class)
     fun photosShouldHaveAMonkeyImageHolder() {
 
-        testThatMessageGetsAMonkeyImageHolder(incoming = true, status = MonkeyItem.DeliveryStatus.read)
-        testThatMessageGetsAMonkeyImageHolder(incoming = false, status = MonkeyItem.DeliveryStatus.read)
         testThatMessageGetsAMonkeyImageHolder(incoming = true, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyImageHolder(incoming = false, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyImageHolder(incoming = true, status = MonkeyItem.DeliveryStatus.sending)
@@ -254,8 +248,6 @@ class MonkeyTypesTest: AdapterTestCase(){
     @Throws (Exception::class)
     fun filesShouldHaveAMonkeyFileHolder() {
 
-        testThatMessageGetsAMonkeyFileHolder(incoming = true, status = MonkeyItem.DeliveryStatus.read)
-        testThatMessageGetsAMonkeyFileHolder(incoming = false, status = MonkeyItem.DeliveryStatus.read)
         testThatMessageGetsAMonkeyFileHolder(incoming = true, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyFileHolder(incoming = false, status = MonkeyItem.DeliveryStatus.delivered)
         testThatMessageGetsAMonkeyFileHolder(incoming = true, status = MonkeyItem.DeliveryStatus.sending)

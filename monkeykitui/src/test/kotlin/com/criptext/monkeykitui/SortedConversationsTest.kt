@@ -76,7 +76,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         newPage.add(newConversation(time + 2, "129"))
         newPage.add(newConversation(time + 1, "130"))
 
-        adapter.addOldConversations(newPage, true, recycler!!)
+        adapter.addOldConversations(newPage, true)
         val list = adapter.takeAllConversations()
         assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
     }
@@ -136,7 +136,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         oldPage.add(newConversation(time + 1, "155", 0))
 
         try {
-            adapter.addOldConversations(oldPage, true, recycler!!)
+            adapter.addOldConversations(oldPage, true)
         } catch (ex: IllegalArgumentException){
             crashWithOldConversations = true
         }

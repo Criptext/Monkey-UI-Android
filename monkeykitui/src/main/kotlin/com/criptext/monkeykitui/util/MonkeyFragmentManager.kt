@@ -128,25 +128,28 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
                         voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
 
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
-                fragmentContainerId) as MonkeyConversationsFragment //finding by id may be too slow?
-        val list = conversationsFragment.takeAllConversations()
-        chatFragment.inputListener = inputListener
-        //instantiate an object to play voice notes and pass it to the fragment
-        chatFragment.voiceNotePlayer = voiceNotePlayer
-        val ft = activity.supportFragmentManager.beginTransaction();
-        //animations must be set before adding or replacing fragments
-        ft.setCustomAnimations(chatFragmentInAnimation,
-                conversationsFragmentOutAnimation,
-                conversationsFragmentInAnimation,
-                chatFragmentOutAnimation)
-        ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
-        ft.addToBackStack(null)
-        ft.commit()
+                fragmentContainerId) as? MonkeyConversationsFragment? //finding by id may be too slow?
+        if(conversationsFragment != null) {
+            val list = conversationsFragment.takeAllConversations()
+            chatFragment.inputListener = inputListener
+            //instantiate an object to play voice notes and pass it to the fragment
+            chatFragment.voiceNotePlayer = voiceNotePlayer
+            val ft = activity.supportFragmentManager.beginTransaction();
+            //animations must be set before adding or replacing fragments
+            ft.setCustomAnimations(chatFragmentInAnimation,
+                    conversationsFragmentOutAnimation,
+                    conversationsFragmentInAnimation,
+                    chatFragmentOutAnimation)
+            ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
+            ft.addToBackStack(null)
+            ft.commit()
 
-        monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
-                chatFragment.getGroupMembers() == null)
+            monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
+                    chatFragment.getGroupMembers() == null)
 
-        return list
+            return list
+        }
+        return listOf()
     }
 
     fun showStatusNotification(status: Utils.ConnectionStatus) {
