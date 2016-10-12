@@ -1,7 +1,7 @@
 package com.criptext.monkeykitui.info
 
 import com.criptext.monkeykitui.MonkeyInfoFragment
-import com.criptext.monkeykitui.recycler.MonkeyUser
+import com.criptext.monkeykitui.recycler.MonkeyInfo
 import java.util.*
 
 /**
@@ -22,6 +22,8 @@ interface InfoActivity {
      */
     fun requestUsers()
 
-    fun getInfo(): ArrayList<MonkeyUser>
+    fun getInfo(): ArrayList<MonkeyInfo>
+
+    fun onUserClick(user: MonkeyInfo)
 
 }

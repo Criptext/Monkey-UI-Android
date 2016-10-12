@@ -10,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
+import com.criptext.monkeykitui.recycler.MonkeyInfo
 import com.criptext.monkeykitui.info.InfoActivity
 import com.criptext.monkeykitui.info.MonkeyInfoAdapter
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
-import com.criptext.monkeykitui.recycler.MonkeyUser
 import java.util.*
 
 /**
@@ -73,7 +73,7 @@ open class MonkeyInfoFragment: Fragment(){
         super.onDestroy()
     }
 
-    fun takeAllItems(): Collection<MonkeyUser> = infoAdapter?.getAllMonkeyUsers()
+    fun takeAllItems(): Collection<MonkeyInfo> = infoAdapter?.getAllMonkeyUsers()
             ?: listOf()
 
     companion object {
@@ -83,7 +83,7 @@ open class MonkeyInfoFragment: Fragment(){
         }
     }
 
-    fun addUsers(arrayList: ArrayList<MonkeyUser>){
+    fun addUsers(arrayList: ArrayList<MonkeyInfo>){
         infoAdapter?.addMembers(arrayList)
     }
 }

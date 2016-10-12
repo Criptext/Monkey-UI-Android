@@ -14,7 +14,7 @@ import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.info.holder.InfoHolder
-import com.criptext.monkeykitui.recycler.MonkeyUser
+import com.criptext.monkeykitui.recycler.MonkeyInfo
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.SnackbarUtils
@@ -27,11 +27,11 @@ import java.util.*
 
 open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoHolder>() {
 
-    private val usersList: ArrayList<MonkeyUser>
+    private val usersList: ArrayList<MonkeyInfo>
     val mSelectableItemBg: Int
 
-    private val conversationsActivity: ConversationsActivity
-        get() = mContext as ConversationsActivity
+    private val infoActivity: InfoActivity
+        get() = mContext as InfoActivity
 
     val dataLoader : SlowRecyclerLoader
 
@@ -40,7 +40,7 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
     var recyclerView: RecyclerView? = null
 
     init {
-        usersList = ArrayList<MonkeyUser>()
+        usersList = ArrayList<MonkeyInfo>()
         //get that clickable background
         val mTypedValue = TypedValue();
         mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
@@ -74,10 +74,13 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
     override fun onBindViewHolder(holder: InfoHolder?, position: Int) {
         val user = usersList[position]
         if(holder != null){
-            holder.setName(user.getName())
-            holder.setSecondaryText(user.getConnectionStatus())
-            holder.setTag(user.getRol())
-            holder.setAvatar(user.getAvatarUrl(), false)
+            holder.setName(user.getTitle())
+            holder.setSecondaryText(user.getSubtitle())
+            holder.setTag(user.getRightTitle())
+            holder.setAvatar(user.getAvatarUrl(), true)
+            holder.itemView.setOnClickListener{
+                infoActivity.onUserClick(user)
+            }
         }
 
     }
@@ -97,11 +100,11 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
 
     }
 
-    fun getAllMonkeyUsers(): ArrayList<MonkeyUser> {
+    fun getAllMonkeyUsers(): ArrayList<MonkeyInfo> {
         return usersList
     }
 
-    fun addMembers(arraylist : ArrayList<MonkeyUser>){
+    fun addMembers(arraylist : ArrayList<MonkeyInfo>){
         usersList.addAll(arraylist);
     }
 

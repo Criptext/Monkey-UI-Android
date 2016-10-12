@@ -19,7 +19,6 @@ import com.criptext.monkeykitui.MonkeyInfoFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
-import com.criptext.monkeykitui.recycler.MonkeyUser
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.toolbar.MonkeyStatusBar
 import com.criptext.monkeykitui.toolbar.MonkeyToolbar

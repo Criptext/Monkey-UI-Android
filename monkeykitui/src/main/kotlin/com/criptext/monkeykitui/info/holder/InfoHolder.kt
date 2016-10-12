@@ -24,10 +24,6 @@ open class InfoHolder: RecyclerView.ViewHolder {
         tagTextView = view.findViewById(R.id.info_rol) as TextView?
         avatarImageView = view.findViewById(R.id.info_avatar) as CircleImageView?
 
-        nameTextView?.maxWidth = textMaxWidth
-        secondaryTextView?.maxWidth = textMaxWidth
-
-
     }
 
     open fun setName(name: String){

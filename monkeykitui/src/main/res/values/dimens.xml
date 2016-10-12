@@ -17,4 +17,7 @@
     <dimen name="scroll_offset">20dp</dimen>
 
     <dimen name="mk_avatar_size">52dp</dimen>
+
+    <dimen name="mk_appbar_height">128dp</dimen>
+    <dimen name="mk_header_scroll">64dp</dimen>
 </resources>

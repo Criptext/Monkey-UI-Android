@@ -5,9 +5,9 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/info_avatar"
-        android:layout_width="@dimen/mk_avatar_size"
-        android:layout_height="@dimen/mk_avatar_size"
-        android:layout_marginLeft="50dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
@@ -22,14 +22,14 @@
         android:gravity="bottom|left"
         android:layout_toRightOf="@id/info_avatar"
         android:layout_alignTop="@id/info_avatar"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="0dp"
         android:layout_marginLeft="10dp"
         android:lines="1"
         android:maxLines="1"
         android:singleLine="true"
         android:text="Gabriel Aumala"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="1dp"
         android:textSize="16.0sp"
         android:textStyle="bold|normal" />
 
@@ -37,7 +37,7 @@
         android:id="@+id/info_rol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="50dp"
+        android:layout_marginRight="40dp"
         android:ellipsize="end"
         android:lines="1"
         android:maxLines="1"
@@ -47,7 +47,7 @@
         android:text="11:55 am"
         android:textAllCaps="true"
         android:textColor="@color/mk_conv_datetime"
-        android:textSize="16.0sp"
+        android:textSize="14sp"
         android:textStyle="normal" />
 
     <TextView

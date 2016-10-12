@@ -2,7 +2,9 @@ package com.criptext.monkeykitui
 
 import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -62,6 +64,13 @@ open class MonkeyConversationsFragment: Fragment(){
     override fun onAttach(activity: Activity?) {
         val conversationsActivty = activity as? ConversationsActivity
         conversationsActivty?.setConversationsFragment(this)
+
+        //val nestActivity = activity?.findViewById(R.id.nestActivity);
+        //val layout = nestActivity?.layoutParams as CoordinatorLayout.LayoutParams;
+
+        //val behavior  = layout.behavior
+        //layout.behavior = null
+
         super.onAttach(activity)
     }
 
