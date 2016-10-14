@@ -50,7 +50,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         checkIfChatFragmentIsVisible()
-        
+
         setupClickListener()
     }
 
@@ -60,17 +60,17 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
             val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
             customToolbar?.title?.text = monkeyChatFragment?.getChatTitle()
             customToolbar?.imageView?.visibility = View.VISIBLE
-            //(toolbar.findViewById(R.id.textViewTitle) as TextView).text = monkeyChatFragment?.getChatTitle()
-            //(toolbar.findViewById(R.id.imageViewAvatar) as ImageView).visibility = View.VISIBLE
+
+            activity.supportFragmentManager.getBackStackEntryAt(activity.supportFragmentManager.backStackEntryCount - 1)
+
             Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, monkeyChatFragment?.getAvatarURL(), !(monkeyChatFragment?.isGroupConversation() ?: false), null)
         } else {
             customToolbar?.title?.text = "Monkey Sample"
             customToolbar?.imageView?.visibility = View.GONE
             customToolbar?.subtitle?.visibility = View.GONE
 
-            //(toolbar.findViewById(R.id.textViewTitle) as TextView).text = "Monkey Sample"
-            //(toolbar.findViewById(R.id.imageViewAvatar) as ImageView).visibility = View.GONE
-            //(toolbar.findViewById(R.id.textViewSubTitle) as TextView).visibility = View.GONE
+            lockAppBarClosed()
+
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         }
@@ -81,7 +81,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
             if (activity.supportFragmentManager.backStackEntryCount > 0) {
                 Log.d("GGWP", "CLICK")
                 val toolbar_layout = activity.findViewById(R.id.toolbar_layout) as AppBarLayout
-                toolbar_layout.setExpanded(true)
+                unlockAppBarOpen()
                 (activity as ToolbarDelegate).onClickToolbar(monkeyId?:"",
                         "", "", "")
             }
@@ -99,12 +99,24 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         customToolbar?.subtitle?.visibility = View.VISIBLE
         customToolbar?.subtitle?.text = subtitle
 
-        //(toolbar.findViewById(R.id.textViewSubTitle) as TextView).text = subtitle
-        //(toolbar.findViewById(R.id.textViewSubTitle) as TextView).visibility = View.VISIBLE
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
         throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun lockAppBarClosed() {
+        val appToolbar = activity.findViewById(R.id.toolbar_layout) as AppBarLayout?
+        appToolbar?.setExpanded(false)
+        appToolbar?.setActivated(false)
+        //appToolbar?.getLayoutParams()?.height = activity.resources.getDimension(R.dimen.mt_toolbar_height).toInt()
+    }
+
+    fun unlockAppBarOpen() {
+        val appToolbar = activity.findViewById(R.id.toolbar_layout) as AppBarLayout?
+        appToolbar?.setExpanded(true)
+        appToolbar?.setActivated(true)
+        //appToolbar?.getLayoutParams()?.height = activity.resources.getDimension(R.dimen.mk_appbar_height).toInt()
     }
 
 }

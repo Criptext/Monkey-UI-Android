@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
@@ -107,5 +108,12 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
     fun addMembers(arraylist : ArrayList<MonkeyInfo>){
         usersList.addAll(arraylist);
     }
+
+    fun setInfo(arraylist : ArrayList<MonkeyInfo>){
+        usersList.clear()
+        usersList.addAll(arraylist);
+        notifyDataSetChanged();
+    }
+
 
 }

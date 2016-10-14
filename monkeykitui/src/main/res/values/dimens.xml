@@ -20,4 +20,8 @@
 
     <dimen name="mk_appbar_height">128dp</dimen>
     <dimen name="mk_header_scroll">64dp</dimen>
+    <dimen name="mk_image_dim">42dp</dimen>
+    <dimen name="mk_begin_toolbar_left">56dp</dimen>
+    <dimen name="mk_end_toolbar_left">26dp</dimen>
+    <dimen name="mk_image_end_dim">58dp</dimen>
 </resources>

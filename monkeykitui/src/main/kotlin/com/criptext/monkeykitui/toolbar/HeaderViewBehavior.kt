@@ -9,6 +9,7 @@ import android.view.View
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import com.criptext.monkeykitui.R
 
 /**
@@ -41,14 +42,11 @@ class HeaderViewBehavior(context: Context, attrs: AttributeSet? = null) : Coordi
 
         val maxScrollDistance = - mContext.resources.getDimension(R.dimen.mk_header_scroll)
         val expandedPercentageFactor = dependency.y / maxScrollDistance
-        Log.d("TEST", dependency.y.toString())
-        Log.d("TEST", maxScrollDistance.toString())
-
 
         if (expandedPercentageFactor < mChangeBehaviorPoint) {
             val heightFactor = (mChangeBehaviorPoint - expandedPercentageFactor) / mChangeBehaviorPoint
 
-            val distanceYToSubtract = (mStartYPosition - mFinalYPosition) * (1f - expandedPercentageFactor) + child.getHeight() / 2
+            val distanceYToSubtract = (mStartYPosition - mFinalYPosition) * (1f - expandedPercentageFactor)
 
             child.setY(mStartYPosition - distanceYToSubtract)
 
@@ -71,8 +69,10 @@ class HeaderViewBehavior(context: Context, attrs: AttributeSet? = null) : Coordi
             child.title.textSize = mfontSize - (mfontSize - 25) * (1f - expandedPercentageFactor)
             child.subtitle.textSize = 15 - (15 - 20) * (1f - expandedPercentageFactor)
 
-            child.imageView.layoutParams.height = (126 - (126 - 226) * (1f - expandedPercentageFactor)).toInt()
-            child.imageView.layoutParams.width = (126 - (126 - 226) * (1f - expandedPercentageFactor)).toInt()
+            child.imageView.layoutParams.height = (mContext.resources.getDimension(R.dimen.mk_image_dim) - (mContext.resources.getDimension(R.dimen.mk_image_dim) - mContext.resources.getDimension(R.dimen.mk_image_end_dim)) * (1f - expandedPercentageFactor)).toInt()
+            child.imageView.layoutParams.width = (mContext.resources.getDimension(R.dimen.mk_image_dim) - (mContext.resources.getDimension(R.dimen.mk_image_dim) - mContext.resources.getDimension(R.dimen.mk_image_end_dim)) * (1f - expandedPercentageFactor)).toInt()
+
+            (child.layoutParams as CoordinatorLayout.LayoutParams).leftMargin = (mContext.resources.getDimension(R.dimen.mk_begin_toolbar_left) - (mContext.resources.getDimension(R.dimen.mk_begin_toolbar_left) - mContext.resources.getDimension(R.dimen.mk_end_toolbar_left)) * (1f - expandedPercentageFactor)).toInt()
 
         }
         return true

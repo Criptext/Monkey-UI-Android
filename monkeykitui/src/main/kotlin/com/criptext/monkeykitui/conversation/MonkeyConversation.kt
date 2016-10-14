@@ -52,6 +52,12 @@ interface MonkeyConversation{
     fun getAvatarFilePath(): String?
 
     /**
+     * @return a string with the filepath of this conversation's avatar. If it is null, then
+     * a default image is used.
+     */
+    fun getAdmins(): String?
+
+    /**
      * @return an integer with the status of the conversation. This influences how the conversation
      * is displayed. It must be a value of the ConversationStatus enum
      */
@@ -80,6 +86,7 @@ interface MonkeyConversation{
             override fun getName() = "0"
             override fun getStatus() = ConversationStatus.moreConversations.ordinal
             override fun getSecondaryText() = ""
+            override fun getAdmins() = ""
             override fun getTotalNewMessages() = 0
             override fun isGroup() = false
 

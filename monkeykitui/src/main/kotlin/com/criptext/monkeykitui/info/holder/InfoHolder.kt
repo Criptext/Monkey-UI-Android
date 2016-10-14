@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.info.holder
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
@@ -31,6 +32,15 @@ open class InfoHolder: RecyclerView.ViewHolder {
     }
 
     open fun setSecondaryText(text: String){
+        if(text.toLowerCase().equals("online")){
+            var color =  secondaryTextView?.context?.resources?.getColor(R.color.mk_status_connected)
+            if(color == null){
+                color = Color.GREEN
+            }
+            secondaryTextView?.setTextColor(color)
+        }else{
+            secondaryTextView?.setTextColor(Color.GRAY)
+        }
         secondaryTextView!!.text = text
     }
 

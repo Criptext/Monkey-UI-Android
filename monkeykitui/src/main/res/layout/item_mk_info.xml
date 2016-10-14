@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="15dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/info_avatar"
@@ -22,7 +24,7 @@
         android:gravity="bottom|left"
         android:layout_toRightOf="@id/info_avatar"
         android:layout_alignTop="@id/info_avatar"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-4dp"
         android:layout_marginLeft="10dp"
         android:lines="1"
         android:maxLines="1"
@@ -38,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="40dp"
+        android:layout_marginTop="-5dp"
         android:ellipsize="end"
         android:lines="1"
         android:maxLines="1"
@@ -62,6 +65,7 @@
         android:text="Hola! Que dice man..."
         android:textColor="#bebebe"
         android:textSize="15sp"
+        android:paddingRight="40dp"
         android:drawablePadding="4dp"
         android:textStyle="normal" />
 
@@ -70,6 +74,7 @@
         android:layout_height="0.5dp"
         android:background="#e2e2e2"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="72dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"/>
 </RelativeLayout>
