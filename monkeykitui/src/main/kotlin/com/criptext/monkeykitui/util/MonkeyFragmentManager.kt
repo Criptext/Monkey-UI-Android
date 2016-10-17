@@ -15,6 +15,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
+import com.criptext.monkeykitui.MonkeyInfoFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
@@ -70,6 +71,19 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var conversationsTitle: String = "UI Sample"
 
     /**
+     * Color for expanded status bar
+     */
+    var expandedToolbarColor: Int = 0
+        get() {
+        if(field == 0){
+            val value = TypedValue()
+            activity.theme.resolveAttribute(R.attr.colorPrimary, value, true)
+            return value.data
+        }
+        return field
+    }
+
+    /**
      * resource id of the animation to use when the conversations fragment reenters the activity,
      * replacing the chat fragment
      */
@@ -105,7 +119,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
-        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle)
+        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle, expandedToolbarColor)
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()
@@ -145,11 +159,22 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
             ft.commit()
 
             monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
-                    chatFragment.getGroupMembers() == null)
+                    chatFragment.isGroupConversation() ?: false, chatFragment.getConversationId())
 
             return list
         }
         return listOf()
+    }
+
+    fun setInfoFragment(infoFragment: MonkeyInfoFragment){
+        val ft = activity.supportFragmentManager.beginTransaction();
+        ft.setCustomAnimations(chatFragmentInAnimation,
+                conversationsFragmentOutAnimation,
+                conversationsFragmentInAnimation,
+                chatFragmentOutAnimation)
+        ft.add(fragmentContainerId, infoFragment)
+        ft.addToBackStack(null)
+        ft.commit()
     }
 
     fun showStatusNotification(status: Utils.ConnectionStatus) {
@@ -165,6 +190,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
          * TAG to recognize fragment from Fragment manager
          */
         val CHAT_FRAGMENT_TAG: String = "CHAT_TAG"
+        val INFO_FRAGMENT_TAG: String = "INFO_TAG"
     }
 
 }

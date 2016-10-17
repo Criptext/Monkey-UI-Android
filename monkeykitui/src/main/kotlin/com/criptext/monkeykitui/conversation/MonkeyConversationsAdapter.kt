@@ -157,7 +157,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
             }
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {

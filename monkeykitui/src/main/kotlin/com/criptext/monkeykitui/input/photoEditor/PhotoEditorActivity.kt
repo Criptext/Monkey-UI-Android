@@ -12,6 +12,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -82,6 +83,9 @@ class PhotoEditorActivity : AppCompatActivity() {
 
         //set button color
         setButtonColor()
+
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 

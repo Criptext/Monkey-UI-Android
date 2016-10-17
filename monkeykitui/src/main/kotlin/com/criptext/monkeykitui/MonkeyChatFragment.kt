@@ -117,7 +117,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val conversationId = args.getString(chatConversationId)
         val reachedEnd = args.getBoolean(chatHasReachedEnd)
         val lastRead = args.getLong(initalLastReadValue)
-       monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
+        monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
             monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
@@ -236,7 +236,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     fun getConversationId(): String{
-        return monkeyAdapter.conversationId
+        try {
+            return monkeyAdapter.conversationId
+        }
+        catch (ex: UninitializedPropertyAccessException){
+            ex.printStackTrace()
+            return ""
+        }
     }
 
     fun getGroupMembers() = arguments.getString(chatmembersGroupIds)
@@ -259,6 +265,12 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     fun setLastRead(lastRead: Long) {
         monkeyAdapter.lastRead = lastRead
         reloadAllMessages();
+    }
+
+    fun isGroupConversation(): Boolean?{
+        val args = arguments
+        val conversationId = args.getString(chatConversationId)
+        return conversationId.contains("G:")
     }
 
     fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
