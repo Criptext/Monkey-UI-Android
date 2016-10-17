@@ -15,6 +15,7 @@ class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context)
     var requestmessagesTimestamp = 0L
     val DEFAULT_DELAY_TIME = 300L
     var delayTime = DEFAULT_DELAY_TIME
+    lateinit var messagesList: List<MonkeyItem>
 
     val activityRef: WeakReference<Context>
 
@@ -29,7 +30,7 @@ class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context)
                 conversationsActivity?.onLoadMoreConversations(loadedItems)
             } else {
                 val chatActivity = activityRef.get() as? ChatActivity
-                chatActivity?.onLoadMoreMessages(conversationId)
+                chatActivity?.onLoadMoreMessages(conversationId, messagesList.size)
             }
         }, delayTime)
     }

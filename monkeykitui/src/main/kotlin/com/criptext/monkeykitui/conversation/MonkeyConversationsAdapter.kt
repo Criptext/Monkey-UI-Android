@@ -29,7 +29,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     private val conversationsList: ArrayList<MonkeyConversation>
     val mSelectableItemBg: Int
 
-    private val conversationsMap: HashMap<String, Boolean>
+    private val conversationsSet: HashSet<String>
 
     private val conversationsActivity: ConversationsActivity
     get() = mContext as ConversationsActivity
@@ -66,7 +66,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
     init {
         conversationsList = ArrayList<MonkeyConversation>()
-        conversationsMap = HashMap()
+        conversationsSet = HashSet()
         //get that clickable background
         val mTypedValue = TypedValue();
         mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
@@ -236,7 +236,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         conversationsList.clear()
-        conversationsMap.clear()
+        conversationsSet.clear()
         removeEndOfRecyclerView()
         //sanity check
         for(conv in conversations)
@@ -265,7 +265,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         if(!silent)
             notifyItemInserted(actualPosition)
 
-        conversationsMap.put(newConversation.getConvId(), true)
+        conversationsSet.add(newConversation.getConvId())
         return actualPosition
     }
 
@@ -293,7 +293,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val pos = getConversationPositionByTimestamp(conversation)
         if(pos > -1){
             conversationsList.removeAt(pos)
-            conversationsMap.put(conversation.getConvId(), false)
+            conversationsSet.remove(conversation.getConvId())
             notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
@@ -331,13 +331,13 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      */
     fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
         removeEndOfRecyclerView()
-        val filteredConversations = oldConversations.filterNot { it -> conversationsMap.contains(it.getConvId()) }
+        val filteredConversations = oldConversations.filterNot { it -> conversationsSet.contains(it.getConvId()) }
         if(oldConversations.size > 0) {
 
             //sanity check
             for(conv in filteredConversations) {
                 assertConversationIsNotEndItem(conv)
-                conversationsMap.put(conv.getConvId(), true)
+                conversationsSet.remove(conv.getConvId())
             }
 
             val firstNewIndex = conversationsList.size
@@ -371,19 +371,21 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
-    fun updateConversations(set: Set<Map.Entry<MonkeyConversation, ConversationTransaction>>) {
+    fun updateConversations(set: Set<Map.Entry<String, ConversationTransaction>>) {
         val iterator = set.iterator()
         while(iterator.hasNext()) {
             val entry = iterator.next()
             val transaction = entry.value
-            val conversationPos = conversationsList.indexOfFirst { conv -> conv.getConvId() == entry.key.getConvId() }
-            if(conversationPos == -1)
-                Log.e("ConversationsAdapter", "Update failed. Conversation with ID: ${entry.key.getConvId()}" +
-                "not found in adapter.")
-            else {
-                val conversation = conversationsList.removeAt(conversationPos)
-                transaction.updateConversation(conversation)
-                addNewConversation(conversation, true)
+            if(conversationsSet.contains(entry.key)) {
+                val conversationPos = conversationsList.indexOfFirst { conv -> conv.getConvId() == entry.key }
+                if (conversationPos == -1)
+                    Log.e("ConversationsAdapter", "Update failed. Conversation with ID: ${entry.key}" +
+                            "was expected to be in adapter.")
+                else {
+                    val conversation = conversationsList.removeAt(conversationPos)
+                    transaction.updateConversation(conversation)
+                    addNewConversation(conversation, true)
+                }
             }
         }
         notifyDataSetChanged()

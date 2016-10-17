@@ -105,6 +105,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
         monkeyConfig = MonkeyConfig()
         dataLoader = SlowRecyclerLoader(conversationId, mContext)
+        dataLoader.messagesList = messagesList
 
     }
 
@@ -854,6 +855,16 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         else {
             return messagesList.firstOrNull()
         }
+    }
+
+    fun insertMessages(messages: List<MonkeyItem>) {
+        val previouslyHadMessages = messagesList.isNotEmpty()
+        messagesList.clear()
+        messagesList.addAll(messages)
+        if(previouslyHadMessages)
+            notifyDataSetChanged()
+        else
+            notifyItemRangeInserted(0, messagesList.size)
     }
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){

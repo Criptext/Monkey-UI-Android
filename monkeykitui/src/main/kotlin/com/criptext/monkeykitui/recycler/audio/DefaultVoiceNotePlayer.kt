@@ -34,7 +34,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     override val playbackProgress : Int
     get(){
-        if(player.duration > 0)
+        if(isPlayingAudio && player.duration > 0)
             return 100 * player.currentPosition / player.duration;
         else
             return 0;

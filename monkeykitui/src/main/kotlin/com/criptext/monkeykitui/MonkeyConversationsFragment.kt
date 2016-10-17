@@ -151,7 +151,7 @@ open class MonkeyConversationsFragment: Fragment(){
         conversationsAdapter?.updateConversation(conversationItem)
     }
 
-    fun updateConversations(set: Set<Map.Entry<MonkeyConversation, ConversationTransaction>>) {
+    fun updateConversations(set: Set<Map.Entry<String, ConversationTransaction>>) {
         conversationsAdapter?.updateConversations(set)
     }
 

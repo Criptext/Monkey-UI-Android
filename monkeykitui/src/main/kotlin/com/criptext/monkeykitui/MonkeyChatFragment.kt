@@ -123,7 +123,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
         } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
         else
-            (activity as ChatActivity).onLoadMoreMessages(conversationId)
+            (activity as ChatActivity).onLoadMoreMessages(conversationId, 0)
         val groupMembers = getGroupMembers()
         if(groupMembers != null){
             val groupChat = (activity as ChatActivity).getGroupChat(conversationId, groupMembers)
@@ -213,6 +213,10 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         monkeyAdapter.smoothlyAddNewItems(messages, recyclerView)
     }
 
+    fun insertMessages(messages: List<MonkeyItem>) {
+        monkeyAdapter.insertMessages(messages)
+    }
+
     fun clearMessages(){
         monkeyAdapter.clear()
     }
@@ -227,7 +231,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         }
     }
 
-    fun getAllMessages(): Collection<MonkeyItem> {
+    fun takeAllMessages(): List<MonkeyItem> {
         return monkeyAdapter.takeAllMessages()
     }
 
