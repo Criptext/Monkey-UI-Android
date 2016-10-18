@@ -387,6 +387,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 }
             }
         }
+        Collections.sort(conversationsList, MonkeyConversation.defaultComparator)
         notifyDataSetChanged()
     }
 
