@@ -238,8 +238,10 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         conversationsSet.clear()
         removeEndOfRecyclerView()
         //sanity check
-        for(conv in conversations)
+        for(conv in conversations) {
             assertConversationIsNotEndItem(conv)
+            conversationsSet.add(conv.getConvId())
+        }
 
         conversationsList.addAll(conversations)
         Collections.sort(conversationsList, MonkeyConversation.defaultComparator)
@@ -247,13 +249,24 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         this.hasReachedEnd = hasReachedEnd
     }
 
+    /**
+     * Adds a conversation to the top of the adapter's list.
+     * @return the position at which the conversation was inserted. It should be zero, unless there is
+     * a more recent conversation. If the conversation is already present in the adapter, it returns
+     * -1.
+     */
     fun addNewConversation(newConversation: MonkeyConversation): Int{
-        return addNewConversation(newConversation, silent = false)
+        if(conversationsSet.contains(newConversation.getConvId()))
+            return -1;
+        else
+            return addNewConversation(newConversation, silent = false)
     }
 
     /**
-     * adds a conversation to the top of the adapter's list. The changes are then notified to the UI
+     * adds a conversation to the top of the adapter's list. You should make sure that the conversation
+     * isn't already loaded in the adapter before calling this method.
      * @param newConversation conversation to add
+     * @param silent UI is updated right after adding the conversation only if this parameter is false.
      * @return the position at which the conversation was inserted. It should be zero, unless there is
      * a more recent conversation
      */
@@ -336,7 +349,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             //sanity check
             for(conv in filteredConversations) {
                 assertConversationIsNotEndItem(conv)
-                conversationsSet.remove(conv.getConvId())
+                conversationsSet.add(conv.getConvId())
             }
 
             val firstNewIndex = conversationsList.size

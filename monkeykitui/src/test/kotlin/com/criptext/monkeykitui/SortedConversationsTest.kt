@@ -25,6 +25,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
             override fun getStatus() = status
             override fun getTotalNewMessages() = 0
             override fun isGroup() = false
+            override fun getAdmins() = ""
         }
     }
 
@@ -38,7 +39,6 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
     }
 
     fun assertThatConversationsAreNotRepeated(list: ArrayList<MonkeyConversation>){
-
         for(i in 0..(list.size-2))
             for(j in (i+1)..(list.size-1)) {
                 assert(list[i].getConvId() != list[j].getConvId())
@@ -155,7 +155,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
 
         assert(crashWithInsertConversations)
     }
-    /**
+
     @Test
     @Throws (Exception::class)
     fun conversationsCantBeRepeated() {
@@ -173,15 +173,17 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
             newPage.add(newConversation(time - 1, "152"))
             newPage.add(newConversation(time, "153"))
 
-            adapter.addOldConversations(newPage, true, recycler!!)
+            adapter.addOldConversations(newPage, true)
         }
 
         addOldPage()
         addOldPage()
+        adapter.addNewConversation(newConversation(time + 4 , "156"))
 
         val list = adapter.takeAllConversations()
-        assert(list.size == 12)
+        assert(list.size == 7)
         assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
         assertThatConversationsAreNotRepeated(list)
-    }*/
+
+    }
 }
