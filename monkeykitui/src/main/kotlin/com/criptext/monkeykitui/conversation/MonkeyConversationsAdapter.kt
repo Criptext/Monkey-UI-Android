@@ -125,7 +125,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 MonkeyConversation.ConversationStatus.moreConversations.ordinal){
             holder.setName(conversation.getName())
             holder.setSecondaryText(conversation.getSecondaryText())
-            holder.setDate(Utils.getHoraVerdadera(conversation.getDatetime()))
+            holder.setDate(Utils.getFormattedDate(conversation.getDatetime(), mContext))
             holder.setTotalNewMessages(conversation.getTotalNewMessages())
             holder.setAvatar(conversation.getAvatarFilePath(), conversation.isGroup())
 
