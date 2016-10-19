@@ -80,7 +80,7 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
             holder.setTag(user.getRightTitle())
             holder.setAvatar(user.getAvatarUrl(), true)
             holder.itemView.setOnClickListener{
-                infoActivity.onUserClick(user)
+                infoActivity.onInfoItemClick(user)
             }
         }
 
