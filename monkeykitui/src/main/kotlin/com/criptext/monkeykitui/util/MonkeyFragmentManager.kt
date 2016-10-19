@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.util
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.FragmentManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -177,6 +178,23 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         ft.commit()
     }
 
+    fun setChatFragment(infoFragment: MonkeyInfoFragment, chatFragment: MonkeyChatFragment, inputListener: InputListener,
+                        voiceNotePlayer: VoiceNotePlayer){
+        val ft = activity.supportFragmentManager.beginTransaction();
+        activity.supportFragmentManager.popBackStack();
+        activity.supportFragmentManager.popBackStack();
+        ft.setCustomAnimations(chatFragmentInAnimation,
+                conversationsFragmentOutAnimation,
+                conversationsFragmentInAnimation,
+                chatFragmentOutAnimation)
+        chatFragment.inputListener = inputListener
+        chatFragment.voiceNotePlayer = voiceNotePlayer
+        ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
+        ft.addToBackStack(null)
+        ft.commit()
+
+    }
+
     fun showStatusNotification(status: Utils.ConnectionStatus) {
         monkeyStatusBar?.showStatusNotification(status)
     }
@@ -191,6 +209,19 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
          */
         val CHAT_FRAGMENT_TAG: String = "CHAT_TAG"
         val INFO_FRAGMENT_TAG: String = "INFO_TAG"
+    }
+
+    fun popStack(times : Int){
+        val fragmentManager = activity.supportFragmentManager as android.support.v4.app.FragmentManager
+        var timess = times as Int
+        while(timess > 0){
+            if(fragmentManager.backStackEntryCount >= timess){
+                fragmentManager.popBackStack()
+                timess--
+            }else{
+                timess = 0
+            }
+        }
     }
 
 }

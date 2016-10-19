@@ -173,7 +173,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     override fun onDetach() {
-        (activity as ChatActivity).setChatFragment(null)
+        (activity as ChatActivity).deleteChatFragment(this)
         super.onDetach()
     }
 

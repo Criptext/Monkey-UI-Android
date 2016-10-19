@@ -91,5 +91,7 @@ interface ChatActivity {
      */
     fun onStopChatFragment(conversationId: String)
 
+    fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment)
+
 
 }

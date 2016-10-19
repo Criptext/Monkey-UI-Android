@@ -22,8 +22,10 @@ interface InfoActivity {
      */
     fun requestUsers()
 
-    fun getInfo(): ArrayList<MonkeyInfo>
+    fun getInfo(conversationId : String): ArrayList<MonkeyInfo>
 
     fun onUserClick(user: MonkeyInfo)
+
+    fun onExitGroup(conversationId : String)
 
 }
