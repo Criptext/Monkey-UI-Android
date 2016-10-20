@@ -37,7 +37,7 @@ open class MonkeyInfoFragment : Fragment(){
     var loadingLayout : FrameLayout? = null
 
     private fun setInfo(){
-        val groupInfo = (activity as InfoActivity).getInfo()
+        val groupInfo = (activity as InfoActivity).getInfo(arguments.getString("conversationId"))
         if(isGroup) {
             leftText?.text = "Participants"
             rightText?.text = groupInfo.size.toString() + " of 50"
@@ -76,7 +76,12 @@ open class MonkeyInfoFragment : Fragment(){
         leftText = view.findViewById(R.id.leftTextList) as TextView
         outButton = view.findViewById(R.id.mk_info_out) as Button
         loadingLayout = view.findViewById(R.id.info_load) as FrameLayout
-        setInfo();
+        setInfo()
+
+        (outButton as? Button)?.setOnClickListener{
+            (activity as InfoActivity).onExitGroup(arguments.getString("conversationId"));
+        }
+
         return view
     }
 
@@ -108,8 +113,9 @@ open class MonkeyInfoFragment : Fragment(){
             ?: listOf()
 
     companion object {
-        fun newInfoInstance(isGroup : Boolean): MonkeyInfoFragment {
+        fun newInfoInstance(conversationId : String, isGroup : Boolean): MonkeyInfoFragment {
             val args = Bundle()
+            args.putString("conversationId", conversationId)
             args.putBoolean("isGroup", isGroup)
             val newInstance = MonkeyInfoFragment()
             newInstance.arguments = args

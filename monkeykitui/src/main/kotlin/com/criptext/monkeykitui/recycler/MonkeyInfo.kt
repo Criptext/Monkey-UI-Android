@@ -12,6 +12,12 @@ interface MonkeyInfo {
      * @return the user's avatar url
      *
      */
+    fun getInfoId() : String
+
+    /**
+     * @return the user's avatar url
+     *
+     */
     fun getAvatarUrl() : String
 
     /**
