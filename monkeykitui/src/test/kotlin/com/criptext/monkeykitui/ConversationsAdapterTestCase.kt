@@ -8,7 +8,6 @@ import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
 import org.junit.Before
 import org.robolectric.Robolectric
-import java.util.*
 
 /**
  * Created by gesuwall on 9/6/16.

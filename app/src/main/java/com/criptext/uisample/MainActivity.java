@@ -159,4 +159,9 @@ public class MainActivity extends BaseChatActivity{
     public void onStopChatFragment(@NotNull String conversationId) {
 
     }
+
+    @Override
+    public void deleteChatFragment(@NotNull MonkeyChatFragment monkeyChatFragment) {
+
+    }
 }

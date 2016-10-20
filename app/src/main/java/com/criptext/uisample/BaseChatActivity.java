@@ -122,7 +122,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     }
 
     @Override
-    public void onLoadMoreMessages(String conversationId) {
+    public void onLoadMoreMessages(String conversationId, int loadedMessages) {
         loader.execute();
     }
 

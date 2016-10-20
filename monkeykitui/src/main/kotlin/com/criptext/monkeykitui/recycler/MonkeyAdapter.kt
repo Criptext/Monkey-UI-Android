@@ -379,11 +379,9 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
         if(!file.exists() || file.length() < item.getFileSize()) {
-            Log.d("PhotoHolder", "bind ${file.length()} ${item.getFileSize()}")
             chatActivity.onFileDownloadRequested(item)
             imageHolder.setOnClickListener(null)
         }else {
-            Log.d("PhotoHolder", "bind ${item.getFilePath()} ${item.getFileSize()}")
             imageHolder.setDownloadedImage(file, chatActivity as Context)
             imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
             val imageView = imageHolder.photoImageView
@@ -442,8 +440,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                 }
         audioHolder.setAudioDurationText(item.getAudioDuration())
         if(!target.exists()){ //Message does not exist, needs to be downloaded
-            if(!item.isIncomingMessage())
-                Log.d("AudioBind", "download: ${item.getFilePath()}")
             chatActivity.onFileDownloadRequested(item)
             audioHolder.updatePlayPauseButton(false)
             audioHolder.setWaitingForDownload()

@@ -170,4 +170,9 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     public void onClickToolbar(@NotNull String monkeyID, @NotNull String name, @NotNull String lastSeen, @NotNull String avatarURL) {
 
     }
+
+    @Override
+    public void deleteChatFragment(@NotNull MonkeyChatFragment monkeyChatFragment) {
+
+    }
 }

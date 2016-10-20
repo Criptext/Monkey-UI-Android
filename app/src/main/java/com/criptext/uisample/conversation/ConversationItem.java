@@ -3,6 +3,7 @@ package com.criptext.uisample.conversation;
 import com.criptext.monkeykitui.conversation.MonkeyConversation;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by gesuwall on 8/11/16.
@@ -101,4 +102,9 @@ public class ConversationItem implements MonkeyConversation {
         this.groupMembers = groupMembers;
     }
 
+    @Nullable
+    @Override
+    public String getAdmins() {
+        return null;
+    }
 }
