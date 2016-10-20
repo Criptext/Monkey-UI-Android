@@ -255,8 +255,12 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
      * messages. All messages with a sent timestamp lower than this will be displayed as read.
      */
     fun setLastRead(lastRead: Long) {
-        monkeyAdapter.lastRead = lastRead
-        reloadAllMessages();
+        val lastStamp = monkeyAdapter.getLastItem()?.getMessageTimestampOrder()
+        if(lastStamp != null &&  lastRead > monkeyAdapter.lastRead &&
+                monkeyAdapter.lastRead < lastStamp && lastStamp <= lastRead) {
+            monkeyAdapter.lastRead = lastRead
+            reloadAllMessages()
+        }
     }
 
     fun isGroupConversation(): Boolean?{

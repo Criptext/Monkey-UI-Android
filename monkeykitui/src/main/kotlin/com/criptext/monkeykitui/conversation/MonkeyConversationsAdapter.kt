@@ -380,7 +380,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1) {
             notifyItemChanged(position)
-        }
+        } else Log.e("ConversationsAdapter", "Conversation with ID: ${conversation.getConvId()} and " +
+                "timestamp: ${conversation.getDatetime()} not found in adapter. Can't notify item changed.")
     }
 
     fun updateConversations(set: Set<Map.Entry<String, ConversationTransaction>>) {
