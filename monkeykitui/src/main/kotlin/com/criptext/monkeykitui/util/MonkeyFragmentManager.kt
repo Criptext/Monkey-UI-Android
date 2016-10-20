@@ -178,7 +178,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         ft.commit()
     }
 
-    fun setChatFragment(infoFragment: MonkeyInfoFragment, chatFragment: MonkeyChatFragment, inputListener: InputListener,
+    fun setChatFragmentFromInfo(chatFragment: MonkeyChatFragment, inputListener: InputListener,
                         voiceNotePlayer: VoiceNotePlayer){
         val ft = activity.supportFragmentManager.beginTransaction();
         activity.supportFragmentManager.popBackStack();
