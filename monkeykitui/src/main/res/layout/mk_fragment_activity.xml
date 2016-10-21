@@ -5,6 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- This is a layout intended for containing MonkeyChatFragment and/or MonkeyConversationsFragment
+    RelativeLayout has an issue that doesn't render the RecyclerView with the whole size of its
+    container linear layout.
+    The only viable solution is FrameLayout -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <FrameLayout
+        android:id="@+id/viewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/status_height"
+        android:layout_marginTop="21dp"
+        android:background="@color/mk_status_connected"/>
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
@@ -38,24 +55,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
-
-    <!-- This is a layout intended for containing MonkeyChatFragment and/or MonkeyConversationsFragment
-    RelativeLayout has an issue that doesn't render the RecyclerView with the whole size of its
-    container linear layout.
-    The only viable solution is FrameLayout -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-    <FrameLayout
-        android:id="@+id/viewStatus"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/status_height"
-        android:layout_marginTop="21dp"
-        android:background="@color/mk_status_connected"/>
-
-
 
 </android.support.design.widget.CoordinatorLayout>
 

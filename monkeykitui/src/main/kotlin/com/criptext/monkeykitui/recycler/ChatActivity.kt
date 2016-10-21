@@ -93,5 +93,4 @@ interface ChatActivity {
 
     fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment)
 
-
 }

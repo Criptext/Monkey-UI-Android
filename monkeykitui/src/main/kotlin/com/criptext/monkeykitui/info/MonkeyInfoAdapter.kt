@@ -28,7 +28,7 @@ import java.util.*
 
 open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoHolder>() {
 
-    private val usersList: ArrayList<MonkeyInfo>
+    private val itemsList: ArrayList<MonkeyInfo>
     val mSelectableItemBg: Int
 
     private val infoActivity: InfoActivity
@@ -41,7 +41,7 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
     var recyclerView: RecyclerView? = null
 
     init {
-        usersList = ArrayList<MonkeyInfo>()
+        itemsList = ArrayList<MonkeyInfo>()
         //get that clickable background
         val mTypedValue = TypedValue();
         mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
@@ -58,12 +58,12 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
         val endHolder = holder as? InfoHolder.EndHolder
         if(endHolder != null) {
             //endHolder.setOnClickListener {  }
-            dataLoader.delayNewBatch(usersList.size)
+            dataLoader.delayNewBatch(itemsList.size)
         }
     }
 
 
-    override fun getItemCount() = usersList.size
+    override fun getItemCount() = itemsList.size
 
     private fun getSentMessageCheckmark(status: MonkeyConversation.ConversationStatus): Int{
         return when(status){
@@ -73,7 +73,7 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
         }
     }
     override fun onBindViewHolder(holder: InfoHolder?, position: Int) {
-        val user = usersList[position]
+        val user = itemsList[position]
         if(holder != null){
             holder.setName(user.getTitle())
             holder.setSecondaryText(user.getSubtitle())
@@ -102,18 +102,33 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
     }
 
     fun getAllMonkeyUsers(): ArrayList<MonkeyInfo> {
-        return usersList
+        return itemsList
     }
 
     fun addMembers(arraylist : ArrayList<MonkeyInfo>){
-        usersList.addAll(arraylist);
+        itemsList.addAll(arraylist);
     }
 
     fun setInfo(arraylist : ArrayList<MonkeyInfo>){
-        usersList.clear()
-        usersList.addAll(arraylist);
+        itemsList.clear()
+        itemsList.addAll(arraylist);
         notifyDataSetChanged();
     }
 
+    fun removeMember(monkeyId : String){
+        val li = itemsList.listIterator()
+        var position = -1;
+        while(li.hasNext()){
+            if(li.next().getInfoId().equals(monkeyId)){
+                position = li.nextIndex() - 1
+                break
+            }
+        }
 
+        if(position > -1){
+            itemsList.removeAt(position);
+            notifyItemRemoved(position)
+        }
+
+    }
 }

@@ -132,4 +132,8 @@ open class MonkeyInfoFragment : Fragment(){
         rightText?.text = arraylist.size.toString() + " of 50"
         loadingLayout?.visibility = View.GONE
     }
+
+    fun removeMember(monkeyId : String){
+        infoAdapter?.removeMember(monkeyId);
+    }
 }
