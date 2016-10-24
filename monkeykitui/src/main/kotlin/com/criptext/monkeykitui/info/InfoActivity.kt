@@ -28,4 +28,6 @@ interface InfoActivity {
 
     fun onExitGroup(conversationId : String)
 
+    fun removeMember(monkeyId : String)
+
 }

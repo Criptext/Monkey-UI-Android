@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.info
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,11 @@ import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
 import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
+import com.criptext.monkeykitui.conversation.dialog.OnInfoOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
+import com.criptext.monkeykitui.info.dialog.InfoOptionsDialog
+import com.criptext.monkeykitui.info.OnInfoItemLongClicked
 import com.criptext.monkeykitui.info.holder.InfoHolder
 import com.criptext.monkeykitui.recycler.MonkeyInfo
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
@@ -40,6 +44,9 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
 
     var recyclerView: RecyclerView? = null
 
+    var onInfoItemLongClicked : OnInfoItemLongClicked
+    val userOptions : MutableList<OnInfoOptionClicked>
+
     init {
         itemsList = ArrayList<MonkeyInfo>()
         //get that clickable background
@@ -50,6 +57,22 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
                 throw IllegalArgumentException(
                         "The context of this MonkeyInfoAdapter must implement InfoActivity!")
         dataLoader = SlowRecyclerLoader(null, mContext)
+
+        userOptions = mutableListOf(
+            object : OnInfoOptionClicked("Remove Member"){
+                override fun invoke(info : MonkeyInfo){
+                    infoActivity.removeMember(info.getInfoId())
+                }
+            }
+        )
+
+        onInfoItemLongClicked = object : OnInfoItemLongClicked {
+            override fun invoke(info : MonkeyInfo){
+                var options = userOptions
+                val dialog = InfoOptionsDialog(options, info)
+                dialog.show(mContext)
+            }
+        }
 
     }
 
@@ -73,14 +96,21 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
         }
     }
     override fun onBindViewHolder(holder: InfoHolder?, position: Int) {
-        val user = itemsList[position]
+        val infoItem = itemsList[position]
         if(holder != null){
-            holder.setName(user.getTitle())
-            holder.setSecondaryText(user.getSubtitle())
-            holder.setTag(user.getRightTitle())
-            holder.setAvatar(user.getAvatarUrl(), true)
+            holder.setName(infoItem.getTitle())
+            holder.setSecondaryText(infoItem.getSubtitle())
+            holder.setTag(infoItem.getRightTitle())
+            holder.setAvatar(infoItem.getAvatarUrl(), true)
             holder.itemView.setOnClickListener{
-                infoActivity.onInfoItemClick(user)
+                infoActivity.onInfoItemClick(infoItem)
+            }
+
+            if(!infoItem.getInfoId().contains("G:")) {
+                holder.itemView.setOnLongClickListener({
+                    onInfoItemLongClicked.invoke(infoItem)
+                    true
+                })
             }
         }
 
@@ -132,3 +162,5 @@ open class MonkeyInfoAdapter(val mContext: Context) : RecyclerView.Adapter<InfoH
 
     }
 }
+
+

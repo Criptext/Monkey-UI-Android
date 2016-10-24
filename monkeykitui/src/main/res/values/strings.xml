@@ -46,4 +46,10 @@
     <string name="mk_text_members_online_s">member online</string>
     <string name="mk_text_members_online_p">members online</string>
 
+    <string name="mk_text_exit_group">Are you sure you want to exit the group?</string>
+    <string name="mk_text_confirm">Yes</string>
+    <string name="mk_text_cancel">Cancelar</string>
+
+    <string name="mk_text_participants">Participants</string>
+    <string name="mk_text_common">Common Conversations</string>
 </resources>

@@ -21,4 +21,11 @@
     <string name="mk_text_offline2">Desconectado</string>
     <string name="mk_text_members_online_s">miembro en línea</string>
     <string name="mk_text_members_online_p">miembros en línea</string>
+
+    <string name="mk_text_exit_group">Estas seguro que quieres salir del grupo?</string>
+    <string name="mk_text_confirm">Si</string>
+    <string name="mk_text_cancel">Cancelar</string>
+
+    <string name="mk_text_participants">Paticipante</string>
+    <string name="mk_text_common">Conversaciones en Comun</string>
 </resources>
