@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 
@@ -13,7 +14,6 @@ open class MonkeyTextHolder : MonkeyHolder {
 
     constructor(view : View) : super(view) {
         messageTextView = view.findViewById(R.id.text_message) as TextView
-
 
     }
 

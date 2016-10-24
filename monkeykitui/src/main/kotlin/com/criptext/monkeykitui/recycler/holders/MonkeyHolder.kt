@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -58,6 +59,13 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         errorImageView = view.findViewById(R.id.net_error) as ImageView?
         sendingProgressBar = view.findViewById(R.id.sendingWheel) as ProgressBar?
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.parseColor("#014766"), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        bubbleLayout?.setOnClickListener {
+            if(errorImageView?.visibility == View.VISIBLE) {
+                errorImageView?.visibility = View.GONE
+                sendingProgressBar?.visibility = View.VISIBLE
+            }
+        }
     }
 
     /**

@@ -79,7 +79,6 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
     fun setupClickListener(){
         customToolbar?.secondContainer?.setOnClickListener(View.OnClickListener {
             if (activity.supportFragmentManager.backStackEntryCount > 0) {
-                Log.d("GGWP", "CLICK")
                 val toolbar_layout = activity.findViewById(R.id.toolbar_layout) as AppBarLayout
                 unlockAppBarOpen()
                 (activity as ToolbarDelegate).onClickToolbar(monkeyId?:"",

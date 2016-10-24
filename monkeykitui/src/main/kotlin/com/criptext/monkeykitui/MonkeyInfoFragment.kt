@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -39,11 +40,11 @@ open class MonkeyInfoFragment : Fragment(){
     private fun setInfo(){
         val groupInfo = (activity as InfoActivity).getInfo(arguments.getString("conversationId"))
         if(isGroup) {
-            leftText?.text = "Participants"
+            leftText?.text = leftText?.context?.resources?.getString(R.string.mk_text_participants)
             rightText?.text = groupInfo.size.toString() + " of 50"
             outButton?.visibility = View.VISIBLE
         }else{
-            leftText?.text = "Conversations in Common"
+            leftText?.text = leftText?.context?.resources?.getString(R.string.mk_text_common)
             rightText?.text = ""
             outButton?.visibility = View.GONE
         }
@@ -79,7 +80,15 @@ open class MonkeyInfoFragment : Fragment(){
         setInfo()
 
         (outButton as? Button)?.setOnClickListener{
-            (activity as InfoActivity).onExitGroup(arguments.getString("conversationId"));
+            var alert = AlertDialog.Builder(recyclerView.context)
+            alert.setTitle(recyclerView.context.getString(R.string.mk_text_exit_group))
+            alert.setPositiveButton(recyclerView.context.getString(R.string.mk_text_confirm)){
+                dialog, whichButton -> (activity as InfoActivity).onExitGroup(arguments.getString("conversationId"));
+            }
+            alert.setNegativeButton(recyclerView.context.getString(R.string.mk_text_cancel)){
+                dialog, whichButton ->
+            }
+            alert.show()
         }
 
         return view
@@ -131,5 +140,9 @@ open class MonkeyInfoFragment : Fragment(){
         infoAdapter?.setInfo(arraylist)
         rightText?.text = arraylist.size.toString() + " of 50"
         loadingLayout?.visibility = View.GONE
+    }
+
+    fun removeMember(monkeyId : String){
+        infoAdapter?.removeMember(monkeyId);
     }
 }
