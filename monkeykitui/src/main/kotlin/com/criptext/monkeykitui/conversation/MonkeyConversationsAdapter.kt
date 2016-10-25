@@ -121,7 +121,10 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
     override fun onBindViewHolder(holder: ConversationHolder?, position: Int) {
         val conversation = conversationsList[position]
-        if(holder != null && conversation.getStatus() >
+        if(holder != null && conversation.getStatus() ==
+                MonkeyConversation.ConversationStatus.moreConversations.ordinal)
+            (holder as ConversationHolder.EndHolder).adjustHeight(matchParentHeight = conversationsList.size == 1)
+        else if (holder != null && conversation.getStatus() >
                 MonkeyConversation.ConversationStatus.moreConversations.ordinal){
             holder.setName(conversation.getName())
             holder.setSecondaryText(conversation.getSecondaryText())

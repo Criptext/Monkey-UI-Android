@@ -122,6 +122,23 @@ class Utils {
             return fechaPaelUser
         }
 
+        /**
+         * Changes the layoutParams height property of a view, to either MATCH_PARENT or WRAP_CONTENT.
+         * A new instance of RecyclerView.LayoutParams will be set to the View only if the desired
+         * value is different from the current value.
+         * @param itemView The view that will change its params. The params will have a type
+         * RecyclerView.LayoutParams
+         * @param matchParentHeight if true, set MATCH_PARENT, else set WRAP_CONTENT
+         *
+         */
+        fun adjustHeight(itemView: View, matchParentHeight: Boolean) {
+            val newConstraint = if(matchParentHeight) ViewGroup.LayoutParams.MATCH_PARENT
+            else ViewGroup.LayoutParams.WRAP_CONTENT
+            val currentConstraint = itemView.layoutParams.height
+            if(newConstraint != currentConstraint)
+                itemView.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        newConstraint)
+        }
 
         /**
          * Adds a RecyclerView.LayoutParams to a view

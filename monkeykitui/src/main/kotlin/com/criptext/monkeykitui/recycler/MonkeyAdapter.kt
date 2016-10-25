@@ -195,6 +195,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val item = messagesList[position]
 
         if(holder is MonkeyEndHolder) {
+            holder.adjustHeight(matchParentHeight = messagesList.size == 1)
             return
         }
 

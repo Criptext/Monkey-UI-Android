@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.conversation.holder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.util.Utils
@@ -76,7 +77,12 @@ open class ConversationHolder: RecyclerView.ViewHolder {
         moreConversations, empty, receivedMessage, sentMessage, newMessages;
     }
 
-    class EndHolder(view: View) : ConversationHolder(view, 0);
+    class EndHolder(view: View) : ConversationHolder(view, 0){
+
+        fun adjustHeight(matchParentHeight: Boolean) {
+            Utils.adjustHeight(itemView, matchParentHeight)
+        }
+    };
 }
 
 
