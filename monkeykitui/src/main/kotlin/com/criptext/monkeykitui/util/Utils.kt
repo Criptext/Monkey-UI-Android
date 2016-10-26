@@ -122,6 +122,24 @@ class Utils {
             return fechaPaelUser
         }
 
+
+        /**
+         * Converts a Long to a String formatted as audio duration in minutes and seconds.
+         * @param time a timestamp
+         * @return A string formatted as mm:ss (minutes and seconds)
+         */
+        open fun getAudioTimeFormattedText(time: Long) : String
+        {
+            val totalSeconds = time / 1000;
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
+            var strMinutes = if(minutes < 10)  "0" + minutes else "" + minutes
+            var strSeconds = if(seconds < 10)  "0" + seconds else "" + seconds
+
+            return "$strMinutes:$strSeconds"
+        }
+
+
         /**
          * Changes the layoutParams height property of a view, to either MATCH_PARENT or WRAP_CONTENT.
          * A new instance of RecyclerView.LayoutParams will be set to the View only if the desired

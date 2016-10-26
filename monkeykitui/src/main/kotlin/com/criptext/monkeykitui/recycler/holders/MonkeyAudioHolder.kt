@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.cav.AudioActions
 import com.criptext.monkeykitui.cav.CircularAudioView
+import com.criptext.monkeykitui.util.Utils
 
 
 /**
@@ -94,19 +95,8 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         setAudioDurationText(audioTime)
     }
 
-    open fun getAudioTimeFormattedText(time: Long) : String
-    {
-        val totalSeconds = time / 1000;
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        var strMinutes = if(minutes < 10)  "0" + minutes else "" + minutes
-        var strSeconds = if(seconds < 10)  "0" + seconds else "" + seconds
-
-        return "$strMinutes:$strSeconds"
-    }
-
     open fun setAudioDurationText(duration : Long){
-        durationTextView!!.text = getAudioTimeFormattedText(duration)
+        durationTextView!!.text = Utils.getAudioTimeFormattedText(duration)
     }
 
     open fun setOnSeekBarChangeListener(listener: CircularAudioView.OnCircularAudioViewChangeListener){

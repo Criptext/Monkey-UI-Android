@@ -119,6 +119,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
             else -> 0
         }
     }
+
     override fun onBindViewHolder(holder: ConversationHolder?, position: Int) {
         val conversation = conversationsList[position]
         if(holder != null && conversation.getStatus() ==
