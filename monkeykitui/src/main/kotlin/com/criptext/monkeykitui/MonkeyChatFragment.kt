@@ -7,9 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -132,7 +130,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(chatLayout, null)
-
+        setHasOptionsMenu(true)
         recyclerView = initRecyclerView(view)
 
         inputView = view.findViewById(R.id.inputView) as BaseInputView
@@ -320,6 +318,23 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             Picasso.with(iv?.context).load(File(imageUrl)).resize(width, 0).into(iv)
         } else {
             iv?.setImageDrawable(null)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu : Menu?, inflater: MenuInflater){
+        inflater.inflate(R.menu.menu_chat, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_deleteall -> {
+                (activity as ChatActivity).deleteAllMessages(monkeyAdapter.conversationId)
+                return true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
         }
     }
 }
