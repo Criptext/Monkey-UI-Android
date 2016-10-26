@@ -6,8 +6,7 @@
          android:id="@+id/progressBarImage"
          android:layout_width="45dp"
          android:layout_height="45dp"
-         android:layout_gravity="center"
-         android:indeterminateTint="#014766"/>
+         android:layout_gravity="center" />
 
 </FrameLayout>
 
