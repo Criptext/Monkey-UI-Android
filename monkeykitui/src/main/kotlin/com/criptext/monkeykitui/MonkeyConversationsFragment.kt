@@ -8,9 +8,7 @@ import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.criptext.monkeykitui.conversation.ConversationsActivity
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
@@ -49,6 +47,7 @@ open class MonkeyConversationsFragment: Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(conversationsLayout, null)
+        setHasOptionsMenu(false)
         recyclerView = initRecyclerView(view)
         conversationsAdapter = MonkeyConversationsAdapter(activity)
         conversationsAdapter!!.recyclerView = recyclerView
@@ -185,4 +184,8 @@ open class MonkeyConversationsFragment: Fragment(){
     }
 
     fun getLastConversation(): MonkeyConversation? = conversationsAdapter?.getLastConversation()
+
+    override fun onCreateOptionsMenu(menu : Menu?, inflater: MenuInflater){
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 }

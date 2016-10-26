@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -69,6 +67,7 @@ open class MonkeyInfoFragment : Fragment(){
         isGroup = arguments.getBoolean("isGroup")
 
         val view = inflater!!.inflate(infoLayout, null)
+        setHasOptionsMenu(true)
         recyclerView = initRecyclerView(view)
         infoAdapter = MonkeyInfoAdapter(activity)
         infoAdapter!!.recyclerView = recyclerView
@@ -145,4 +144,10 @@ open class MonkeyInfoFragment : Fragment(){
     fun removeMember(monkeyId : String){
         infoAdapter?.removeMember(monkeyId);
     }
+
+    override fun onCreateOptionsMenu(menu : Menu?, inflater: MenuInflater){
+        menu?.clear()
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
 }

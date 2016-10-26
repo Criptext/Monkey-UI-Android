@@ -93,4 +93,6 @@ interface ChatActivity {
 
     fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment)
 
+    fun deleteAllMessages(conversationId: String);
+
 }
