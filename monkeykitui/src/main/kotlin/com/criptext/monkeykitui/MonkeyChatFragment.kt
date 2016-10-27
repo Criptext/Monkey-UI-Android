@@ -52,6 +52,9 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             if(view != null) {
                 monkeyAdapter.voiceNotePlayer = value
                 value?.uiUpdater = audioUIUpdater
+
+                if(value?.isPlayingAudio ?: false)
+                    audioUIUpdater.rebindAudioHolder(value!!.currentlyPlayingItem!!.item)
             }
             field = value
         }
@@ -155,13 +158,12 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     override fun onStart() {
         super.onStart()
         (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
-        voiceNotePlayer?.initPlayer()
     }
 
     override fun onStop() {
         super.onStop()
+        voiceNotePlayer?.uiUpdater = null
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
-        voiceNotePlayer?.releasePlayer()
     }
 
     override fun onAttach(activity: Activity?) {

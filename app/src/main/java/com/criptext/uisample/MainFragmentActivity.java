@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
@@ -15,7 +14,6 @@ import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
-import com.criptext.monkeykitui.toolbar.MonkeyToolbar;
 import com.criptext.monkeykitui.toolbar.ToolbarDelegate;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
 import com.criptext.monkeykitui.util.Utils;
@@ -25,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,7 +31,6 @@ import java.util.List;
 public class MainFragmentActivity extends BaseChatActivity implements ConversationsActivity, ToolbarDelegate {
     MonkeyChatFragment chatFragment;
     MonkeyConversationsFragment convFragment;
-    VoiceNotePlayer vnPlayer;
     InputListener inputListener;
     MonkeyFragmentManager fragmentManager;
     @Override
@@ -105,8 +101,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     public void onConversationClicked(@NotNull MonkeyConversation conversation) {
         if(inputListener == null)
             inputListener = createInputListener();
-        if(vnPlayer == null)
-            vnPlayer = new DefaultVoiceNotePlayer(this);
         //set all messages as read, use default avatar
         MonkeyChatFragment fragment =
                 MonkeyChatFragment.Companion.newGroupInstance("0", conversation.getName(),
@@ -118,6 +112,13 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     public void requestConversations() {
         if(convFragment != null)
             convFragment.insertConversations(new FakeConversations().getAll(this), true);
+    }
+
+    @Override
+    protected void setVoiceNotePlayer(DefaultVoiceNotePlayer player) {
+        super.setVoiceNotePlayer(player);
+        if(chatFragment != null)
+            chatFragment.setVoiceNotePlayer(player);
     }
 
     @Override
@@ -173,6 +174,11 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void deleteChatFragment(@NotNull MonkeyChatFragment monkeyChatFragment) {
+
+    }
+
+    @Override
+    public void deleteAllMessages(@NotNull String conversationId) {
 
     }
 }

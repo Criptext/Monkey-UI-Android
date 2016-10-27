@@ -721,11 +721,11 @@ public class CircularAudioView extends View {
 			cwDistanceFromPointer = (cwDistanceFromPointer < 0 ? 360f + cwDistanceFromPointer : cwDistanceFromPointer);
 			ccwDistanceFromPointer = 360f - cwDistanceFromPointer;
 			
-			System.out.println("touchEventRadius: " + touchEventRadius + " innerRadius: " + innerRadius);
+			//System.out.println("touchEventRadius: " + touchEventRadius + " innerRadius: " + innerRadius);
 			// This is for if the first touch is on the actual pointer.
 			if(touchEventRadius < innerRadius){
 				//PLAY/PAUSE PRESSED
-				System.out.println("touchEvent PLAY PRESSED");
+				//System.out.println("touchEvent PLAY PRESSED");
 				mAudioActions.onActionPressed();
 				lastPress = System.currentTimeMillis();
 				mUserIsMovingPointer = false;
@@ -769,7 +769,7 @@ public class CircularAudioView extends View {
 				lockAtEnd = false;
 				lockAtStart = false;
 			} else { // If the user is not touching near the circle
-				System.out.println("NOT IN CIRCLE");
+				//System.out.println("NOT IN CIRCLE");
 				mUserIsMovingPointer = false;
 				return false;
 			}

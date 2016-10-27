@@ -35,6 +35,8 @@
         <activity
             android:name="com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity"
             android:label="@string/mk_edit_photo"/>
+
+        <service android:name="com.criptext.monkeykitui.recycler.audio.PlaybackService" />
     </application>
 
 </manifest>

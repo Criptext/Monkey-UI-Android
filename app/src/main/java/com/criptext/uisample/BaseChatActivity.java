@@ -1,20 +1,25 @@
 package com.criptext.uisample;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.listeners.InputListener;
+import com.criptext.monkeykitui.recycler.audio.PlaybackService;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
+import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,6 +30,18 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     private Handler handler = new Handler();
     SlowMessageLoader loader; //loads fake messages
     FakeFiles fakeFiles; //manages fake photos and voice notes.
+    protected DefaultVoiceNotePlayer vnPlayer;
+
+    final private ServiceConnection playbackConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                PlaybackService.VoiceNoteBinder binder = (PlaybackService.VoiceNoteBinder)service;
+                setVoiceNotePlayer(binder.getVoiceNotePlayer());
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) { }
+        };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +88,10 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             };
     }
 
+    protected void setVoiceNotePlayer(DefaultVoiceNotePlayer player) {
+        vnPlayer = player;
+    }
+
     private void mockFileNetworkRequests(MonkeyItem item) {
         final MessageItem message = (MessageItem) item;
         Runnable errorCallback = new Runnable() {
@@ -90,6 +111,25 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             rebindMonkeyItem(message);
         } else
             handler.postDelayed(errorCallback, 3000);
+    }
+
+    private void startPlaybackService() {
+        Intent playbackIntent = new Intent(getApplicationContext(), PlaybackService.class);
+        if(!PlaybackService.Companion.isRunning())
+            startService(new Intent(this, PlaybackService.class));
+        getApplicationContext().bindService(playbackIntent, playbackConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startPlaybackService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        getApplicationContext().unbindService(playbackConnection);
     }
 
     /**

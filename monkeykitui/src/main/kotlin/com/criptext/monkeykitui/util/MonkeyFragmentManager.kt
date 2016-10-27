@@ -140,7 +140,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer): Collection<MonkeyConversation>{
+                        voiceNotePlayer: VoiceNotePlayer?): Collection<MonkeyConversation>{
 
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as? MonkeyConversationsFragment? //finding by id may be too slow?

@@ -18,7 +18,7 @@ import java.io.IOException
 
 open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     val handler : Handler
-    lateinit private var player : MediaPlayer
+    private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
     var mediaDuration : Int
     private set
