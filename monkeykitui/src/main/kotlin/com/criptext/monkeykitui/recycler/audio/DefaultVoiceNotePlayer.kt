@@ -20,6 +20,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     val handler : Handler
     lateinit private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
+    var mediaDuration : Int
     private set
 
     override val isPlayingAudio: Boolean
@@ -34,19 +35,30 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     override val playbackProgress : Int
     get(){
-        if(isPlayingAudio && player.duration > 0)
-            return 100 * player.currentPosition / player.duration;
+        if(mediaDuration > 0)
+            try {
+                return 100 * player.currentPosition / mediaDuration;
+            }catch(ex : IllegalStateException){
+                return 0
+            }
         else
             return 0;
     }
 
     override  val playbackPosition : Int
-    get() = player.currentPosition
+    get(){
+        try {
+            return player.currentPosition;
+        }catch(ex : IllegalStateException){
+            return 0
+        }
+    }
 
     init {
         updateProgressEnabled = true
         player = MediaPlayer()
         handler = Handler()
+        mediaDuration = 0
     }
 
     constructor(ctx: Context, uiUpdater: AudioUIUpdater): this(ctx){
@@ -57,6 +69,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         player.setDataSource(prevPlayingItem.item.getFilePath())
         player.setOnPreparedListener {
             player.seekTo(prevPlayingItem.lastPlaybackPosition)
+            rebindCurrentAudioHolder()
         }
         player.prepareAsync()
     }
@@ -99,9 +112,9 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         playerRunnable = createNewUIRunnable()
 
         val playingTrack = currentlyPlayingItem
-        if(playingTrack != null)
+        if(playingTrack != null) {
             restorePreviousPlaybackAndPlay(playingTrack)
-
+        }
         player.setOnCompletionListener {
             notifyPlaybackStopped()
         }
@@ -166,6 +179,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     private fun startPlayback(){
         player.start()
+        mediaDuration = player.duration
         try {
             playerRunnable.run()
         } catch (ex: UninitializedPropertyAccessException){

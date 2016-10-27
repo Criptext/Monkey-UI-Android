@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler.holders
 
 import android.content.DialogInterface
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -36,6 +37,8 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         playButtonView = view.findViewById(R.id.play_button) as ImageView
         downloadProgressView = view.findViewById(R.id.progress_audio) as ProgressBar?
         circularAudioView!!.setAudioActions(object : AudioActions(){ })
+
+        downloadProgressView?.indeterminateDrawable?.setColorFilter(Color.parseColor("#909d9e"), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
     open fun setAudioActions(actions: AudioActions){
