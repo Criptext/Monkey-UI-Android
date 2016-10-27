@@ -34,10 +34,10 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
     override val playbackProgress : Int
     get(){
-        if(isPlayingAudio && player.duration > 0)
+        //if(isPlayingAudio && player.duration > 0)
             return 100 * player.currentPosition / player.duration;
-        else
-            return 0;
+        //else
+            //return 0;
     }
 
     override  val playbackPosition : Int
@@ -57,6 +57,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         player.setDataSource(prevPlayingItem.item.getFilePath())
         player.setOnPreparedListener {
             player.seekTo(prevPlayingItem.lastPlaybackPosition)
+            rebindCurrentAudioHolder()
         }
         player.prepareAsync()
     }
@@ -99,9 +100,9 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         playerRunnable = createNewUIRunnable()
 
         val playingTrack = currentlyPlayingItem
-        if(playingTrack != null)
+        if(playingTrack != null) {
             restorePreviousPlaybackAndPlay(playingTrack)
-
+        }
         player.setOnCompletionListener {
             notifyPlaybackStopped()
         }

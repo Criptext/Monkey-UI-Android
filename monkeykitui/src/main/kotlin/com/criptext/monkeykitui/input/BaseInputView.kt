@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import com.criptext.monkeykitui.R
@@ -92,6 +93,14 @@ open class BaseInputView : FrameLayout {
         params.bottomMargin = context.resources.getDimension(R.dimen.input_view_bottom_margin).toInt()
 
         editText.layoutParams = params
+        editText.setOnFocusChangeListener { view, b ->
+            if (view == editText && !b) {
+
+                val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+
+            }
+        }
         addView(editText)
 
         val leftBtn = setLeftButton(typedArray)
@@ -160,5 +169,18 @@ open class BaseInputView : FrameLayout {
         editText.text.clear()
     }
 
+
+    private inner class MyFocusChangeListener : OnFocusChangeListener {
+
+        override fun onFocusChange(v: View, hasFocus: Boolean) {
+
+            if (v == editText && !hasFocus) {
+
+                val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+
+            }
+        }
+    }
 
 }

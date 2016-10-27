@@ -446,6 +446,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             audioHolder.setWaitingForDownload()
         } else if(playingAudio?.getMessageId().equals(item.getMessageId())){// Message is prepared in MediaPlayer
             audioHolder.setReadyForPlayback()
+            Log.d("TEST", "Audio : " + voiceNotePlayer?.playbackProgress);
             audioHolder.updateAudioProgress(voiceNotePlayer?.playbackProgress ?: 0,
                         voiceNotePlayer?.playbackPosition?.toLong() ?: 0)
             if(voiceNotePlayer?.isPlayingAudio ?: false){ // Message is playing

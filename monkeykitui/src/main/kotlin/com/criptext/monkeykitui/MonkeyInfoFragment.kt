@@ -90,6 +90,8 @@ open class MonkeyInfoFragment : Fragment(){
             alert.show()
         }
 
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
         return view
     }
 

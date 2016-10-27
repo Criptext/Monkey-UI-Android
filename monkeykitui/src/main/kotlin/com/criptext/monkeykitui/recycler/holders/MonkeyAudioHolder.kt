@@ -91,7 +91,9 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
     }
 
     open fun updateAudioProgress(percentage: Int, audioTime: Long){
-        circularAudioView!!.progress = if(percentage > 100) 100 else percentage
+        //if(!(percentage == 0 && audioTime != 0.toLong())){
+            circularAudioView!!.progress = if(percentage > 100) 100 else percentage
+        //}
         setAudioDurationText(audioTime)
     }
 
