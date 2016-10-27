@@ -1,7 +1,6 @@
 package com.criptext.monkeykitui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,7 +10,6 @@ import android.util.Log
 import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.criptext.monkeykitui.input.BaseInputView
@@ -163,7 +161,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     override fun onStop() {
         super.onStop()
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
-         voiceNotePlayer?.releasePlayer()
+        voiceNotePlayer?.releasePlayer()
     }
 
     override fun onAttach(activity: Activity?) {

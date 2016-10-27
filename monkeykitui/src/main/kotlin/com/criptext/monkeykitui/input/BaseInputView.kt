@@ -93,8 +93,8 @@ open class BaseInputView : FrameLayout {
         params.bottomMargin = context.resources.getDimension(R.dimen.input_view_bottom_margin).toInt()
 
         editText.layoutParams = params
-        editText.setOnFocusChangeListener { view, b ->
-            if (view == editText && !b) {
+        editText.setOnFocusChangeListener { view, isFocused ->
+            if (!isFocused) {
 
                 val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -167,20 +167,6 @@ open class BaseInputView : FrameLayout {
 
     fun clearText(){
         editText.text.clear()
-    }
-
-
-    private inner class MyFocusChangeListener : OnFocusChangeListener {
-
-        override fun onFocusChange(v: View, hasFocus: Boolean) {
-
-            if (v == editText && !hasFocus) {
-
-                val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(v.windowToken, 0)
-
-            }
-        }
     }
 
 }

@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.FragmentManager
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -13,8 +12,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
@@ -128,14 +125,9 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()
         addOnBackStackChangedListener()
-
     }
 
     fun addOnBackStackChangedListener(){
-        //val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //imm.hideSoftInputFromWindow(activity.view)
-
         activity.supportFragmentManager.addOnBackStackChangedListener({
             monkeyToolbar?.checkIfChatFragmentIsVisible()
         })
