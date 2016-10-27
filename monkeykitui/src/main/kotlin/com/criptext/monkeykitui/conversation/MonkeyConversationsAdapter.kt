@@ -365,21 +365,26 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     /**
-     * updates a conversation in the recyclerView. calls notifyItemChanged with the updated conversation's
-     * position.
-     * @param updatedConversation the updated conversation. this object replaces the existing conversation
-     * in the adapter.
+     * updates a conversation in the recyclerView, using a transaction.
+     * @param target conversation to find and update. This object only needs to have valid id and timestamp.
+     * @param transaction the transaction object that will update the conversation once it is found
+     * in the adapter
      */
-    fun updateConversation(conversation: MonkeyConversation, transaction: ConversationTransaction){
-        val position = getConversationPositionByTimestamp(conversation)
+    fun updateConversation(target: MonkeyConversation, transaction: ConversationTransaction){
+        val position = getConversationPositionByTimestamp(target)
         if(position > -1){
-            conversationsList.removeAt(position)
+            val conversation = conversationsList.removeAt(position)
             transaction.updateConversation(conversation)
             swapConversationPosition(conversation, position)
-        } else Log.e("ConversationsAdapter", "Conversation with ID: ${conversation.getConvId()} and " +
-                "timestamp: ${conversation.getDatetime()} not found in adapter.")
+        } else Log.e("ConversationsAdapter", "Conversation with ID: ${target.getConvId()} and " +
+                "timestamp: ${target.getDatetime()} not found in adapter.")
     }
 
+    /**
+     * Calls notifyItemChanged with the updated conversation's
+     * position.
+     * @param  conversation to find and update.
+     */
     fun updateConversation(conversation: MonkeyConversation){
         val position = getConversationPositionByTimestamp(conversation)
         if(position > -1) {
