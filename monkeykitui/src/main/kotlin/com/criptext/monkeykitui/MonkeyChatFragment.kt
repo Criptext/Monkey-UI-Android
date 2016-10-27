@@ -163,7 +163,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     override fun onStop() {
         super.onStop()
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
-        voiceNotePlayer?.releasePlayer()
+         voiceNotePlayer?.releasePlayer()
     }
 
     override fun onAttach(activity: Activity?) {
