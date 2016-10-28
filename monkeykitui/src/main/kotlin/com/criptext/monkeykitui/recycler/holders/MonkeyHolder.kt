@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.Utils
 import java.util.*
@@ -124,7 +125,7 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
      */
     open fun setSenderName(name : String, color : Int){
         senderNameTextView!!.visibility = View.VISIBLE
-        senderNameTextView!!.text = name
+        senderNameTextView!!.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(name)))
         senderNameTextView!!.setTextColor(color)
     }
 

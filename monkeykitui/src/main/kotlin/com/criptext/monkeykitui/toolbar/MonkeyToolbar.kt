@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.util.MonkeyFragmentManager
 import com.criptext.monkeykitui.util.Utils
 import com.github.badoualy.morphytoolbar.MorphyToolbar
@@ -58,7 +59,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
         if (activity.supportFragmentManager.backStackEntryCount > 0) {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
             val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
-            customToolbar?.title?.text = monkeyChatFragment?.getChatTitle()
+            customToolbar?.title?.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(monkeyChatFragment?.getChatTitle())))
             customToolbar?.imageView?.visibility = View.VISIBLE
 
             activity.supportFragmentManager.getBackStackEntryAt(activity.supportFragmentManager.backStackEntryCount - 1)

@@ -31,6 +31,7 @@ open class MonkeyInfoFragment : Fragment(){
     protected var infoAdapter: MonkeyInfoAdapter? = null
     var rightText : TextView? = null
     var leftText : TextView? = null
+    var noContentText : TextView? = null
     var outButton : Button? = null
     var isGroup : Boolean = false
     var loadingLayout : FrameLayout? = null
@@ -46,10 +47,15 @@ open class MonkeyInfoFragment : Fragment(){
             rightText?.text = ""
             outButton?.visibility = View.GONE
         }
-        if(groupInfo.size <= 0){
+        if(groupInfo.size <= 0 && isGroup){
             loadingLayout?.visibility = View.VISIBLE
+            noContentText?.visibility = View.GONE
+        }else if (groupInfo.size <= 0 && !isGroup){
+            loadingLayout?.visibility = View.GONE
+            noContentText?.visibility = View.VISIBLE
         }else{
             loadingLayout?.visibility = View.GONE
+            noContentText?.visibility = View.GONE
         }
         infoAdapter?.addMembers(groupInfo);
     }
@@ -76,6 +82,7 @@ open class MonkeyInfoFragment : Fragment(){
         leftText = view.findViewById(R.id.leftTextList) as TextView
         outButton = view.findViewById(R.id.mk_info_out) as Button
         loadingLayout = view.findViewById(R.id.info_load) as FrameLayout
+        noContentText = view.findViewById(R.id.noContentText) as TextView
         setInfo()
 
         (outButton as? Button)?.setOnClickListener{
@@ -139,6 +146,7 @@ open class MonkeyInfoFragment : Fragment(){
         infoAdapter?.setInfo(arraylist)
         rightText?.text = arraylist.size.toString() + " of 50"
         loadingLayout?.visibility = View.GONE
+        noContentText?.visibility = View.GONE
     }
 
     fun removeMember(monkeyId : String){

@@ -52,5 +52,6 @@
     <string name="mk_text_cancel">Cancelar</string>
 
     <string name="mk_text_participants">Participants</string>
-    <string name="mk_text_common">Common Conversations</string>
+    <string name="mk_text_common">Shared Conversations</string>
+    <string name="mk_no_common">No Shared Conversations</string>
 </resources>

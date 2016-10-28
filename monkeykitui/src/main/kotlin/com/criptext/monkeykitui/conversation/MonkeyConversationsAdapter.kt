@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
 import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
@@ -316,7 +317,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 val name = conversation.getName()
                 val msg = if(conversation.isGroup()) "${mContext.getString(R.string.mk_exit_group_msg)} \"$name\""
                         else "${mContext.getString(R.string.mk_delete_conversation_msg)} $name"
-                SnackbarUtils.showUndoMessage(recycler = recycler, msg = msg,
+                SnackbarUtils.showUndoMessage(recycler = recycler, msg = EmojiHandler.decodeJava(EmojiHandler.decodeJava(msg)),
                         undoAction = {
                             conversationToDelete = null
                             addNewConversation(conversation)
