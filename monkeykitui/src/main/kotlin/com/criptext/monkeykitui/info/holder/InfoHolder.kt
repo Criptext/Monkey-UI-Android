@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.util.Utils
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -28,7 +29,7 @@ open class InfoHolder: RecyclerView.ViewHolder {
     }
 
     open fun setName(name: String){
-        nameTextView!!.text = name
+        nameTextView!!.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(name)))
     }
 
     open fun setSecondaryText(text: String){

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.util.Utils
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -43,11 +44,11 @@ open class ConversationHolder: RecyclerView.ViewHolder {
     }
 
     open fun setName(name: String){
-        nameTextView!!.text = name
+        nameTextView!!.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(name)))
     }
 
     open fun setSecondaryText(text: String){
-        secondaryTextView!!.text = text
+        secondaryTextView!!.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(text)))
     }
 
     open fun setDate(dateString: String){

@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
-
+import com.criptext.monkeykitui.cav.EmojiHandler
 /**
  * Created by gesuwall on 4/12/16.
  */
