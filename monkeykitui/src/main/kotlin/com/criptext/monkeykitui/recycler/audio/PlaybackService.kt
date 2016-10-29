@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.recycler.audio
 
+import android.app.Activity
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -17,9 +18,8 @@ class PlaybackService: Service()  {
         newPlayer.initPlayer()
         newPlayer
     }
-    private var currentSong : Int = 0
 
-
+    private var sensorHandler: SensorHandler? = null
     private val binder  = VoiceNoteBinder()
 
 
@@ -33,6 +33,12 @@ class PlaybackService: Service()  {
             player.releasePlayer()
             stopSelf()
         }
+
+        if(!(sensorHandler?.isProximityOn ?: false)) {
+            sensorHandler?.onDestroy()
+            sensorHandler = null
+        }
+
         return true
 
     }
@@ -49,7 +55,10 @@ class PlaybackService: Service()  {
     }
 
     inner class VoiceNoteBinder : Binder() {
-        fun getVoiceNotePlayer() : DefaultVoiceNotePlayer {
+        fun getVoiceNotePlayer(act: Activity) : DefaultVoiceNotePlayer {
+            if(sensorHandler == null) {
+                sensorHandler = SensorHandler(player, act)
+            }
             return player;
         }
     }
