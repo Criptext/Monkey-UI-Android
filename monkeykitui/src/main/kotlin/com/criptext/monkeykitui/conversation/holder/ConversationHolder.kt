@@ -75,7 +75,7 @@ open class ConversationHolder: RecyclerView.ViewHolder {
     }
 
     enum class ViewTypes {
-        moreConversations, empty, receivedMessage, sentMessage, newMessages;
+        moreConversations, empty, receivedMessage, sentMessage, newMessages, sendingMessage, errorSendingMessage
     }
 
     class EndHolder(view: View) : ConversationHolder(view, 0){
