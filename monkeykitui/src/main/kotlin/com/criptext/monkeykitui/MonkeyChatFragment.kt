@@ -162,7 +162,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStop() {
         super.onStop()
-        voiceNotePlayer?.uiUpdater = null
+        //voiceNotePlayer?.uiUpdater = null
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
     }
 

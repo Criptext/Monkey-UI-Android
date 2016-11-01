@@ -21,6 +21,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
     var mediaDuration : Int
+    var progressDuration : Int
     private set
 
     override val isPlayingAudio: Boolean
@@ -59,6 +60,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
         player = MediaPlayer()
         handler = Handler()
         mediaDuration = 0
+        progressDuration = 0
     }
 
     constructor(ctx: Context, uiUpdater: AudioUIUpdater): this(ctx){
