@@ -117,7 +117,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         return when(status){
             MonkeyConversation.ConversationStatus.deliveredMessage -> R.drawable.mk_checkmark_sent
             MonkeyConversation.ConversationStatus.sentMessageRead -> R.drawable.mk_checkmark_read
-            MonkeyConversation.ConversationStatus.errorSendingMessage -> R.drawable.ic_clock
             MonkeyConversation.ConversationStatus.sendingMessage -> R.drawable.ic_clock
             else -> 0
         }
@@ -154,8 +153,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                     holder.setSecondaryTextLeftDrawable(0)
                 }
                 ConversationHolder.ViewTypes.sentMessage,
-                ConversationHolder.ViewTypes.sendingMessage,
-                ConversationHolder.ViewTypes.errorSendingMessage ->{
+                ConversationHolder.ViewTypes.sendingMessage ->{
                     holder.setSecondaryTextLeftDrawable(getSentMessageCheckmark(
                             MonkeyConversation.ConversationStatus.values()[conversation.getStatus()]))
                 }
@@ -189,9 +187,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
 
             MonkeyConversation.ConversationStatus.moreConversations ->
                 ConversationHolder.ViewTypes.moreConversations.ordinal
-            MonkeyConversation.ConversationStatus.errorSendingMessage ->
-                ConversationHolder.ViewTypes.errorSendingMessage.ordinal
-
         }
     }
 
