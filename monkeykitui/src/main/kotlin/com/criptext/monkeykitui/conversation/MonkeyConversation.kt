@@ -64,7 +64,7 @@ interface MonkeyConversation{
     fun getStatus(): Int
 
     enum class ConversationStatus {
-        moreConversations, empty, receivedMessage, sendingMessage, deliveredMessage, sentMessageRead;
+        moreConversations, empty, receivedMessage, sendingMessage, deliveredMessage, sentMessageRead
     }
 
     companion object {

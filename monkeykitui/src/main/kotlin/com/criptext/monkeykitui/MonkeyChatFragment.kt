@@ -157,6 +157,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStart() {
         super.onStart()
+        voiceNotePlayer?.uiUpdater = audioUIUpdater
         (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
     }
 
