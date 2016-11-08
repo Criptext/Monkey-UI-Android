@@ -25,6 +25,7 @@ abstract class VoiceNotePlayer {
      */
     var updateProgressEnabled : Boolean = false
 
+    var onPlaybackStopped: ((MonkeyItem) -> Unit)? = null
     /**
      * Boolean flag that is set to true when a voice note is playing and consequentially, false when
      * a voice note is paused or if there is no currently playing item.
@@ -72,4 +73,7 @@ abstract class VoiceNotePlayer {
      * called before releasing. This should be called on the onStop() callback of your activity.
      */
     abstract fun releasePlayer()
+
+    abstract fun showNotification(notification: PlaybackNotification)
+
 }

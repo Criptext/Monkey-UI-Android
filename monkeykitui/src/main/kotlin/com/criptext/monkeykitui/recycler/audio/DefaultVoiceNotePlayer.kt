@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.recycler.audio
 
+import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -17,11 +18,19 @@ import java.io.IOException
  */
 
 open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
+
+    override fun showNotification(notification: PlaybackNotification) {
+        this.notification = notification
+        if(isPlayingAudio)
+            notification.start(ctx, true)
+    }
+
     val handler : Handler
     private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
     var mediaDuration : Int
     private set
+    private var notification: PlaybackNotification? = null
 
     override val isPlayingAudio: Boolean
     get() {
@@ -123,6 +132,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
     override fun onPauseButtonClicked() {
         //handler.removeCallbacks(playerRunnable);
         pauseAudioHolderPlayer()
+        notification?.start(ctx, false)
     }
 
     override fun onPlayButtonClicked(item: MonkeyItem) {
@@ -139,6 +149,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
                 ex.printStackTrace();
             }
         }
+        notification?.start(ctx, true)
 
     }
 
@@ -206,6 +217,9 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
             val lastPlayingItem = currentlyPlayingItem!!.item
             currentlyPlayingItem = null
             uiUpdater?.rebindAudioHolder(lastPlayingItem)
+
+            onPlaybackStopped?.invoke(lastPlayingItem)
+            PlaybackNotification.removePlaybackNotification(ctx)
         }
     }
 

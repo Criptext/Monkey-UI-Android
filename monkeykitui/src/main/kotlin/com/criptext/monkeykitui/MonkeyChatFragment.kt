@@ -61,6 +61,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     private var isTransitioning = false
     private var runAfterTransition: Runnable? = null
+    var shouldUpdateAudioView: Boolean = false
 
     companion object {
         val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
@@ -159,12 +160,17 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         super.onStart()
         voiceNotePlayer?.uiUpdater = audioUIUpdater
         (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
+        if(shouldUpdateAudioView)
+            reloadAllMessages()
     }
 
     override fun onStop() {
         super.onStop()
         voiceNotePlayer?.uiUpdater = null
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
+
+        if(voiceNotePlayer?.currentlyPlayingItem != null)
+            shouldUpdateAudioView = true
     }
 
     override fun onAttach(activity: Activity?) {

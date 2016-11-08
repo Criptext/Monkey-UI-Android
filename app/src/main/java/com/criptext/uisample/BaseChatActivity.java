@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.listeners.InputListener;
+import com.criptext.monkeykitui.recycler.audio.PlaybackNotification;
 import com.criptext.monkeykitui.recycler.audio.PlaybackService;
 import com.criptext.monkeykitui.recycler.ChatActivity;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
@@ -36,7 +37,8 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 PlaybackService.VoiceNoteBinder binder = (PlaybackService.VoiceNoteBinder)service;
-                setVoiceNotePlayer(binder.getVoiceNotePlayer());
+                setVoiceNotePlayer(binder.getVoiceNotePlayer(BaseChatActivity.this));
+                PlaybackNotification.Companion.removePlaybackNotification(BaseChatActivity.this);
             }
 
             @Override
@@ -129,6 +131,10 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     @Override
     protected void onStop() {
         super.onStop();
+        if(vnPlayer != null && vnPlayer.isPlayingAudio()) {
+            MonkeyItem playingItem = vnPlayer.getCurrentlyPlayingItem().getItem();
+            vnPlayer.showNotification(new PlaybackNotification(R.drawable.audio_play_in, "Playing voice note"));
+        }
         getApplicationContext().unbindService(playbackConnection);
     }
 

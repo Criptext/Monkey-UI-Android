@@ -67,6 +67,7 @@ class SensorHandler(private val voiceNotePlayer: VoiceNotePlayer?, private val c
                 mAudioManager.mode = AudioManager.MODE_NORMAL
                 isProximityOn = false
                 if((mProximityWakeLock?.isHeld ?: false)) mProximityWakeLock?.release()
+                voiceNotePlayer.uiUpdater?.rebindAudioHolder(voiceNotePlayer.currentlyPlayingItem!!.item)
             }
         }
     }

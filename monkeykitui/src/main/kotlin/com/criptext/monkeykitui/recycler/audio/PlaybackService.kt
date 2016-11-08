@@ -5,6 +5,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
+import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
  * Created by gesuwall on 10/27/16.
@@ -16,6 +18,7 @@ class PlaybackService: Service()  {
     private val player : DefaultVoiceNotePlayer by lazy {
         val newPlayer = DefaultVoiceNotePlayer(this)
         newPlayer.initPlayer()
+
         newPlayer
     }
 
@@ -25,6 +28,7 @@ class PlaybackService: Service()  {
 
     override fun onBind(p0: Intent?): IBinder? {
         //Log.d("MusicService", "bind service ")
+        player.onPlaybackStopped = null
         return binder
     }
 
@@ -32,6 +36,10 @@ class PlaybackService: Service()  {
         if(!player.isPlayingAudio) {
             player.releasePlayer()
             stopSelf()
+        } else {
+            player.onPlaybackStopped = { it: MonkeyItem ->
+                stopSelf()
+            }
         }
 
         if(!(sensorHandler?.isProximityOn ?: false)) {
@@ -43,9 +51,17 @@ class PlaybackService: Service()  {
 
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         isRunning = true
-        player.initPlayer();
+
+        if(intent.getBooleanExtra(togglePlayback, false)) {
+            if(player.isPlayingAudio)
+                player.onPauseButtonClicked()
+            else
+                player.onPlayButtonClicked(player.currentlyPlayingItem!!.item)
+        } else
+            player.initPlayer();
+
         return START_STICKY
     }
 
@@ -55,8 +71,8 @@ class PlaybackService: Service()  {
     }
 
     inner class VoiceNoteBinder : Binder() {
-        fun getVoiceNotePlayer(act: Activity) : DefaultVoiceNotePlayer {
-            if(sensorHandler == null) {
+        fun getVoiceNotePlayer(act: Activity?) : DefaultVoiceNotePlayer {
+            if(sensorHandler == null && act != null) {
                 sensorHandler = SensorHandler(player, act)
             }
             return player;
@@ -65,6 +81,7 @@ class PlaybackService: Service()  {
 
     companion object {
         var isRunning: Boolean = false
+        val togglePlayback = "MonkeyKitUI.PlaybackService.togglePlayback"
     }
 }
 
