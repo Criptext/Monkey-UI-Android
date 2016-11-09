@@ -218,6 +218,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
             currentlyPlayingItem = null
             uiUpdater?.rebindAudioHolder(lastPlayingItem)
 
+            notification = null
             onPlaybackStopped?.invoke(lastPlayingItem)
             PlaybackNotification.removePlaybackNotification(ctx)
         }
