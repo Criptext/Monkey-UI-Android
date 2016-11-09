@@ -17,6 +17,7 @@ import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.*
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
+import com.criptext.monkeykitui.recycler.audio.PlaybackService
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import com.etiennelawlor.imagegallery.library.adapters.FullScreenImageGalleryAdapter
@@ -47,14 +48,14 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         field = value
     }
 
-    var voiceNotePlayer: VoiceNotePlayer? = null
+    var voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder? = null
         set(value) {
             if(view != null) {
                 monkeyAdapter.voiceNotePlayer = value
-                value?.uiUpdater = audioUIUpdater
+                value?.setUiUpdater(audioUIUpdater)
 
                 if(value?.isPlayingAudio ?: false)
-                    audioUIUpdater.rebindAudioHolder(value!!.currentlyPlayingItem!!.item)
+                    audioUIUpdater.rebindAudioHolder(value!!.currentlyPlayingItem!!)
             }
             field = value
         }
@@ -146,7 +147,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         recyclerView.adapter = monkeyAdapter
         audioUIUpdater = AudioUIUpdater(recyclerView)
         monkeyAdapter.voiceNotePlayer = voiceNotePlayer
-        voiceNotePlayer?.uiUpdater = audioUIUpdater
+        voiceNotePlayer?.setUiUpdater(audioUIUpdater)
 
         //(activity as AppCompatActivity).supportActionBar?.title = getChatTitle()
         //(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -158,7 +159,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStart() {
         super.onStart()
-        voiceNotePlayer?.uiUpdater = audioUIUpdater
+        voiceNotePlayer?.setUiUpdater(audioUIUpdater)
         (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
         if(shouldUpdateAudioView)
             reloadAllMessages()
@@ -166,7 +167,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStop() {
         super.onStop()
-        voiceNotePlayer?.uiUpdater = null
+        voiceNotePlayer?.setUiUpdater(null)
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
 
         if(voiceNotePlayer?.currentlyPlayingItem != null)

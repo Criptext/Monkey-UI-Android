@@ -20,6 +20,7 @@ import com.criptext.monkeykitui.MonkeyInfoFragment
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.recycler.audio.PlaybackService
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.toolbar.MonkeyStatusBar
 import com.criptext.monkeykitui.toolbar.MonkeyToolbar
@@ -140,7 +141,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer?): Collection<MonkeyConversation>{
+                        voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder?): Collection<MonkeyConversation>{
 
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as? MonkeyConversationsFragment? //finding by id may be too slow?
@@ -179,7 +180,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     }
 
     fun setChatFragmentFromInfo(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: VoiceNotePlayer){
+                        voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder){
         val ft = activity.supportFragmentManager.beginTransaction();
         activity.supportFragmentManager.popBackStack();
         activity.supportFragmentManager.popBackStack();

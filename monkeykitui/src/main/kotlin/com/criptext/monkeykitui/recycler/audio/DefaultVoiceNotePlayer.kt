@@ -1,6 +1,5 @@
 package com.criptext.monkeykitui.recycler.audio
 
-import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -122,6 +121,7 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
         val playingTrack = currentlyPlayingItem
         if(playingTrack != null) {
+            Log.d("Playback", "start front speaker")
             restorePreviousPlaybackAndPlay(playingTrack)
         }
         player.setOnCompletionListener {

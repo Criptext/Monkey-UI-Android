@@ -56,8 +56,7 @@ public class MainActivity extends BaseChatActivity{
         recycler.setLayoutManager(linearLayoutManager);
         recycler.setAdapter(adapter);
         AudioUIUpdater uiUpdater = new AudioUIUpdater(recycler);
-        voiceNotePlayer = new DefaultVoiceNotePlayer(this, uiUpdater);
-        adapter.setVoiceNotePlayer(voiceNotePlayer);
+        //adapter.setVoiceNotePlayer(voiceNotePlayer);
         initInputView();
 
         sensorHandler = new SensorHandler(voiceNotePlayer, this);

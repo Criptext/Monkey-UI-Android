@@ -16,7 +16,7 @@ import android.util.Log
  * face. If audio is playing, changes the audio stream to voice call mode.
  * Created by Gabriel on 5/13/16.
  */
-class SensorHandler(private val voiceNotePlayer: VoiceNotePlayer?, private val ctx: Activity) : SensorEventListener {
+class SensorHandler(private val voiceNotePlayer: VoiceNotePlayer?, private val ctx: Context) : SensorEventListener {
     var isProximityOn = false
     private set
     private val mSensorManager: SensorManager
@@ -53,7 +53,8 @@ class SensorHandler(private val voiceNotePlayer: VoiceNotePlayer?, private val c
                 voiceNotePlayer.onPauseButtonClicked()
                 voiceNotePlayer.releasePlayer()
                 voiceNotePlayer.initPlayerWithFrontSpeaker()
-                ctx.volumeControlStream = AudioManager.STREAM_VOICE_CALL
+                //ctx.volumeControlStream = AudioManager.STREAM_VOICE_CALL
+                mAudioManager.mode = AudioManager.STREAM_VOICE_CALL
                 isProximityOn = true
                 if(!(mProximityWakeLock?.isHeld ?: false)) mProximityWakeLock?.acquire()
             }

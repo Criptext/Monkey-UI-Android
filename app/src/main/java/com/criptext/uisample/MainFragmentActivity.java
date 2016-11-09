@@ -14,6 +14,7 @@ import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
 import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
 import com.criptext.monkeykitui.recycler.audio.PlaybackNotification;
+import com.criptext.monkeykitui.recycler.audio.PlaybackService;
 import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 import com.criptext.monkeykitui.toolbar.ToolbarDelegate;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
@@ -116,7 +117,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    protected void setVoiceNotePlayer(DefaultVoiceNotePlayer player) {
+    public void setVoiceNotePlayer(PlaybackService.VoiceNotePlayerBinder player) {
         super.setVoiceNotePlayer(player);
         if(chatFragment != null)
             chatFragment.setVoiceNotePlayer(player);

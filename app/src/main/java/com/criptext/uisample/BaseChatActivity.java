@@ -31,13 +31,13 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     private Handler handler = new Handler();
     SlowMessageLoader loader; //loads fake messages
     FakeFiles fakeFiles; //manages fake photos and voice notes.
-    protected DefaultVoiceNotePlayer vnPlayer;
+    protected PlaybackService.VoiceNotePlayerBinder vnPlayer;
 
     final private ServiceConnection playbackConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                PlaybackService.VoiceNoteBinder binder = (PlaybackService.VoiceNoteBinder)service;
-                setVoiceNotePlayer(binder.getVoiceNotePlayer(BaseChatActivity.this));
+                PlaybackService.VoiceNotePlayerBinder binder = (PlaybackService.VoiceNotePlayerBinder)service;
+                setVoiceNotePlayer(binder);
                 PlaybackNotification.Companion.removePlaybackNotification(BaseChatActivity.this);
             }
 
@@ -90,10 +90,6 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
             };
     }
 
-    protected void setVoiceNotePlayer(DefaultVoiceNotePlayer player) {
-        vnPlayer = player;
-    }
-
     private void mockFileNetworkRequests(MonkeyItem item) {
         final MessageItem message = (MessageItem) item;
         Runnable errorCallback = new Runnable() {
@@ -128,11 +124,14 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
         startPlaybackService();
     }
 
+    public void setVoiceNotePlayer(PlaybackService.VoiceNotePlayerBinder binder) {
+        vnPlayer = binder;
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
         if(vnPlayer != null && vnPlayer.isPlayingAudio()) {
-            MonkeyItem playingItem = vnPlayer.getCurrentlyPlayingItem().getItem();
             vnPlayer.showNotification(new PlaybackNotification(R.drawable.audio_play_in, "Playing voice note"));
         }
         getApplicationContext().unbindService(playbackConnection);
