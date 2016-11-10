@@ -22,6 +22,12 @@ open class PlaybackService: Service()  {
         newPlayer
     }
 
+    /**
+    This controls whether the service should be killed after stopping playback. The service should
+    only be killed if it is not playing anything while activity is dead.
+    */
+    var inForeground = false
+
     private var sensorHandler: SensorHandler? = null
 
     open protected fun newVoiceNotePlayerInstance(): VoiceNotePlayer {
@@ -42,15 +48,12 @@ open class PlaybackService: Service()  {
             player.releasePlayer()
             stopSelf()
         } else {
-            player.onPlaybackStopped = { it: MonkeyItem ->
-                stopSelf()
+            player.onPlaybackStopped = { item ->
+                if(!inForeground)
+                    stopSelf()
             }
         }
 
-        if(!(sensorHandler?.isProximityOn ?: false)) {
-            sensorHandler?.onDestroy()
-            sensorHandler = null
-        }
 
         return true
 
@@ -72,6 +75,12 @@ open class PlaybackService: Service()  {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        if(!(sensorHandler?.isProximityOn ?: false)) {
+            sensorHandler?.onDestroy()
+            sensorHandler = null
+        }
+
         isRunning = false
     }
 
@@ -110,6 +119,10 @@ open class PlaybackService: Service()  {
             player.uiUpdater = updater
         }
 
+        fun setIsInForeground(value: Boolean) {
+            inForeground = value
+        }
+
         /**
          * Posts a notification that can control voice note's playback if the player is playing audio.
          * If it isn't playing anything or is paused, it will attempt to remove any existing playback
@@ -132,7 +145,7 @@ open class PlaybackService: Service()  {
             if( player.isPlayingAudio) {
                 val message = player.currentlyPlayingItem!!.item;
                 if(message.getConversationId() == conversationId)
-                    PlaybackNotification.Companion.removePlaybackNotification(this@PlaybackService);
+                    player.removeNotification()
             }
         }
 

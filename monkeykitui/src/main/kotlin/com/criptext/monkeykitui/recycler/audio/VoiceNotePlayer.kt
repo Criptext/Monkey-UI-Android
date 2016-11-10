@@ -76,4 +76,6 @@ abstract class VoiceNotePlayer {
 
     abstract fun showNotification(notification: PlaybackNotification)
 
+    abstract fun removeNotification()
+
 }

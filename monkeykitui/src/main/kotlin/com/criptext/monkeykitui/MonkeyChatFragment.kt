@@ -18,7 +18,6 @@ import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.*
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
 import com.criptext.monkeykitui.recycler.audio.PlaybackService
-import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import com.etiennelawlor.imagegallery.library.adapters.FullScreenImageGalleryAdapter
 import com.squareup.picasso.Picasso
@@ -50,12 +49,18 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     var voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder? = null
         set(value) {
-            if(view != null) {
+            if(view != null) { //check that fragment is ready.
                 monkeyAdapter.voiceNotePlayer = value
-                value?.setUiUpdater(audioUIUpdater)
+                if(value != null) {
+                    value.setIsInForeground(true)
+                    value.setUiUpdater(audioUIUpdater)
+                    val playingItem = value.currentlyPlayingItem
+                    if (playingItem != null)
+                        audioUIUpdater.rebindAudioHolder(playingItem)
+                    //if we are coming back into the chat, remove notification
+                    value.removeNotificationControl(monkeyAdapter.conversationId)
+                }
 
-                if(value?.isPlayingAudio ?: false)
-                    audioUIUpdater.rebindAudioHolder(value!!.currentlyPlayingItem!!)
             }
             field = value
         }
@@ -168,6 +173,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStop() {
         super.onStop()
+        voiceNotePlayer?.setIsInForeground(false)
         voiceNotePlayer?.setUiUpdater(null)
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
 

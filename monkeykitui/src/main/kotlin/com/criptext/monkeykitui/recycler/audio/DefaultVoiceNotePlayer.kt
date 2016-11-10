@@ -24,6 +24,11 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
             notification.start(ctx, true)
     }
 
+    override fun removeNotification() {
+        this.notification = null
+        PlaybackNotification.Companion.removePlaybackNotification(ctx);
+    }
+
     val handler : Handler
     private var player : MediaPlayer
     lateinit var playerRunnable : Runnable
@@ -121,7 +126,6 @@ open class DefaultVoiceNotePlayer(val ctx: Context) : VoiceNotePlayer(){
 
         val playingTrack = currentlyPlayingItem
         if(playingTrack != null) {
-            Log.d("Playback", "start front speaker")
             restorePreviousPlaybackAndPlay(playingTrack)
         }
         player.setOnCompletionListener {
