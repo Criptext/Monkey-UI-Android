@@ -43,5 +43,6 @@ class EndItem : MonkeyItem {
     }
 
     override fun getSenderId(): String = ""
+    override fun getConversationId(): String = ""
 
 }

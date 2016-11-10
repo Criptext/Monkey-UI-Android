@@ -160,6 +160,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     override fun onStart() {
         super.onStart()
         voiceNotePlayer?.setUiUpdater(audioUIUpdater)
+        voiceNotePlayer?.removeNotificationControl(monkeyAdapter.conversationId)
         (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
         if(shouldUpdateAudioView)
             reloadAllMessages()
@@ -282,6 +283,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             override fun getAudioDuration() = 0L
             override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.sending
             override fun getSenderId() = ""
+            override fun getConversationId() = ""
             override fun getFileSize() = 0L
             override fun getFilePath() = ""
             override fun getMessageId() = messageId

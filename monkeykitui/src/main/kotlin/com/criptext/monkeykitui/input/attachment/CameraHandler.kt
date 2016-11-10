@@ -199,6 +199,10 @@ class CameraHandler constructor(var context : Context){
                         return 0
                     }
 
+                    override fun getConversationId(): String {
+                        return ""
+                    }
+
                     override fun getSenderId(): String {
                         return ""
                     }

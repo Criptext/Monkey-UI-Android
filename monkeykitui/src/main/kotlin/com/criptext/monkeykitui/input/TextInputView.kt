@@ -115,6 +115,10 @@ open class TextInputView : BaseInputView {
                         throw UnsupportedOperationException()
                     }
 
+                    override fun getConversationId(): String {
+                        throw UnsupportedOperationException()
+                    }
+
                 }
 
                 inputListener?.onNewItem(monkeyItem)

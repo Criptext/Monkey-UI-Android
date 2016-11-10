@@ -100,6 +100,11 @@ interface MonkeyItem {
      */
     fun getSenderId() : String
 
+    /**
+     * @return a String with an unique identifier of the conversation to which this message belongs.
+     */
+    fun getConversationId() : String
+
     companion object {
 
         /**
@@ -138,6 +143,7 @@ interface MonkeyItem {
                 override fun getAudioDuration() = 0L
                 override fun getDeliveryStatus() = DeliveryStatus.sending
                 override fun getSenderId() = ""
+                override fun getConversationId() = ""
                 override fun getFileSize() = 0L
                 override fun getFilePath() = ""
                 override fun getMessageId() = id

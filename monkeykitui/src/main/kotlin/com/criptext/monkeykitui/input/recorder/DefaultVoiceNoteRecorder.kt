@@ -122,6 +122,10 @@ class DefaultVoiceNoteRecorder(ctx : Context, val maxRecordingSize: Long) : Voic
                     return ""
                 }
 
+                override fun getConversationId(): String {
+                    return ""
+                }
+
                 override fun getFilePath(): String {
                     return file.absolutePath
                 }

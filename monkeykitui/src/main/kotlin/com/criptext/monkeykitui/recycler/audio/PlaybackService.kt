@@ -12,18 +12,23 @@ import com.criptext.monkeykitui.recycler.MonkeyItem
  * Created by gesuwall on 10/27/16.
  */
 
-class PlaybackService: Service()  {
+open class PlaybackService: Service()  {
 
     //media player
-    private val player : DefaultVoiceNotePlayer by lazy {
-        val newPlayer = DefaultVoiceNotePlayer(this)
-        sensorHandler = SensorHandler(newPlayer, this)
+    private val player : VoiceNotePlayer by lazy {
+        val newPlayer = newVoiceNotePlayerInstance()
         newPlayer.initPlayer()
 
         newPlayer
     }
 
     private var sensorHandler: SensorHandler? = null
+
+    open protected fun newVoiceNotePlayerInstance(): VoiceNotePlayer {
+        val newPlayer = DefaultVoiceNotePlayer(this)
+        sensorHandler = SensorHandler(newPlayer, this)
+        return newPlayer
+    }
 
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -105,9 +110,32 @@ class PlaybackService: Service()  {
             player.uiUpdater = updater
         }
 
-        fun showNotification(notification: PlaybackNotification) {
-            player.showNotification(notification)
+        /**
+         * Posts a notification that can control voice note's playback if the player is playing audio.
+         * If it isn't playing anything or is paused, it will attempt to remove any existing playback
+         * notifications.
+         * @param notification an instance of the notification to post
+         */
+        fun setupNotificationControl(notification: PlaybackNotification) {
+            if(player.isPlayingAudio) {
+            player.showNotification(notification);
+        } else
+            PlaybackNotification.Companion.removePlaybackNotification(this@PlaybackService);
         }
+
+        /**
+         * Removes the playback notification only if the supplied conversation ID matches the
+         * conversation ID of the currently playing item.
+         * @param conversationId the conversation ID to match
+         */
+        fun removeNotificationControl(conversationId: String) {
+            if( player.isPlayingAudio) {
+                val message = player.currentlyPlayingItem!!.item;
+                if(message.getConversationId() == conversationId)
+                    PlaybackNotification.Companion.removePlaybackNotification(this@PlaybackService);
+            }
+        }
+
 
     }
 
