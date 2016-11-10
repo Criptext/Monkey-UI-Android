@@ -173,7 +173,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onStop() {
         super.onStop()
-        voiceNotePlayer?.setIsInForeground(false)
+        val isRotating = activity.isChangingConfigurations
+        voiceNotePlayer?.setIsInForeground(isRotating)
         voiceNotePlayer?.setUiUpdater(null)
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
 

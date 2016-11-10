@@ -44,7 +44,7 @@ open class PlaybackService: Service()  {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        if(!player.isPlayingAudio) {
+        if(!inForeground && !player.isPlayingAudio) {
             player.releasePlayer()
             stopSelf()
         } else {
