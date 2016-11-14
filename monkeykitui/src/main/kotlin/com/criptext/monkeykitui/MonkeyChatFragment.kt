@@ -2,6 +2,7 @@ package com.criptext.monkeykitui
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -204,6 +205,11 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             return
 
         val mediaInputView = inputView as? MediaInputView
+
+        if(requestCode == 777){
+            mediaInputView?.attachmentButton?.onActivityResult(requestCode, resultCode, data)
+            return
+        }
         mediaInputView?.cameraHandler?.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -235,6 +241,10 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     fun clearMessages(){
         monkeyAdapter.clear()
+    }
+
+    fun setBackground(data : Intent){
+        recyclerView?.background = Drawable.createFromPath( File(data.data.encodedPath).absolutePath )
     }
 
     fun reloadAllMessages(){

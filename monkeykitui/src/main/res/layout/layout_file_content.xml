@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewLogoFile"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
         android:layout_marginRight="10dp"
         android:tag="1dp" />
 
@@ -15,12 +14,11 @@
         android:id="@+id/textViewFilename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:gravity="top|center_vertical"
         android:maxLines="3"
+        android:singleLine="true"
         android:text="Criptext as dkaspd asdsa dsapkdpas.pfd"
         android:paddingRight="10dp"
-        android:textColor="@android:color/black"
         android:textSize="16sp"
         android:layout_toRightOf="@id/imageViewLogoFile"
         android:textStyle="bold" />
@@ -35,7 +33,6 @@
         android:text="128 KB"
         android:layout_below="@+id/textViewFilename"
         android:layout_alignLeft="@id/textViewFilename"
-        android:layout_marginTop="3dp"
         android:layout_marginRight="10dp"/>
 
 
