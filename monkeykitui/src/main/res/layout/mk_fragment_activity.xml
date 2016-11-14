@@ -25,7 +25,8 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mt_toolbar_height">
+        android:layout_height="@dimen/mt_toolbar_height"
+        android:background="@color/mk_toolbar">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_collapse"
@@ -39,7 +40,8 @@
                 android:id="@+id/toolbar"
                 style="@style/ToolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/mt_toolbar_height">
+                android:layout_height="@dimen/mt_toolbar_height"
+                >
 
                 <com.criptext.monkeykitui.toolbar.HeaderView
                     android:id="@+id/custom_toolbar"

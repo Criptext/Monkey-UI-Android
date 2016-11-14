@@ -33,17 +33,17 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
     open fun showFileIcon(ext: String){
         val context = fileLogoImageView!!.context
         if(ext.compareTo("xls")==0 || ext.compareTo("xlsx")==0)
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.excel_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.xls_icon));
         else if(ext.compareTo("doc")==0 || ext.compareTo("docx")==0)
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.word_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.doc_icon));
         else if(ext.compareTo("ppt")==0 || ext.compareTo("pptx")==0)
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ppt_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ppt_icon));
         else if(ext.compareTo("pdf")==0)
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pdf_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.pdf_icon));
         else if(ext.compareTo("zip")==0)
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.zip_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ext_icon));
         else
-            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.default_file));
+            fileLogoImageView!!.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ext_icon));
     }
     override fun setWaitingForDownload(){
 
@@ -77,6 +77,10 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
         retryDownloadLayout!!.setOnClickListener(retryListener)
         */
 
+    }
+
+    fun  setOnClickListener(listener : View.OnClickListener?) {
+        fileLogoImageView!!.setOnClickListener(listener)
     }
 
 }

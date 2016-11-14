@@ -9,14 +9,14 @@
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
     android:visibility="gone"
-    android:background="#fffce3">
+    android:background="@color/mk_bubble_header">
 
     <TextView
         android:id="@+id/textViewDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Today"
-        android:textColor="#5b5b5b"
+        android:textColor="@color/mk_bubble_header_text"
         android:textStyle="bold"
         android:padding="5dp"
         android:visibility="visible"/>

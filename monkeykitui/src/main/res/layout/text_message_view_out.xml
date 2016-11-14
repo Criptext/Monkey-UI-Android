@@ -47,11 +47,12 @@
                     android:paddingLeft="10dp"
                     android:paddingTop="5dp"
                     android:paddingRight="10dp"
-                    android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    android:text="This is a message"
                     android:lineSpacingExtra="0.8dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColorLink="@color/mk_blue"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/mk_text_out"
+                    android:textColorHighlight="@color/mk_blue"
                     android:textSize="16sp"/>
 
                 <LinearLayout

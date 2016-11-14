@@ -6,8 +6,15 @@
     <color name="mk_bubble_incoming">#f8f6f7</color>
     <color name="mk_bubble_incoming_pressed">#dfddde</color>
     <color name="mk_blue">#0a85ad</color>
+    <color name="mk_text_link_in">#0a85ad</color>
     <color name="mk_bar_status_azul">#29baef</color>
     <color name="mk_black_ochenta_cuatro">#80000000</color>
+    <color name="mk_bubble_header">#fffce3</color>
+    <color name="mk_bubble_header_text">#5b5b5b</color>
+
+    <color name="mk_text_out">#000000</color>
+    <color name="mk_text_in">#000000</color>
+    <color name="mk_fragment_background">#ffffff</color>
 
     <color name="mk_btn_blue_normal">#0276a9</color>
     <color name="mk_btn_blue_pressed">#02597f</color>
@@ -18,5 +25,9 @@
     <color name="mk_status_connecting">#ffff8800</color>
     <color name="mk_status_connected">#ff669900</color>
     <color name="mk_status_no_network">#ff000000</color>
+
+    <color name="mk_toolbar">#0a85ad</color>
+    <color name="mk_toolbar_title">#ffffff</color>
+    <color name="mk_toolbar_secondary_title">#ffffff</color>
 
 </resources>

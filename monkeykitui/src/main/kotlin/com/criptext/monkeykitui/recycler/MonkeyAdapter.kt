@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
@@ -28,6 +29,7 @@ import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.SnackbarUtils
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import java.io.File
+import java.net.URLConnection
 import java.util.*
 
 /**
@@ -397,15 +399,29 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     open protected fun bindMonkeyFileHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
         val fileHolder = holder as MonkeyFileHolder
         val file = File(item.getFilePath())
-        fileHolder.showFileData(file.name, getTotalSizeFile(item.getFileSize()))
-        fileHolder.showFileIcon(file.extension)
+        if(!file.exists() || file.length() < item.getFileSize()) {
+            chatActivity.onFileDownloadRequested(item)
+            fileHolder.showFileData(item.getMessageText(), "Descargando...")
+            fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
+            fileHolder.setOnClickListener(null)
+        }else {
+            fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
+            fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
+            fileHolder.setOnClickListener(View.OnClickListener {
+                val openFile = Intent(Intent.ACTION_VIEW)
+                openFile.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                openFile.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(item.getMessageText()))
+                mContext.startActivity(openFile)
+            })
+
+        }
     }
 
     open protected fun bindMonkeyFileProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
         val fileHolder = holder as MonkeyFileHolder
         val file = File(item.getFilePath())
         if(file.exists()) {
-            fileHolder.showFileData(file.name, getTotalSizeFile(item.getFileSize()))
+            fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
         }
         bindMonkeyFile(item, fileHolder)
 

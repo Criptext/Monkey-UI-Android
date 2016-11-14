@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,6 +16,7 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.attachment.CameraHandler
@@ -23,7 +25,11 @@ import com.criptext.monkeykitui.dialog.SimpleDialog
 import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import com.nbsp.materialfilepicker.MaterialFilePicker
+import com.nbsp.materialfilepicker.ui.FilePickerActivity
+import java.io.File
 import java.util.*
+import java.util.regex.Pattern
 
 /**
  * Created by daniel on 5/10/16.
@@ -40,6 +46,7 @@ open class AttachmentButton : ImageView {
 
     lateinit var cameraOptionLabel: String
     lateinit var galleryOptionLabel: String
+    lateinit var fileOptionLabel : String
 
     lateinit var attachmentOptions: ArrayList<DialogOption>
     private set
@@ -71,7 +78,7 @@ open class AttachmentButton : ImageView {
     fun initialize(typedArray: TypedArray?) {
         cameraHandler = CameraHandler(context)
 
-        attachmentOptions = ArrayList(2)
+        attachmentOptions = ArrayList(3)
         cameraOptionLabel = typedArray?.getString(R.styleable.InputView_cameraOptionLabel) ?:
                 resources.getString(R.string.mk_take_picture)
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
@@ -101,6 +108,16 @@ open class AttachmentButton : ImageView {
                 }
             })
 
+        fileOptionLabel = "Choose File"
+        attachmentOptions.add(object : DialogOption(fileOptionLabel) {
+            override fun onOptionSelected() {
+                MaterialFilePicker().withActivity(context as Activity)
+                        .withRequestCode(777)
+                        .start()
+            }
+        })
+
+
         val customDrawable = typedArray?.getDrawable(R.styleable.InputView_attachmentDrawable)
         setImageDrawable(customDrawable ?:
                         ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
@@ -121,9 +138,78 @@ open class AttachmentButton : ImageView {
     open val diameter: Int
     get() = context.resources.getDimension(R.dimen.circle_button_diameter).toInt()
 
+
     companion object {
         val REQUEST_CAMERA = 5001
         val REQUEST_GALLERY = 5002
+
+    }
+
+    fun  onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val output = File(data!!.getStringExtra(FilePickerActivity.RESULT_FILE_PATH))
+        Log.d("TEST", "SENDING FILE")
+        var monkeyItem = object : MonkeyItem {
+
+            override fun getConversationId(): String {
+                return "" 
+            }
+
+            override fun getMessageTimestampOrder(): Long {
+                return System.currentTimeMillis()
+            }
+
+            override fun getOldMessageId(): String {
+                return "-" + System.currentTimeMillis()
+            }
+
+            override fun getMessageTimestamp(): Long {
+                return System.currentTimeMillis()/1000
+            }
+
+            override fun getMessageId(): String {
+                return "" + (System.currentTimeMillis())
+            }
+
+            override fun isIncomingMessage(): Boolean {
+                return false
+            }
+
+            override fun getDeliveryStatus(): MonkeyItem.DeliveryStatus {
+                throw UnsupportedOperationException()
+            }
+
+            override fun getMessageType(): Int {
+                return MonkeyItem.MonkeyItemType.file.ordinal
+            }
+
+            override fun getMessageText(): String {
+                return output.name
+            }
+
+            override fun getPlaceholderFilePath(): String {
+                return ""
+            }
+
+            override fun getFilePath(): String {
+                return output.absolutePath
+            }
+
+            override fun getFileSize(): Long {
+                return output.length()
+            }
+
+            override fun getAudioDuration(): Long {
+                return 0
+            }
+
+            override fun getSenderId(): String {
+                return ""
+            }
+
+        }
+
+        inputListener?.onNewItem(monkeyItem)
+
     }
 
 }
