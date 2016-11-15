@@ -97,7 +97,7 @@ open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle
 
     fun setSubtitle(subtitle: String){
         customToolbar?.subtitle?.visibility = View.VISIBLE
-        customToolbar?.subtitle?.text = subtitle
+        customToolbar?.subtitle?.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(subtitle))
 
     }
 

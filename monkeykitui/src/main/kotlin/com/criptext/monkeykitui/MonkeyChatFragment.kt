@@ -178,6 +178,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val isRotating = activity.isChangingConfigurations
         voiceNotePlayer?.setIsInForeground(isRotating)
         voiceNotePlayer?.setUiUpdater(null)
+        inputListener?.onStopTyping()
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
 
         if(voiceNotePlayer?.currentlyPlayingItem != null)
@@ -192,11 +193,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onDetach() {
         (activity as ChatActivity).deleteChatFragment(this)
+        inputListener?.onStopTyping()
         super.onDetach()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        inputListener?.onStopTyping()
         (inputView as? MediaInputView)?.recorder = null
         (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }

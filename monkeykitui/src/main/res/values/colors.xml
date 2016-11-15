@@ -26,7 +26,7 @@
     <color name="mk_status_connected">#ff669900</color>
     <color name="mk_status_no_network">#ff000000</color>
 
-    <color name="mk_toolbar">#0a85ad</color>
+    <color name="mk_toolbar">#3F51B5</color>
     <color name="mk_toolbar_title">#ffffff</color>
     <color name="mk_toolbar_secondary_title">#ffffff</color>
 

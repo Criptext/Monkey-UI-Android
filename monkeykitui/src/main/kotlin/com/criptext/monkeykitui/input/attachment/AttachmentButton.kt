@@ -108,14 +108,14 @@ open class AttachmentButton : ImageView {
                 }
             })
 
-        fileOptionLabel = "Choose File"
+        /*fileOptionLabel = "Choose File"
         attachmentOptions.add(object : DialogOption(fileOptionLabel) {
             override fun onOptionSelected() {
                 MaterialFilePicker().withActivity(context as Activity)
                         .withRequestCode(777)
                         .start()
             }
-        })
+        })*/
 
 
         val customDrawable = typedArray?.getDrawable(R.styleable.InputView_attachmentDrawable)
@@ -203,6 +203,10 @@ open class AttachmentButton : ImageView {
             }
 
             override fun getSenderId(): String {
+                return ""
+            }
+
+            override fun getConversationId(): String {
                 return ""
             }
 
