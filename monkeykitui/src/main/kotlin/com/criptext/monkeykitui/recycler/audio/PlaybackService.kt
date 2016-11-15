@@ -59,10 +59,13 @@ open class PlaybackService: Service()  {
 
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         isRunning = true
 
-        if(intent.getBooleanExtra(togglePlayback, false)) {
+        if(intent == null){
+            Log.e("Playback Service", "Unable to start service, null intent")
+            return super.onStartCommand(intent, flags, startId)
+        }else if(intent.getBooleanExtra(togglePlayback, false)) {
             if(player.isPlayingAudio)
                 player.onPauseButtonClicked()
             else
