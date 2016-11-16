@@ -34,6 +34,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     open val chatLayout: Int
         get() = R.layout.monkey_chat_layout
 
+    val LOAD_FILE = 777
     lateinit var recyclerView: RecyclerView
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
@@ -209,7 +210,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
         val mediaInputView = inputView as? MediaInputView
 
-        if(requestCode == 777){
+        if(requestCode == LOAD_FILE){
             mediaInputView?.attachmentButton?.onActivityResult(requestCode, resultCode, data)
             return
         }

@@ -41,6 +41,7 @@ open class AttachmentButton : ImageView {
             field = value
         }
 
+    val LOAD_FILE = 777
     lateinit var cameraOptionLabel: String
     lateinit var galleryOptionLabel: String
     lateinit var fileOptionLabel : String
@@ -88,7 +89,7 @@ open class AttachmentButton : ImageView {
         attachmentOptions.add(object : DialogOption(fileOptionLabel) {
             override fun onOptionSelected() {
                 MaterialFilePicker().withActivity(context as Activity)
-                        .withRequestCode(777)
+                        .withRequestCode(LOAD_FILE)
                         .start()
             }
         })*/
@@ -116,7 +117,6 @@ open class AttachmentButton : ImageView {
 
     fun  onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val output = File(data!!.getStringExtra(FilePickerActivity.RESULT_FILE_PATH))
-        Log.d("TEST", "SENDING FILE")
         var monkeyItem = object : MonkeyItem {
 
             override fun getMessageTimestampOrder(): Long {
