@@ -32,6 +32,7 @@
 
     <string name="mk_take_picture">Take Picture</string>
     <string name="mk_choose_picture">Choose Picture</string>
+    <string name="mk_choose_file">Choose File</string>
 
     <string name="mk_file_dir">Monkey Kit Files</string>
     <string name="mk_sent_photos_dir">Sent Photos</string>

@@ -14,6 +14,7 @@
     <string name="mk_label_yesterday">Ayer</string>
     <string name="mk_take_picture">Tomar Foto</string>
     <string name="mk_choose_picture">Abrir Galería</string>
+    <string name="mk_choose_file">Enviar Archivo</string>
     <string name="mk_file_error">Ocurrió un error guardando tus datos. Tienes suficente espacio disponible?</string>
 
     <string name="mk_text_online">En línea</string>
