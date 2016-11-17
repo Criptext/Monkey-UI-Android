@@ -20,8 +20,12 @@ interface ChatActivity {
      * If a file instantiated with MonkeyItem.getFilePath() does not exist, this method will be called
      * &nbsp\ to download the neccesary file. Once the download is complete the adapter should be notified
      * &nbsp\ to update the UI.
+     *
+     * If you do start the download, make sure to set the status of the MonkeyItem as 'sending' so
+     * that the user can see a progress bar while the file downloads.
+     *
      * Monkey Adapter may call this method several times for the same file, you must make sure that
-     * you only start the download operation once.
+     * you only start the download operation once, although MonkeySDK already does this for you.
      *
      * @param position the adapter position of the MonkeyItem with the missing file
      * @param item the MonkeyItem with the missing file.
@@ -30,69 +34,108 @@ interface ChatActivity {
 
     /**
      * This method will be called when there is a file that had an error during its upload and the
-     * user wants to retry the upload.`
+     * user wants to retry the upload. Once the download is complete the adapter should be notified
+     * &nbsp\ to update the UI.
+     *
+     * If you do start the upload, make sure to set the status of the MonkeyItem as 'sending' so
+     * that the user can see a progress bar while the file uploads.
+     *
      * Monkey Adapter may call this method several times for the same file, you must make sure that
-     * you only start the upload operation once.
+     * you only start the upload operation once, although MonkeySDK already does it for you.
      */
     fun onFileUploadRequested(item: MonkeyItem)
 
     /**
+     * Checks network status. The recommended way to implement this is using ConnectivityManager
      * @return true if the device is connected to the internet, otherwise false
      */
     fun isOnline() : Boolean
 
     /**
-     * Callback executed when the user removes an item from the Chat. Application may need to
-     * delete files from SD card.
+     * Callback executed when the user removes an item from the Chat. If message was of type file, such
+     * as photo or voice note, you must delete the file from the SD dard.
      * @param item the removed MonkeyItem
      * @param unsend if true Application should request the server to remotely delete the message from all devices.
      */
     fun onMessageRemoved(item: MonkeyItem, unsent: Boolean)
+
     /**
-     * When the user scrolls to the to the end, but there are still more messages to display, this
-     * &nbsp\ method will be called to load the next batch of old messages. Once the messages are
-     * &nbsp\ ready they should be added to the adapter using the addOldMessages() method.
-     * @param conversationId
+     * Callback executed when the user scrolls to the top of the list of messages. This should
+     * add older messages to the fragment.
+     *
+     * You should gather the next message batch without blocking the UI thread and when it is
+     * ready add them to the fragment using MonkeyChatFragment's addOldMessages()
+     * method.
+     *
+     * @param conversationId the id of the conversations whose messages are requested. This is useful
+     * for querying the messages.
+     * @param currentMessageCount the number of messages that the fragment currently has. You
+     * could use this number as an offset if fetching from a local database.
      */
+
     fun onLoadMoreMessages(conversationId: String, currentMessageCount: Int)
 
     /**
      * MonkeyChatFragment will call this method to instantly retrieve the first messages to display.
+     * You should return any cached messages that you have quickly available. if you need to access
+     * a database or a server, do that on the onLoadMoreMessages() callback.
+     *
      * @param conversationId unique identifier of the conversation of this chat activity
      * @return A collection of MonkeyItems that will be displayed in the chat as soon as it renders.
      * if there are no messages available returns null
      */
     fun getInitialMessages(conversationId: String): List<MonkeyItem>?
-
     /**
-     * MonkeyChatFragment will call this method in the onDestroy callback. chat activity should try
-     * to persist the messages of the conversations to retain state on configuration change
-     * @param conversationId unique identifier of the chat's conversation
-     * @param messages list of messages to retain
+     * Callback executed when the fragment is about to be destroyed or removed from the screen so
+     * that the activity can persist the messages. When the fragment is recreated it will try
+     * to get back the messages using the getInitialMessages() method
+     *
+     * @param conversationId the id of the conversation to which this messages belong to.
+     * @param messages The messages that the fragment had before being dettached. You
+     * should cache this list but only to give it back the next time getInitialMessages() is called.
+     * Never try to access the objects of this list if you want to manipulate a message object,
+     * always fetch them from the chat fragment or your local database because this list may not be
+     * up to date with those two sources, thus leading to data inconsistencies. This is only meant
+     * to be used as a temporary 'backup'.
      */
     fun retainMessages(conversationId: String, messages: List<MonkeyItem>)
 
     /**
-     * MonkeyChatFragment will call this method to retrieve the groupChat.
+     * MonkeyChatFragment will call this method to retrieve the current conversation's groupChat object.
      * @param conversationId unique identifier of the conversation of this chat activity
-     * @return A GroupChat to handle group functions
+     * @return A GroupChat object that describes a group conversation that is currently active.
      */
     fun getGroupChat(conversationId: String, membersIds: String): GroupChat?
 
     /**
      * Callback executed on the chat fragment's onStart callback
-     * @param conversationId the conversation ID of the current chat
+     * @param conversationId the conversation ID of the current chat. You should keep a reference
+     * to this object, since it identifies the active conversation.
      */
     fun onStartChatFragment(conversationId: String)
 
     /**
-     * Callback executed on the chat fragment's onStop callback
-     * @param conversationId the conversation ID of the current chat
+     * Callback executed on the chat fragment's onStop callback.
+     *
+     * When the chat closes you can do things like showing a playback notification if the user
+     * is listening to a voice note.
+     * @param conversationId the conversation ID of the current chat. You should clear any references
+     * to this object, since it no longer identifies the active conversation.
      */
     fun onStopChatFragment(conversationId: String)
 
+    /**
+     * Callback executed to clear a reference to MonkeyChatFragment
+     * @param monkeyChatFragment a fragment that you should no longer reference, so that it can
+     * be garbage collected.
+     */
     fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment)
 
+    /**
+     * Callback executed when the user wishes to delete all messages from the conversation. You
+     * should delete them from you local database.
+     * @param conversationId The ID of the conversation whose messages are to be deleted.
+     */
     fun deleteAllMessages(conversationId: String);
 
 }
