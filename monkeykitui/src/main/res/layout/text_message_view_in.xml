@@ -37,8 +37,8 @@
             android:text=""
             android:paddingRight="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/black"
-            android:textColorLink="@color/mk_blue"
+            android:textColor="@color/mk_text_in"
+            android:textColorLink="@color/mk_text_link_in"
             android:lineSpacingExtra="0.8dp"
             android:textSize="16sp" />
 

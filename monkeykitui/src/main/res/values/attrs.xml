@@ -9,8 +9,10 @@
 
         <attr name="useDefaultCamera" format="boolean" />
         <attr name="useDefaultGallery" format="boolean" />
+        <attr name="useDefaultFilePicker" format="boolean" />
         <attr name="cameraOptionLabel" format="string" />
         <attr name="galleryOptionLabel" format="string" />
+        <attr name="fileOptionLabel" format="string" />
 
         <attr name="EditPhotoActionBarTitle" format="string" />
         <attr name="EditPhotoOkButtonText" format="string" />

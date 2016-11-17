@@ -121,11 +121,22 @@ open class TextInputView : BaseInputView {
 
                 }
 
+                stopTyping()
                 inputListener?.onNewItem(monkeyItem)
 
                 clearText()
             }
         })
+    }
+
+    override fun typingChange(newText: String) {
+        super.typingChange(newText)
+        inputListener?.onTyping(newText)
+    }
+
+    override fun stopTyping() {
+        super.stopTyping()
+        inputListener?.onStopTyping()
     }
 
 }

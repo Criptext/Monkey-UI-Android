@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
@@ -17,6 +19,8 @@ import android.widget.FrameLayout
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.children.SideButton
 import com.criptext.monkeykitui.input.listeners.InputListener
+import java.util.*
+import kotlin.concurrent.schedule
 
 /**
  * Superclass for all InputViews. An InputView is a FrameLayout with an EditText and buttons to the
@@ -43,6 +47,8 @@ open class BaseInputView : FrameLayout {
     protected lateinit var leftButtonView : View
     protected lateinit var rightButtonView : View
     open var inputListener : InputListener? = null
+    protected lateinit var timer : Timer
+    var sendTyping = true
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs){
         val a = context.theme.obtainStyledAttributes(attrs, R.styleable.InputView, 0, 0)
@@ -101,6 +107,33 @@ open class BaseInputView : FrameLayout {
 
             }
         }
+        editText.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable) {
+                if(sendTyping){
+                    typingChange(s.toString())
+                    timer = Timer("schedule", true)
+                    timer.schedule(1000){
+                        stopTyping()
+                    }
+                }else{
+                    timer.cancel()
+                    timer.purge()
+                    timer = Timer("schedule", true)
+                    timer.schedule(1000){
+                        stopTyping()
+                    }
+                }
+
+
+            }
+        })
         addView(editText)
 
         val leftBtn = setLeftButton(typedArray)
@@ -164,6 +197,14 @@ open class BaseInputView : FrameLayout {
      * for the new View.
      */
     open protected fun setRightButton(typedArray: TypedArray) : SideButton? = null
+
+    open fun typingChange(newText : String){
+        sendTyping = false
+    }
+
+    open fun stopTyping(){
+        sendTyping = true;
+    }
 
     fun clearText(){
         editText.text.clear()
