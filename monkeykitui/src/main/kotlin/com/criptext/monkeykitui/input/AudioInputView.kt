@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.input
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -77,7 +78,7 @@ open class AudioInputView : TextInputView {
         slideAnimator.textInput = editText
         slideAnimator.leftButton = leftButtonView
 
-        val touchListener = RecorderTouchListener()                          //starts animations depending on touch gestures
+        val touchListener = RecorderTouchListener(context as Activity)       //starts animations depending on touch gestures
         touchListener.recordingAnimations = slideAnimator
         recBtn.setOnTouchListener(touchListener)
 

@@ -131,9 +131,9 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     @Override
     protected void onStop() {
         super.onStop();
-        if(vnPlayer != null && vnPlayer.isPlayingAudio()) {
+        /*if(vnPlayer != null && vnPlayer.isPlayingAudio()) {
             vnPlayer.showNotification(new PlaybackNotification(R.drawable.audio_play_in, "Playing voice note"));
-        }
+        }*/
         getApplicationContext().unbindService(playbackConnection);
     }
 

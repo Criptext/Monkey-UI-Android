@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.input
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import com.criptext.monkeykitui.input.attachment.AttachmentButton
@@ -36,4 +37,14 @@ open class AttachmentInputView : TextInputView {
         return SideButton(attachBtn, attachBtn.diameter)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, result: IntArray) {
+        if(requestCode == AttachmentButton.REQUEST_CAMERA &&
+                result[0] == PackageManager.PERMISSION_GRANTED &&
+                result[1] == PackageManager.PERMISSION_GRANTED)
+            attachmentButton.cameraHandler.takePicture()
+        else if(requestCode == AttachmentButton.REQUEST_GALLERY &&
+                result[0] == PackageManager.PERMISSION_GRANTED &&
+                result[1] == PackageManager.PERMISSION_GRANTED)
+            attachmentButton.cameraHandler.pickFromGallery()
+    }
 }

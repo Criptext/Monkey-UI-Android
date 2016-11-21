@@ -165,6 +165,10 @@ open class BaseInputView : FrameLayout {
      */
     open protected fun setRightButton(typedArray: TypedArray) : SideButton? = null
 
+    open fun onRequestPermissionsResult(requestCode: Int, results: IntArray) {
+
+    }
+
     fun clearText(){
         editText.text.clear()
     }

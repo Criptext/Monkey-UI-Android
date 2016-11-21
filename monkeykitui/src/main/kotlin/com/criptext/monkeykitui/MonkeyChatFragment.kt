@@ -356,4 +356,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             }
         }
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        inputView.onRequestPermissionsResult(requestCode, grantResults)
+    }
 }

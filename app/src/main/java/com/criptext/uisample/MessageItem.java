@@ -125,4 +125,9 @@ public class MessageItem  implements MonkeyItem {
         return duration;
     }
 
+    @NotNull
+    @Override
+    public String getConversationId() {
+        return "1";
+    }
 }

@@ -3,6 +3,8 @@ package com.criptext.uisample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
@@ -182,5 +184,11 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     public void deleteAllMessages(@NotNull String conversationId) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(chatFragment != null)
+            chatFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

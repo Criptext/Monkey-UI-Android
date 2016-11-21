@@ -2,24 +2,14 @@ package com.criptext.monkeykitui.input
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.content.res.TypedArray
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
-import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.attachment.AttachmentButton
 import com.criptext.monkeykitui.input.attachment.CameraHandler
 import com.criptext.monkeykitui.input.children.SideButton
-import com.criptext.monkeykitui.input.listeners.CameraListener
 import com.criptext.monkeykitui.input.listeners.InputListener
-import com.criptext.monkeykitui.recycler.MonkeyItem
-import com.criptext.monkeykitui.util.Utils
 
 /**
  * Created by daniel on 4/22/16.
@@ -47,6 +37,17 @@ open class MediaInputView : AudioInputView {
     override fun setLeftButton(typedArray : TypedArray) : SideButton?{
         val attachBtn = AttachmentButton(context, typedArray)
         return SideButton(attachBtn, attachBtn.diameter)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, result: IntArray) {
+        if(requestCode == AttachmentButton.REQUEST_CAMERA &&
+                result[0] == PackageManager.PERMISSION_GRANTED &&
+                result[1] == PackageManager.PERMISSION_GRANTED)
+            attachmentButton.cameraHandler.takePicture()
+        else if(requestCode == AttachmentButton.REQUEST_GALLERY &&
+                result[0] == PackageManager.PERMISSION_GRANTED &&
+                result[1] == PackageManager.PERMISSION_GRANTED)
+            attachmentButton.cameraHandler.pickFromGallery()
     }
 
 }

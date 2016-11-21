@@ -1,10 +1,14 @@
 package com.criptext.monkeykitui.input.attachment
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
@@ -53,6 +57,16 @@ open class AttachmentButton : ImageView {
         initialize(typedArray)
     }
 
+    fun hasPermissionsToTakePicture(ctx: Context) =
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                            PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED
+    fun hasPermissionsToOpenGallery(ctx: Context) =
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                            PackageManager.PERMISSION_GRANTED
 
     fun initialize(typedArray: TypedArray?) {
         cameraHandler = CameraHandler(context)
@@ -63,7 +77,13 @@ open class AttachmentButton : ImageView {
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultCamera, true) ?: true)
             attachmentOptions.add(object : DialogOption(cameraOptionLabel) {
                 override fun onOptionSelected() {
-                    cameraHandler.takePicture()
+                    if(hasPermissionsToTakePicture(context))
+                        cameraHandler.takePicture()
+                    else
+                        ActivityCompat.requestPermissions(context as Activity,
+                                arrayOf(Manifest.permission.CAMERA,
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CAMERA)
+
                 }
             })
 
@@ -72,7 +92,12 @@ open class AttachmentButton : ImageView {
         if (typedArray?.getBoolean(R.styleable.InputView_useDefaultGallery, true) ?: true)
             attachmentOptions.add(object : DialogOption(galleryOptionLabel) {
                 override fun onOptionSelected() {
-                    cameraHandler.pickFromGallery()
+                    if(hasPermissionsToOpenGallery(context))
+                        cameraHandler.pickFromGallery()
+                    else
+                        ActivityCompat.requestPermissions(context as Activity,
+                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_GALLERY)
                 }
             })
 
@@ -95,5 +120,10 @@ open class AttachmentButton : ImageView {
 
     open val diameter: Int
     get() = context.resources.getDimension(R.dimen.circle_button_diameter).toInt()
+
+    companion object {
+        val REQUEST_CAMERA = 5001
+        val REQUEST_GALLERY = 5002
+    }
 
 }
