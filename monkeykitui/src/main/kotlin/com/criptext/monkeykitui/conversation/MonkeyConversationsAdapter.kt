@@ -229,8 +229,8 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         if(newConversation.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal) {
             val invalidStatus = newConversation.getStatus()
             throw IllegalArgumentException("New conversations can never have status = $invalidStatus\n" +
-                    "It is currently used by Conversation status = ${MonkeyConversation.ConversationStatus.values()[invalidStatus]}\n" +
-                    "Please check the docs for valid status values.")
+                "It is currently used by Conversation status = ${MonkeyConversation.ConversationStatus.values()[invalidStatus]}\n" +
+                "Please check the docs for valid status values. conversation name: ${newConversation.getName()}. id: ${newConversation.getConvId()}")
         }
     }
 

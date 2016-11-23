@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
@@ -60,8 +61,8 @@ open class MonkeyConversationsFragment: Fragment(){
         (activity as ConversationsActivity).requestConversations()
     }
 
-    override fun onAttach(activity: Activity?) {
-        val conversationsActivty = activity as? ConversationsActivity
+    override fun onAttach(context: Context?) {
+        val conversationsActivty = context as? ConversationsActivity
         conversationsActivty?.setConversationsFragment(this)
 
         //val nestActivity = activity?.findViewById(R.id.nestActivity);
@@ -70,7 +71,7 @@ open class MonkeyConversationsFragment: Fragment(){
         //val behavior  = layout.behavior
         //layout.behavior = null
 
-        super.onAttach(activity)
+        super.onAttach(context)
     }
 
     override fun onDetach() {

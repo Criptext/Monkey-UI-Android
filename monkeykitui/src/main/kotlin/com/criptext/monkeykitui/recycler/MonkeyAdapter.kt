@@ -1,8 +1,13 @@
 package com.criptext.monkeykitui.recycler
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -19,6 +24,7 @@ import com.criptext.monkeykitui.dialog.AbstractDialog
 import com.criptext.monkeykitui.recycler.audio.PlaybackService
 import com.criptext.monkeykitui.recycler.listeners.OnMessageOptionClicked
 import com.criptext.monkeykitui.util.InsertionSort
+import com.criptext.monkeykitui.util.SnackbarUtils
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import java.io.File
 import java.util.*
@@ -69,6 +75,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         set(value) { dataLoader.delayTime = value }
 
     var itemToDelete: MonkeyItem? = null
+    var itemThatNeedsPermissions: MonkeyItem? = null
     var recyclerView: RecyclerView? = null
 
     /**
@@ -121,6 +128,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         return messagesList.size
     }
 
+
+    fun hasPermissionsToDownloadFiles() =
+            ContextCompat.checkSelfPermission(mContext,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+
+    fun hasPermissionsToAccessFiles() =
+            ContextCompat.checkSelfPermission(mContext,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     /**
      * Gets number of View Types that this adapter can display on a RecyclerView. This number must
      * be constant. The value returned by this function is important for getItemViewType method
@@ -165,11 +180,11 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     fun updateMessageDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
         recyclerView.itemAnimator.isRunning({
             val position = getItemPositionByTimestamp(monkeyItem)
-            if((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
-                monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error) && isFileMessage(monkeyItem))
-                //File messages need change MonkeyHolder
-                notifyItemChanged(position)
-            else {
+            if ((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
+                    monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error) && isFileMessage(monkeyItem)) {
+            //File messages need change MonkeyHolder
+            notifyItemChanged(position)
+        } else {
                 //All non files just need tu update the checkmark
                 val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
                 monkeyHolder?.updateReadStatus(monkeyItem.getDeliveryStatus(), isRead(monkeyItem))
@@ -314,6 +329,16 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         */
     }
 
+    fun requestPermissionToDownload(item: MonkeyItem) {
+        itemThatNeedsPermissions = item
+        ActivityCompat.requestPermissions(mContext as Activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE_SD)
+    }
+
+    fun requestPermissionToReadSDCard() {
+        ActivityCompat.requestPermissions(mContext as Activity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_READ_SD)
+    }
 
     /**
      * Common binding for all files, including audio and phot. Callse the correct network method
@@ -326,7 +351,11 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->
                     fileHolder.setErrorInDownload(View.OnClickListener {
-                        chatActivity.onFileDownloadRequested(item)
+                        if(hasPermissionsToDownloadFiles())
+                            chatActivity.onFileDownloadRequested(item)
+                        else
+                            requestPermissionToDownload(item)
+
                     })
                 MonkeyItem.DeliveryStatus.sending -> {
                     fileHolder.setWaitingForDownload()
@@ -337,18 +366,29 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             val fileExists = File(item.getFilePath()).exists()
             when(item.getDeliveryStatus()){
                 MonkeyItem.DeliveryStatus.error ->
-                    fileHolder.setErrorInUpload(View.OnClickListener {
-                        if(fileExists)
-                            chatActivity.onFileUploadRequested(item)
-                        else
-                            chatActivity.onFileDownloadRequested(item)
-                    })
-                MonkeyItem.DeliveryStatus.sending -> {
-                    fileHolder.setWaitingForUpload()
                     if(fileExists)
-                        chatActivity.onFileUploadRequested(item)
+                        fileHolder.setErrorInUpload(View.OnClickListener {
+                            if(hasPermissionsToAccessFiles())
+                                chatActivity.onFileUploadRequested(item)
+                            else
+                                requestPermissionToReadSDCard()
+                        })
                     else
+                        fileHolder.setErrorInDownload(View.OnClickListener {
+                            if(hasPermissionsToDownloadFiles())
+                                chatActivity.onFileDownloadRequested(item)
+                            else
+                                requestPermissionToDownload(item)
+                            })
+                MonkeyItem.DeliveryStatus.sending -> {
+                    if(fileExists) {
+                        fileHolder.setWaitingForUpload()
+                        chatActivity.onFileUploadRequested(item)
+                    }
+                    else {
+                        fileHolder.setWaitingForDownload()
                         chatActivity.onFileDownloadRequested(item)
+                    }
                 }
             }
         }
@@ -380,12 +420,19 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
+        if(hasPermissionsToDownloadFiles())
         if(!file.exists() || file.length() < item.getFileSize()) {
             chatActivity.onFileDownloadRequested(item)
             imageHolder.setOnClickListener(null)
-        }else {
+        } else if (hasPermissionsToAccessFiles()) {
             imageHolder.setDownloadedImage(file, chatActivity as Context)
             imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+            val imageView = imageHolder.photoImageView
+            if(imageView != null)
+                bindMessageLongClickListener(item, imageView)
+        } else {
+            imageHolder.setEmptyImage()
+            imageHolder.setOnClickListener(View.OnClickListener { requestPermissionToReadSDCard() })
             val imageView = imageHolder.photoImageView
             if(imageView != null)
                 bindMessageLongClickListener(item, imageView)
@@ -741,15 +788,18 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     fun updateMessage(searchItem: MonkeyItem, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
         val position = getItemPositionByTimestamp(searchItem)
         if(position > -1) {
-            val old = messagesList.removeAt(position)
-            val temp = transaction.invoke(old)
-            messagesList[position] = temp
+            val old = messagesList[position]
+            val new = transaction.invoke(old)
+            messagesList.add(position, new)
+            messagesList.removeAt(position + 1)
+
             messagesMap.remove(old.getMessageId())
-            messagesMap.put(temp.getMessageId(), true)
-            if(temp.getDeliveryStatus() != old.getDeliveryStatus())
+            messagesMap.put(new.getMessageId(), true)
+
+            if(new.getDeliveryStatus() != old.getDeliveryStatus())
                 notifyItemChanged(position)
             else
-                rebindMonkeyItem(temp, recyclerView)
+                rebindMonkeyItem(new, recyclerView)
         }
     }
 
@@ -764,8 +814,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         if(pos > -1){
             messagesList.removeAt(pos)
             notifyItemRemoved(pos)
-            chatActivity.onMessageRemoved(item, unsent)
-            /*
+
             val recycler = recyclerView
             if(recycler != null){
                 val msg = "Message deleted"
@@ -789,7 +838,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                 //need to wait until snackbar dismissed to leave
                 itemToDelete = item
             }
-            */
         }
     }
 
@@ -884,6 +932,17 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
+
+    fun onRequestPermissionsResult(requestCode: Int, result: IntArray) {
+        if (requestCode == REQUEST_WRITE_SD && itemThatNeedsPermissions != null &&
+                result[0] == PackageManager.PERMISSION_GRANTED) {
+            notifyDataSetChanged()
+            chatActivity.onFileDownloadRequested(itemThatNeedsPermissions!!)
+        } else if (requestCode == REQUEST_READ_SD && result[0] == PackageManager.PERMISSION_GRANTED)
+            notifyDataSetChanged()
+        itemThatNeedsPermissions = null
+
+    }
     /**
      * removes all messages from the adapter and clears the RecyclerView
      */
@@ -898,6 +957,11 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         override fun executeCallback(selectedOption: OnMessageOptionClicked) {
             selectedOption.invoke(item)
         }
+    }
+
+    companion object {
+        val REQUEST_WRITE_SD = 9003
+        val REQUEST_READ_SD = 9004
     }
 
 }

@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -182,10 +183,10 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             shouldUpdateAudioView = true
     }
 
-    override fun onAttach(activity: Activity?) {
-        val chatActivty = activity as? ChatActivity
+    override fun onAttach(context: Context?) {
+        val chatActivty = context as? ChatActivity
         chatActivty?.setChatFragment(this)
-        super.onAttach(activity)
+        super.onAttach(context)
     }
 
     override fun onDetach() {
@@ -359,5 +360,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         inputView.onRequestPermissionsResult(requestCode, grantResults)
+        monkeyAdapter.onRequestPermissionsResult(requestCode, grantResults)
     }
 }

@@ -20,14 +20,20 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
     var retryUploadLayout: LinearLayout? = null
     var photoImageView : ImageView? = null
     var photoLoadingView : ProgressBar? = null
+    var button: ImageView? = null
 
     constructor(view : View) : super(view) {
         photoImageView = view.findViewById(R.id.image_view) as ImageView
+        button = view.findViewById(R.id.button) as ImageView?
         retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout?
         retryUploadLayout = view.findViewById(R.id.layoutRetryUpload) as LinearLayout?
         photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar?
 
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+
+    open fun setEmptyImage() {
+        photoImageView?.setImageDrawable(null)
     }
 
     open fun setDownloadedImage(file : File, context : Context){
@@ -46,7 +52,9 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
     override fun setWaitingForDownload(){
 
         photoImageView!!.setImageDrawable(null)
+        button?.setImageResource(R.drawable.mk_file_download)
         photoImageView?.isClickable = false
+        sendingProgressBar?.visibility = View.INVISIBLE
         photoLoadingView!!.visibility = View.VISIBLE
         retryDownloadLayout?.visibility = View.INVISIBLE
         retryUploadLayout?.visibility = View.INVISIBLE
@@ -60,6 +68,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
 
         retryUploadLayout?.visibility = View.GONE
         sendingProgressBar?.visibility = View.VISIBLE
+        button?.setImageResource(R.drawable.ic_action_upload)
         retryDownloadLayout?.isClickable = false
         retryUploadLayout?.isClickable = false
 
