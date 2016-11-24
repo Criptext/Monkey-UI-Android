@@ -420,17 +420,18 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
         val imageHolder = holder as MonkeyImageHolder
         val file = File(item.getFilePath())
-        if(hasPermissionsToDownloadFiles())
-        if(!file.exists() || file.length() < item.getFileSize()) {
-            chatActivity.onFileDownloadRequested(item)
-            imageHolder.setOnClickListener(null)
-        } else if (hasPermissionsToAccessFiles()) {
-            imageHolder.setDownloadedImage(file, chatActivity as Context)
-            imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
-            val imageView = imageHolder.photoImageView
-            if(imageView != null)
-                bindMessageLongClickListener(item, imageView)
-        } else {
+        if (hasPermissionsToAccessFiles()) {
+            if(!file.exists() || file.length() < item.getFileSize()) {//file doesn't exist, ask server
+                chatActivity.onFileDownloadRequested(item)
+                imageHolder.setOnClickListener(null)
+            } else {// set file from SD card
+                imageHolder.setDownloadedImage(file, chatActivity as Context)
+                imageHolder.setOnClickListener(View.OnClickListener { imageListener?.onImageClicked(position, item) })
+                val imageView = imageHolder.photoImageView
+                if(imageView != null)
+                    bindMessageLongClickListener(item, imageView)
+            }
+        } else {//Ask for permissions on click
             imageHolder.setEmptyImage()
             imageHolder.setOnClickListener(View.OnClickListener { requestPermissionToReadSDCard() })
             val imageView = imageHolder.photoImageView
