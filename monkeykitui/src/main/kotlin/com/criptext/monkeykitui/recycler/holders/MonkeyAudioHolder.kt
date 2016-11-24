@@ -55,6 +55,7 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         playButtonView!!.visibility = View.INVISIBLE
         downloadProgressView?.visibility = View.VISIBLE
         playButtonView!!.isClickable = false
+        sendingProgressBar?.visibility = View.INVISIBLE
         playButtonView!!.setOnClickListener(null)
     }
 
