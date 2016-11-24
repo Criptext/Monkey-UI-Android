@@ -62,6 +62,7 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
     override fun setWaitingForUpload(){
         playButtonView!!.visibility = View.VISIBLE
         sendingProgressBar?.visibility = View.VISIBLE
+        downloadProgressView?.visibility = View.INVISIBLE
         playButtonView!!.setImageDrawable(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.audio_play_in))
         playButtonView!!.isClickable = false
