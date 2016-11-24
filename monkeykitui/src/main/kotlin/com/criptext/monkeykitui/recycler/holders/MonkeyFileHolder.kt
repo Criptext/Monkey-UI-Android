@@ -58,7 +58,7 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
         sendingProgressBar!!.visibility = View.VISIBLE
 
     }
-    override fun setErrorInUpload(listener: View.OnClickListener){
+    override fun setErrorInUpload(listener: View.OnClickListener, uploadSize: Long){
 
         fileLogoImageView!!.visibility = View.VISIBLE
         fileLogoImageView!!.setOnClickListener(listener)
@@ -66,7 +66,7 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
 
     }
 
-    override fun setErrorInDownload(listener: View.OnClickListener){
+    override fun setErrorInDownload(listener: View.OnClickListener, downloadSize: Long){
 
         downloadProgressBar?.visibility = View.INVISIBLE
         fileLogoImageView!!.visibility = View.VISIBLE

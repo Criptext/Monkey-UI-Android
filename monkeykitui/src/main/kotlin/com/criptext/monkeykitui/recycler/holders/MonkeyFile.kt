@@ -15,8 +15,9 @@ interface MonkeyFile {
      * Adjust the UI to display a state of error during the file download. It should also display
      * a button to retry the download
      * @param listener A click listener to retry the download.
+     * @param downloadSize number of bytes to download. The UI should display this number.
      */
-    fun setErrorInDownload(listener: View.OnClickListener)
+    fun setErrorInDownload(listener: View.OnClickListener, downloadSize: Long)
     /**
      * Adjust the UI to display a state of waiting for the file upload to complete
      */
@@ -26,5 +27,5 @@ interface MonkeyFile {
      * a button to retry the upload
      * @param listener A click listener to retry the upload.
      */
-    fun setErrorInUpload(listener: View.OnClickListener)
+    fun setErrorInUpload(listener: View.OnClickListener, uploadSize: Long)
 }

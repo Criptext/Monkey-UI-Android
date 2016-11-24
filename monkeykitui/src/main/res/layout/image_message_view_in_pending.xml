@@ -70,10 +70,10 @@
                     android:layout_margin="10dp"/>
 
                 <TextView
-                    android:id="@+id/textViewTamano"
+                    android:id="@+id/textViewSize"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="67 KB"
+                    android:text="69 KB"
                     android:layout_marginRight="10dp"
                     android:textColor="@android:color/white"/>
 

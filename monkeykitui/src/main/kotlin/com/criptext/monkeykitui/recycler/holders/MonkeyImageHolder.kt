@@ -6,7 +6,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import com.criptext.monkeykitui.R
+import com.criptext.monkeykitui.util.Utils
 import com.squareup.picasso.Picasso
 import java.io.File
 
@@ -20,6 +22,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
     var retryUploadLayout: LinearLayout? = null
     var photoImageView : ImageView? = null
     var photoLoadingView : ProgressBar? = null
+    var downloadSizeTextView : TextView? = null
     var button: ImageView? = null
 
     constructor(view : View) : super(view) {
@@ -28,6 +31,7 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
         retryDownloadLayout = view.findViewById(R.id.layoutRetryDownload) as LinearLayout?
         retryUploadLayout = view.findViewById(R.id.layoutRetryUpload) as LinearLayout?
         photoLoadingView = view.findViewById(R.id.progressBarImage) as ProgressBar?
+        downloadSizeTextView = view.findViewById(R.id.textViewSize) as TextView?
 
         sendingProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
@@ -73,22 +77,24 @@ open class MonkeyImageHolder : MonkeyHolder, MonkeyFile {
         retryUploadLayout?.isClickable = false
 
     }
-    override fun setErrorInUpload(listener: View.OnClickListener){
+    override fun setErrorInUpload(listener: View.OnClickListener, uploadSize: Long){
 
         //photoLoadingView?.visibility = View.GONE
         retryUploadLayout?.visibility = View.VISIBLE
         retryUploadLayout?.isClickable = true
         retryUploadLayout?.setOnClickListener(listener)
         sendingProgressBar?.visibility = View.INVISIBLE
+        downloadSizeTextView?.text = Utils.readableFileSize(uploadSize)
 
     }
 
-    override fun setErrorInDownload(listener: View.OnClickListener){
+    override fun setErrorInDownload(listener: View.OnClickListener, downloadSize: Long){
 
         photoLoadingView!!.visibility = View.GONE
         retryDownloadLayout!!.visibility = View.VISIBLE
         retryDownloadLayout?.isClickable = true
         retryDownloadLayout!!.setOnClickListener(listener)
+        downloadSizeTextView?.text = Utils.readableFileSize(downloadSize)
 
     }
 

@@ -356,7 +356,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                         else
                             requestPermissionToDownload(item)
 
-                    })
+                    }, item.getFileSize())
                 MonkeyItem.DeliveryStatus.sending -> {
                     fileHolder.setWaitingForDownload()
                     chatActivity.onFileDownloadRequested(item)
@@ -372,14 +372,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                                 chatActivity.onFileUploadRequested(item)
                             else
                                 requestPermissionToReadSDCard()
-                        })
+                        }, item.getFileSize())
                     else
                         fileHolder.setErrorInDownload(View.OnClickListener {
                             if(hasPermissionsToDownloadFiles())
                                 chatActivity.onFileDownloadRequested(item)
                             else
                                 requestPermissionToDownload(item)
-                            })
+                            }, item.getFileSize())
                 MonkeyItem.DeliveryStatus.sending -> {
                     if(fileExists) {
                         fileHolder.setWaitingForUpload()

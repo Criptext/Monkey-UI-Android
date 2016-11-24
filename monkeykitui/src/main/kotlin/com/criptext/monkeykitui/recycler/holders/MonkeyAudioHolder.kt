@@ -1,6 +1,5 @@
 package com.criptext.monkeykitui.recycler.holders
 
-import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
@@ -8,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.SeekBar
 import android.widget.TextView
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.cav.AudioActions
@@ -78,15 +76,17 @@ open class MonkeyAudioHolder: MonkeyHolder, MonkeyFile {
         sendingProgressBar?.visibility = View.INVISIBLE
     }
 
-    override fun setErrorInDownload(listener: View.OnClickListener){
+    override fun setErrorInDownload(listener: View.OnClickListener, downloadSize: Long){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.ic_play_down), listener)
+        durationTextView?.text = Utils.readableFileSize(downloadSize)
     }
 
-    override fun setErrorInUpload(listener: View.OnClickListener){
+    override fun setErrorInUpload(listener: View.OnClickListener, uploadSize: Long){
         setErrorInTransfer(ContextCompat.getDrawable(playButtonView!!.context,
                 R.drawable.ic_play_up), listener)
         checkmarkImageView?.visibility = View.INVISIBLE
+        durationTextView?.text = Utils.readableFileSize(uploadSize)
     }
     open fun updatePlayPauseButton(isPlaying: Boolean){
         if(isPlaying)
