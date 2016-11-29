@@ -11,10 +11,12 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import com.criptext.monkeykitui.conversation.ConversationsActivity
+import com.criptext.monkeykitui.conversation.ConversationsList
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.conversation.MonkeyConversationsAdapter
 import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
 import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
+import com.criptext.monkeykitui.conversation.holder.ConversationListUI
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.dialog.DialogOption
 import java.util.*
@@ -23,11 +25,11 @@ import java.util.*
  * Created by gesuwall on 8/11/16.
  */
 
-open class MonkeyConversationsFragment: Fragment(){
+open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
 
     open val conversationsLayout: Int
         get() = R.layout.recycler_layout
-    lateinit var recyclerView: RecyclerView
+    var recyclerView: RecyclerView? = null
     protected var conversationsAdapter: MonkeyConversationsAdapter? = null
 
 
@@ -52,141 +54,70 @@ open class MonkeyConversationsFragment: Fragment(){
         recyclerView = initRecyclerView(view)
         conversationsAdapter = MonkeyConversationsAdapter(activity)
         conversationsAdapter!!.recyclerView = recyclerView
-        recyclerView.adapter = conversationsAdapter
+        recyclerView!!.adapter = conversationsAdapter
         return view
     }
 
     override fun onStart() {
         super.onStart()
-        (activity as ConversationsActivity).requestConversations()
-    }
-
-    override fun onAttach(context: Context?) {
         val conversationsActivty = context as? ConversationsActivity
-        conversationsActivty?.setConversationsFragment(this)
-
-        //val nestActivity = activity?.findViewById(R.id.nestActivity);
-        //val layout = nestActivity?.layoutParams as CoordinatorLayout.LayoutParams;
-
-        //val behavior  = layout.behavior
-        //layout.behavior = null
-
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        (activity as ConversationsActivity).setConversationsFragment(null)
-        super.onDetach()
+        if(conversationsActivty != null) {
+            conversationsActivty.setConversationsFragment(this)
+            conversationsActivty.requestConversations()
+        }
     }
 
     override fun onStop() {
         super.onStop()
+        val conversationsActivty = context as? ConversationsActivity
+        if(conversationsActivty != null) {
+            val pendingConversationToDelete = conversationsAdapter?.conversationToDelete
+            if (pendingConversationToDelete != null)
+                conversationsActivty.onConversationDeleted(pendingConversationToDelete)
 
-        val pendingConversationToDelete = conversationsAdapter?.conversationToDelete
-        if(pendingConversationToDelete != null)
-            (activity as ConversationsActivity).onConversationDeleted(pendingConversationToDelete)
+            val adapter = conversationsAdapter
 
-        val adapter = conversationsAdapter
-        if(adapter != null)
-            (activity as ConversationsActivity).retainConversations(adapter.takeAllConversations())
-
+            conversationsActivty.setConversationsFragment(null)
+        }
         conversationsAdapter?.conversationToDelete = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
         val adapter = conversationsAdapter
-        if(adapter != null)
-            (activity as ConversationsActivity).retainConversations(adapter.takeAllConversations())
-
     }
 
-    fun takeAllConversations(): Collection<MonkeyConversation> = conversationsAdapter?.takeAllConversations()
-                            ?: listOf()
-    /**
-     * adds a list of conversations to this adapter. If there were already any conversations, they
-     * will be removed.
-     * @param conversations a list of conversations to add. After calling this function, the adapter
-     * will contain ONLY the conversations in this list.
-     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
-     * loading view when the user scrolls to the end
-     */
-    fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsAdapter?.insertConversations(conversations, hasReachedEnd)
+    fun insertConversations(list: ConversationsList) {
+        list.listUI = this
+        conversationsAdapter?.conversations = list
     }
 
-
-    /**
-     * Uses binary search to find a conversation with a given identifier and timestamp.
-     * @param id unique identifier of the conversation to search
-     * @param timestamp long with the timestamp of the conversation to search
-     * @return A conversation in the adapter that matches the id and timestamp. null if it does not exists
-    fun findConversation(id: String, timestamp: Long){
-        conversationsAdapter.getConversationPositionByTimestamp(object: MonkeyConversation {
-            override fun getGroupMembers() = null
-            override fun getConvId() = id
-            override fun getDatetime() = timestamp
-            override fun getAvatarFilePath() = null
-            override fun getName() = ""
-            override fun getSecondaryText() = ""
-            override fun getStatus() = 0
-            override fun getTotalNewMessages() = 0
-            override fun isGroup() = false
-        })
-    }
-     */
-
-    /**
-     * Looks for a conversation with a given id using linear search. Search start with the latest
-     * conversations
-     * @param id A string with an unique identifier of the conversation to search
-     * @result the conversation with the matching identifier. null if it does not exist
-     */
-    fun findConversationById(id: String): MonkeyConversation? {
-        return conversationsAdapter?.findConversationItemById(id)
+    override fun notifyConversationChanged(position: Int) {
+        conversationsAdapter?.notifyItemChanged(position)
     }
 
-    /**
-     * Updates the view of an existing conversation. Uses binary search to find the conversation's
-     * position in the adapter.
-     * @param conversationItem the conversation to update. it must not be updated yet
-     * @param transaction a ConversationTransaction object that updates the conversation item
-     */
-    fun updateConversation(conversationItem: MonkeyConversation, transaction: ConversationTransaction){
-        conversationsAdapter?.updateConversation(conversationItem, transaction)
+    override fun notifyConversationInserted(position: Int) {
+        conversationsAdapter?.notifyItemInserted(position)
     }
 
-    fun updateConversation(conversationItem: MonkeyConversation){
-        conversationsAdapter?.updateConversation(conversationItem)
+    override fun notifyConversationMoved(oldPosition: Int, newPosition: Int) {
+        conversationsAdapter?.notifyItemMoved(oldPosition, newPosition)
     }
 
-    fun updateConversations(set: Set<Map.Entry<String, ConversationTransaction>>) {
-        conversationsAdapter?.updateConversations(set)
+    override fun notifyConversationRangeInserted(start: Int, end: Int) {
+        conversationsAdapter?.notifyItemRangeInserted(start, end)
     }
 
-    /**
-     * adds a collection of conversations to the bottom of the adapter's list. The changes are then
-     * notified to the UI
-     * @param conversations conversations to add
-     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
-     * loading view when the user scrolls to the end
-     */
-    fun addOldConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsAdapter?.addOldConversations(conversations, hasReachedEnd)
-    }
-    /**
-     * adds a conversation to the top of the recycler view.
-     * @param newConversation conversation to add
-     */
-    fun addNewConversation(newConversation: MonkeyConversation, scrollToFirst: Boolean){
-        conversationsAdapter?.addNewConversation(newConversation)
-        if(scrollToFirst)
-            recyclerView.smoothScrollToPosition(0)
+    override fun refresh() {
+        conversationsAdapter?.notifyDataSetChanged()
     }
 
-    fun getLastConversation(): MonkeyConversation? = conversationsAdapter?.getLastConversation()
-
-    override fun onCreateOptionsMenu(menu : Menu?, inflater: MenuInflater){
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun removeLoadingView() {
+        conversationsAdapter?.removeEndOfRecyclerView()
     }
+
+    override fun scrollToPosition(position: Int) {
+        recyclerView?.scrollToPosition(position)
+    }
+
 }

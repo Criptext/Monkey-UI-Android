@@ -24,6 +24,8 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getConversationId() = "0"
+
             override fun getMessageTimestampOrder() = newTimestamp
 
             override fun getOldMessageId() = newTimestamp.toString()
@@ -83,6 +85,8 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getConversationId() = "0"
+
             override fun getMessageTimestampOrder() = newTimestamp
 
             override fun getOldMessageId() = newTimestamp.toString()
@@ -136,6 +140,8 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getConversationId() = "0"
+
             override fun getMessageTimestampOrder() = newTimestamp
 
             override fun getOldMessageId() = newTimestamp.toString()
@@ -189,6 +195,8 @@ class MonkeyTypesTest: AdapterTestCase(){
         val newTimestamp = System.currentTimeMillis()
         val monkeyId = if(incoming) contactSessionId else mySessionId
         return object : MonkeyItem {
+            override fun getConversationId() = "0"
+
             override fun getMessageTimestampOrder() = newTimestamp
 
             override fun getOldMessageId() = newTimestamp.toString()

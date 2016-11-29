@@ -12,10 +12,10 @@ import com.criptext.monkeykitui.R
 class SnackbarUtils {
     companion object {
         fun showUndoMessage(recycler: RecyclerView, msg: String, undoAction: (View) -> Unit,
-                            attachStateChangeListener: View.OnAttachStateChangeListener){
+                            callback: Snackbar.Callback){
             val snack = Snackbar.make(recycler, msg, Snackbar.LENGTH_LONG)
+                snack.setCallback(callback)
                 snack.setAction(recycler.context.getString(R.string.mk_undo), undoAction)
-                snack.view.addOnAttachStateChangeListener(attachStateChangeListener)
                 snack.show()
         }
     }

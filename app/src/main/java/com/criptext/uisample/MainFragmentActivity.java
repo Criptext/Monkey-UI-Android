@@ -4,20 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
 import com.criptext.monkeykitui.MonkeyConversationsFragment;
 import com.criptext.monkeykitui.conversation.ConversationsActivity;
+import com.criptext.monkeykitui.conversation.ConversationsList;
 import com.criptext.monkeykitui.conversation.MonkeyConversation;
 import com.criptext.monkeykitui.input.listeners.InputListener;
 import com.criptext.monkeykitui.recycler.GroupChat;
 import com.criptext.monkeykitui.recycler.MonkeyItem;
-import com.criptext.monkeykitui.recycler.audio.DefaultVoiceNotePlayer;
-import com.criptext.monkeykitui.recycler.audio.PlaybackNotification;
 import com.criptext.monkeykitui.recycler.audio.PlaybackService;
-import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer;
 import com.criptext.monkeykitui.toolbar.ToolbarDelegate;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
 import com.criptext.monkeykitui.util.Utils;
@@ -37,6 +34,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     MonkeyConversationsFragment convFragment;
     InputListener inputListener;
     MonkeyFragmentManager fragmentManager;
+    ConversationsList conversations;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,8 +113,10 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void requestConversations() {
-        if(convFragment != null)
-            convFragment.insertConversations(new FakeConversations().getAll(this), true);
+        if(convFragment != null) {
+            conversations = new ConversationsList(new FakeConversations().getAll(this));
+            convFragment.insertConversations(conversations);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -814,6 +815,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val pos = getItemPositionByTimestamp(item)
         if(pos > -1){
             messagesList.removeAt(pos)
+            messagesMap.remove(item.getMessageId())
             notifyItemRemoved(pos)
 
             val recycler = recyclerView
@@ -822,19 +824,24 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                 SnackbarUtils.showUndoMessage(recycler = recycler, msg = msg,
                         undoAction = {
                             itemToDelete = null
-                            var newPos = Math.abs(getItemPositionByTimestamp(item))
+                            //We don't know if list has changed since the removal, recalculate position
+                            //item is no longer part of list, so function will return a negative value - 1
+                            val newPos = Math.abs(getItemPositionByTimestamp(item)) - 1
+                            messagesList.add(newPos, item)
+                            messagesMap.put(item.getMessageId(), true)
                             notifyItemInserted(newPos)
-                        },
-                        attachStateChangeListener = object  : View.OnAttachStateChangeListener{
-                    override fun onViewAttachedToWindow(p0: View?) { }
 
-                    override fun onViewDetachedFromWindow(p0: View?) {
-                        val deleted = itemToDelete
-                        if(deleted != null && deleted == item){
-                            chatActivity.onMessageRemoved(deleted, unsent)
-                            itemToDelete = null
-                        }
-                    }
+                        },
+                        callback = object : Snackbar.Callback() {
+                            override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                                if (event != DISMISS_EVENT_ACTION) {
+                                    val deleted = itemToDelete
+                                    if (deleted != null && deleted == item) {
+                                        chatActivity.onMessageRemoved(deleted, unsent)
+                                        itemToDelete = null
+                                    }
+                                }
+                            }
                 })
                 //need to wait until snackbar dismissed to leave
                 itemToDelete = item

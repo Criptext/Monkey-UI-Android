@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui
 
+import com.criptext.monkeykitui.conversation.ConversationsList
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,7 +13,8 @@ import java.util.*
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
-class SortedConversationsTest : ConversationsAdapterTestCase() {
+class SortedConversationsTest {
+    val conversations = ConversationsList()
 
     fun newConversation(timestamp: Long, id: String, status: Int): MonkeyConversation {
         return object : MonkeyConversation {
@@ -32,13 +34,13 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
     fun newConversation(timestamp: Long, id: String) = newConversation(timestamp, id,
             MonkeyConversation.ConversationStatus.receivedMessage.ordinal)
 
-    fun assertThatListIsSorted(list: ArrayList<MonkeyConversation>){
+    fun assertThatListIsSorted(list: List<MonkeyConversation>){
         for(i in 1..(list.size-1))
             assert(MonkeyConversation.defaultComparator.compare(list[i - 1], list[i]) != 1)
             //System.out.println("${list[i].getMessageTimestampOrder()}")
     }
 
-    fun assertThatConversationsAreNotRepeated(list: ArrayList<MonkeyConversation>){
+    fun assertThatConversationsAreNotRepeated(list: List<MonkeyConversation>){
         for(i in 0..(list.size-2))
             for(j in (i+1)..(list.size-1)) {
                 assert(list[i].getConvId() != list[j].getConvId())
@@ -49,17 +51,16 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
     @Throws (Exception::class)
     fun newConversationsAddedAreSorted() {
         val time = System.currentTimeMillis()
-        adapter.addNewConversation(newConversation(time, "123"))
-        adapter.addNewConversation(newConversation(time + 1, "124"))
-        adapter.addNewConversation(newConversation(time + 2, "125"))
-        adapter.addNewConversation(newConversation(time + 4, "126"))
+        conversations.addNewConversation(newConversation(time, "123"))
+        conversations.addNewConversation(newConversation(time + 1, "124"))
+        conversations.addNewConversation(newConversation(time + 2, "125"))
+        conversations.addNewConversation(newConversation(time + 4, "126"))
 
-        adapter.addNewConversation(newConversation(time + 3, "126"))
-        adapter.addNewConversation(newConversation(time + -1, "127"))
-        adapter.addNewConversation(newConversation(time + 3, "128"))
+        conversations.addNewConversation(newConversation(time + 3, "126"))
+        conversations.addNewConversation(newConversation(time + -1, "127"))
+        conversations.addNewConversation(newConversation(time + 3, "128"))
 
-        val list = adapter.takeAllConversations()
-        assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
+        assertThatListIsSorted(conversations)
 
     }
 
@@ -76,9 +77,8 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         newPage.add(newConversation(time + 2, "129"))
         newPage.add(newConversation(time + 1, "130"))
 
-        adapter.addOldConversations(newPage, true)
-        val list = adapter.takeAllConversations()
-        assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
+        conversations.addOldConversations(newPage, true)
+        assertThatListIsSorted(conversations)
     }
 
     @Test
@@ -96,10 +96,9 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         newPage.add(newConversation(time + 1, "130"))
         newPage.add(newConversation(time - 1, "131"))
 
-        adapter.insertConversations(newPage, true)
-        val list = adapter.takeAllConversations()
-        assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
-        assertThatConversationsAreNotRepeated(list)
+        conversations.insertConversations(newPage, true)
+        assertThatListIsSorted(conversations)
+        assertThatConversationsAreNotRepeated(conversations)
     }
 
 
@@ -123,7 +122,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
 
         val time = System.currentTimeMillis()
         try {
-            adapter.addNewConversation(newConversation(time, "151",
+            conversations.addNewConversation(newConversation(time, "151",
                     MonkeyConversation.ConversationStatus.moreConversations.ordinal))
         } catch (ex: IllegalArgumentException) {
             crashWithNewConversation = true
@@ -136,7 +135,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         oldPage.add(newConversation(time + 1, "155", 0))
 
         try {
-            adapter.addOldConversations(oldPage, true)
+            conversations.addOldConversations(oldPage, true)
         } catch (ex: IllegalArgumentException){
             crashWithOldConversations = true
         }
@@ -148,7 +147,7 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
         oldPage.add(newConversation(time + 1, "155", 0))
 
         try {
-            adapter.insertConversations(oldPage, true)
+            conversations.insertConversations(oldPage, true)
         } catch (ex: IllegalArgumentException){
             crashWithInsertConversations = true
         }
@@ -160,9 +159,9 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
     @Throws (Exception::class)
     fun conversationsCantBeRepeated() {
         val time = System.currentTimeMillis()
-        adapter.addNewConversation(newConversation(time, "151"))
-        adapter.addNewConversation(newConversation(time + 1 , "152"))
-        adapter.addNewConversation(newConversation(time + 2 , "153"))
+        conversations.addNewConversation(newConversation(time, "151"))
+        conversations.addNewConversation(newConversation(time + 1 , "152"))
+        conversations.addNewConversation(newConversation(time + 2 , "153"))
 
         fun addOldPage(){
             val newPage = ArrayList<MonkeyConversation>()
@@ -173,17 +172,16 @@ class SortedConversationsTest : ConversationsAdapterTestCase() {
             newPage.add(newConversation(time - 1, "152"))
             newPage.add(newConversation(time, "153"))
 
-            adapter.addOldConversations(newPage, true)
+            conversations.addOldConversations(newPage, true)
         }
 
         addOldPage()
         addOldPage()
-        adapter.addNewConversation(newConversation(time + 4 , "156"))
+        conversations.addNewConversation(newConversation(time + 4 , "156"))
 
-        val list = adapter.takeAllConversations()
-        assert(list.size == 7)
-        assertThatListIsSorted(list as ArrayList<MonkeyConversation>)
-        assertThatConversationsAreNotRepeated(list)
+        assert(conversations.size == 7)
+        assertThatListIsSorted(conversations)
+        assertThatConversationsAreNotRepeated(conversations)
 
     }
 }

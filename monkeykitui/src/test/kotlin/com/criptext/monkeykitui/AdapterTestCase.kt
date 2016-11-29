@@ -3,6 +3,7 @@ package com.criptext.monkeykitui
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.criptext.monkeykitui.conversation.ConversationsList
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.GroupChat
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
@@ -16,7 +17,7 @@ import java.util.*
  */
 
 open class AdapterTestCase {
-lateinit var adapter: MonkeyAdapter
+    lateinit var adapter: MonkeyAdapter
     var activity: Activity? = null
     var recycler: RecyclerView? = null
 
@@ -37,6 +38,13 @@ lateinit var adapter: MonkeyAdapter
         }
     }
     class MonkeyActivity: Activity(), ChatActivity {
+        override fun deleteAllMessages(conversationId: String) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment) {
+            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
 
         override fun onLoadMoreMessages(conversationId: String, currentMessageCount: Int) {
         }

@@ -2,6 +2,7 @@ package com.criptext.monkeykitui.conversation
 
 import android.content.Context
 import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.Callback
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -14,6 +15,7 @@ import com.criptext.monkeykitui.cav.EmojiHandler
 import com.criptext.monkeykitui.conversation.dialog.ConversationOptionsDialog
 import com.criptext.monkeykitui.conversation.dialog.OnConversationOptionClicked
 import com.criptext.monkeykitui.conversation.holder.ConversationHolder
+import com.criptext.monkeykitui.conversation.holder.ConversationListUI
 import com.criptext.monkeykitui.conversation.holder.ConversationTransaction
 import com.criptext.monkeykitui.recycler.SlowRecyclerLoader
 import com.criptext.monkeykitui.util.InsertionSort
@@ -27,30 +29,18 @@ import java.util.*
 
 open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adapter<ConversationHolder>() {
 
-    private val conversationsList: ArrayList<MonkeyConversation>
-    val mSelectableItemBg: Int
+    var conversations: ConversationsList
 
-    private val conversationsSet: HashSet<String>
+    val mSelectableItemBg: Int
 
     private val conversationsActivity: ConversationsActivity
     get() = mContext as ConversationsActivity
 
-
-    var hasReachedEnd : Boolean = true
-        set(value) {
-            if(!value && field != value) {
-                conversationsList.add(MonkeyConversation.endItem())
-                notifyItemInserted(conversationsList.size - 1)
-                //Log.d("MonkeyConversationsAdapter", "End item added")
-            }
-            field = value
-        }
+    var recyclerView : RecyclerView? = null
 
     val dataLoader : SlowRecyclerLoader
 
     var maxTextWidth: Int? = null
-
-    var recyclerView: RecyclerView? = null
 
     var conversationToDelete: MonkeyConversation? = null
     set(value) {
@@ -66,8 +56,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     var onConversationLongClicked: OnConversationLongClicked
 
     init {
-        conversationsList = ArrayList<MonkeyConversation>()
-        conversationsSet = HashSet()
+        conversations = ConversationsList()
         //get that clickable background
         val mTypedValue = TypedValue();
         mContext.theme.resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
@@ -106,12 +95,12 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val endHolder = holder as? ConversationHolder.EndHolder
         if(endHolder != null) {
             //endHolder.setOnClickListener {  }
-            dataLoader.delayNewBatch(conversationsList.size)
+            dataLoader.delayNewBatch(conversations.size)
         }
     }
 
 
-    override fun getItemCount() = conversationsList.size
+    override fun getItemCount() = conversations.size
 
     private fun getSentMessageCheckmark(status: MonkeyConversation.ConversationStatus): Int{
         return when(status){
@@ -123,10 +112,10 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ConversationHolder?, position: Int) {
-        val conversation = conversationsList[position]
+        val conversation = conversations[position]
         if(holder != null && conversation.getStatus() ==
                 MonkeyConversation.ConversationStatus.moreConversations.ordinal)
-            (holder as ConversationHolder.EndHolder).adjustHeight(matchParentHeight = conversationsList.size == 1)
+            (holder as ConversationHolder.EndHolder).adjustHeight(matchParentHeight = conversations.size == 1)
         else if (holder != null && conversation.getStatus() >
                 MonkeyConversation.ConversationStatus.moreConversations.ordinal){
             holder.setName(conversation.getName())
@@ -167,7 +156,7 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
     }
 
     override fun getItemViewType(position: Int): Int {
-        val conversation = conversationsList[position]
+        val conversation = conversations[position]
         return when (MonkeyConversation.ConversationStatus.values()[conversation.getStatus()]){
             MonkeyConversation.ConversationStatus.empty ->
                 ConversationHolder.ViewTypes.empty.ordinal
@@ -207,98 +196,23 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         }
     }
 
-    protected fun removeEndOfRecyclerView(){
+    fun removeEndOfRecyclerView(){
         removeEndOfRecyclerView(false)
     }
-    protected fun removeEndOfRecyclerView(silent: Boolean){
-        if(conversationsList.isEmpty())
+    fun removeEndOfRecyclerView(silent: Boolean){
+        if(conversations.isEmpty())
             return;
 
-        val lastPosition = conversationsList.size - 1
-        val lastItem = conversationsList[lastPosition]
+        val lastPosition = conversations.size - 1
+        val lastItem = conversations[lastPosition]
         if(lastItem.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal){
-            conversationsList.remove(lastItem)
+            conversations.removeConversationAt(lastPosition)
             if(!silent)
                 notifyItemRemoved(lastPosition)
-            hasReachedEnd = true
+            conversations.hasReachedEnd = true
         }
 
     }
-
-    private fun assertConversationIsNotEndItem(newConversation: MonkeyConversation){
-        if(newConversation.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal) {
-            val invalidStatus = newConversation.getStatus()
-            throw IllegalArgumentException("New conversations can never have status = $invalidStatus\n" +
-                "It is currently used by Conversation status = ${MonkeyConversation.ConversationStatus.values()[invalidStatus]}\n" +
-                "Please check the docs for valid status values. conversation name: ${newConversation.getName()}. id: ${newConversation.getConvId()}")
-        }
-    }
-
-    /**
-     * adds a list of conversations to this adapter. If there were already any conversations, they
-     * will be removed.
-     * @param conversations a list of conversations to add. After calling this function, the adapter
-     * will contain ONLY the conversations in this list.
-     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
-     * loading view when the user scrolls to the end
-     */
-    fun insertConversations(conversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        conversationsList.clear()
-        conversationsSet.clear()
-        removeEndOfRecyclerView()
-        //sanity check
-        for(conv in conversations) {
-            assertConversationIsNotEndItem(conv)
-            conversationsSet.add(conv.getConvId())
-        }
-
-        conversationsList.addAll(conversations)
-        Collections.sort(conversationsList, MonkeyConversation.defaultComparator)
-        notifyDataSetChanged()
-        this.hasReachedEnd = hasReachedEnd
-    }
-
-    /**
-     * Adds a conversation to the top of the adapter's list.
-     * @return the position at which the conversation was inserted. It should be zero, unless there is
-     * a more recent conversation. If the conversation is already present in the adapter, it returns
-     * -1.
-     */
-    fun addNewConversation(newConversation: MonkeyConversation): Int{
-        if(conversationsSet.contains(newConversation.getConvId()))
-            return -1;
-        else
-            return addNewConversation(newConversation, silent = false)
-    }
-
-    /**
-     * adds a conversation to the top of the adapter's list. You should make sure that the conversation
-     * isn't already loaded in the adapter before calling this method.
-     * @param newConversation conversation to add
-     * @param silent UI is updated right after adding the conversation only if this parameter is false.
-     * @return the position at which the conversation was inserted. It should be zero, unless there is
-     * a more recent conversation
-     */
-    private fun addNewConversation(newConversation: MonkeyConversation, silent: Boolean): Int{
-        assertConversationIsNotEndItem(newConversation)
-        val actualPosition = InsertionSort(conversationsList, MonkeyConversation.defaultComparator)
-                .insertAtCorrectPosition(newConversation, insertAtEnd = false)
-        if(!silent)
-            notifyItemInserted(actualPosition)
-
-        conversationsSet.add(newConversation.getConvId())
-        return actualPosition
-    }
-
-    private fun swapConversationPosition(movedConversation: MonkeyConversation, oldPosition: Int){
-        val newPosition = addNewConversation(movedConversation, silent = true)
-        notifyItemMoved(oldPosition, newPosition)
-        if(oldPosition == newPosition)
-            notifyItemChanged(newPosition)
-        else
-            recyclerView?.scrollToPosition(newPosition) //bug in android https://code.google.com/p/android/issues/detail?id=99047
-    }
-
 
     /**
      * Removes a conversation from the recyclerview, animating the removal and displaying a snackbar
@@ -311,10 +225,9 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
      * @param conversation the conversation to remove
      */
     private fun removeConversationFromRecycler(conversation: MonkeyConversation){
-        val pos = getConversationPositionByTimestamp(conversation)
+        val pos = conversations.getConversationPositionByTimestamp(conversation)
         if(pos > -1){
-            conversationsList.removeAt(pos)
-            conversationsSet.remove(conversation.getConvId())
+            conversations.removeConversationAt(pos)
             notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
@@ -322,134 +235,24 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
                 val msg = if(conversation.isGroup()) "${mContext.getString(R.string.mk_exit_group_msg)} \"$name\""
                         else "${mContext.getString(R.string.mk_delete_conversation_msg)} $name"
                 SnackbarUtils.showUndoMessage(recycler = recycler, msg = EmojiHandler.decodeJava(EmojiHandler.decodeJava(msg)),
-                        undoAction = {
-                            conversationToDelete = null
-                            addNewConversation(conversation)
-                        },
-                        attachStateChangeListener = object  : View.OnAttachStateChangeListener{
-                    override fun onViewAttachedToWindow(p0: View?) { }
-
-                    override fun onViewDetachedFromWindow(p0: View?) {
-                        val deleted = conversationToDelete
-                        if(deleted != null && deleted == conversation){
-                            conversationsActivity.onConversationDeleted(deleted)
-                            conversationToDelete = null
+                    undoAction = {
+                        conversationToDelete = null
+                        conversations.addNewConversation(conversation)
+                    },
+                    callback = object  : Callback() {
+                        override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                            if (event  != DISMISS_EVENT_ACTION) {
+                                val deleted = conversationToDelete
+                                if(deleted != null && deleted == conversation){
+                                    conversationsActivity.onConversationDeleted(deleted)
+                                    conversationToDelete = null
+                                }
+                            }
                         }
-                    }
                 })
                 //need to wait until snackbar dismissed to leave
                 conversationToDelete = conversation
             }
         }
     }
-
-    /**
-     * adds a collection of conversations to the bottom of the adapter's list. The changes are then
-     * notified to the UI
-     * @param oldConversations conversations to add
-     * @param hasReachedEnd false if there are no remaining Conversations to load, else display a
-     * loading view when the user scrolls to the end
-     */
-    fun addOldConversations(oldConversations: Collection<MonkeyConversation>, hasReachedEnd: Boolean){
-        removeEndOfRecyclerView()
-        val filteredConversations = oldConversations.filterNot { it -> conversationsSet.contains(it.getConvId()) }
-        if(oldConversations.size > 0) {
-
-            //sanity check
-            for(conv in filteredConversations) {
-                assertConversationIsNotEndItem(conv)
-                conversationsSet.add(conv.getConvId())
-            }
-
-            val firstNewIndex = conversationsList.size
-            conversationsList.addAll(filteredConversations)
-            InsertionSort(conversationsList, MonkeyConversation.defaultComparator, Math.max(1, firstNewIndex)).sort()
-            notifyItemRangeInserted(firstNewIndex, filteredConversations.size);
-        }
-        this.hasReachedEnd = hasReachedEnd
-    }
-
-    /**
-     * updates a conversation in the recyclerView, using a transaction.
-     * @param target conversation to find and update. This object only needs to have valid id and timestamp.
-     * @param transaction the transaction object that will update the conversation once it is found
-     * in the adapter
-     */
-    fun updateConversation(target: MonkeyConversation, transaction: ConversationTransaction){
-        val position = getConversationPositionByTimestamp(target)
-        if(position > -1){
-            val conversation = conversationsList.removeAt(position)
-            transaction.updateConversation(conversation)
-            swapConversationPosition(conversation, position)
-        } else Log.e("ConversationsAdapter", "Conversation with ID: ${target.getConvId()} and " +
-                "timestamp: ${target.getDatetime()} not found in adapter.")
-    }
-
-    /**
-     * Calls notifyItemChanged with the updated conversation's
-     * position.
-     * @param  conversation to find and update.
-     */
-    fun updateConversation(conversation: MonkeyConversation){
-        val position = getConversationPositionByTimestamp(conversation)
-        if(position > -1) {
-            notifyItemChanged(position)
-        } else Log.e("ConversationsAdapter", "Conversation with ID: ${conversation.getConvId()} and " +
-                "timestamp: ${conversation.getDatetime()} not found in adapter. Can't notify item changed.")
-    }
-
-    fun updateConversations(set: Set<Map.Entry<String, ConversationTransaction>>) {
-        val iterator = set.iterator()
-        while(iterator.hasNext()) {
-            val entry = iterator.next()
-            val transaction = entry.value
-            if(conversationsSet.contains(entry.key)) {
-                val conversationPos = conversationsList.indexOfFirst { conv -> conv.getConvId() == entry.key }
-                if (conversationPos == -1)
-                    Log.e("ConversationsAdapter", "Update failed. Conversation with ID: ${entry.key}" +
-                            "was expected to be in adapter.")
-                else {
-                    val conversation = conversationsList.removeAt(conversationPos)
-                    transaction.updateConversation(conversation)
-                    addNewConversation(conversation, true)
-                }
-            }
-        }
-        notifyDataSetChanged()
-    }
-
-    fun getLastConversation(): MonkeyConversation? {
-        if(conversationsList.size > 1) {
-            val last = conversationsList[conversationsList.size - 1]
-            if (last != null && last.getStatus() == MonkeyConversation.ConversationStatus.moreConversations.ordinal)
-                return conversationsList[conversationsList.size - 2]
-            else
-                return last
-        } else if(conversationsList.size == 1
-                && conversationsList.last().getStatus() != MonkeyConversation.ConversationStatus.moreConversations.ordinal)
-            return conversationsList.last()
-
-        return null
-    }
-
-    fun takeAllConversations(): List<MonkeyConversation>{
-        removeEndOfRecyclerView(true) //never pass EndItem to developer
-        return conversationsList
-    }
-    /**
-     * Finds the adapter position by the MonkeyConversation's timestamp.
-     * @param targetId the timestamp of the MonkeyConversation whose adapter position will be searched. This
-     * timestamp must belong to an existing MonkeyConversation in this adapter.
-     * @return The adapter position of the MonkeyItem. If the item was not found returns
-     * the negated expected position.
-     */
-    fun getConversationPositionByTimestamp(item: MonkeyConversation) = conversationsList.binarySearch(item,
-            MonkeyConversation.defaultComparator)
-
-    /**
-     * Looks for a monkey conversation with a specified Id, starting by the most recent ones.
-     * @return the message with the requested Id. returns null if the conversation does not exist
-     */
-    fun findConversationItemById(id: String) = conversationsList.find { it.getConvId() == id }
-
 }

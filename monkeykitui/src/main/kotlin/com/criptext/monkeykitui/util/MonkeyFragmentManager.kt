@@ -141,12 +141,11 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
     fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder?): Collection<MonkeyConversation>{
+                        voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder?) {
 
         val conversationsFragment = activity.supportFragmentManager.findFragmentById(
                 fragmentContainerId) as? MonkeyConversationsFragment? //finding by id may be too slow?
         if(conversationsFragment != null) {
-            val list = conversationsFragment.takeAllConversations()
             chatFragment.inputListener = inputListener
             //instantiate an object to play voice notes and pass it to the fragment
             chatFragment.voiceNotePlayer = voiceNotePlayer
@@ -162,10 +161,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
 
             monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
                     chatFragment.isGroupConversation() ?: false, chatFragment.getConversationId())
-
-            return list
         }
-        return listOf()
     }
 
     fun setInfoFragment(infoFragment: MonkeyInfoFragment){

@@ -17,6 +17,7 @@ class SortedMessagesTest : AdapterTestCase() {
 
     fun newTextMessage(timestamp: Long, id: String, oldId: String?, incoming: Boolean): MonkeyItem {
         return object : MonkeyItem {
+            override fun getConversationId() = "0"
             override fun getMessageTimestampOrder() = timestamp
             override fun getOldMessageId() = oldId
             override fun getAudioDuration(): Long { throw UnsupportedOperationException() }

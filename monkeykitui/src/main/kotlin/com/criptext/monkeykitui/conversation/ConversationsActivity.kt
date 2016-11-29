@@ -12,9 +12,10 @@ import com.criptext.monkeykitui.MonkeyConversationsFragment
 interface ConversationsActivity {
 
     /**
-     * This callback is executed on the onAttach() and onDetach() callbacks of the Conversations
+     * This callback is executed on the onStart() and onStop() callbacks of the Conversations
      * fragment, the purpose is to update the activity's reference to the Conversation Fragment.
-     * The activity should only have a reference to the fragment while it is attached.
+     *
+     * The activity should only have a reference to the fragment while it is active.
      */
     fun setConversationsFragment(conversationsFragment: MonkeyConversationsFragment?)
 
