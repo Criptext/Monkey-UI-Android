@@ -21,10 +21,11 @@ interface ConversationsActivity {
 
     /**
      * This method is called by the Conversations fragment when it is initializing to retrieve the
-     * list of conversations. loading the conversations should be asynchronous, so when you are done
-     * call the fragment's insertConversations() method to add the conversations to the fragment.
+     * list of conversations. This method must return immediately, it's ok if the object is empty,
+     * the conversations can be loaded asynchronously in the onLoadMoreConversations callback
+     * @return the ConversationsList instance of the Conversations Activity.
      */
-    fun requestConversations()
+    fun onRequestConversations(): ConversationsList
 
     /**
      * Callback executed when the user clicks a conversation. This should open the chat.
@@ -50,21 +51,6 @@ interface ConversationsActivity {
      * could use this number as an offset if fetching from a local database.
      */
     fun onLoadMoreConversations(loadedConversations: Int)
-
-    /**
-     * Callback executed when the fragment is about to be destroyed or removed from the screen so
-     * that the activity can persist the conversations. When the fragment is recreated it will try
-     * to get back the conversations using the requestConversations() method
-     *
-     * @param conversations The conversations that the fragment had before being dettached. You
-     * should hold a reference to this list in your conversation but only to give it back the next
-     * time requestConversations() is called. Never try to access the objects of this list if you
-     * want to manipulate a conversation object, always fetch them from the ConversationsFragment or
-     * your local database because this list may not be up to date with those two sources, thus
-     * leading to data inconsistencies. This is only meant to be used as a temporary 'backup'.
-     *
-     */
-    fun retainConversations(conversations: List<MonkeyConversation>)
 
     /**
      * Callback executed when the user has deleted a conversation. The conversation has been

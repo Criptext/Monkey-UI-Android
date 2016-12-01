@@ -7,14 +7,16 @@ import com.criptext.monkeykitui.util.InsertionSort
 import java.util.*
 
 /**
- * Created by gesuwall on 11/28/16.
+ * List that holds the conversations of a chat application. It is always ordered using the timestamps
+ * of the conversations, every insert adds the item at the correct position. Attempts to insert
+ * duplicates are ignored.
+ * Created by Gabriel on 11/28/16.
  */
 
 class ConversationsList() : AbstractList<MonkeyConversation>() {
     private val list: ArrayList<MonkeyConversation>
     private val set: HashSet<String>
     var listUI: ConversationListUI?
-
 
     var hasReachedEnd : Boolean = true
         set(value) {
@@ -90,7 +92,7 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
     }
 
     /**
-     * adds a conversation to the top of the adapter's list. You should make sure that the conversation
+     * adds a conversation to the top of the list. You should make sure that the conversation
      * isn't already loaded in the adapter before calling this method.
      * @param newConversation conversation to add
      * @param silent UI is updated right after adding the conversation only if this parameter is false.
@@ -153,7 +155,7 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
     }
 
     /**
-     * updates a conversation in the recyclerView, using a transaction.
+     * updates a conversation in the list, using a transaction.
      * @param target conversation to find and update. This object only needs to have valid id and timestamp.
      * @param transaction the transaction object that will update the conversation once it is found
      * in the adapter
@@ -219,7 +221,7 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
     }
 
     /**
-     * Finds the adapter position by the MonkeyConversation's timestamp.
+     * Finds the list position by the MonkeyConversation's timestamp.
      * @param targetId the timestamp of the MonkeyConversation whose adapter position will be searched. This
      * timestamp must belong to an existing MonkeyConversation in this adapter.
      * @return The adapter position of the MonkeyItem. If the item was not found returns

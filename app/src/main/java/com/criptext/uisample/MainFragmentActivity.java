@@ -39,6 +39,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        conversations = new ConversationsList(new FakeConversations().getAll(this));
         fragmentManager = new MonkeyFragmentManager(this);
         fragmentManager.setConversationsTitle("UI Sample");
         fragmentManager.setContentLayout(savedInstanceState);
@@ -112,14 +113,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void requestConversations() {
-        if(convFragment != null) {
-            conversations = new ConversationsList(new FakeConversations().getAll(this));
-            convFragment.insertConversations(conversations);
-        }
-    }
-
-    @Override
     public void setVoiceNotePlayer(PlaybackService.VoiceNotePlayerBinder player) {
         super.setVoiceNotePlayer(player);
         if(chatFragment != null)
@@ -147,8 +140,8 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void retainConversations(@NotNull List<? extends MonkeyConversation> conversations) {
-
+    public ConversationsList onRequestConversations() {
+        return conversations;
     }
 
     @Nullable

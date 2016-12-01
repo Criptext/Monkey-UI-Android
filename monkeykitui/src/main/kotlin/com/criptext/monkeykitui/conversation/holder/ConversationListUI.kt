@@ -1,5 +1,7 @@
 package com.criptext.monkeykitui.conversation.holder
 
+import com.criptext.monkeykitui.conversation.ConversationsList
+
 /**
  * Created by gesuwall on 11/28/16.
  */
@@ -19,5 +21,4 @@ interface ConversationListUI {
     fun removeLoadingView()
 
     fun scrollToPosition(position: Int)
-
 }

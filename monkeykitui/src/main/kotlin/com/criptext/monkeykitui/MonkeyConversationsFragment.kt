@@ -63,7 +63,7 @@ open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
         val conversationsActivty = context as? ConversationsActivity
         if(conversationsActivty != null) {
             conversationsActivty.setConversationsFragment(this)
-            conversationsActivty.requestConversations()
+            conversationsAdapter?.conversations = conversationsActivty.onRequestConversations()
         }
     }
 
@@ -90,6 +90,7 @@ open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
     fun insertConversations(list: ConversationsList) {
         list.listUI = this
         conversationsAdapter?.conversations = list
+        conversationsAdapter?.notifyItemRangeInserted(0, list.size)
     }
 
     override fun notifyConversationChanged(position: Int) {

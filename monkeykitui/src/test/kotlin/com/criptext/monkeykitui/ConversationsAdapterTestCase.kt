@@ -32,6 +32,11 @@ open class ConversationsAdapterTestCase {
         }
     }
     class MonkeyActivity: Activity(), ConversationsActivity {
+
+        override fun onRequestConversations(): ConversationsList {
+            return ConversationsList()
+        }
+
         override fun onConversationClicked(conversation: MonkeyConversation) {
         }
 
@@ -39,12 +44,6 @@ open class ConversationsAdapterTestCase {
         }
 
         override fun onLoadMoreConversations(loadedConversations: Int) {
-        }
-
-        override fun requestConversations() {
-        }
-
-        override fun retainConversations(conversations: List<MonkeyConversation>) {
         }
 
         override fun setConversationsFragment(conversationsFragment: MonkeyConversationsFragment?) {
