@@ -150,10 +150,6 @@ open class AttachmentButton : ImageView {
         val output = File(data!!.getStringExtra(FilePickerActivity.RESULT_FILE_PATH))
         var monkeyItem = object : MonkeyItem {
 
-            override fun getConversationId(): String {
-                return "" 
-            }
-
             override fun getMessageTimestampOrder(): Long {
                 return System.currentTimeMillis()
             }
