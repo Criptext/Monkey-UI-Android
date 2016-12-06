@@ -10,4 +10,8 @@ interface InputListener {
     fun onNewItem(item : MonkeyItem)
 
     fun onNewItemFileError(type: Int)
+
+    fun onTyping(text : String)
+
+    fun onStopTyping()
 }

@@ -3,6 +3,7 @@ package com.criptext.monkeykitui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -34,6 +35,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     open val chatLayout: Int
         get() = R.layout.monkey_chat_layout
 
+    val LOAD_FILE = 777
     lateinit var recyclerView: RecyclerView
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
@@ -177,6 +179,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val isRotating = activity.isChangingConfigurations
         voiceNotePlayer?.setIsInForeground(isRotating)
         voiceNotePlayer?.setUiUpdater(null)
+        inputListener?.onStopTyping()
         (activity as ChatActivity).onStopChatFragment(monkeyAdapter.conversationId)
 
         if(voiceNotePlayer?.currentlyPlayingItem != null)
@@ -191,11 +194,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
     override fun onDetach() {
         (activity as ChatActivity).deleteChatFragment(this)
+        inputListener?.onStopTyping()
         super.onDetach()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        inputListener?.onStopTyping()
         (inputView as? MediaInputView)?.recorder = null
         (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }
@@ -205,6 +210,11 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             return
 
         val mediaInputView = inputView as? MediaInputView
+
+        if(requestCode == LOAD_FILE){
+            mediaInputView?.attachmentButton?.onActivityResult(requestCode, resultCode, data)
+            return
+        }
         mediaInputView?.cameraHandler?.onActivityResult(requestCode, resultCode, data)
     }
 
