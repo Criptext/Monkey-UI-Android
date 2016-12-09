@@ -232,6 +232,10 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         monkeyAdapter.addOldMessages(messages, hasReachedEnd, recyclerView)
     }
 
+    fun noMoreOldMessages(){
+        monkeyAdapter.noMoreOldMessages();
+    }
+
     fun smoothlyAddNewItem(message: MonkeyItem){
         monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
     }
