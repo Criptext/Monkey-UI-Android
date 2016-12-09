@@ -634,15 +634,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     /**
-
-     */
-    fun noMoreOldMessages(){
-        removeEndOfRecyclerView()
-        hasReachedEnd = true
-    }
-
-
-    /**
      * Check whether the last item in RecyclerView is being displayed or not
      * @param manager LinearLayoutManager
      * @return true if last position was Visible and false Otherwise

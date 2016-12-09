@@ -236,4 +236,12 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
      */
     fun findConversationById(id: String) = list.find { it.getConvId() == id }
 
+
+    /**
+     * Remove Loading View and set has reach end to null
+     */
+    fun removeLoadingView(){
+        listUI?.removeLoadingView()
+        this.hasReachedEnd = true
+    }
 }
