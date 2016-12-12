@@ -23,6 +23,8 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
             if(!value && field != value) {
                 list.add(MonkeyConversation.endItem())
                 listUI?.notifyConversationInserted(list.size - 1)
+            }else if(value && field != value) {
+                listUI?.removeLoadingView()
             }
             field = value
         }
@@ -235,5 +237,4 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
      * @return the message with the requested Id. returns null if the conversation does not exist
      */
     fun findConversationById(id: String) = list.find { it.getConvId() == id }
-
 }
