@@ -52,8 +52,6 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
         fileLogoImageView!!.setOnClickListener(null)
     }
     override fun setWaitingForUpload(){
-
-        fileLogoImageView!!.visibility = View.INVISIBLE
         fileLogoImageView!!.setOnClickListener(null)
         sendingProgressBar!!.visibility = View.VISIBLE
 
@@ -71,11 +69,6 @@ open class MonkeyFileHolder: MonkeyHolder, MonkeyFile {
         downloadProgressBar?.visibility = View.INVISIBLE
         fileLogoImageView!!.visibility = View.VISIBLE
         fileLogoImageView!!.setOnClickListener(listener)
-        /*
-        photoLoadingView!!.visibility = View.GONE
-        retryDownloadLayout!!.visibility = View.VISIBLE
-        retryDownloadLayout!!.setOnClickListener(retryListener)
-        */
 
     }
 
