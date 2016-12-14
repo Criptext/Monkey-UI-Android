@@ -422,6 +422,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val file = File(item.getFilePath())
         if(file.exists()) {
             fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
+            fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
         }
         bindMonkeyFile(item, fileHolder)
 
