@@ -63,6 +63,16 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
         //and add it to the recyclerView.
         return new InputListener() {
             @Override
+            public void onTyping(@NotNull String text) {
+                //Won't be needed in the UI Sample
+            }
+
+            @Override
+            public void onStopTyping() {
+                //Won't be needed in the UI Sample
+            }
+
+            @Override
             public void onNewItemFileError(@NotNull int filetype) {
                 Toast.makeText(BaseChatActivity.this, "Error writing file of type " +
                         MonkeyItem.MonkeyItemType.values()[filetype], Toast.LENGTH_LONG).show();
