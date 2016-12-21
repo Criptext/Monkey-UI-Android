@@ -1,19 +1,9 @@
 package com.criptext.monkeykitui.util
 
-import android.animation.Animator
-import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
-import android.app.FragmentManager
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.TextView
 import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.MonkeyConversationsFragment
 import com.criptext.monkeykitui.MonkeyInfoFragment
@@ -21,15 +11,15 @@ import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.audio.PlaybackService
-import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.toolbar.MonkeyStatusBar
 import com.criptext.monkeykitui.toolbar.MonkeyToolbar
+import java.util.*
 
 /**
  * Created by gesuwall on 8/15/16.
  */
 
-class MonkeyFragmentManager(val activity: AppCompatActivity){
+class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTitle: String, val mkFragmentStack: Stack<FragmentTypes>){
     /**
      * resource id of the xml layout to use in the Activity that will display the chat fragments
      */
@@ -68,24 +58,6 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
     var monkeyStatusBar: MonkeyStatusBar?
 
     /**
-     * Title of the conversations fragment.
-     */
-    var conversationsTitle: String = "UI Sample"
-
-    /**
-     * Color for expanded status bar
-     */
-    var expandedToolbarColor: Int = 0
-        get() {
-        if(field == 0){
-            val value = TypedValue()
-            activity.theme.resolveAttribute(R.attr.colorPrimary, value, true)
-            return value.data
-        }
-        return field
-    }
-
-    /**
      * resource id of the animation to use when the conversations fragment reenters the activity,
      * replacing the chat fragment
      */
@@ -99,16 +71,49 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
         monkeyStatusBar = MonkeyStatusBar(activity)
         monkeyToolbar = null
+
+        activity.supportFragmentManager.addOnBackStackChangedListener {
+            //mkFragmentStack always has one more item than backStackEntryCount
+            //substracting one unit from mkFragmentStack count is REALLY IMPORTANT
+            //only try to pop if backstack count decreased
+            if (activity.supportFragmentManager.backStackEntryCount < mkFragmentStack.count() - 1) {
+                if (mkFragmentStack.count() > 1) //Check before running into StackEmptyException
+                    mkFragmentStack.pop()
+                val currentFragment = mkFragmentStack.peek()
+                when (currentFragment) {
+                    FragmentTypes.conversations ->
+                        monkeyToolbar?.setConversationsToolbar(conversationsTitle)
+                }
+            }
+        }
+
+    }
+
+    fun restoreToolbar(activeConversation: MonkeyConversation?) {
+        when (mkFragmentStack.peek()) {
+            FragmentTypes.conversations -> monkeyToolbar?.setConversationsToolbar(conversationsTitle)
+            FragmentTypes.chat, FragmentTypes.info -> {
+                if (activeConversation != null)
+                    monkeyToolbar?.setChatToolbar(chatTitle = activeConversation.getName(),
+                        avatarURL = activeConversation.getAvatarFilePath(),
+                        isGroup = activeConversation.isGroup())
+                else throw IllegalArgumentException("Active conversation argument was null despite " +
+                        "the fact that the stack has a ${mkFragmentStack.peek()} value")
+            }
+            null -> {Log.e("MonkeyFragmentManager", "Can't call restoreToolbar with an empty fragment stack")}
+        }
     }
 
     /**
      * Add a new Conversations fragment to the activity.
      */
-    private fun setConversationsFragment() {
+    public fun setConversationsFragment() {
+        mkFragmentStack.push(FragmentTypes.conversations)
         val convFragment = MonkeyConversationsFragment()
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
         ft.commit()
+        monkeyToolbar?.setConversationsToolbar(conversationsTitle)
     }
     /**
      * Set a layout with a FrameLayout as fragment container in the activity. this fragment
@@ -121,17 +126,16 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
-        monkeyToolbar = MonkeyToolbar(activity, conversationsTitle, expandedToolbarColor)
+        monkeyToolbar = MonkeyToolbar(activity)
         if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()
-        addOnBackStackChangedListener()
+
     }
 
-    fun addOnBackStackChangedListener(){
-        activity.supportFragmentManager.addOnBackStackChangedListener({
-            monkeyToolbar?.checkIfChatFragmentIsVisible()
-        })
+    fun setToolbarOnClickListener(listener: View.OnClickListener) {
+        monkeyToolbar!!.setOnClickListener(listener)
+
     }
 
     /**
@@ -140,15 +144,15 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
      * @param inputListener object that listens to the user's inputs in the chat
      * @param voiceNotePlayer object that plays voice notes in the chat
      */
-    fun setChatFragment(chatFragment: MonkeyChatFragment, inputListener: InputListener,
-                        voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder?) {
+    fun setChatFragment(chatFragment: MonkeyChatFragment) {
 
-        val conversationsFragment = activity.supportFragmentManager.findFragmentById(
-                fragmentContainerId) as? MonkeyConversationsFragment? //finding by id may be too slow?
-        if(conversationsFragment != null) {
-            chatFragment.inputListener = inputListener
-            //instantiate an object to play voice notes and pass it to the fragment
-            chatFragment.voiceNotePlayer = voiceNotePlayer
+        if (mkFragmentStack.peek() == FragmentTypes.conversations) {
+            //for tests to work, toolbar and fragmentStack must be updated before
+            // messing with the fragment backstack
+            mkFragmentStack.push(FragmentTypes.chat)
+            monkeyToolbar?.setChatToolbar(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
+                    chatFragment.isGroupConversation() ?: false)
+        }
             val ft = activity.supportFragmentManager.beginTransaction();
             //animations must be set before adding or replacing fragments
             ft.setCustomAnimations(chatFragmentInAnimation,
@@ -158,13 +162,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
             ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
             ft.addToBackStack(null)
             ft.commit()
-
-            monkeyToolbar?.configureForChat(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
-                    chatFragment.isGroupConversation() ?: false, chatFragment.getConversationId())
-        }
     }
 
     fun setInfoFragment(infoFragment: MonkeyInfoFragment){
+        mkFragmentStack.push(FragmentTypes.info)
         val ft = activity.supportFragmentManager.beginTransaction();
         ft.setCustomAnimations(chatFragmentInAnimation,
                 conversationsFragmentOutAnimation,
@@ -198,6 +199,10 @@ class MonkeyFragmentManager(val activity: AppCompatActivity){
 
     fun setSubtitle(subtitle: String){
         monkeyToolbar?.setSubtitle(subtitle)
+    }
+
+    enum class FragmentTypes {
+        conversations, chat, info
     }
 
     companion object {

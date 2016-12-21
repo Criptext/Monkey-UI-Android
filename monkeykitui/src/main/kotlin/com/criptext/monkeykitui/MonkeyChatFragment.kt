@@ -3,7 +3,6 @@ package com.criptext.monkeykitui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -32,14 +31,12 @@ import java.util.*
 
 open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullScreenImageLoader{
 
-    open val chatLayout: Int
-        get() = R.layout.monkey_chat_layout
-
     val LOAD_FILE = 777
     lateinit var recyclerView: RecyclerView
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
     private lateinit var inputView: BaseInputView
+    var chatLayout: Int = R.layout.monkey_chat_layout
     private set
 
     var inputListener: InputListener? = null
@@ -79,32 +76,9 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val chatTitleName = "MonkeyChatFragment.titleName"
         val chatAvatarUrl = "MonkeyChatFragment.avatarUrl"
         val initalLastReadValue = "MonkeyChatFragment.lastread"
+        val chatLayoutId = "MonkeyChatFragment.chatLayoutId"
 
-        fun newGroupInstance(conversationId: String, chatTitle: String, avatarURL: String,
-                             hasReachedEnd: Boolean, lastRead: Long, membersIds: String?): MonkeyChatFragment {
-            val newInstance = MonkeyChatFragment()
-            val newBundle = Bundle()
-            newBundle.putString(chatConversationId, conversationId)
-            newBundle.putString(chatmembersGroupIds, membersIds)
-            newBundle.putString(chatTitleName, chatTitle)
-            newBundle.putString(chatAvatarUrl, avatarURL)
-            newBundle.putBoolean(chatHasReachedEnd, hasReachedEnd)
-            newBundle.putLong(initalLastReadValue, lastRead)
-            newInstance.arguments = newBundle
-            return newInstance
-        }
 
-        fun newGroupInstance(conversationId: String, chatTitle: String,
-                             avatarURL: String, hasReachedEnd: Boolean, membersIds: String) =
-                newGroupInstance(conversationId, chatTitle, avatarURL, hasReachedEnd, 0L, membersIds)
-
-        fun newInstance(conversationId: String, chatTitle: String, avatarURL: String,
-                        hasReachedEnd: Boolean, lastRead: Long) =
-                newGroupInstance(conversationId, chatTitle, avatarURL, hasReachedEnd, lastRead, null)
-
-        fun newInstance(conversationId: String, chatTitle: String, avatarURL: String,
-                        hasReachedEnd: Boolean) =
-                newGroupInstance(conversationId, chatTitle, avatarURL, hasReachedEnd, 0L, null)
     }
 
 
@@ -201,6 +175,15 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     override fun onDestroy() {
         super.onDestroy()
         inputListener?.onStopTyping()
+        inputListener = object: InputListener {
+            override fun onNewItemFileError(type: Int) { }
+
+            override fun onStopTyping() { }
+
+            override fun onNewItem(item: MonkeyItem) { }
+
+            override fun onTyping(text: String) { }
+        }
         (inputView as? MediaInputView)?.recorder = null
         (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }
@@ -271,7 +254,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         return args.getString(chatTitleName)
     }
 
-    fun getAvatarURL(): String{
+    fun getAvatarURL(): String?{
         val args = arguments
         return args.getString(chatAvatarUrl)
     }
@@ -372,4 +355,55 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         inputView.onRequestPermissionsResult(requestCode, grantResults)
         monkeyAdapter.onRequestPermissionsResult(requestCode, grantResults)
     }
+
+    class Builder(private val conversationId: String, private val chatTitle: String) {
+            private val fragment: MonkeyChatFragment
+            private var avatarURL: String? = null
+            private var reachedEnd: Boolean = false
+            private var lastRead: Long = 0L
+            private var membersIds: String? = null
+            private var layoutId: Int = R.layout.monkey_chat_layout
+
+            init  {
+                fragment = MonkeyChatFragment()
+            }
+
+            fun setAvatarURL(avatarURL: String): Builder {
+                this.avatarURL = avatarURL
+                return this
+            }
+
+            fun setReachedEnd(reachedEnd: Boolean): Builder {
+                this.reachedEnd = reachedEnd
+                return this
+            }
+
+            fun setLastRead(lastRead: Long): Builder {
+                this.lastRead = lastRead
+                return this
+            }
+
+            fun setMembersIds(membersIds: String): Builder {
+                this.membersIds = membersIds
+                return this
+            }
+
+            fun setLayoutId(layoutId: Int): Builder {
+                this.layoutId = layoutId
+                return this
+            }
+
+            fun build(): MonkeyChatFragment {
+                val newBundle = Bundle()
+                newBundle.putString(chatConversationId, conversationId)
+                newBundle.putString(chatmembersGroupIds, membersIds)
+                newBundle.putString(chatTitleName, chatTitle)
+                newBundle.putString(chatAvatarUrl, avatarURL)
+                newBundle.putBoolean(chatHasReachedEnd, reachedEnd)
+                newBundle.putLong(initalLastReadValue, lastRead)
+                newBundle.putInt(chatLayoutId, layoutId)
+                fragment.arguments = newBundle
+                return fragment
+            }
+        }
 }
