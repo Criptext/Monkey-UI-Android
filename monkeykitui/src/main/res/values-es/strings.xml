@@ -27,7 +27,8 @@
     <string name="mk_text_confirm">Si</string>
     <string name="mk_text_cancel">Cancelar</string>
 
-    <string name="mk_text_participants">Paticipantes</string>
+    <string name="mk_add_participants">Añadir Participante</string>
+    <string name="mk_text_participants">Participantes</string>
     <string name="mk_text_common">Conversaciones en Comun</string>
     <string name="mk_no_common">No Hay Conversaciones en Comun</string>
 </resources>

@@ -36,4 +36,23 @@ interface MonkeyInfo {
      */
     fun getRightTitle() : String
 
+    /**
+     * @return the color of the user
+     */
+    fun getColor() : Int
+
+    /**
+     * Set the right title for user info
+     */
+    fun setRightTitle(rightTitle : String)
+
+    /**
+     * Set the subtitle for user info
+     */
+    fun setSubtitle(subtitle : String)
+
+    /**
+     * Set the color for user info
+     */
+    fun setColor(color : Int)
 }

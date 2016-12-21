@@ -85,6 +85,15 @@ open class MonkeyInfoFragment : Fragment(){
         noContentText = view.findViewById(R.id.noContentText) as TextView
         setInfo()
 
+        if(!isGroup || !arguments.getBoolean("canAddMembers")){
+            view.findViewById(R.id.add_participant).visibility = View.GONE
+            view.findViewById(R.id.participant_gap).visibility = View.VISIBLE
+        }else{
+            view.findViewById(R.id.add_participant).setOnClickListener {
+                (activity as InfoActivity).onAddParticipant();
+            }
+        }
+
         (outButton as? Button)?.setOnClickListener{
             var alert = AlertDialog.Builder(recyclerView.context)
             alert.setTitle(recyclerView.context.getString(R.string.mk_text_exit_group))
@@ -128,10 +137,11 @@ open class MonkeyInfoFragment : Fragment(){
             ?: listOf()
 
     companion object {
-        fun newInfoInstance(conversationId : String, isGroup : Boolean): MonkeyInfoFragment {
+        fun newInfoInstance(conversationId : String, isGroup : Boolean, canAddMembers : Boolean): MonkeyInfoFragment {
             val args = Bundle()
             args.putString("conversationId", conversationId)
             args.putBoolean("isGroup", isGroup)
+            args.putBoolean("canAddMembers", canAddMembers)
             val newInstance = MonkeyInfoFragment()
             newInstance.arguments = args
             return newInstance

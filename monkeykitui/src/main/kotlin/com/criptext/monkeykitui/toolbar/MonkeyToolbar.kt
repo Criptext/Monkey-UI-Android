@@ -55,6 +55,7 @@ open class MonkeyToolbar(activity: AppCompatActivity) {
 
     fun setChatToolbar(chatTitle: String, avatarURL: String?, isGroup: Boolean) {
         customToolbar.title.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(chatTitle))
+        customToolbar.subtitle.visibility = View.GONE
         customToolbar.imageView.visibility = View.VISIBLE
         if (avatarURL != null)
                 Utils.setAvatarAsync(toolbar.context, customToolbar.imageView, avatarURL,
@@ -64,6 +65,8 @@ open class MonkeyToolbar(activity: AppCompatActivity) {
                         else R.drawable.mk_default_user_img
             customToolbar.imageView.setImageResource(imgRes)
         }
+
+        actionBar.setDisplayHomeAsUpEnabled(true)
     }
 
     fun setOnClickListener(listener: View.OnClickListener){

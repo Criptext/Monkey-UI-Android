@@ -76,7 +76,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
             //mkFragmentStack always has one more item than backStackEntryCount
             //substracting one unit from mkFragmentStack count is REALLY IMPORTANT
             //only try to pop if backstack count decreased
-            if (activity.supportFragmentManager.backStackEntryCount < mkFragmentStack.count() - 1) {
+            if (activity.supportFragmentManager.backStackEntryCount == 0  || activity.supportFragmentManager.backStackEntryCount < mkFragmentStack.count() - 1) {
                 if (mkFragmentStack.count() > 1) //Check before running into StackEmptyException
                     mkFragmentStack.pop()
                 val currentFragment = mkFragmentStack.peek()
@@ -84,6 +84,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                     FragmentTypes.conversations ->
                         monkeyToolbar?.setConversationsToolbar(conversationsTitle)
                 }
+            }else{
+
             }
         }
 
@@ -121,13 +123,13 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
      * activity is being created.
      * @oaram savedInstanceState the bundle passed in the onCreate() callback
      */
-    fun setContentLayout(savedInstanceState: Bundle?){
+    fun setContentLayout(savedInstanceState: Bundle?, setConversations : Boolean){
         //The content layout must have a FrameLayout as container of the fragments. using
         // different layouts like RelativeLayout may have weird results. It's best to use
         // our mk_fragment_container
         activity.setContentView(fragmentContainerLayout)
         monkeyToolbar = MonkeyToolbar(activity)
-        if(savedInstanceState == null) //don't set conversations fragment if the activity is being recreated
+        if(savedInstanceState == null && setConversations) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()
 
@@ -153,15 +155,15 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
             monkeyToolbar?.setChatToolbar(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
                     chatFragment.isGroupConversation() ?: false)
         }
-            val ft = activity.supportFragmentManager.beginTransaction();
-            //animations must be set before adding or replacing fragments
-            ft.setCustomAnimations(chatFragmentInAnimation,
-                    conversationsFragmentOutAnimation,
-                    conversationsFragmentInAnimation,
-                    chatFragmentOutAnimation)
-            ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
-            ft.addToBackStack(null)
-            ft.commit()
+        val ft = activity.supportFragmentManager.beginTransaction();
+        //animations must be set before adding or replacing fragments
+        ft.setCustomAnimations(chatFragmentInAnimation,
+                conversationsFragmentOutAnimation,
+                conversationsFragmentInAnimation,
+                chatFragmentOutAnimation)
+        ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
+        ft.addToBackStack(null)
+        ft.commit()
     }
 
     fun setInfoFragment(infoFragment: MonkeyInfoFragment){
@@ -190,6 +192,9 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
         ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
+        activity.supportFragmentManager.executePendingTransactions();
+        monkeyToolbar?.setChatToolbar(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
+                chatFragment.isGroupConversation() ?: false)
 
     }
 
