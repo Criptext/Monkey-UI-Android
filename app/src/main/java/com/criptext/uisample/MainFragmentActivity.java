@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.view.MenuItem;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
@@ -19,12 +20,14 @@ import com.criptext.monkeykitui.toolbar.ToolbarDelegate;
 import com.criptext.monkeykitui.util.MonkeyFragmentManager;
 import com.criptext.monkeykitui.util.Utils;
 import com.criptext.uisample.conversation.FakeConversations;
+import com.criptext.uisample.conversation.StateFragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by gesuwall on 8/10/16.
@@ -36,13 +39,33 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     MonkeyFragmentManager fragmentManager;
     ConversationsList conversations;
 
+    StateFragment stateFragment;
+
+    static String STATE_KEY = "MonkeyKitUI.StateFragment";
+
+    private boolean restoreState() {
+        boolean restored = true;
+        //Store activity state in headless fragment
+        StateFragment _stateFragment = (StateFragment) getSupportFragmentManager().findFragmentByTag(STATE_KEY);
+        if (_stateFragment == null) {
+            _stateFragment = StateFragment.newStateFragment(this);
+            getSupportFragmentManager().beginTransaction().add(_stateFragment, STATE_KEY).commit();
+            restored = false;
+        }
+        stateFragment = _stateFragment;
+        return restored;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        conversations = new ConversationsList(new FakeConversations().getAll(this));
-        fragmentManager = new MonkeyFragmentManager(this);
-        fragmentManager.setConversationsTitle("UI Sample");
+
+        boolean restored = restoreState();
+        conversations = new ConversationsList(stateFragment.conversationsList);
+        fragmentManager = new MonkeyFragmentManager(this, "UI Sample", stateFragment.mkFragmentStack);
         fragmentManager.setContentLayout(savedInstanceState);
+        if (restored) //if this is a restored instance, we must restore the toolbar as well
+        fragmentManager.restoreToolbar(stateFragment.activeConversation);
 
         fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
         //Simulating connectivity status
@@ -107,9 +130,12 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
             inputListener = createInputListener();
         //set all messages as read, use default avatar
         MonkeyChatFragment fragment =
-                MonkeyChatFragment.Companion.newGroupInstance("0", conversation.getName(),
-                "", false, System.currentTimeMillis(), conversation.getGroupMembers());
-        fragmentManager.setChatFragment(fragment, inputListener, vnPlayer);
+                new MonkeyChatFragment.Builder("0", conversation.getName())
+                    .setLastRead(System.currentTimeMillis())
+                    .setReachedEnd(false)
+                    .build();
+        fragmentManager.setChatFragment(fragment);
+        stateFragment.activeConversation = conversation;
     }
 
     @Override
@@ -122,6 +148,11 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     public void setChatFragment(@Nullable MonkeyChatFragment monkeyChatFragment) {
         chatFragment = monkeyChatFragment;
+        if (chatFragment != null) {
+            chatFragment.setInputListener(createInputListener());
+            //instantiate an object to play voice notes and pass it to the fragment
+            chatFragment.setVoiceNotePlayer(vnPlayer);
+        }
     }
 
     @Override

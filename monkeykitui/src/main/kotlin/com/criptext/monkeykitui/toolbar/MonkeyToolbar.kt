@@ -25,98 +25,53 @@ import de.hdodenhof.circleimageview.CircleImageView
  * Created by daniel on 9/16/16.
  */
 
-open class MonkeyToolbar(var activity: AppCompatActivity, var conversationsTitle: String, var expandColor: Int) : AppBarLayout.OnOffsetChangedListener{
+open class MonkeyToolbar(activity: AppCompatActivity) {
 
-    var imageViewAvatar: CircleImageView?
-    var toolbar: Toolbar
-    var monkeyId: String?
-    var avatarURL: String?
-    var customToolbar : HeaderView?
+    val toolbar: Toolbar
+    val customToolbar : HeaderView
+    val actionBar : ActionBar
+    val appBarLayout : AppBarLayout
 
     init {
-
-        monkeyId = null
-        avatarURL = null
         toolbar = activity.findViewById(R.id.toolbar) as Toolbar
-        val appToolbar = activity.findViewById(R.id.toolbar_layout) as AppBarLayout?
-
-        val mInflater = LayoutInflater.from(activity)
-        //val mCustomView = mInflater.inflate(R.layout.custom_toolbar, toolbar)
-
         customToolbar = activity.findViewById(R.id.custom_toolbar) as HeaderView
-        imageViewAvatar = customToolbar?.findViewById(R.id.imageViewAvatar) as CircleImageView
 
         activity.setSupportActionBar(toolbar)
-        activity.supportActionBar?.setDisplayShowTitleEnabled(false)
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        checkIfChatFragmentIsVisible()
-
-        setupClickListener()
+        actionBar = activity.supportActionBar!!
+        actionBar.setDisplayShowTitleEnabled(false)
+        actionBar.setDisplayHomeAsUpEnabled(false)
+        appBarLayout = activity.findViewById(R.id.toolbar_layout) as AppBarLayout
     }
 
-    fun checkIfChatFragmentIsVisible(){
-        if (activity.supportFragmentManager.backStackEntryCount > 0) {
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            val monkeyChatFragment = activity.supportFragmentManager.findFragmentByTag(MonkeyFragmentManager.CHAT_FRAGMENT_TAG) as MonkeyChatFragment?
-            customToolbar?.title?.text = (EmojiHandler.decodeJava(EmojiHandler.decodeJava(monkeyChatFragment?.getChatTitle())))
-            customToolbar?.imageView?.visibility = View.VISIBLE
+    fun setConversationsToolbar(title: String) {
+        customToolbar.title.text = title
+        customToolbar.imageView.visibility = View.GONE
+        customToolbar.subtitle.visibility = View.GONE
 
-            activity.supportFragmentManager.getBackStackEntryAt(activity.supportFragmentManager.backStackEntryCount - 1)
+        appBarLayout.setExpanded(false)
+        appBarLayout.isActivated = false
+        actionBar.setDisplayHomeAsUpEnabled(false)
+    }
 
-            Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, monkeyChatFragment?.getAvatarURL(), !(monkeyChatFragment?.isGroupConversation() ?: false), null)
-        } else {
-            customToolbar?.title?.text = "Monkey Sample"
-            customToolbar?.imageView?.visibility = View.GONE
-            customToolbar?.subtitle?.visibility = View.GONE
-
-            lockAppBarClosed()
-
-            activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
+    fun setChatToolbar(chatTitle: String, avatarURL: String?, isGroup: Boolean) {
+        customToolbar.title.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(chatTitle))
+        customToolbar.imageView.visibility = View.VISIBLE
+        if (avatarURL != null)
+                Utils.setAvatarAsync(toolbar.context, customToolbar.imageView, avatarURL,
+                        isGroup, null)
+        else {
+            val imgRes = if (isGroup) R.drawable.mk_default_group_avatar
+                        else R.drawable.mk_default_user_img
+            customToolbar.imageView.setImageResource(imgRes)
         }
     }
 
-    fun setupClickListener(){
-        customToolbar?.secondContainer?.setOnClickListener(View.OnClickListener {
-            if (activity.supportFragmentManager.backStackEntryCount > 0) {
-                val toolbar_layout = activity.findViewById(R.id.toolbar_layout) as AppBarLayout
-                unlockAppBarOpen()
-                (activity as ToolbarDelegate).onClickToolbar(monkeyId?:"",
-                        "", "", "")
-            }
-        })
-    }
-
-    fun configureForChat(chatTitle: String, avatarURL: String, isGroup: Boolean, monkeyID: String){
-        //Utils.setAvatarAsync(activity, imageViewAvatar as ImageView, avatarURL, !isGroup, null)
-
-        this.avatarURL = avatarURL
-        this.monkeyId = monkeyID
+    fun setOnClickListener(listener: View.OnClickListener){
+        customToolbar.secondContainer.setOnClickListener(listener)
     }
 
     fun setSubtitle(subtitle: String){
-        customToolbar?.subtitle?.visibility = View.VISIBLE
-        customToolbar?.subtitle?.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(subtitle))
-
+        customToolbar.subtitle.visibility = View.VISIBLE
+        customToolbar.subtitle.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(subtitle))
     }
-
-    override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    fun lockAppBarClosed() {
-        val appToolbar = activity.findViewById(R.id.toolbar_layout) as AppBarLayout?
-        appToolbar?.setExpanded(false)
-        appToolbar?.setActivated(false)
-        //appToolbar?.getLayoutParams()?.height = activity.resources.getDimension(R.dimen.mt_toolbar_height).toInt()
-    }
-
-    fun unlockAppBarOpen() {
-        val appToolbar = activity.findViewById(R.id.toolbar_layout) as AppBarLayout?
-        appToolbar?.setExpanded(true)
-        appToolbar?.setActivated(true)
-        //appToolbar?.getLayoutParams()?.height = activity.resources.getDimension(R.dimen.mk_appbar_height).toInt()
-    }
-
 }
