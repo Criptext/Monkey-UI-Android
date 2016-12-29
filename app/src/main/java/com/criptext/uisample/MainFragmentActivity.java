@@ -147,16 +147,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void setChatFragment(@Nullable MonkeyChatFragment monkeyChatFragment) {
-        chatFragment = monkeyChatFragment;
-        if (chatFragment != null) {
-            chatFragment.setInputListener(createInputListener());
-            //instantiate an object to play voice notes and pass it to the fragment
-            chatFragment.setVoiceNotePlayer(vnPlayer);
-        }
-    }
-
-    @Override
     public void setConversationsFragment(@Nullable MonkeyConversationsFragment monkeyConversationsFragment) {
         convFragment = monkeyConversationsFragment;
     }
@@ -178,7 +168,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     }
 
     @Override
-    public void onStartChatFragment(@NotNull String conversationId) {
+    public void onStartChatFragment(@NotNull MonkeyChatFragment fragment, @NotNull String conversationId) {
 
     }
 
@@ -194,11 +184,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void onClickToolbar(@NotNull String monkeyID, @NotNull String name, @NotNull String lastSeen, @NotNull String avatarURL) {
-
-    }
-
-    @Override
-    public void deleteChatFragment(@NotNull MonkeyChatFragment monkeyChatFragment) {
 
     }
 

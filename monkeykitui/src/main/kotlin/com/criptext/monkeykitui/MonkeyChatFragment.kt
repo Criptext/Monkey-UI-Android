@@ -142,7 +142,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         super.onStart()
         voiceNotePlayer?.setUiUpdater(audioUIUpdater)
         voiceNotePlayer?.removeNotificationControl(monkeyAdapter.conversationId)
-        (activity as ChatActivity).onStartChatFragment(monkeyAdapter.conversationId)
+        (activity as ChatActivity).onStartChatFragment(this, monkeyAdapter.conversationId)
         if(shouldUpdateAudioView)
             reloadAllMessages()
     }
@@ -159,20 +159,9 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             shouldUpdateAudioView = true
     }
 
-    override fun onAttach(context: Context?) {
-        val chatActivty = context as? ChatActivity
-        chatActivty?.setChatFragment(this)
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        (activity as ChatActivity).deleteChatFragment(this)
-        inputListener?.onStopTyping()
-        super.onDetach()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
+        monkeyAdapter.messages.messageListUI = null
         inputListener?.onStopTyping()
         inputListener = object: InputListener {
             override fun onNewItemFileError(type: Int) { }
@@ -300,6 +289,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         inputView.onRequestPermissionsResult(requestCode, grantResults)
         monkeyAdapter.onRequestPermissionsResult(requestCode, grantResults)
     }
+
+    fun refreshDeliveryStatus(item: MonkeyItem) = monkeyAdapter.refreshDeliveryStatus(item, recyclerView)
 
     class Builder(private val conversationId: String, private val chatTitle: String) {
             private val fragment: MonkeyChatFragment

@@ -12,10 +12,8 @@ import java.lang.ref.WeakReference
 
 class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context): Handler() {
 
-    var requestmessagesTimestamp = 0L
     val DEFAULT_DELAY_TIME = 300L
     var delayTime = DEFAULT_DELAY_TIME
-    lateinit var messagesList: List<MonkeyItem>
 
     val activityRef: WeakReference<Context>
 
@@ -25,12 +23,12 @@ class SlowRecyclerLoader(val conversationId: String?, recyclerActivity: Context)
 
     fun delayNewBatch(loadedItems: Int){
         postDelayed( Runnable {
-            if(conversationId == null){
+            if(conversationId == null){ //only ConversationsAdapter passes null conversation id
                 val conversationsActivity = activityRef.get() as? ConversationsActivity
                 conversationsActivity?.onLoadMoreConversations(loadedItems)
-            } else {
+            } else { //MonkeyAdapter always passes a valid conversation id
                 val chatActivity = activityRef.get() as? ChatActivity
-                chatActivity?.onLoadMoreMessages(conversationId, messagesList.size)
+                chatActivity?.onLoadMoreMessages(conversationId, loadedItems)
             }
         }, delayTime)
     }

@@ -25,9 +25,6 @@ class TestActivity: AppCompatActivity(), ConversationsActivity, ChatActivity {
 
     override fun onRequestConversations() = ConversationsList()
 
-    override fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment) {
-    }
-
     override fun deleteAllMessages(conversationId: String) {
     }
 
@@ -48,13 +45,10 @@ class TestActivity: AppCompatActivity(), ConversationsActivity, ChatActivity {
     override fun onMessageRemoved(item: MonkeyItem, unsent: Boolean) {
     }
 
-    override fun onStartChatFragment(conversationId: String) {
+    override fun onStartChatFragment(fragment: MonkeyChatFragment, conversationId: String) {
     }
 
     override fun onStopChatFragment(conversationId: String) {
-    }
-
-    override fun setChatFragment(chatFragment: MonkeyChatFragment?) {
     }
 
     override fun onConversationClicked(conversation: MonkeyConversation) {

@@ -11,12 +11,6 @@ import com.criptext.monkeykitui.MonkeyChatFragment
 interface ChatActivity {
 
     /**
-     * This callback is executed on the onAttach() and onDetach() callbacks of the chat
-     * fragment, the purpose is to update the activity's reference to the chat fragment.
-     * The activity should only have a reference to the fragment while it is attached.
-     */
-    fun setChatFragment(chatFragment: MonkeyChatFragment?)
-    /**
      * If a file instantiated with MonkeyItem.getFilePath() does not exist, this method will be called
      * &nbsp\ to download the neccesary file. Once the download is complete the adapter should be notified
      * &nbsp\ to update the UI.
@@ -95,10 +89,12 @@ interface ChatActivity {
 
     /**
      * Callback executed on the chat fragment's onStart callback
+     * @param fragment a reference to the MonkeyChatFragment that has started. Activity should keep
+     * it, so that it can iteract with the fragment.
      * @param conversationId the conversation ID of the current chat. You should keep a reference
      * to this object, since it identifies the active conversation.
      */
-    fun onStartChatFragment(conversationId: String)
+    fun onStartChatFragment(fragment: MonkeyChatFragment, conversationId: String)
 
     /**
      * Callback executed on the chat fragment's onStop callback.
@@ -109,13 +105,6 @@ interface ChatActivity {
      * to this object, since it no longer identifies the active conversation.
      */
     fun onStopChatFragment(conversationId: String)
-
-    /**
-     * Callback executed to clear a reference to MonkeyChatFragment
-     * @param monkeyChatFragment a fragment that you should no longer reference, so that it can
-     * be garbage collected.
-     */
-    fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment)
 
     /**
      * Callback executed when the user wishes to delete all messages from the conversation. You

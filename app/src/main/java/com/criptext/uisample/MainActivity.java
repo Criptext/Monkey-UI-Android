@@ -133,19 +133,10 @@ public class MainActivity extends BaseChatActivity{
 //        adapter.smoothlyAddNewItem(message, recycler);
     }
 
-    @Override
-    public void setChatFragment(@Nullable MonkeyChatFragment chatFragment) {
-        //This activity doesn't use fragments so there is nothing to do
-    }
-
     @Nullable
     @Override
     public GroupChat getGroupChat(@NotNull String conversationId, @NotNull String membersIds) {
         return null;
-    }
-
-    @Override
-    public void onStartChatFragment(@NotNull String conversationId) {
     }
 
     @Override
@@ -154,12 +145,12 @@ public class MainActivity extends BaseChatActivity{
     }
 
     @Override
-    public void deleteChatFragment(@NotNull MonkeyChatFragment monkeyChatFragment) {
+    public void deleteAllMessages(@NotNull String conversationId) {
 
     }
 
     @Override
-    public void deleteAllMessages(@NotNull String conversationId) {
+    public void onStartChatFragment(@NotNull MonkeyChatFragment fragment, @NotNull String conversationId) {
 
     }
 }

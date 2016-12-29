@@ -40,10 +40,6 @@ open class AdapterTestCase {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun deleteChatFragment(monkeyChatFragment: MonkeyChatFragment) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
         override fun onLoadMoreMessages(conversationId: String, currentMessageCount: Int) {
         }
 
@@ -56,15 +52,11 @@ open class AdapterTestCase {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun onStartChatFragment(conversationId: String) {
+        override fun onStartChatFragment(fragment: MonkeyChatFragment, conversationId: String) {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onStopChatFragment(conversationId: String) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun setChatFragment(chatFragment: MonkeyChatFragment?) {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 

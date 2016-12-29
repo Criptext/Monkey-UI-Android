@@ -104,8 +104,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
         monkeyConfig = MonkeyConfig()
         dataLoader = SlowRecyclerLoader(conversationId, mContext)
-        dataLoader.messagesList = messages
-
     }
 
     constructor(mContext: Context, conversationId: String, lastRead: Long): this(mContext, conversationId){
@@ -168,7 +166,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             item.getMessageType() == MonkeyItem.MonkeyItemType.audio.ordinal
 
 
-    fun updateMessageDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
+    fun refreshDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
         recyclerView.itemAnimator.isRunning({
             val position = messages.getItemPositionByTimestamp(monkeyItem)
             if ((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
@@ -207,8 +205,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
 
         bindCommonMonkeyHolder(position, item, holder)
-
-        //Log.d("MonkeyAdapter", "id: ${item.getMessageId()} at $position")
 
         //type specific stuff
         if(typeClassification == 0 || typeClassification == 2) {
@@ -572,9 +568,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             messages.removeMessageAt(0)
             if(!silent)
                 notifyItemRemoved(0)
-            messages.hasReachedEnd = true
         }
-
     }
 
     fun scrollWithOffset(newItemsCount: Int) {

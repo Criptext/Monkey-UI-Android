@@ -1,6 +1,6 @@
 package com.criptext.monkeykitui.recycler
 
-import com.criptext.monkeykitui.R
+import android.util.Log
 import com.criptext.monkeykitui.recycler.holders.MessageListUI
 import com.criptext.monkeykitui.util.InsertionSort
 import java.util.*
@@ -15,10 +15,9 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
 
     var hasReachedEnd : Boolean = true
         set(value) {
-            if(!value && field != value) {
+            if(!value && (list.isEmpty() || list[0] !is EndItem)) {
                 list.add(0, EndItem())
                 messageListUI?.notifyItemInserted(0)
-                //Log.d("MonkeyAdapter", "End item added")
             }
             field = value
         }
@@ -252,6 +251,8 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
         list.clear()
         messageListUI?.notifyItemRangeRemoved(0, totalMessages)
     }
+
+
 
     /**
      * Looks for a monkey item with a specified Id, starting by the most recent ones.
