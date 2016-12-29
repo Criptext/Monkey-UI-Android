@@ -56,7 +56,7 @@ class MonkeyTypesTest: AdapterTestCase(){
     }
 
     fun createViewHolder(newMessage: MonkeyItem): MonkeyHolder {
-        adapter.smoothlyAddNewItem(newMessage, recycler!!)
+        adapter.messages.smoothlyAddNewItem(newMessage)
         return adapter.onCreateViewHolder(null, adapter.getItemViewType(adapter.itemCount - 1))!!
     }
 
@@ -118,7 +118,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
     fun testThatMessageGetsAMonkeyAudioHolder(incoming: Boolean, status: MonkeyItem.DeliveryStatus) {
         val newItem = newVoiceNote(incoming, status)
-        adapter.smoothlyAddNewItem(newItem, recycler!!)
+        adapter.messages.smoothlyAddNewItem(newItem)
         var newHolder = createViewHolder(newItem)
         assert(newHolder is MonkeyAudioHolder)
     }

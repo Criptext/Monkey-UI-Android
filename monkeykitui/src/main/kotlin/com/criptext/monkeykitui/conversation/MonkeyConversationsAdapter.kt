@@ -67,18 +67,18 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         dataLoader = SlowRecyclerLoader(null, mContext)
 
         conversationOptions = mutableListOf(
-                object: OnConversationOptionClicked(mContext.getString(R.string.mk_delete_conversation)){
-                    override fun invoke(conv: MonkeyConversation) {
-                        removeConversationFromRecycler(conv)
-                    }
-                })
+            object: OnConversationOptionClicked(mContext.getString(R.string.mk_delete_conversation)){
+                override fun invoke(conv: MonkeyConversation) {
+                    removeConversationFromRecycler(conv)
+                }
+            })
 
         groupOptions = mutableListOf(
-                object: OnConversationOptionClicked(mContext.getString(R.string.mk_exit_group)) {
-                    override fun invoke(conv: MonkeyConversation) {
-                        removeConversationFromRecycler(conv)
-                    }
-                })
+            object: OnConversationOptionClicked(mContext.getString(R.string.mk_exit_group)) {
+                override fun invoke(conv: MonkeyConversation) {
+                    removeConversationFromRecycler(conv)
+                }
+            })
 
         onConversationLongClicked = object : OnConversationLongClicked {
             override fun invoke(p1: MonkeyConversation) {

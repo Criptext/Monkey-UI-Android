@@ -46,9 +46,9 @@ public class MainActivity extends BaseChatActivity{
         ArrayList<MonkeyItem> messages = loader.generateRandomMessages();
         adapter = new MonkeyAdapter(this, "mirror");
         recycler = (RecyclerView) findViewById(R.id.recycler);
-        adapter.addOldMessages(messages, false, recycler);
+        //adapter.addOldMessages(messages, false, recycler);
         //configureMonkeyAdapter();
-        adapter.setHasReachedEnd(false);
+        //adapter.setHasReachedEnd(false);
 
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -125,23 +125,17 @@ public class MainActivity extends BaseChatActivity{
 
     @Override
     void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd) {
-        adapter.addOldMessages(messages, hasReachedEnd, recycler);
+        //adapter.addOldMessages(messages, hasReachedEnd, recycler);
     }
 
     @Override
     void smoothlyAddNewItem(MonkeyItem message) {
-        adapter.smoothlyAddNewItem(message, recycler);
+//        adapter.smoothlyAddNewItem(message, recycler);
     }
 
     @Override
     public void setChatFragment(@Nullable MonkeyChatFragment chatFragment) {
         //This activity doesn't use fragments so there is nothing to do
-    }
-
-
-    @Override
-    public void retainMessages(@NotNull String conversationId, @NotNull List<? extends MonkeyItem> messages) {
-
     }
 
     @Nullable

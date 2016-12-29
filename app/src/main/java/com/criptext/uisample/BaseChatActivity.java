@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.criptext.monkeykitui.input.listeners.InputListener;
+import com.criptext.monkeykitui.recycler.MessagesList;
 import com.criptext.monkeykitui.recycler.audio.PlaybackNotification;
 import com.criptext.monkeykitui.recycler.audio.PlaybackService;
 import com.criptext.monkeykitui.recycler.ChatActivity;
@@ -32,6 +33,7 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     SlowMessageLoader loader; //loads fake messages
     FakeFiles fakeFiles; //manages fake photos and voice notes.
     protected PlaybackService.VoiceNotePlayerBinder vnPlayer;
+    protected MessagesList messages;
 
     final private ServiceConnection playbackConnection = new ServiceConnection() {
             @Override
@@ -183,8 +185,11 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
 
     @Nullable
     @Override
-    public List<MonkeyItem> getInitialMessages(@NotNull String conversationId) {
-        return loader.generateRandomMessages().subList(0, 20);
+    public MessagesList getInitialMessages(@NotNull String conversationId) {
+        messages = new MessagesList("1");
+        messages.insertMessages(loader.generateRandomMessages().subList(0, 20), false);
+
+        return  messages;
     }
 
     @Override

@@ -149,17 +149,16 @@ open class MonkeyHolder : RecyclerView.ViewHolder {
         bubbleLayout?.setOnLongClickListener(listener)
     }
 
-    open fun setSeparatorText(position: Int, item: MonkeyItem, messagesList: ArrayList<MonkeyItem>) {
+    open fun setSeparatorText(position: Int, item: MonkeyItem, previousItem: MonkeyItem?) {
 
         layoutDateHeader?.visibility = View.GONE
 
-        if (position > 0) {
-            val previousMessage = messagesList[position - 1]
-            if (!Utils.isTheSameDay(item.getMessageTimestamp() * 1000, previousMessage.getMessageTimestamp() * 1000)) {
+        if (previousItem != null) {
+            if (!Utils.isTheSameDay(item.getMessageTimestamp() * 1000, previousItem.getMessageTimestamp() * 1000)) {
                 dateSeparatorTextview?.text = Utils.getFormattedDay(item.getMessageTimestamp() * 1000, dateSeparatorTextview?.context)
                 layoutDateHeader?.visibility = View.VISIBLE
             }
-        } else if (position == 0) {
+        } else {
             dateSeparatorTextview?.text = Utils.getFormattedDay(item.getMessageTimestamp() * 1000, dateSeparatorTextview?.context)
             layoutDateHeader?.visibility = View.VISIBLE
         }

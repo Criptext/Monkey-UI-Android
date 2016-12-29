@@ -40,20 +40,9 @@ import java.util.*
 
 open class MonkeyAdapter(val mContext: Context, val conversationId: String) : RecyclerView.Adapter<MonkeyHolder>() {
     var groupChat : GroupChat? = null
-    private val messagesList: ArrayList<MonkeyItem>
-    private val messagesMap: HashMap<String, Boolean>
-    var hasReachedEnd : Boolean = true
-    set(value) {
-        if(!value && field != value) {
-            messagesList.add(0, EndItem())
-            notifyItemInserted(0)
-            //Log.d("MonkeyAdapter", "End item added")
-        }
-        field = value
-    }
+    var messages: MessagesList
 
     private var selectedMessage : MonkeyItem?
-
 
     var monkeyConfig: MonkeyConfig
     /**
@@ -89,15 +78,14 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     private fun isRead(item: MonkeyItem) = item.getMessageTimestampOrder() <= lastRead
 
     init{
-        messagesList = ArrayList<MonkeyItem>()
-        messagesMap = HashMap()
+        messages = MessagesList("")
         selectedMessage = null
         voiceNotePlayer = null
         var messageOptions = MessageOptions(ctx = mContext,
-                delete = { it: MonkeyItem -> removeItem(it, false)},
+                delete = { it: MonkeyItem -> removeItemFromRecycler(it, false)},
                 unsend = { it: MonkeyItem ->
                     if(!it.getDeliveryStatus().isTransferring()) {
-                        removeItem(it, true)
+                        removeItemFromRecycler(it, true)
                     }
                 } )
         receivedMessageOptions = messageOptions.initReceivedMessageOptions()
@@ -116,7 +104,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
         monkeyConfig = MonkeyConfig()
         dataLoader = SlowRecyclerLoader(conversationId, mContext)
-        dataLoader.messagesList = messagesList
+        dataLoader.messagesList = messages
 
     }
 
@@ -128,7 +116,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         get() = mContext as ChatActivity
 
     override fun getItemCount(): Int {
-        return messagesList.size
+        return messages.size
     }
 
 
@@ -149,7 +137,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = messagesList[position]
+        val item = messages[position]
         val typeConst = if(!item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
                0 //outgoing and delivered
             else if(!item.isIncomingMessage() && item.getDeliveryStatus().isTransferring())
@@ -170,7 +158,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val endHolder = holder as? MonkeyEndHolder
         if(endHolder != null) {
             //endHolder.setOnClickListener {  }
-            dataLoader.delayNewBatch(messagesList.size)
+            dataLoader.delayNewBatch(messages.size)
         }
     }
 
@@ -182,7 +170,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     fun updateMessageDeliveryStatus(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
         recyclerView.itemAnimator.isRunning({
-            val position = getItemPositionByTimestamp(monkeyItem)
+            val position = messages.getItemPositionByTimestamp(monkeyItem)
             if ((monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.delivered ||
                     monkeyItem.getDeliveryStatus() == MonkeyItem.DeliveryStatus.error) && isFileMessage(monkeyItem)) {
             //File messages need change MonkeyHolder
@@ -197,12 +185,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     fun rebindMonkeyItem(monkeyItem: MonkeyItem, recyclerView: RecyclerView){
         recyclerView.post {
-            val position = getItemPositionByTimestamp(monkeyItem)
+            val position = messages.getItemPositionByTimestamp(monkeyItem)
             val monkeyHolder = recyclerView.findViewHolderForAdapterPosition(position) as MonkeyHolder?
             if(monkeyHolder != null)
                 onBindViewHolder(monkeyHolder, position)
             else {//sometimes recyclerview cant find the viewholder, and never rebind the holder. this may fix it...
-                val position = getItemPositionByTimestamp(monkeyItem)
+                val position = messages.getItemPositionByTimestamp(monkeyItem)
                 notifyItemChanged(position)
             }
         }
@@ -211,10 +199,10 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
 
         val typeClassification = getItemViewType(position) / MonkeyItem.MonkeyItemType.values().size
-        val item = messagesList[position]
+        val item = messages[position]
 
         if(holder is MonkeyEndHolder) {
-            holder.adjustHeight(matchParentHeight = messagesList.size == 1)
+            holder.adjustHeight(matchParentHeight = messages.size == 1)
             return
         }
 
@@ -274,8 +262,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun isFollowupMessage(position: Int): Boolean{
-        if(position > 0 && messagesList[position].getSenderId()
-                    == messagesList[position - 1].getSenderId())
+        if(position > 0 && messages[position].getSenderId()
+                    == messages[position - 1].getSenderId())
                 return true
         return false
     }
@@ -292,7 +280,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         //set message date
         holder.setMessageDate(item.getMessageTimestamp()*1000)
         //set date separator
-        holder.setSeparatorText(position, item, messagesList)
+        val prevItem = if (position > 0) messages[position - 1] else null
+        holder.setSeparatorText(position, item, prevItem)
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
             val group = groupChat
@@ -567,71 +556,35 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
-    protected fun removeEndOfRecyclerView(){
+    fun removeEndOfRecyclerView(){
         removeEndOfRecyclerView(false)
-    }
-
-    /**
-     * Iterate array and create a new array without duplicates
-     */
-    fun removeIfExist(messages: ArrayList<MonkeyItem>): ArrayList<MonkeyItem>{
-        val withoutDuplicates: ArrayList<MonkeyItem> = ArrayList()
-        messages.map {
-            if(!existMessage(it)) {
-                withoutDuplicates.add(it)
-            }
-        }
-        return withoutDuplicates
     }
 
     /**
      *removes the more messages view
      */
     protected fun removeEndOfRecyclerView(silent: Boolean){
-        if(messagesList.isEmpty())
+        if(messages.isEmpty())
             return;
 
-        val lastItem = messagesList[0]
+        val lastItem = messages[0]
         if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
-            messagesList.remove(lastItem)
+            messages.removeMessageAt(0)
             if(!silent)
                 notifyItemRemoved(0)
-            hasReachedEnd = true
+            messages.hasReachedEnd = true
         }
 
     }
 
-    /**
-     * Adds a group of MonkeyItems to the beginning of the list. This should be only used for showing
-     * older messages as the user scrolls up.
-     * @param newData the list of MonkeyItems to add
-     * @param reachedEnd boolean that indicates whether there are still more items available. If there are
-     * then when the user scrolls to the beginning of the list, the adapter should attempt to load the
-     * remaining items and show a view that tells the user that it is loading messages.
-     */
-    fun addOldMessages(newData : Collection<MonkeyItem>, reachedEnd: Boolean, recyclerView: RecyclerView){
-        removeEndOfRecyclerView()
-        val filteredData = removeIfExist(ArrayList(newData))
-        if(filteredData.size > 0) {
-            messagesList.addAll(0, filteredData)
-            val lastNewIndex = filteredData.size - 1
-            InsertionSort(messagesList, MonkeyItem.defaultComparator, lastNewIndex).sortBackwards()
-            notifyItemRangeInserted(0, filteredData.size)
-
-            //Scroll only if position is not in the last position
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            if(messagesList.size - filteredData.size > 0 && !isLastItemDisplaying(manager)) {
-                notifyItemChanged(filteredData.size);
-                manager.scrollToPositionWithOffset(filteredData.size,
-                        mContext.resources.getDimension(R.dimen.scroll_offset).toInt());
-            }
-
-            for(item: MonkeyItem in filteredData){
-                messagesMap.put(item.getMessageId(), true)
-            }
+    fun scrollWithOffset(newItemsCount: Int) {
+    //Scroll only if position is not in the last position
+        val manager = recyclerView!!.layoutManager as LinearLayoutManager
+        if(messages.size - newItemsCount > 0 && !isLastItemDisplaying(manager)) {
+            notifyItemChanged(newItemsCount)
+            manager.scrollToPositionWithOffset(newItemsCount,
+                    mContext.resources.getDimension(R.dimen.scroll_offset).toInt())
         }
-
-        hasReachedEnd = reachedEnd
     }
 
     /**
@@ -753,7 +706,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
 
     fun takeAllMessages() : List<MonkeyItem>{
 
-        return messagesList.filterNot {
+        return messages.filterNot {
             it-> it is EndItem
         }
         //removeEndOfRecyclerView(true)
@@ -768,71 +721,12 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             return String.format("%.2f", (totalBytes / 1000000).toDouble())+" MB";
     }
 
-    /**
-     * Finds the adapter position by the MonkeyItem's timestamp.
-     * @param targetId the timestamp of the MonkeyItem whose adapter position will be searched. This
-     * timestamp must belong to an existing MonkeyItem in this adapter.
-     * @return The adapter position of the MonkeyItem. If the item was not found returns
-     * the negated expected position.
-     */
-    fun getItemPositionByTimestamp(item: MonkeyItem) = MonkeyItem.findItemPositionInList(item, messagesList)
 
-    /**
-     * Finds the adapter position by the MonkeyItem's id.
-     * @param targetId the id of the MonkeyItem whose adapter position will be searched. This
-     * timestamp must belong to an existing MonkeyItem in this adapter.
-     * @return The adapter position of the MonkeyItem. If the item was not found returns -1
-     */
-    fun getLastItemPositionById(targetId: String) = MonkeyItem.findLastPositionById(targetId, messagesList)
 
-    /**
-     * finds a message using the order timestamp and the ID with a binary search algorithm.
-     * @param searchItem a monkeyItem containing the requested item's ID and order timestamp.
-     * @return the requested item. Null if the item was not found.
-     */
-    fun getItemByTimestamp(searchItem: MonkeyItem): MonkeyItem?{
-        val position = getItemPositionByTimestamp(searchItem)
-        if(position > -1)
-            return messagesList[position]
-
-        return null
-    }
-
-    /**
-     * finds a message using the order timestamp and the ID with a binary search algorithm, then
-     * updates it using a MonkeyItemTransaction object.
-     * @param searchItem a monkeyItem containing the requested item's ID and order timestamp.
-     * @return the requested item. Null if the item was not found.
-     */
-    fun updateMessage(searchItem: MonkeyItem, transaction: MonkeyItemTransaction, recyclerView: RecyclerView){
-        val position = getItemPositionByTimestamp(searchItem)
-        if(position > -1) {
-            val old = messagesList[position]
-            val new = transaction.invoke(old)
-            messagesList.add(position, new)
-            messagesList.removeAt(position + 1)
-
-            messagesMap.remove(old.getMessageId())
-            messagesMap.put(new.getMessageId(), true)
-
-            if(new.getDeliveryStatus() != old.getDeliveryStatus())
-                notifyItemChanged(position)
-            else
-                rebindMonkeyItem(new, recyclerView)
-        }
-    }
-
-    /**
-     * Looks for a monkey item with a specified Id, starting by the most recent ones.
-     * @return the message with the requested Id. returns null if the message does not exist
-     */
-    fun findMonkeyItemById(id: String) = messagesList.findLast { it.getMessageId() == id }
-
-    fun removeItem(item: MonkeyItem, unsent: Boolean){
-        val pos = getItemPositionByTimestamp(item)
+    fun removeItemFromRecycler(item: MonkeyItem, unsent: Boolean){
+        val pos = messages.getItemPositionByTimestamp(item)
         if(pos > -1){
-            messagesList.removeAt(pos)
-            messagesMap.remove(item.getMessageId())
+            messages.removeMessageAt(pos)
             notifyItemRemoved(pos)
 
             val recycler = recyclerView
@@ -841,13 +735,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                 SnackbarUtils.showUndoMessage(recycler = recycler, msg = msg,
                         undoAction = {
                             itemToDelete = null
-                            //We don't know if list has changed since the removal, recalculate position
-                            //item is no longer part of list, so function will return a negative value - 1
-                            val newPos = Math.abs(getItemPositionByTimestamp(item)) - 1
-                            messagesList.add(newPos, item)
-                            messagesMap.put(item.getMessageId(), true)
-                            notifyItemInserted(newPos)
-
+                            messages.smoothlyAddNewItem(item)
                         },
                         callback = object : Snackbar.Callback() {
                             override fun onDismissed(snackbar: Snackbar?, event: Int) {
@@ -866,97 +754,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         }
     }
 
-    fun removeItemById(id: String){
-        val pos = getLastItemPositionById(id)
-        if(pos > -1){
-            messagesList.removeAt(pos)
-            messagesMap.remove(id);
-            notifyItemRemoved(pos)
-        }
-    }
-    /**
-     * Adds a new item to the RecyclerView with a smooth scrolling animation. The scrolling animation
-     * is only used in any of these 2 conditions:
-     * - The last messages are visible and the new message is added at the last position
-     * - the message was sent by the user.
-     * @param item MonkeyItem to add. It will be added at the end of the messagesList, so it should
-     * have a higher timestamp than the other messages.
-     * @recylerview The recyclerView object that displays the messages.
-     */
-    fun smoothlyAddNewItem(item : MonkeyItem, recyclerView: RecyclerView){
-
-        if(!existMessage(item)) {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            val last = manager.findLastVisibleItemPosition()
-
-            //make sure it goes to the right position!
-            var newPos = InsertionSort(messagesList, MonkeyItem.defaultComparator)
-                    .insertAtCorrectPosition(item, insertAtEnd = true)
-            notifyItemInserted(newPos)
-
-            messagesMap.put(item.getMessageId(), true)
-
-            //Only scroll if the latest messages are visible and new message goes right next
-            //OR... message was sent by the user.
-            val latestMessagesAreVisible = last >= messagesList.size - 2
-            val newMessageIsLatest = newPos == (messagesList.size - 1)
-            if ((newMessageIsLatest && latestMessagesAreVisible) || !item.isIncomingMessage()) {
-                recyclerView.scrollToPosition(messagesList.size - 1);
-            }
-        }
-    }
-
-    fun existMessage(item: MonkeyItem): Boolean{
-        if(messagesMap[item.getMessageId()] !=null)
-            return true
-        else if(!item.isIncomingMessage()){
-            val oldId = item.getOldMessageId()
-            if(oldId != null && messagesMap[oldId] != null)
-                return true
-        }
-        return false
-    }
-
-    fun getLastItem(): MonkeyItem? = messagesList.lastOrNull()
-
-    fun getFirstItem(): MonkeyItem?{
-        if(messagesList.firstOrNull() is EndItem) {
-            return messagesList.getOrNull(1)
-        }
-        else {
-            return messagesList.firstOrNull()
-        }
-    }
-
-    fun insertMessages(messages: List<MonkeyItem>) {
-        val previouslyHadMessages = messagesList.isNotEmpty()
-        messagesList.clear()
-        messagesList.addAll(messages)
-        if(previouslyHadMessages)
-            notifyDataSetChanged()
-        else
-            notifyItemRangeInserted(0, messagesList.size)
-    }
-
-    fun smoothlyAddNewItems(newData : Collection<MonkeyItem>, recyclerView: RecyclerView){
-        val filteredData = removeIfExist(ArrayList(newData))
-        if(filteredData.size > 0) {
-            val manager = recyclerView.layoutManager as LinearLayoutManager
-            val last = manager.findLastVisibleItemPosition()
-            val firstNewIndex = messagesList.size
-            messagesList.addAll(filteredData)
-            InsertionSort(messagesList, MonkeyItem.defaultComparator, Math.max(1, firstNewIndex)).sort()
-            notifyItemRangeInserted(firstNewIndex, filteredData.size);
-            //Only scroll if this is the latest message
-            if(firstNewIndex == (messagesList.size - 1) && last >= messagesList.size - 2) {
-                recyclerView.scrollToPosition(messagesList.size - 1);
-            }
-            for(item: MonkeyItem in filteredData){
-                messagesMap.put(item.getMessageId(), true)
-            }
-        }
-    }
-
 
     fun onRequestPermissionsResult(requestCode: Int, result: IntArray) {
         if (requestCode == REQUEST_WRITE_SD && itemThatNeedsPermissions != null &&
@@ -967,14 +764,6 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
             notifyDataSetChanged()
         itemThatNeedsPermissions = null
 
-    }
-    /**
-     * removes all messages from the adapter and clears the RecyclerView
-     */
-    fun clear(){
-        val totalMessages = messagesList.size
-        messagesList.clear()
-        notifyItemRangeRemoved(0, totalMessages)
     }
 
     class MessageOptionsDialog(options: MutableList<OnMessageOptionClicked>,

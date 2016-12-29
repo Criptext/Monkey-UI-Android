@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui
 
 import android.util.Log
+import com.criptext.monkeykitui.recycler.MessagesList
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,6 +15,7 @@ import java.util.*
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
 class SortedMessagesTest : AdapterTestCase() {
+    val messages = MessagesList("test")
 
     fun newTextMessage(timestamp: Long, id: String, oldId: String?, incoming: Boolean): MonkeyItem {
         return object : MonkeyItem {
@@ -38,13 +40,13 @@ class SortedMessagesTest : AdapterTestCase() {
     fun newSentTextMessage(timestamp: Long, id: String) = newTextMessage(timestamp, id, null, false)
     fun newSentTextMessage(timestamp: Long, id: String, oldId: String) = newTextMessage(timestamp, id, oldId, false)
 
-    fun assertThatListIsSorted(list: ArrayList<MonkeyItem>){
+    fun assertThatListIsSorted(list: List<MonkeyItem>){
         for(i in 1..(list.size-1))
             assert(MonkeyItem.defaultComparator.compare(list[i - 1], list[i]) != 1)
             //System.out.println("${list[i].getMessageTimestampOrder()}")
     }
 
-    fun assertThatMessagesAreNotRepeated(list: ArrayList<MonkeyItem>){
+    fun assertThatMessagesAreNotRepeated(list: List<MonkeyItem>){
 
         for(i in 0..(list.size-2))
             for(j in (i+1)..(list.size-1)) {
@@ -58,14 +60,14 @@ class SortedMessagesTest : AdapterTestCase() {
     @Throws (Exception::class)
     fun newMessagesAddedAreSorted() {
         val time = System.currentTimeMillis()
-        adapter.smoothlyAddNewItem(newTextMessage(time, "123"), recycler!!)
-        adapter.smoothlyAddNewItem(newTextMessage(time + 1, "124"), recycler!!)
-        adapter.smoothlyAddNewItem(newTextMessage(time + 2, "125"), recycler!!)
-        adapter.smoothlyAddNewItem(newTextMessage(time + 4, "126"), recycler!!)
+        messages.smoothlyAddNewItem(newTextMessage(time, "123"))
+        messages.smoothlyAddNewItem(newTextMessage(time + 1, "124"))
+        messages.smoothlyAddNewItem(newTextMessage(time + 2, "125"))
+        messages.smoothlyAddNewItem(newTextMessage(time + 4, "126"))
 
-        adapter.smoothlyAddNewItem(newTextMessage(time + 3, "126"), recycler!!)
-        adapter.smoothlyAddNewItem(newTextMessage(time + -1, "127"), recycler!!)
-        adapter.smoothlyAddNewItem(newTextMessage(time + 3, "128"), recycler!!)
+        messages.smoothlyAddNewItem(newTextMessage(time + 3, "126"))
+        messages.smoothlyAddNewItem(newTextMessage(time + -1, "127"))
+        messages.smoothlyAddNewItem(newTextMessage(time + 3, "128"))
 
         val list = adapter.takeAllMessages()
         assertThatListIsSorted(list as ArrayList<MonkeyItem>)
@@ -85,7 +87,7 @@ class SortedMessagesTest : AdapterTestCase() {
         newPage.add(newTextMessage(time + 2, "129"))
         newPage.add(newTextMessage(time + 1, "130"))
 
-        adapter.addOldMessages(newPage, true, recycler!!)
+        messages.addOldMessages(newPage, true)
         val list = adapter.takeAllMessages()
         assertThatListIsSorted(list as ArrayList<MonkeyItem>)
     }
@@ -105,7 +107,7 @@ class SortedMessagesTest : AdapterTestCase() {
         newPage.add(newTextMessage(time + 1, "130"))
         newPage.add(newTextMessage(time - 1, "131"))
 
-        adapter.smoothlyAddNewItems(newPage, recycler!!)
+        messages.smoothlyAddNewItems(newPage)
         val list = adapter.takeAllMessages()
         assertThatListIsSorted(list as ArrayList<MonkeyItem>)
         assertThatMessagesAreNotRepeated(list)
@@ -116,9 +118,9 @@ class SortedMessagesTest : AdapterTestCase() {
     @Throws (Exception::class)
     fun messagesCantBeRepeated() {
         val time = System.currentTimeMillis()
-        adapter.smoothlyAddNewItem(newSentTextMessage(time, "151"), recycler!!)
-        adapter.smoothlyAddNewItem(newSentTextMessage(time + 1 , "152"), recycler!!)
-        adapter.smoothlyAddNewItem(newSentTextMessage(time + 2 , "-153"), recycler!!)
+        messages.smoothlyAddNewItem(newSentTextMessage(time, "151"))
+        messages.smoothlyAddNewItem(newSentTextMessage(time + 1 , "152"))
+        messages.smoothlyAddNewItem(newSentTextMessage(time + 2 , "-153"))
 
         val newPage = ArrayList<MonkeyItem>()
         newPage.add(newTextMessage(time - 5, "146"))
@@ -128,9 +130,8 @@ class SortedMessagesTest : AdapterTestCase() {
         newPage.add(newSentTextMessage(time - 1, "152"))
         newPage.add(newSentTextMessage(time, "154", "-153")) //message with old id
 
-        adapter.addOldMessages(newPage, true, recycler!!)
-        val list = adapter.takeAllMessages()
-        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
-        assertThatMessagesAreNotRepeated(list)
+        messages.addOldMessages(newPage, true)
+        assertThatListIsSorted(messages)
+        assertThatMessagesAreNotRepeated(messages)
     }
 }

@@ -1,6 +1,8 @@
 package com.criptext.monkeykitui.recycler.audio
 
 import android.support.v7.widget.RecyclerView
+import com.criptext.monkeykitui.MonkeyChatFragment
+import com.criptext.monkeykitui.recycler.MessagesList
 import com.criptext.monkeykitui.recycler.MonkeyAdapter
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
@@ -11,10 +13,10 @@ import com.criptext.monkeykitui.recycler.holders.MonkeyAudioHolder
 
 open class AudioUIUpdater(val recyclerView: RecyclerView) {
     val adapter: MonkeyAdapter
-
     init {
         adapter = recyclerView.adapter as MonkeyAdapter
     }
+
     open fun rebindAudioHolder(monkeyItem: MonkeyItem){
         adapter.rebindMonkeyItem(monkeyItem, recyclerView)
     }
@@ -29,7 +31,7 @@ open class AudioUIUpdater(val recyclerView: RecyclerView) {
     }
 
     open fun updateAudioProgress(monkeyItem: MonkeyItem, percentage: Int, progress: Long){
-        val audioHolder = getAudioHolder(adapter.getItemPositionByTimestamp(monkeyItem))
+        val audioHolder = getAudioHolder(adapter.messages.getItemPositionByTimestamp(monkeyItem))
         audioHolder?.updateAudioProgress(percentage, progress)
     }
 }

@@ -6,6 +6,7 @@ import com.criptext.monkeykitui.conversation.ConversationsList
 import com.criptext.monkeykitui.conversation.MonkeyConversation
 import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.GroupChat
+import com.criptext.monkeykitui.recycler.MessagesList
 import com.criptext.monkeykitui.recycler.MonkeyItem
 
 /**
@@ -31,7 +32,7 @@ class TestActivity: AppCompatActivity(), ConversationsActivity, ChatActivity {
     }
 
     override fun getGroupChat(conversationId: String, membersIds: String) = null
-    override fun getInitialMessages(conversationId: String): List<MonkeyItem>? = null
+    override fun getInitialMessages(conversationId: String): MessagesList? = null
 
     override fun isOnline(): Boolean = true
 
@@ -51,9 +52,6 @@ class TestActivity: AppCompatActivity(), ConversationsActivity, ChatActivity {
     }
 
     override fun onStopChatFragment(conversationId: String) {
-    }
-
-    override fun retainMessages(conversationId: String, messages: List<MonkeyItem>) {
     }
 
     override fun setChatFragment(chatFragment: MonkeyChatFragment?) {

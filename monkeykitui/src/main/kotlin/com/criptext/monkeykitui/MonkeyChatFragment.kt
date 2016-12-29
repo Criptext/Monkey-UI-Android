@@ -19,17 +19,17 @@ import com.criptext.monkeykitui.input.listeners.InputListener
 import com.criptext.monkeykitui.recycler.*
 import com.criptext.monkeykitui.recycler.audio.AudioUIUpdater
 import com.criptext.monkeykitui.recycler.audio.PlaybackService
+import com.criptext.monkeykitui.recycler.holders.MessageListUI
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import com.etiennelawlor.imagegallery.library.adapters.FullScreenImageGalleryAdapter
 import com.squareup.picasso.Picasso
 import java.io.File
-import java.util.*
 
 /**
  * Created by Gabriel on 8/10/16.
  */
 
-open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullScreenImageLoader{
+open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullScreenImageLoader, MessageListUI{
 
     val LOAD_FILE = 777
     lateinit var recyclerView: RecyclerView
@@ -100,14 +100,13 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     private fun setInitialMessages(){
         val args = arguments
         val conversationId = args.getString(chatConversationId)
-        val reachedEnd = args.getBoolean(chatHasReachedEnd)
         val lastRead = args.getLong(initalLastReadValue)
         monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
-            monkeyAdapter.addOldMessages(initialMessages, reachedEnd, recyclerView)
-        } else if(reachedEnd) monkeyAdapter.hasReachedEnd = true
-        else
+            initialMessages.messageListUI = this
+            monkeyAdapter.messages = initialMessages
+        } else
             (activity as ChatActivity).onLoadMoreMessages(conversationId, 0)
         val groupMembers = getGroupMembers()
         if(groupMembers != null){
@@ -185,7 +184,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             override fun onTyping(text: String) { }
         }
         (inputView as? MediaInputView)?.recorder = null
-        (activity as ChatActivity).retainMessages(monkeyAdapter.conversationId, monkeyAdapter.takeAllMessages())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -201,34 +199,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         mediaInputView?.cameraHandler?.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun findMonkeyItemById(id: String): MonkeyItem? = monkeyAdapter.findMonkeyItemById(id)
-
-    fun updateMessageDeliveryStatus(message: MonkeyItem){
-        monkeyAdapter.updateMessageDeliveryStatus(message, recyclerView)
-    }
-
-    fun rebindMonkeyItem(message: MonkeyItem){
-        monkeyAdapter.rebindMonkeyItem(message, recyclerView)
-    }
-
-    fun addOldMessages(messages: ArrayList<MonkeyItem>, hasReachedEnd:  Boolean){
-        monkeyAdapter.addOldMessages(messages, hasReachedEnd, recyclerView)
-    }
-
-    fun smoothlyAddNewItem(message: MonkeyItem){
-        monkeyAdapter.smoothlyAddNewItem(message, recyclerView)
-    }
-
-    fun smoothlyAddNewItems(messages: List<MonkeyItem>){
-        monkeyAdapter.smoothlyAddNewItems(messages, recyclerView)
-    }
-
-    fun insertMessages(messages: List<MonkeyItem>) {
-        monkeyAdapter.insertMessages(messages)
-    }
-
-    fun clearMessages(){
-        monkeyAdapter.clear()
+    override fun rebindMonkeyItem(item: MonkeyItem){
+        monkeyAdapter.rebindMonkeyItem(item, recyclerView)
     }
 
     fun reloadAllMessages(){
@@ -265,9 +237,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
      * messages. All messages with a sent timestamp lower than this will be displayed as read.
      */
     fun setLastRead(lastRead: Long) {
-        val lastStamp = monkeyAdapter.getLastItem()?.getMessageTimestampOrder()
-        if(lastStamp != null &&  lastRead > monkeyAdapter.lastRead &&
-                monkeyAdapter.lastRead < lastStamp && lastStamp <= lastRead) {
+        if(lastRead > monkeyAdapter.lastRead) {
             monkeyAdapter.lastRead = lastRead
             reloadAllMessages()
         }
@@ -279,25 +249,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         return conversationId.contains("G:")
     }
 
-    fun updateMessage(messageId: String, messageTimestamp: Long, transaction: MonkeyItemTransaction){
-        val searchItem = object: MonkeyItem {
-            override fun getAudioDuration() = 0L
-            override fun getDeliveryStatus() = MonkeyItem.DeliveryStatus.sending
-            override fun getSenderId() = ""
-            override fun getConversationId() = ""
-            override fun getFileSize() = 0L
-            override fun getFilePath() = ""
-            override fun getMessageId() = messageId
-            override fun getMessageText() = ""
-            override fun getMessageTimestamp() = messageTimestamp
-            override fun getMessageTimestampOrder() = messageTimestamp
-            override fun getMessageType() = 0
-            override fun getOldMessageId() = ""
-            override fun getPlaceholderFilePath() = ""
-            override fun isIncomingMessage() = true
-        }
-        monkeyAdapter.updateMessage(searchItem, transaction, recyclerView)
-    }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         val animation = if(enter) AnimationUtils.loadAnimation(activity, R.anim.mk_fragment_slide_right_in)
@@ -319,12 +270,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         })
         return animation
     }
-
-    fun getLastMessage(): MonkeyItem? = monkeyAdapter.getLastItem()
-
-    fun getFirstMessage(): MonkeyItem? = monkeyAdapter.getFirstItem()
-
-    fun removeMonkeyItem(id: String) = monkeyAdapter.removeItemById(id)
 
     override fun loadFullScreenImage(iv: ImageView?, imageUrl: String?, width: Int, bglinearLayout: LinearLayout?) {
         if (imageUrl?.length != 0) {
@@ -406,4 +351,27 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
                 return fragment
             }
         }
+
+    override fun notifyItemChanged(pos: Int) = monkeyAdapter.notifyItemChanged(pos)
+
+    override fun findLastVisibleItemPosition(): Int {
+        val manager = recyclerView.layoutManager as LinearLayoutManager
+        return manager.findLastVisibleItemPosition()
+    }
+
+    override fun notifyDataSetChanged() = monkeyAdapter.notifyDataSetChanged()
+
+    override fun notifyItemRangeInserted(pos: Int, count: Int) = monkeyAdapter.notifyItemRangeInserted(pos, count)
+
+    override fun notifyItemInserted(pos: Int) = monkeyAdapter.notifyItemInserted(pos)
+
+    override fun notifyItemRemoved(pos: Int) = monkeyAdapter.notifyItemRemoved(pos)
+
+    override fun notifyItemRangeRemoved(pos: Int, count: Int) = monkeyAdapter.notifyItemRangeRemoved(pos, count)
+
+    override fun removeLoadingView() = monkeyAdapter.removeEndOfRecyclerView()
+
+    override fun scrollToPosition(pos: Int) = recyclerView.scrollToPosition(pos)
+
+    override fun scrollWithOffset(newItemsCount: Int) = monkeyAdapter.scrollWithOffset(newItemsCount)
 }

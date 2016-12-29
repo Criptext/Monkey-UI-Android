@@ -1,13 +1,11 @@
 package com.criptext.monkeykitui
 
 import android.app.Activity
+import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.criptext.monkeykitui.conversation.ConversationsList
-import com.criptext.monkeykitui.recycler.ChatActivity
-import com.criptext.monkeykitui.recycler.GroupChat
-import com.criptext.monkeykitui.recycler.MonkeyAdapter
-import com.criptext.monkeykitui.recycler.MonkeyItem
+import com.criptext.monkeykitui.recycler.*
 import org.junit.Before
 import org.robolectric.Robolectric
 import java.util.*
@@ -52,13 +50,7 @@ open class AdapterTestCase {
         override fun onMessageRemoved(item: MonkeyItem, unsent: Boolean) {
         }
 
-        override fun getInitialMessages(conversationId: String): List<MonkeyItem> {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun retainMessages(conversationId: String, messages: List<MonkeyItem>) {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
+        override fun getInitialMessages(conversationId: String) = null
 
         override fun getGroupChat(conversationId: String, membersIds: String): GroupChat {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.

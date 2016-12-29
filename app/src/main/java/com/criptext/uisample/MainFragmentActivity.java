@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.criptext.monkeykitui.MonkeyChatFragment;
@@ -106,13 +107,13 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     void addOldMessages(ArrayList<MonkeyItem> messages, boolean hasReachedEnd) {
-        if(chatFragment != null)
-            chatFragment.addOldMessages(messages, hasReachedEnd);
+        Log.d("FragmentActivity", "add old messages");
+        this.messages.addOldMessages(messages, hasReachedEnd);
     }
 
     @Override
     void smoothlyAddNewItem(MonkeyItem message) {
-        chatFragment.smoothlyAddNewItem(message);
+        this.messages.smoothlyAddNewItem(message);
     }
 
     @Override
@@ -158,11 +159,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
     @Override
     public void setConversationsFragment(@Nullable MonkeyConversationsFragment monkeyConversationsFragment) {
         convFragment = monkeyConversationsFragment;
-    }
-
-    @Override
-    public void retainMessages(@NotNull String conversationId, @NotNull List<? extends MonkeyItem> messages) {
-
     }
 
     @Override

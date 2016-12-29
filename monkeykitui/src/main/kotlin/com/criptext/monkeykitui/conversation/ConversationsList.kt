@@ -23,7 +23,7 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
             if(!value && field != value) {
                 list.add(MonkeyConversation.endItem())
                 listUI?.notifyConversationInserted(list.size - 1)
-            }else if(value && field != value) {
+            } else if(value && field != value) {
                 listUI?.removeLoadingView()
             }
             field = value

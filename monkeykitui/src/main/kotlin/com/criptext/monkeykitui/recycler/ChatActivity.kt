@@ -84,21 +84,7 @@ interface ChatActivity {
      * @return A collection of MonkeyItems that will be displayed in the chat as soon as it renders.
      * if there are no messages available returns null
      */
-    fun getInitialMessages(conversationId: String): List<MonkeyItem>?
-    /**
-     * Callback executed when the fragment is about to be destroyed or removed from the screen so
-     * that the activity can persist the messages. When the fragment is recreated it will try
-     * to get back the messages using the getInitialMessages() method
-     *
-     * @param conversationId the id of the conversation to which this messages belong to.
-     * @param messages The messages that the fragment had before being dettached. You
-     * should cache this list but only to give it back the next time getInitialMessages() is called.
-     * Never try to access the objects of this list if you want to manipulate a message object,
-     * always fetch them from the chat fragment or your local database because this list may not be
-     * up to date with those two sources, thus leading to data inconsistencies. This is only meant
-     * to be used as a temporary 'backup'.
-     */
-    fun retainMessages(conversationId: String, messages: List<MonkeyItem>)
+    fun getInitialMessages(conversationId: String): MessagesList?
 
     /**
      * MonkeyChatFragment will call this method to retrieve the current conversation's groupChat object.
