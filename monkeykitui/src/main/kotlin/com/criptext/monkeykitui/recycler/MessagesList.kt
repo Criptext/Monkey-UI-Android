@@ -211,14 +211,9 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
     }
 
     fun insertMessages(messages: List<MonkeyItem>, hasReachedEnd: Boolean) {
-        val previouslyHadMessages = list.isNotEmpty()
-        list.clear()
-        list.addAll(messages)
-        if(previouslyHadMessages)
-            messageListUI?.notifyDataSetChanged()
-        else
-            messageListUI?.notifyItemRangeInserted(0, list.size)
-        this.hasReachedEnd = hasReachedEnd
+        if (list.isNotEmpty())
+            throw IllegalStateException("Can't insert messages, list is not empty")
+        addOldMessages(messages, hasReachedEnd)
     }
 
     fun smoothlyAddNewItems(newData : Collection<MonkeyItem>){

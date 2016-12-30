@@ -3,6 +3,7 @@ package com.criptext.monkeykitui
 import android.util.Log
 import com.criptext.monkeykitui.recycler.MessagesList
 import com.criptext.monkeykitui.recycler.MonkeyItem
+import org.amshove.kluent.shouldThrow
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -58,6 +59,26 @@ class SortedMessagesTest : AdapterTestCase() {
 
     @Test
     @Throws (Exception::class)
+    fun initiallyInsertedMessagesAreSorted() {
+        val newPage = ArrayList<MonkeyItem>()
+        val time = System.currentTimeMillis()
+        newPage.add(newTextMessage(time + 1, "114"))
+        newPage.add(newTextMessage(time + 2, "115"))
+        newPage.add(newTextMessage(time + 2, "116"))
+        newPage.add(newTextMessage(time + 3, "117"))
+        newPage.add(newTextMessage(time + 4, "118"))
+        newPage.add(newTextMessage(time + 2, "119"))
+        newPage.add(newTextMessage(time + 1, "120"))
+
+        messages.insertMessages(newPage, true)
+        assertThatListIsSorted(messages)
+
+        val duplicatedInsertion = { messages.insertMessages(newPage, true) }
+        duplicatedInsertion shouldThrow  IllegalStateException::class
+    }
+
+    @Test
+    @Throws (Exception::class)
     fun newMessagesAddedAreSorted() {
         val time = System.currentTimeMillis()
         messages.smoothlyAddNewItem(newTextMessage(time, "123"))
@@ -69,9 +90,7 @@ class SortedMessagesTest : AdapterTestCase() {
         messages.smoothlyAddNewItem(newTextMessage(time + -1, "127"))
         messages.smoothlyAddNewItem(newTextMessage(time + 3, "128"))
 
-        val list = adapter.takeAllMessages()
-        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
-
+        assertThatListIsSorted(messages)
     }
 
     @Test
@@ -88,8 +107,7 @@ class SortedMessagesTest : AdapterTestCase() {
         newPage.add(newTextMessage(time + 1, "130"))
 
         messages.addOldMessages(newPage, true)
-        val list = adapter.takeAllMessages()
-        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
+        assertThatListIsSorted(messages)
     }
 
     @Test
@@ -108,9 +126,8 @@ class SortedMessagesTest : AdapterTestCase() {
         newPage.add(newTextMessage(time - 1, "131"))
 
         messages.smoothlyAddNewItems(newPage)
-        val list = adapter.takeAllMessages()
-        assertThatListIsSorted(list as ArrayList<MonkeyItem>)
-        assertThatMessagesAreNotRepeated(list)
+        assertThatListIsSorted(messages)
+        assertThatMessagesAreNotRepeated(messages)
     }
 
 
