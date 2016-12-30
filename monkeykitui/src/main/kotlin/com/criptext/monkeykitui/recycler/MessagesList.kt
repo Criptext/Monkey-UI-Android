@@ -29,11 +29,14 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
     }
 
     override val size: Int
-        get() = list.size
+        get() = if(!list.isEmpty() && list[0] is EndItem) list.size - 1 else list.size
 
     override fun get(index: Int) = if(!list.isEmpty() && list[0] is EndItem) list[index + 1] else list[index]
 
     fun getItemAt(index: Int) = list[index]
+
+    val actualSize: Int
+        get() = list.size
 
     fun removeMessageAt(index: Int) {
         val item = list.removeAt(index)

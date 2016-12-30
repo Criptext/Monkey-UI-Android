@@ -114,7 +114,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         get() = mContext as ChatActivity
 
     override fun getItemCount(): Int {
-        return messages.size
+        return messages.actualSize
     }
 
 
@@ -156,7 +156,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val endHolder = holder as? MonkeyEndHolder
         if(endHolder != null) {
             //endHolder.setOnClickListener {  }
-            dataLoader.delayNewBatch(messages.size)
+            dataLoader.delayNewBatch(messages.actualSize)
         }
     }
 
@@ -200,7 +200,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val item = messages.getItemAt(position)
 
         if(holder is MonkeyEndHolder) {
-            holder.adjustHeight(matchParentHeight = messages.size == 1)
+            holder.adjustHeight(matchParentHeight = messages.actualSize == 1)
             return
         }
 
@@ -574,7 +574,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     fun scrollWithOffset(newItemsCount: Int) {
     //Scroll only if position is not in the last position
         val manager = recyclerView!!.layoutManager as LinearLayoutManager
-        if(messages.size - newItemsCount > 0 && !isLastItemDisplaying(manager)) {
+        if(messages.actualSize - newItemsCount > 0 && !isLastItemDisplaying(manager)) {
             notifyItemChanged(newItemsCount)
             manager.scrollToPositionWithOffset(newItemsCount,
                     mContext.resources.getDimension(R.dimen.scroll_offset).toInt())
