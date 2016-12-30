@@ -31,7 +31,9 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
     override val size: Int
         get() = list.size
 
-    override fun get(index: Int) = list[index]
+    override fun get(index: Int) = if(!list.isEmpty() && list[0] is EndItem) list[index + 1] else list[index]
+
+    fun getItemAt(index: Int) = list[index]
 
     fun removeMessageAt(index: Int) {
         val item = list.removeAt(index)
@@ -254,4 +256,5 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
      * @return the message with the requested Id. returns null if the message does not exist
      */
     fun findMonkeyItemById(id: String) = list.findLast { it.getMessageId() == id }
+
 }

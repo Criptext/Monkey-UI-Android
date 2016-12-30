@@ -135,7 +135,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = messages[position]
+        val item = messages.getItemAt(position)
         val typeConst = if(!item.isIncomingMessage() && !item.getDeliveryStatus().isTransferring())
                0 //outgoing and delivered
             else if(!item.isIncomingMessage() && item.getDeliveryStatus().isTransferring())
@@ -197,7 +197,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     override fun onBindViewHolder(holder : MonkeyHolder, position : Int) {
 
         val typeClassification = getItemViewType(position) / MonkeyItem.MonkeyItemType.values().size
-        val item = messages[position]
+        val item = messages.getItemAt(position)
 
         if(holder is MonkeyEndHolder) {
             holder.adjustHeight(matchParentHeight = messages.size == 1)
@@ -258,8 +258,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     }
 
     fun isFollowupMessage(position: Int): Boolean{
-        if(position > 0 && messages[position].getSenderId()
-                    == messages[position - 1].getSenderId())
+        if(position > 0 && messages.getItemAt(position).getSenderId()
+                    == messages.getItemAt(position - 1).getSenderId())
                 return true
         return false
     }
@@ -276,7 +276,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         //set message date
         holder.setMessageDate(item.getMessageTimestamp()*1000)
         //set date separator
-        val prevItem = if (position > 0) messages[position - 1] else null
+        val prevItem = if (position > 0) messages.getItemAt(position - 1) else null
         holder.setSeparatorText(position, item, prevItem)
 
         if (item.isIncomingMessage()) { //stuff for incoming messages
@@ -563,7 +563,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         if(messages.isEmpty())
             return;
 
-        val lastItem = messages[0]
+        val lastItem = messages.getItemAt(0)
         if(lastItem.getMessageType() == MonkeyItem.MonkeyItemType.MoreMessages.ordinal){
             messages.removeMessageAt(0)
             if(!silent)
