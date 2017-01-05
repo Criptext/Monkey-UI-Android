@@ -126,6 +126,7 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
             val item = list[position]
             list.removeAt(position)
             set.remove(item.getConvId())
+            listUI?.notifyConversationRemoved(position)
             item
         } else null
 

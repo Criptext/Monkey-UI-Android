@@ -113,6 +113,10 @@ open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
         conversationsAdapter?.notifyDataSetChanged()
     }
 
+    override fun notifyConversationRemoved(position: Int) {
+        conversationsAdapter?.notifyItemRemoved(position)
+    }
+
     override fun removeLoadingView() {
         conversationsAdapter?.removeEndOfRecyclerView()
     }

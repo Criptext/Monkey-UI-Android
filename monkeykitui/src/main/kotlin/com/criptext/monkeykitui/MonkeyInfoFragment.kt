@@ -40,24 +40,26 @@ open class MonkeyInfoFragment : Fragment(){
         val groupInfo = (activity as InfoActivity).getInfo(arguments.getString("conversationId"))
         if(isGroup) {
             leftText?.text = leftText?.context?.resources?.getString(R.string.mk_text_participants)
-            rightText?.text = groupInfo.size.toString() + " of 50"
+            if(groupInfo != null)
+                rightText?.text = groupInfo.size.toString() + " of 50"
             outButton?.visibility = View.VISIBLE
         }else{
             leftText?.text = leftText?.context?.resources?.getString(R.string.mk_text_common)
             rightText?.text = ""
             outButton?.visibility = View.GONE
         }
-        if(groupInfo.size <= 0 && isGroup){
+        if(groupInfo != null && groupInfo.size <= 0 && isGroup){
             loadingLayout?.visibility = View.VISIBLE
             noContentText?.visibility = View.GONE
-        }else if (groupInfo.size <= 0 && !isGroup){
+        }else if (groupInfo != null && groupInfo.size <= 0 && !isGroup){
             loadingLayout?.visibility = View.GONE
             noContentText?.visibility = View.VISIBLE
         }else{
             loadingLayout?.visibility = View.GONE
             noContentText?.visibility = View.GONE
         }
-        infoAdapter?.addMembers(groupInfo);
+        if(groupInfo!=null)
+            infoAdapter?.addMembers(groupInfo);
     }
 
     open protected fun initRecyclerView(view: View): RecyclerView {

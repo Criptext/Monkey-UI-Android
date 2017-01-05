@@ -16,6 +16,8 @@ interface ConversationListUI {
 
     fun notifyConversationRangeInserted(start: Int, end: Int)
 
+    fun notifyConversationRemoved(position: Int)
+
     fun refresh()
 
     fun removeLoadingView()

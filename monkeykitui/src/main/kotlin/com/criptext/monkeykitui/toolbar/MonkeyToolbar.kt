@@ -44,29 +44,19 @@ open class MonkeyToolbar(activity: AppCompatActivity) {
     }
 
     fun setConversationsToolbar(title: String, showBackButton: Boolean) {
-        customToolbar.title.text = title
-        customToolbar.imageView.visibility = View.GONE
-        customToolbar.subtitle.visibility = View.GONE
-
-        appBarLayout.setExpanded(false)
-        appBarLayout.isActivated = false
-        actionBar.setDisplayHomeAsUpEnabled(showBackButton)
+        setToolbar(title, null, showBackButton, null, null)
     }
 
     fun setChatToolbar(chatTitle: String, avatarURL: String?, isGroup: Boolean) {
-        customToolbar.title.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(chatTitle))
-        customToolbar.subtitle.visibility = View.GONE
-        customToolbar.imageView.visibility = View.VISIBLE
         if (avatarURL != null)
-                Utils.setAvatarAsync(toolbar.context, customToolbar.imageView, avatarURL,
-                        isGroup, null)
+            setToolbar(chatTitle, null, true, avatarURL, null);
         else {
             val imgRes = if (isGroup) R.drawable.mk_default_group_avatar
                         else R.drawable.mk_default_user_img
-            customToolbar.imageView.setImageResource(imgRes)
+
+            setToolbar(chatTitle, null, true, null, imgRes);
         }
 
-        actionBar.setDisplayHomeAsUpEnabled(true)
     }
 
     fun setOnClickListener(listener: View.OnClickListener){
@@ -76,5 +66,27 @@ open class MonkeyToolbar(activity: AppCompatActivity) {
     fun setSubtitle(subtitle: String){
         customToolbar.subtitle.visibility = View.VISIBLE
         customToolbar.subtitle.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(subtitle))
+    }
+
+    fun setToolbar(title : String, subtitle : String?, backable : Boolean, avatarURL : String?, imgRSC : Int?){
+        customToolbar.title.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(title))
+        customToolbar.subtitle.visibility = View.GONE
+        customToolbar.imageView.visibility = View.GONE
+        if (avatarURL != null) {
+            customToolbar.imageView.visibility = View.VISIBLE
+            Utils.setAvatarAsync(toolbar.context, customToolbar.imageView, avatarURL,
+                    false, null)
+        }else if (imgRSC != null){
+            customToolbar.imageView.visibility = View.VISIBLE
+            customToolbar.imageView.setImageResource(imgRSC)
+        }
+
+        if (subtitle != null) {
+            customToolbar.subtitle.visibility = View.VISIBLE
+            customToolbar.subtitle.text = EmojiHandler.decodeJava(EmojiHandler.decodeJava(subtitle))
+        }
+
+
+        actionBar.setDisplayHomeAsUpEnabled(backable)
     }
 }

@@ -368,6 +368,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
                             else
                                 requestPermissionToDownload(item)
                             }, item.getFileSize())
+
                 MonkeyItem.DeliveryStatus.sending -> {
                     if(fileExists) {
                         fileHolder.setWaitingForUpload()
@@ -386,16 +387,16 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val file = File(item.getFilePath())
         if(!file.exists() || file.length() < item.getFileSize()) {
             chatActivity.onFileDownloadRequested(item)
-            fileHolder.showFileData(item.getFilePath(), "Descargando...")
-            fileHolder.showFileIcon(item.getFilePath().substring(item.getFilePath().lastIndexOf(".")+1))
+            fileHolder.showFileData(item.getMessageText(), "Descargando...")
+            fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
             fileHolder.setOnClickListener(null)
         }else {
-            fileHolder.showFileData(item.getFilePath(), getTotalSizeFile(item.getFileSize()))
-            fileHolder.showFileIcon(item.getFilePath().substring(item.getFilePath().lastIndexOf(".")+1))
+            fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
+            fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
             fileHolder.setOnClickListener(View.OnClickListener {
                 val openFile = Intent(Intent.ACTION_VIEW)
                 openFile.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                openFile.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(item.getFilePath()))
+                openFile.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(item.getMessageText()))
                 mContext.startActivity(openFile)
             })
 
@@ -405,8 +406,8 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
     open protected fun bindMonkeyFileProcessingHolder(position: Int, item: MonkeyItem, holder: MonkeyHolder) {
         val fileHolder = holder as MonkeyFileHolder
         val file = File(item.getFilePath())
+        fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
         if(file.exists()) {
-            fileHolder.showFileData(item.getMessageText(), getTotalSizeFile(item.getFileSize()))
             fileHolder.showFileIcon(item.getMessageText().substring(item.getMessageText().lastIndexOf(".")+1))
         }
         bindMonkeyFile(item, fileHolder)

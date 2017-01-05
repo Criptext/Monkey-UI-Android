@@ -216,7 +216,7 @@ class MonkeyTypesTest: AdapterTestCase(){
 
             override fun getMessageTimestamp() = newTimestamp
 
-            override fun getMessageText(): String {throw UnsupportedOperationException() }
+            override fun getMessageText() = "filename" 
 
             override fun getMessageType() = MonkeyItem.MonkeyItemType.file.ordinal
 

@@ -228,7 +228,6 @@ open class MonkeyConversationsAdapter(val mContext: Context) : RecyclerView.Adap
         val pos = conversations.getConversationPositionByTimestamp(conversation)
         if(pos > -1){
             conversations.removeConversationAt(pos)
-            notifyItemRemoved(pos)
             val recycler = recyclerView
             if(recycler != null){
                 val name = conversation.getName()
