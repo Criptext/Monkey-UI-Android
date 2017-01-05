@@ -30,7 +30,7 @@ class `MonkeyFragmentManager Test` {
         val mfm = MonkeyFragmentManager(act, activityTitle, mkFragmentStack)
 
         //set the conversations fragment
-        mfm.setContentLayout(null)
+        mfm.setContentLayout(null, true)
 
         //init toolbar variables before asserting
         val monkeyToolbar = mfm.monkeyToolbar!!
@@ -66,7 +66,7 @@ class `MonkeyFragmentManager Test` {
         val mfm = MonkeyFragmentManager(act, activityTitle, mkFragmentStack)
 
         //set the layout with toolbar
-        mfm.setContentLayout(null)
+        mfm.setContentLayout(null, true)
 
         //init toolbar variables before asserting
         val monkeyToolbar = mfm.monkeyToolbar!!

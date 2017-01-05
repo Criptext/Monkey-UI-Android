@@ -15,6 +15,7 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
 
     var hasReachedEnd : Boolean = true
         set(value) {
+
             if(!value && (list.isEmpty() || list[0] !is EndItem)) {
                 list.add(0, EndItem())
                 messageListUI?.notifyItemInserted(0)

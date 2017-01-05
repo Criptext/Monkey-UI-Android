@@ -30,4 +30,6 @@ interface InfoActivity {
 
     fun removeMember(monkeyId : String)
 
+    fun onAddParticipant()
+
 }
