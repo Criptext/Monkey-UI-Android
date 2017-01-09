@@ -70,7 +70,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     var shouldUpdateAudioView: Boolean = false
 
     companion object {
-        val chatHasReachedEnd = "MonkeyChatFragment.hasReachedEnd"
         val chatConversationId = "MonkeyChatFragment.conversationId"
         val chatmembersGroupIds = "MonkeyChatFragment.membersIds"
         val chatTitleName = "MonkeyChatFragment.titleName"
@@ -202,10 +201,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         }
     }
 
-    fun takeAllMessages(): List<MonkeyItem> {
-        return monkeyAdapter.takeAllMessages()
-    }
-
     fun getConversationId() = arguments.getString(chatConversationId)
 
     fun getGroupMembers() = arguments.getString(chatmembersGroupIds)
@@ -295,7 +290,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     class Builder(private val conversationId: String, private val chatTitle: String) {
             private val fragment: MonkeyChatFragment
             private var avatarURL: String? = null
-            private var reachedEnd: Boolean = false
             private var lastRead: Long = 0L
             private var membersIds: String? = null
             private var layoutId: Int = R.layout.monkey_chat_layout
@@ -306,11 +300,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
             fun setAvatarURL(avatarURL: String): Builder {
                 this.avatarURL = avatarURL
-                return this
-            }
-
-            fun setReachedEnd(reachedEnd: Boolean): Builder {
-                this.reachedEnd = reachedEnd
                 return this
             }
 
@@ -335,7 +324,6 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
                 newBundle.putString(chatmembersGroupIds, membersIds)
                 newBundle.putString(chatTitleName, chatTitle)
                 newBundle.putString(chatAvatarUrl, avatarURL)
-                newBundle.putBoolean(chatHasReachedEnd, reachedEnd)
                 newBundle.putLong(initalLastReadValue, lastRead)
                 newBundle.putInt(chatLayoutId, layoutId)
                 fragment.arguments = newBundle

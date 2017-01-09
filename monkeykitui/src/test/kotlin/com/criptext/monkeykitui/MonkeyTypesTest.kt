@@ -2,6 +2,7 @@ package com.criptext.monkeykitui
 
 
 import android.view.View
+import com.criptext.monkeykitui.recycler.AdapterTestCase
 import com.criptext.monkeykitui.recycler.EndItem
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.recycler.holders.*

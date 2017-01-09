@@ -8,7 +8,7 @@ import org.junit.Test
  * Created by gesuwall on 12/30/16.
  */
 
-class `MesssagesList Test` {
+class `MessagesList Test` {
 
     @Test
     fun `get() should never return an EndItem object`() {
@@ -70,5 +70,10 @@ class `MesssagesList Test` {
         messagesList.hasReachedEnd = false
 
         messagesList.actualSize `should equal` 4
+    }
+
+    fun `addOldMessages() removes loading view correctly even with empty conversation`() {
+        val messagesList = MessagesList("test")
+
     }
 }

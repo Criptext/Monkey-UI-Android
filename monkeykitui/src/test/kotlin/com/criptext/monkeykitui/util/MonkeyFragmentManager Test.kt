@@ -47,7 +47,6 @@ class `MonkeyFragmentManager Test` {
         val contactName = "John Smith"
         val chatFragment = MonkeyChatFragment.Builder("0", contactName)
             .setLastRead(System.currentTimeMillis())
-            .setReachedEnd(false)
             .build();
 
         mfm.setChatFragment(chatFragment)

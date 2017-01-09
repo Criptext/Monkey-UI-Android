@@ -133,7 +133,6 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         MonkeyChatFragment fragment =
                 new MonkeyChatFragment.Builder("0", conversation.getName())
                     .setLastRead(System.currentTimeMillis())
-                    .setReachedEnd(false)
                     .build();
         fragmentManager.setChatFragment(fragment);
         stateFragment.activeConversation = conversation;

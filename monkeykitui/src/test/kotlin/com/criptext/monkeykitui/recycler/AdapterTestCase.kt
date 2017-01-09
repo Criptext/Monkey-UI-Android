@@ -1,9 +1,10 @@
-package com.criptext.monkeykitui
+package com.criptext.monkeykitui.recycler
 
 import android.app.Activity
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.criptext.monkeykitui.MonkeyChatFragment
 import com.criptext.monkeykitui.conversation.ConversationsList
 import com.criptext.monkeykitui.recycler.*
 import org.junit.Before
@@ -27,14 +28,13 @@ open class AdapterTestCase {
     val FAKE_FILE = "myFile.zip"
     @Before
     fun initAdapter(){
-        if(activity == null){
-            val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
-            adapter = MonkeyAdapter(newActivity, "mirror")
-            recycler = RecyclerView(newActivity);
-            recycler!!.layoutManager = LinearLayoutManager(newActivity)
-            activity = newActivity
-        }
+        val newActivity = Robolectric.setupActivity(MonkeyActivity::class.java)
+        adapter = MonkeyAdapter(newActivity, "mirror")
+        recycler = RecyclerView(newActivity);
+        recycler!!.layoutManager = LinearLayoutManager(newActivity)
+        activity = newActivity
     }
+
     class MonkeyActivity: Activity(), ChatActivity {
         override fun deleteAllMessages(conversationId: String) {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.

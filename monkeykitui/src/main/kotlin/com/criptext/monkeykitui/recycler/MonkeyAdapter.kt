@@ -156,7 +156,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
         val endHolder = holder as? MonkeyEndHolder
         if(endHolder != null) {
             //endHolder.setOnClickListener {  }
-            dataLoader.delayNewBatch(messages.actualSize)
+            dataLoader.delayNewBatch(messages.size)
         }
     }
 
@@ -560,7 +560,7 @@ open class MonkeyAdapter(val mContext: Context, val conversationId: String) : Re
      *removes the more messages view
      */
     protected fun removeEndOfRecyclerView(silent: Boolean){
-        if(messages.isEmpty())
+        if(messages.actualSize == 0)
             return;
 
         val lastItem = messages.getItemAt(0)

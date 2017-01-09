@@ -1,6 +1,7 @@
-package com.criptext.monkeykitui
+package com.criptext.monkeykitui.recycler
 
 import android.util.Log
+import com.criptext.monkeykitui.BuildConfig
 import com.criptext.monkeykitui.recycler.MessagesList
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import org.amshove.kluent.shouldThrow
@@ -15,7 +16,7 @@ import java.util.*
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(constants = BuildConfig::class)
-class SortedMessagesTest : AdapterTestCase() {
+class SortedMessagesTest() {
     val messages = MessagesList("test")
 
     fun newTextMessage(timestamp: Long, id: String, oldId: String?, incoming: Boolean): MonkeyItem {

@@ -24,7 +24,6 @@ class `Chat Fragment Tests` {
         val fragment = MonkeyChatFragment.Builder(chatId, chatName)
                         .setAvatarURL(avatarURL)
                         .setLastRead(lastRead)
-                        .setReachedEnd(true)
                         .setLayoutId(layoutId)
                         .build()
 
@@ -34,7 +33,6 @@ class `Chat Fragment Tests` {
         args.getString(MonkeyChatFragment.chatAvatarUrl) `should equal` avatarURL
         args.getLong(MonkeyChatFragment.initalLastReadValue) `should equal` lastRead
         args.getInt(MonkeyChatFragment.chatLayoutId) `should equal` layoutId
-        args.getBoolean(MonkeyChatFragment.chatHasReachedEnd) `should equal` true
 
 
     }
