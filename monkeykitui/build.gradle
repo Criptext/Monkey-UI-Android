@@ -58,7 +58,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    testCompile 'org.robolectric:robolectric:3.1.1'
+    testCompile 'org.robolectric:robolectric:3.2'
     testCompile 'org.robolectric:shadows-support-v4:3.0'
     testCompile 'org.amshove.kluent:kluent:1.11'
     //robolectric needs this for API 23 https://github.com/robolectric/robolectric/issues/1932

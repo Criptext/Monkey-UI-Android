@@ -17,7 +17,7 @@ import java.util.*
  */
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class)
+@Config(constants = BuildConfig::class, manifest = "TestManifest.xml")
 class `MonkeyFragmentManager Test` {
 
     @Test
