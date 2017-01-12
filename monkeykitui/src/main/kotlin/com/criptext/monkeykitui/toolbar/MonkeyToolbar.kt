@@ -43,14 +43,14 @@ open class MonkeyToolbar(activity: AppCompatActivity) {
         appBarLayout = activity.findViewById(R.id.toolbar_layout) as AppBarLayout
     }
 
-    fun setConversationsToolbar(title: String) {
+    fun setConversationsToolbar(title: String, showBackButton: Boolean) {
         customToolbar.title.text = title
         customToolbar.imageView.visibility = View.GONE
         customToolbar.subtitle.visibility = View.GONE
 
         appBarLayout.setExpanded(false)
         appBarLayout.isActivated = false
-        actionBar.setDisplayHomeAsUpEnabled(false)
+        actionBar.setDisplayHomeAsUpEnabled(showBackButton)
     }
 
     fun setChatToolbar(chatTitle: String, avatarURL: String?, isGroup: Boolean) {

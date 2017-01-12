@@ -62,6 +62,12 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
      * replacing the chat fragment
      */
     var conversationsFragmentInAnimation: Int
+
+    /**
+     * if true, every fragment will display the back button in the toolbar. default is false
+     */
+    var alwaysShowBackButton = false
+
     init{
         fragmentContainerLayout = R.layout.mk_fragment_activity
         fragmentContainerId = R.id.fragment_container
@@ -82,10 +88,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                 val currentFragment = mkFragmentStack.peek()
                 when (currentFragment) {
                     FragmentTypes.conversations ->
-                        monkeyToolbar?.setConversationsToolbar(conversationsTitle)
+                        monkeyToolbar?.setConversationsToolbar(conversationsTitle, alwaysShowBackButton)
                 }
-            }else{
-
             }
         }
 
@@ -93,7 +97,8 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
 
     fun restoreToolbar(activeConversation: MonkeyConversation?) {
         when (mkFragmentStack.peek()) {
-            FragmentTypes.conversations -> monkeyToolbar?.setConversationsToolbar(conversationsTitle)
+            FragmentTypes.conversations -> monkeyToolbar?.setConversationsToolbar(
+                    conversationsTitle, alwaysShowBackButton)
             FragmentTypes.chat, FragmentTypes.info -> {
                 if (activeConversation != null)
                     monkeyToolbar?.setChatToolbar(chatTitle = activeConversation.getName(),
@@ -109,13 +114,13 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
     /**
      * Add a new Conversations fragment to the activity.
      */
-    public fun setConversationsFragment() {
+    fun setConversationsFragment() {
         mkFragmentStack.push(FragmentTypes.conversations)
         val convFragment = MonkeyConversationsFragment()
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
         ft.commit()
-        monkeyToolbar?.setConversationsToolbar(conversationsTitle)
+        monkeyToolbar?.setConversationsToolbar(conversationsTitle, alwaysShowBackButton)
     }
     /**
      * Set a layout with a FrameLayout as fragment container in the activity. this fragment

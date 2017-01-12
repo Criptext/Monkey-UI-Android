@@ -64,6 +64,7 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         boolean restored = restoreState();
         conversations = new ConversationsList(stateFragment.conversationsList);
         fragmentManager = new MonkeyFragmentManager(this, "UI Sample", stateFragment.mkFragmentStack);
+//        fragmentManager.setAlwaysShowBackButton(true);
         fragmentManager.setContentLayout(savedInstanceState, true);
         if (restored) //if this is a restored instance, we must restore the toolbar as well
         fragmentManager.restoreToolbar(stateFragment.activeConversation);
