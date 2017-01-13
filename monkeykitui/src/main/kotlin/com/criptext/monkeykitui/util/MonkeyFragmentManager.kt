@@ -160,6 +160,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
             monkeyToolbar?.setChatToolbar(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
                     chatFragment.isGroupConversation() ?: false)
         }
+
         val ft = activity.supportFragmentManager.beginTransaction();
         //animations must be set before adding or replacing fragments
         ft.setCustomAnimations(chatFragmentInAnimation,
@@ -178,16 +179,18 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
                 chatFragmentOutAnimation)
-        ft.add(fragmentContainerId, infoFragment)
+        ft.add(fragmentContainerId, infoFragment, INFO_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
     }
 
     fun setChatFragmentFromInfo(chatFragment: MonkeyChatFragment, inputListener: InputListener,
                         voiceNotePlayer: PlaybackService.VoiceNotePlayerBinder){
+
+        activity.supportFragmentManager.popBackStack();
+        activity.supportFragmentManager.popBackStack();
+
         val ft = activity.supportFragmentManager.beginTransaction();
-        activity.supportFragmentManager.popBackStack();
-        activity.supportFragmentManager.popBackStack();
         ft.setCustomAnimations(chatFragmentInAnimation,
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
@@ -197,7 +200,9 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
         ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
+
         activity.supportFragmentManager.executePendingTransactions();
+        mkFragmentStack.push(FragmentTypes.chat)
         monkeyToolbar?.setChatToolbar(chatFragment.getChatTitle(), chatFragment.getAvatarURL(),
                 chatFragment.isGroupConversation() ?: false)
 
