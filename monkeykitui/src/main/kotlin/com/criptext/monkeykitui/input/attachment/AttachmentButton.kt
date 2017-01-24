@@ -121,8 +121,9 @@ open class AttachmentButton : ImageView {
 
         val customDrawable = typedArray?.getDrawable(R.styleable.InputView_attachmentDrawable)
         setImageDrawable(customDrawable ?:
-                        ContextCompat.getDrawable(context, R.drawable.ic_action_attachment))
-
+                        ContextCompat.getDrawable(context, R.drawable.ic_attach_file))
+        setColorFilter(context.resources.getColor(R.color.mk_icon_unfocus_tint))
+        alpha = 0.7f
         val dp5 = context.resources.getDimension(R.dimen.attach_button_padding).toInt()
         setPadding(dp5, 0, dp5, 0)
         val diameter = diameter
@@ -137,7 +138,7 @@ open class AttachmentButton : ImageView {
     }
 
     open val diameter: Int
-    get() = context.resources.getDimension(R.dimen.circle_button_diameter).toInt()
+    get() = context.resources.getDimension(R.dimen.default_inputview_icon_height).toInt()
 
 
     companion object {

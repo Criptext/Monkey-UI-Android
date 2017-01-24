@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.criptext.monkeykitui.R
@@ -22,7 +23,7 @@ import com.criptext.monkeykitui.input.recorder.*
 open class AudioInputView : TextInputView {
     private lateinit var slideAnimator : RecorderSlideAnimator
     private lateinit var txtBtn: ImageView
-    private lateinit var recBtn: ImageView
+    private lateinit var recBtn: View
 
     var recorder: VoiceNoteRecorder? = null
     set (value){
@@ -45,15 +46,18 @@ open class AudioInputView : TextInputView {
     }
 
     fun setSendAudioDrawable(customDrawable: Drawable){
-        recBtn.setImageDrawable(customDrawable)
+        val imageView : ImageView = recBtn.findViewById(R.id.button_mic_foreground) as ImageView
+        imageView.setImageDrawable(customDrawable)
     }
+
+
     override fun setRightButton(typedArray : TypedArray): SideButton? {
-        val view = inflate(context, R.layout.right_audio_btn, null);
+        val view = inflate(context, R.layout.right_audio_btn , null);
         val defaultInputViewHeight = context.resources.getDimension(R.dimen.audio_btn_expanded_height)
         val params = LayoutParams(LayoutParams.MATCH_PARENT, defaultInputViewHeight.toInt())
         view.layoutParams = params
         txtBtn = view.findViewById(R.id.button_send) as ImageView
-        recBtn = view.findViewById(R.id.button_mic) as ImageView
+        recBtn = view.findViewById(R.id.button_mic) as View
         val mic = view.findViewById(R.id.redMic)
         val timer = view.findViewById(R.id.textViewTimeRecording)
         val slide = view.findViewById(R.id.layoutSwipeCancel)

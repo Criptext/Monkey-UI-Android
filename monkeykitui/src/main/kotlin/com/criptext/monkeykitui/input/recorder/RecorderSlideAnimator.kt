@@ -3,6 +3,7 @@ package com.criptext.monkeykitui.input.recorder
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.View
@@ -11,6 +12,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.criptext.monkeykitui.R
 import com.criptext.monkeykitui.input.BaseInputView
@@ -26,6 +28,9 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     var timer : View
     var slideMsg: View
     var button : View
+    var buttonForeground: View? = null
+    var buttonBackground: View ? = null
+
 
     var leftButton : View? = null
     var textInput : View? = null
@@ -36,7 +41,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
     var buttonStartX: Float = 0f
     var animStartX: Float = 0f
 
-    var buttonScaleFactor = 2.5f
+    var buttonScaleFactor = 80f
 
     var playingRevealAnim = false
     var playingConcealAnim = false
@@ -51,6 +56,8 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         this.timer = timer
         this.slideMsg = slideMessage
         this.button = button
+        this.buttonBackground = this.button.findViewById(R.id.button_mic_backgorund) as View
+        this.buttonForeground = this.button.findViewById(R.id.button_mic_foreground) as View
     }
     fun hideRecorder(cancelled: Boolean): Boolean {
         if(playingConcealAnim)
@@ -60,8 +67,9 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             return false
         }
 
-        val buttonXAnimator = ObjectAnimator.ofFloat(button, "scaleX", button.scaleX, 1f)
-        val buttonYAnimator = ObjectAnimator.ofFloat(button, "scaleY", button.scaleY, 1f)
+        val buttonXAnimator = ObjectAnimator.ofFloat(buttonBackground, "scaleX", button.scaleX, 1f)
+        val buttonYAnimator = ObjectAnimator.ofFloat(buttonBackground, "scaleY", button.scaleY, 1f)
+
         val buttonSlideAnimator = ObjectAnimator.ofFloat(button, "x", button.x, animStartX -
                 button.context.resources.getDimension(R.dimen.cancel_audio_msg_length))
 
@@ -104,6 +112,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
             override fun onAnimationStart() {
                 playingConcealAnim = true
                 recordingAnimation?.cancel()
+
             }
 
         })
@@ -128,6 +137,10 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
 
         button.scaleY = 1f
         button.scaleX = 1f
+        buttonBackground?.scaleX = 1f
+        buttonBackground?.scaleY = 1f
+        (buttonForeground as ImageView).setColorFilter(button.context.resources.getColor(R.color.mk_icon_unfocus_tint))
+        (buttonForeground as ImageView).alpha = 0.7f
 
         textInput?.requestFocus()
     }
@@ -150,8 +163,10 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
         animStartX = button.x +
                 button.context.resources.getDimension(R.dimen.cancel_audio_msg_length).toInt()
 
-        val buttonXAnimator = ObjectAnimator.ofFloat(button, "scaleX", 1f, buttonScaleFactor)
-        val buttonYAnimator = ObjectAnimator.ofFloat(button, "scaleY", 1f, buttonScaleFactor)
+        (buttonForeground as ImageView).setColorFilter(button.context.resources.getColor(R.color.mk_icon_expanded_tint))
+
+        val buttonXAnimator = ObjectAnimator.ofFloat(buttonBackground, "scaleX", 1f, buttonScaleFactor)
+        val buttonYAnimator = ObjectAnimator.ofFloat(buttonBackground, "scaleY", 1f, buttonScaleFactor)
 
         val decelerator = DecelerateInterpolator()
 
@@ -193,6 +208,7 @@ class RecorderSlideAnimator(redMic: View, timer: View, slideMessage: View, butto
                 playingRevealAnim = true
                 textInput?.visibility = View.INVISIBLE
                 leftButton?.visibility = View.INVISIBLE
+                (buttonForeground as ImageView).alpha = 1f
             }
 
         })

@@ -9,6 +9,7 @@
 
     <dimen name="circle_button_diameter">50dp</dimen>
     <dimen name="default_inputview_height">50dp</dimen>
+    <dimen name="default_inputview_icon_height">40dp</dimen>
     <dimen name="audio_btn_expanded_height">50dp</dimen>
     <dimen name="monkey_image_size">200dp</dimen>
     <dimen name="conversation_item_height">90dp</dimen>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="oval"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/mk_rounded_audio_button" />
+    <stroke
+        android:color="#D1D2D2"
+        android:width="1dp" />
+</shape>
