@@ -39,7 +39,7 @@
             seekbar:start_angle="135"
             seekbar:end_angle="45"
             android:layout_centerHorizontal="true"
-            seekbar:circle_progress_color="#cbcbcf"
+            seekbar:circle_progress_color="mk_"
             seekbar:circle_color="#f8f6f7"
             seekbar:inner_tolerance="0.15"/>
         <TextView

@@ -88,6 +88,7 @@ open class BaseInputView : FrameLayout {
         editText.hint = context.resources.getString(R.string.mk_text_message_write_hint)
         editText.setTextColor(Color.BLACK)
         editText.setEms(10)
+        editText.background.clearColorFilter()
 
         val customBackground = typedArray.getDrawable(R.styleable.InputView_editTextDrawable)
         if(customBackground != null)
@@ -140,7 +141,7 @@ open class BaseInputView : FrameLayout {
         if(leftBtn != null) {
             leftButtonView = leftBtn.button
             params.leftMargin = leftBtn.visibleWidth
-            (leftBtn.button.layoutParams as LayoutParams).gravity = Gravity.LEFT or Gravity.BOTTOM
+            (leftBtn.button.layoutParams as LayoutParams).gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
             addView(leftBtn.button)
         }
 

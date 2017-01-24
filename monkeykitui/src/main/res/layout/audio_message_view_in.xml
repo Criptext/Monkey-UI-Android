@@ -3,12 +3,13 @@
 <!-- VIEW AUDIOS IN-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:seekbar="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/row_messages_thread"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
     android:clickable="false"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <include layout="@layout/include_date_header"/>
 
@@ -39,8 +40,8 @@
             seekbar:start_angle="135"
             seekbar:end_angle="45"
             android:layout_centerHorizontal="true"
-            seekbar:circle_progress_color="#cbcbcf"
-            seekbar:circle_color="#f8f6f7"
+            seekbar:circle_progress_color="@color/mk_audio_icon_progress_color_in"
+            seekbar:circle_color="@color/mk_audio_icon_circle_color_in"
             seekbar:inner_tolerance="0.15"/>
         <TextView
                 android:id="@+id/datetime"
@@ -55,15 +56,15 @@
                 android:textColor="@color/mk_grey_letters"
                 android:layout_marginBottom="3dp"
                 android:textSize="12sp" />
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/play_button"
             android:src="@drawable/audio_play_in"
             android:layout_width="wrap_content"
+            android:layout_marginTop="25dp"
             android:layout_centerHorizontal="true"
             android:layout_alignTop="@id/seek_bar"
-            android:layout_marginTop="25dp"
-            android:layout_height="wrap_content"/>
-
+            android:layout_height="wrap_content"
+            />
     </RelativeLayout>
 
 </LinearLayout>

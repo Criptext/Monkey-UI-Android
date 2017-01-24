@@ -1,87 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/layoutRecording"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutRecording"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false">
 
     <ImageView
+        android:id="@+id/redMic"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/default_inputview_height"
-        android:src="@drawable/btn_mic_red"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:id="@+id/redMic"
+        android:layout_alignParentLeft="true"
         android:alpha="0"
         android:background="@android:color/white"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:src="@drawable/btn_mic_red" />
 
     <TextView
         android:id="@+id/textViewTimeRecording"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/default_inputview_height"
-        android:text="00:00"
-        android:alpha="0"
-        android:textColor="@android:color/black"
-        android:gravity="center_vertical|left"
-        android:layout_toRightOf="@+id/redMic"
         android:layout_alignParentBottom="true"
-        android:textSize="16sp"
+        android:layout_toRightOf="@+id/redMic"
+        android:alpha="0"
         android:background="@android:color/white"
+        android:gravity="center_vertical|left"
+        android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingLeft="10dp"/>
+        android:text="00:00"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
 
 
     <LinearLayout
         android:id="@+id/layoutSwipeCancel"
         android:layout_width="wrap_content"
-        android:orientation="horizontal"
         android:layout_height="@dimen/default_inputview_height"
-        android:alpha="0"
-        android:layout_toRightOf="@+id/textViewTimeRecording"
         android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/textViewTimeRecording"
+        android:alpha="0"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:background="@android:color/white">
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/left_arrow"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/left_arrow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/mk_slide_cancel"
-            android:textSize="16sp"
             android:paddingRight="20dp"
+            android:text="@string/mk_slide_cancel"
             android:textColor="@android:color/darker_gray"
-            android:textStyle="italic"/>
+            android:textSize="16sp"
+            android:textStyle="italic" />
 
     </LinearLayout>
+    <RelativeLayout
+        android:layout_marginRight="5dp"
+        android:id="@+id/button_mic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:clipChildren="false">
+    <View
+        android:layout_centerInParent="true"
+        android:background="@drawable/record_button_background"
+        android:id="@+id/button_mic_backgorund"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        />
     <ImageView
-            android:id="@+id/button_mic"
-            android:layout_width="@dimen/default_inputview_height"
-            android:layout_height="@dimen/default_inputview_height"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/btn_mic"
-            android:visibility="visible"/>
-
-        <ImageView
-            android:id="@+id/button_send"
-            android:layout_width="@dimen/default_inputview_height"
-            android:layout_height="@dimen/default_inputview_height"
-            android:layout_gravity="bottom|right"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_action_send_now"
-            android:visibility="gone"/>
-
-
+        android:id="@+id/button_mic_foreground"
+        android:layout_centerInParent="true"
+        android:layout_width="@dimen/default_inputview_icon_height"
+        android:layout_height="@dimen/default_inputview_height"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        tools:tint="@color/mk_icon_unfocus_tint"
+        android:tint="@color/mk_icon_unfocus_tint"
+        android:src="@drawable/icon_audio"
+        android:visibility="visible"
+        android:alpha="0.7"/>
+    </RelativeLayout>
+    <ImageView
+        android:layout_marginRight="5dp"
+        android:layout_alignTop="@id/button_mic"
+        android:layout_marginTop="4dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/button_send"
+        android:layout_width="@dimen/default_inputview_icon_height"
+        android:layout_height="@dimen/default_inputview_icon_height"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:scaleType="fitCenter"
+        tools:tint="@color/mk_icon_focused_tint"
+        android:tint="@color/mk_icon_focused_tint"
+        android:src="@drawable/ic_send"
+        android:visibility="gone"
+        android:alpha="0.7"/>
 </RelativeLayout>
 
 

@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
+import com.criptext.monkeykitui.input.AudioInputView
 import com.criptext.monkeykitui.input.BaseInputView
 import com.criptext.monkeykitui.input.MediaInputView
 import com.criptext.monkeykitui.input.listeners.InputListener

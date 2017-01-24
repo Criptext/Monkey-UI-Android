@@ -29,5 +29,19 @@
     <color name="mk_toolbar">#3F51B5</color>
     <color name="mk_toolbar_title">#ffffff</color>
     <color name="mk_toolbar_secondary_title">#ffffff</color>
-
+    <color name="mk_icon_unfocus_tint">@color/grey_500</color>
+    <color name="mk_icon_focused_tint">@color/grey_500</color>
+    <color name="mk_icon_expanded_tint">@color/grey_500</color>
+    <color name="mk_icon_background_record">@color/primary</color>
+    <!--Circular audio button background-->
+    <!--Audio In color scheme-->
+    <color name="mk_audio_icon_progress_color_in">#cbcbcf</color>
+    <color name="mk_audio_icon_circle_color_in">#f8f6f7</color>
+    <color name="mk_audio_icon_button_color_in">@color/primary</color>
+    <!--Audio Out color scheme-->
+    <color name="mk_audio_icon_progress_color_out">#0276a9</color>
+    <color name="mk_audio_icon_circle_color_out">#e1f4fd</color>
+    <color name="mk_audio_icon_button_color_out">@color/primary</color>
+    <!--Rounded Shape button-->
+    <color name="mk_rounded_audio_button">#F6F4F5</color>
 </resources>
