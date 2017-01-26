@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.github.gaumala'
-version = '1.5.7'
+group = 'com.github.rbalda'
+version = '1.5.8'
 //23.0.1
 //v7:23.3.0
 //22.0.1
