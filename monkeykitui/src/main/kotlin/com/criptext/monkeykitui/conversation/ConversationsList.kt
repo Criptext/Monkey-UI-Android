@@ -152,7 +152,8 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
             val firstNewIndex = list.size
             list.addAll(filteredConversations)
             InsertionSort(list, MonkeyConversation.defaultComparator, Math.max(1, firstNewIndex)).sort()
-            listUI?.notifyConversationRangeInserted(firstNewIndex, filteredConversations.size);
+            listUI?.notifyConversationRangeInserted(firstNewIndex, filteredConversations.size)
+            listUI?.scrollToPosition(list.size - filteredConversations.size)
         }
         this.hasReachedEnd = hasReachedEnd
     }
