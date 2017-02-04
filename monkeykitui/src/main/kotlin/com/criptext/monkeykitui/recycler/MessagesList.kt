@@ -190,7 +190,6 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
             var newPos = InsertionSort(list, MonkeyItem.defaultComparator)
                     .insertAtCorrectPosition(item, insertAtEnd = true)
             set.add(item.getMessageId())
-
             val listUI = messageListUI
             if (listUI != null) {
                 val last = listUI.findLastVisibleItemPosition()

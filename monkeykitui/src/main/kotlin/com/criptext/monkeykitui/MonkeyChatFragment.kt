@@ -141,6 +141,9 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         super.onStart()
         voiceNotePlayer?.setUiUpdater(audioUIUpdater)
         voiceNotePlayer?.removeNotificationControl(monkeyAdapter.conversationId)
+        if (monkeyAdapter.messages.messageListUI == null)
+            //Fragment was stopped, we must now attach the UI back to list
+            monkeyAdapter.messages.messageListUI = this
         (activity as ChatActivity).onStartChatFragment(this, monkeyAdapter.conversationId)
         if(shouldUpdateAudioView)
             reloadAllMessages()
@@ -156,11 +159,11 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
         if(voiceNotePlayer?.currentlyPlayingItem != null)
             shouldUpdateAudioView = true
+        monkeyAdapter.messages.messageListUI = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        monkeyAdapter.messages.messageListUI = null
         inputListener?.onStopTyping()
         inputListener = object: InputListener {
             override fun onNewItemFileError(type: Int) { }

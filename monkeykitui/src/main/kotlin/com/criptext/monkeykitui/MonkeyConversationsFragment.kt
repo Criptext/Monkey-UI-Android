@@ -61,6 +61,8 @@ open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
     override fun onStart() {
         super.onStart()
         val conversationsActivty = context as? ConversationsActivity
+        //If fragment was stopped, we must now attach the UI back to list
+        conversationsAdapter?.conversations?.listUI = this
         if(conversationsActivty != null) {
             conversationsActivty.setConversationsFragment(this)
             conversationsAdapter?.conversations = conversationsActivty.onRequestConversations()
@@ -75,16 +77,10 @@ open class MonkeyConversationsFragment: Fragment(), ConversationListUI {
             if (pendingConversationToDelete != null)
                 conversationsActivty.onConversationDeleted(pendingConversationToDelete)
 
-            val adapter = conversationsAdapter
-
             conversationsActivty.setConversationsFragment(null)
         }
         conversationsAdapter?.conversationToDelete = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        val adapter = conversationsAdapter
+        conversationsAdapter?.conversations?.listUI = null
     }
 
     fun insertConversations(list: ConversationsList) {
