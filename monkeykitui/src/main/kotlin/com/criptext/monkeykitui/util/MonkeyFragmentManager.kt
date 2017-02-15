@@ -179,7 +179,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
                 chatFragmentOutAnimation)
-        ft.add(fragmentContainerId, infoFragment, INFO_FRAGMENT_TAG)
+        ft.replace(fragmentContainerId, infoFragment, INFO_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()
     }
