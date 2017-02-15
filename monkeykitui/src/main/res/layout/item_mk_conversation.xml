@@ -11,7 +11,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/mk_default_user_img"
         android:tag="2"/>
 
     <TextView

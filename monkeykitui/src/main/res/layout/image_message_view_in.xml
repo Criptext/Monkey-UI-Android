@@ -23,8 +23,7 @@
         android:gravity="center"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/mk_bubble_incoming">
+        android:layout_marginBottom="5dp" >
             <include layout="@layout/image_with_date" />
     </FrameLayout>
 
