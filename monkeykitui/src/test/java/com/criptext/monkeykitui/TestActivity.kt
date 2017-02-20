@@ -29,7 +29,7 @@ class TestActivity: AppCompatActivity(), ConversationsActivity, ChatActivity {
     }
 
     override fun getGroupChat(conversationId: String, membersIds: String) = null
-    override fun getInitialMessages(conversationId: String): MessagesList? = null
+    override fun getInitialMessages(conversationId: String) = MessagesList("")
 
     override fun isOnline(): Boolean = true
 

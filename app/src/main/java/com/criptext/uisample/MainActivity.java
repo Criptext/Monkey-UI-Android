@@ -133,6 +133,11 @@ public class MainActivity extends BaseChatActivity{
 //        adapter.smoothlyAddNewItem(message, recycler);
     }
 
+    @Override
+    void onPlaybackServiceConnected() {
+
+    }
+
     @Nullable
     @Override
     public GroupChat getGroupChat(@NotNull String conversationId, @NotNull String membersIds) {

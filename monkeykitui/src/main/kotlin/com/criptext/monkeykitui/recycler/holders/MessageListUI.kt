@@ -22,7 +22,7 @@ interface MessageListUI {
 
     fun removeLoadingView()
 
-    fun rebindMonkeyItem(iten: MonkeyItem)
+    fun rebindMonkeyItem(item: MonkeyItem)
 
     fun findLastVisibleItemPosition(): Int
 

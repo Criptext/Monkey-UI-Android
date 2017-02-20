@@ -195,8 +195,6 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                 conversationsFragmentOutAnimation,
                 conversationsFragmentInAnimation,
                 chatFragmentOutAnimation)
-        chatFragment.inputListener = inputListener
-        chatFragment.voiceNotePlayer = voiceNotePlayer
         ft.replace(fragmentContainerId, chatFragment, CHAT_FRAGMENT_TAG)
         ft.addToBackStack(null)
         ft.commit()

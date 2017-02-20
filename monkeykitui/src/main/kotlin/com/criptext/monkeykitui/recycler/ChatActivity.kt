@@ -76,9 +76,8 @@ interface ChatActivity {
      *
      * @param conversationId unique identifier of the conversation of this chat activity
      * @return A collection of MonkeyItems that will be displayed in the chat as soon as it renders.
-     * if there are no messages available returns null
      */
-    fun getInitialMessages(conversationId: String): MessagesList?
+    fun getInitialMessages(conversationId: String): MessagesList
 
     /**
      * MonkeyChatFragment will call this method to retrieve the current conversation's groupChat object.

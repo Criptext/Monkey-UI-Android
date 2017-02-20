@@ -169,7 +169,15 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
 
     @Override
     public void onStartChatFragment(@NotNull MonkeyChatFragment fragment, @NotNull String conversationId) {
+        chatFragment = fragment;
+        fragment.setVoiceNotePlayer(vnPlayer);
+        fragment.setInputListener(inputListener);
+    }
 
+    @Override
+    void onPlaybackServiceConnected() {
+        if (chatFragment != null)
+            chatFragment.setVoiceNotePlayer(vnPlayer);
     }
 
     @Override

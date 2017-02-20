@@ -168,6 +168,8 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
      */
     abstract void smoothlyAddNewItem(MonkeyItem message);
 
+    abstract void onPlaybackServiceConnected();
+
     @Override
     public void onFileDownloadRequested(@NotNull MonkeyItem item) {
         mockFileNetworkRequests(item);

@@ -46,7 +46,7 @@ open class AdapterTestCase {
         override fun onMessageRemoved(item: MonkeyItem, unsent: Boolean) {
         }
 
-        override fun getInitialMessages(conversationId: String) = null
+        override fun getInitialMessages(conversationId: String) = MessagesList("")
 
         override fun getGroupChat(conversationId: String, membersIds: String): GroupChat {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
