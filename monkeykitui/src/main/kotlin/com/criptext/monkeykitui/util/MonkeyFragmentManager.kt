@@ -19,7 +19,17 @@ import java.util.*
  * Created by gesuwall on 8/15/16.
  */
 
-class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTitle: String, val mkFragmentStack: Stack<FragmentTypes>){
+class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle: String, val mkFragmentStack: Stack<FragmentTypes>){
+    /**
+     * the title to be used when the conversations fragment is displayed.
+     */
+    var conversationsTitle: String = ""
+    set(value) {
+        val currentFragment = if (mkFragmentStack.isNotEmpty()) mkFragmentStack.peek() else FragmentTypes.chat
+        if (currentFragment == FragmentTypes.conversations) //update toolbar
+            monkeyToolbar?.setConversationsToolbar(value, alwaysShowBackButton)
+        field = value
+    }
     /**
      * resource id of the xml layout to use in the Activity that will display the chat fragments
      */
@@ -76,6 +86,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
         chatFragmentOutAnimation = R.anim.mk_fragment_slide_right_out
         conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
         monkeyStatusBar = MonkeyStatusBar(activity)
+        this.conversationsTitle = conversationsTitle
         monkeyToolbar = null
 
         activity.supportFragmentManager.addOnBackStackChangedListener {
@@ -88,7 +99,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, val conversationsTi
                 val currentFragment = mkFragmentStack.peek()
                 when (currentFragment) {
                     FragmentTypes.conversations ->
-                        monkeyToolbar?.setConversationsToolbar(conversationsTitle, alwaysShowBackButton)
+                        monkeyToolbar?.setConversationsToolbar(this.conversationsTitle, alwaysShowBackButton)
                 }
             }
         }

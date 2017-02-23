@@ -34,6 +34,8 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
     var pendingAction: Runnable?
     var lastColor: Int?
 
+    var open = false
+
     init {
         viewStatusCont = getDefaultViewForStatus()
         viewStatus = null
@@ -67,6 +69,8 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
 
     fun showStatusNotification(status: Utils.ConnectionStatus) {
 
+        if (open) return
+
         if(viewStatus == null)
             return
 
@@ -81,6 +85,8 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
 
         if(handlerStatus!=null)
             handlerStatus!!.removeCallbacks(runnableStatus)
+
+        open = true
 
         when(status){
             Utils.ConnectionStatus.connected->{
@@ -124,6 +130,8 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
     }
 
     fun closeStatusNotification() {
+        if(!open) return
+
         if (viewStatus != null && viewStatus!!.tag != "closing") {
             viewStatus!!.tag = "closing"
             viewStatus!!.animate().translationYBy((-activity.resources.getDimension(R.dimen.status_height)).toFloat()).alpha(0f).setListener(object : Animator.AnimatorListener {
@@ -139,6 +147,7 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
                 override fun onAnimationRepeat(animation: Animator) {
                 }
             })
+            open = false
         }
     }
 

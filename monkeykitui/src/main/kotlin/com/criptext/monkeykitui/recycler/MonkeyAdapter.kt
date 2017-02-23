@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.criptext.monkeykitui.R
-import com.criptext.monkeykitui.recycler.audio.VoiceNotePlayer
 import com.criptext.monkeykitui.recycler.holders.*
 import com.criptext.monkeykitui.recycler.listeners.ImageListener
 import com.criptext.monkeykitui.cav.AudioActions
@@ -25,7 +24,6 @@ import com.criptext.monkeykitui.cav.CircularAudioView
 import com.criptext.monkeykitui.dialog.AbstractDialog
 import com.criptext.monkeykitui.recycler.audio.PlaybackService
 import com.criptext.monkeykitui.recycler.listeners.OnMessageOptionClicked
-import com.criptext.monkeykitui.util.InsertionSort
 import com.criptext.monkeykitui.util.SnackbarUtils
 import com.etiennelawlor.imagegallery.library.activities.FullScreenImageGalleryActivity
 import java.io.File
