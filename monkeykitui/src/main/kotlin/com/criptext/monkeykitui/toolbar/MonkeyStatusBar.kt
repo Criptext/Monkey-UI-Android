@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -69,7 +70,7 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
 
     fun showStatusNotification(status: Utils.ConnectionStatus) {
 
-        if (open) return
+        if (open && status != Utils.ConnectionStatus.connected) return
 
         if(viewStatus == null)
             return
@@ -131,7 +132,6 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
 
     fun closeStatusNotification() {
         if(!open) return
-
         if (viewStatus != null && viewStatus!!.tag != "closing") {
             viewStatus!!.tag = "closing"
             viewStatus!!.animate().translationYBy((-activity.resources.getDimension(R.dimen.status_height)).toFloat()).alpha(0f).setListener(object : Animator.AnimatorListener {
