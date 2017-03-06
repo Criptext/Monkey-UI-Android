@@ -35,14 +35,14 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     lateinit var recyclerView: RecyclerView
     private lateinit var monkeyAdapter: MonkeyAdapter
     private lateinit var audioUIUpdater: AudioUIUpdater
-    private lateinit var inputView: BaseInputView
+    private var inputView: BaseInputView? = null
     var chatLayout: Int = R.layout.monkey_chat_layout
     private set
 
     var inputListener: InputListener? = null
     set(value) {
         if(view != null) {
-            inputView.inputListener = value
+            inputView?.inputListener = value
         }
         field = value
     }
@@ -93,14 +93,19 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.stackFromEnd = true;
         recycler.layoutManager = linearLayoutManager;
+
+        val args = arguments
+        val conversationId = args.getString(chatConversationId)
+        val lastRead = args.getLong(initalLastReadValue)
+        monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
+        monkeyAdapter.recyclerView = recycler
+        recycler.adapter = monkeyAdapter
         return recycler
     }
 
     private fun setInitialMessages(){
         val args = arguments
         val conversationId = args.getString(chatConversationId)
-        val lastRead = args.getLong(initalLastReadValue)
-        monkeyAdapter = MonkeyAdapter(activity, conversationId, lastRead)
         val initialMessages = (activity as ChatActivity).getInitialMessages(conversationId)
         if(initialMessages != null){
             initialMessages.messageListUI = this
@@ -113,6 +118,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
             monkeyAdapter.groupChat = groupChat
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(chatLayout, null)
         setHasOptionsMenu(true)
@@ -120,17 +126,11 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
 
         inputView = view.findViewById(R.id.inputView) as BaseInputView
         (inputView as? MediaInputView)?.setDefaultRecorder()
-        inputView.inputListener = this.inputListener
+        inputView?.inputListener = this.inputListener
 
-        setInitialMessages()
-        monkeyAdapter.recyclerView = recyclerView
-        recyclerView.adapter = monkeyAdapter
         audioUIUpdater = AudioUIUpdater(recyclerView)
         monkeyAdapter.voiceNotePlayer = voiceNotePlayer
         voiceNotePlayer?.setUiUpdater(audioUIUpdater)
-
-        //(activity as AppCompatActivity).supportActionBar?.title = getChatTitle()
-        //(activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         FullScreenImageGalleryActivity.setFullScreenImageLoader(this)
 
@@ -141,6 +141,8 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
         super.onStart()
         voiceNotePlayer?.setUiUpdater(audioUIUpdater)
         voiceNotePlayer?.removeNotificationControl(monkeyAdapter.conversationId)
+        if (monkeyAdapter.itemCount == 0)
+            setInitialMessages()
         if (monkeyAdapter.messages.messageListUI == null)
             //Fragment was stopped, we must now attach the UI back to list
             monkeyAdapter.messages.messageListUI = this
@@ -284,7 +286,7 @@ open class MonkeyChatFragment(): Fragment(), FullScreenImageGalleryAdapter.FullS
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        inputView.onRequestPermissionsResult(requestCode, grantResults)
+        inputView?.onRequestPermissionsResult(requestCode, grantResults)
         monkeyAdapter.onRequestPermissionsResult(requestCode, grantResults)
     }
 

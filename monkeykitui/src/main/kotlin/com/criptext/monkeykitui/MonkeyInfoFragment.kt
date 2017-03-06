@@ -85,7 +85,6 @@ open class MonkeyInfoFragment : Fragment(){
         outButton = view.findViewById(R.id.mk_info_out) as Button
         loadingLayout = view.findViewById(R.id.info_load) as FrameLayout
         noContentText = view.findViewById(R.id.noContentText) as TextView
-        setInfo()
 
         if(!isGroup || !arguments.getBoolean("canAddMembers")){
             view.findViewById(R.id.add_participant).visibility = View.GONE
@@ -113,6 +112,8 @@ open class MonkeyInfoFragment : Fragment(){
 
     override fun onStart() {
         super.onStart()
+        if (infoAdapter?.itemCount == 0)
+            setInfo()
     }
 
     override fun onAttach(activity: Activity?) {
