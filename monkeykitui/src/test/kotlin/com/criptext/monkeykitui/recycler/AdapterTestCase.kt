@@ -1,6 +1,7 @@
 package com.criptext.monkeykitui.recycler
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -36,6 +37,9 @@ open class AdapterTestCase {
     }
 
     class MonkeyActivity: Activity(), ChatActivity {
+        override fun startMonkeyActivityForResult(intent: Intent, requestCode: Int) {
+        }
+
         override fun deleteAllMessages(conversationId: String) {
             throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
         }

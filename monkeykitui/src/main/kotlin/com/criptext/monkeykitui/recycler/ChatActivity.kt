@@ -1,5 +1,6 @@
 package com.criptext.monkeykitui.recycler
 
+import android.content.Intent
 import com.criptext.monkeykitui.MonkeyChatFragment
 
 /**
@@ -112,5 +113,12 @@ interface ChatActivity {
      * @param conversationId The ID of the conversation whose messages are to be deleted.
      */
     fun deleteAllMessages(conversationId: String);
+
+    /**
+     * Callback executed when a class in MonkeyChatFragment wants to start a new activity for result
+     * you should always call startActivityForResult here. You get this callback so that you can
+     * execute any code that you need before switching activities.
+     */
+    fun startMonkeyActivityForResult(intent: Intent, requestCode: Int)
 
 }

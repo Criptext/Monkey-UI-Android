@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import com.criptext.monkeykitui.input.photoEditor.PhotoEditorActivity
 import com.criptext.monkeykitui.input.listeners.InputListener
+import com.criptext.monkeykitui.recycler.ChatActivity
 import com.criptext.monkeykitui.recycler.MonkeyItem
 import com.criptext.monkeykitui.util.OutputFile
 import com.soundcloud.android.crop.Crop
@@ -51,7 +52,7 @@ class CameraHandler constructor(var context : Context){
     }
 
     private fun startActivity(intent: Intent, requestCode: Int){
-        (context as? Activity)?.startActivityForResult(intent, requestCode)
+        (context as? ChatActivity)?.startMonkeyActivityForResult(intent, requestCode)
     }
 
     fun startPhotoEditor(photoUri: Uri?){
