@@ -225,6 +225,9 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
         val filteredData = removeIfExist(ArrayList(newData))
         if(filteredData.size > 0) {
             val firstNewIndex = list.size
+            val lastVisible = messageListUI?.findLastVisibleItemPosition() ?: -2
+            val shouldScroll = lastVisible >= list.size - 3
+
             list.addAll(filteredData)
             InsertionSort(list, MonkeyItem.defaultComparator, Math.max(1, firstNewIndex)).sort()
             for(item: MonkeyItem in filteredData){
@@ -234,9 +237,7 @@ class MessagesList(val conversationId: String) : AbstractList<MonkeyItem>() {
             val listUI = messageListUI
             if (listUI != null) {
                 listUI.notifyItemRangeInserted(firstNewIndex, filteredData.size);
-                val last = listUI.findLastVisibleItemPosition()
-                //Only scroll if this is the latest message
-                if (firstNewIndex == (list.size - 1) && last >= list.size - 2) {
+                if (shouldScroll) {
                     listUI.scrollToPosition(list.size - 1);
                 }
             }
