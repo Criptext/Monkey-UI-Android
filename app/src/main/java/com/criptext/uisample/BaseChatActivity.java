@@ -196,4 +196,9 @@ public abstract class BaseChatActivity extends AppCompatActivity implements Chat
     public void onMessageRemoved(@NotNull MonkeyItem item, boolean unsent) {
 
     }
+
+    @Override
+    public void startMonkeyActivityForResult(@NotNull Intent intent, int requestCode) {
+        startActivityForResult(intent, requestCode);
+    }
 }
