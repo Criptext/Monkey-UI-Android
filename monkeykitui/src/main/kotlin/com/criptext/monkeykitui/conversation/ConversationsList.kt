@@ -207,6 +207,15 @@ class ConversationsList() : AbstractList<MonkeyConversation>() {
         listUI?.refresh()
     }
 
+    fun insertOrUpdateConversation(monkeyConversation: MonkeyConversation) {
+        if (set.contains(monkeyConversation.getConvId())) {
+            val pos = indexOfFirst { it -> it.getConvId() == monkeyConversation.getConvId() }
+            list.removeAt(pos)
+            list.add(pos, monkeyConversation)
+            listUI?.notifyConversationChanged(pos)
+        } else addNewConversation(monkeyConversation, false)
+    }
+
     fun getLastConversation(): MonkeyConversation? {
         val listSize = size
         if(listSize > 1) {
