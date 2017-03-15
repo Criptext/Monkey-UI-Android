@@ -69,9 +69,26 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
         lastColor = colorTo
     }
 
+    fun changeConnectingNotificationText(statusBarTextView: TextView, status: Utils.ConnectionStatus) {
+        val statusBarTextView = viewStatusCont as TextView
+        statusBarTextView.text = when (status) {
+            Utils.ConnectionStatus.syncing -> activity.getString(R.string.mk_status_syncing)
+            else -> activity.getString(R.string.mk_status_connecting)
+        }
+    }
+
+    fun changeNotificationLook(statusBarTextView: TextView, notificationTextId: Int, notificationBgColorId: Int) {
+        statusBarTextView.text = activity.getString(notificationTextId)
+        changeColorAnimated(viewStatus!!, lastColor!!, ContextCompat.getColor(activity, notificationBgColorId))
+    }
+
     fun showStatusNotification(status: Utils.ConnectionStatus) {
 
-        if (open && status != Utils.ConnectionStatus.connected) return
+        val statusBarTextView = viewStatusCont as TextView
+        if (open && status != Utils.ConnectionStatus.connected) {
+            changeConnectingNotificationText(statusBarTextView, status)
+            return
+        }
 
         if(viewStatus == null)
             return
@@ -92,25 +109,21 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
 
         when(status){
             Utils.ConnectionStatus.connected->{
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connected)
-                changeColorAnimated(viewStatus!!, lastColor!!, ContextCompat.getColor(activity, R.color.mk_status_connected))
+                changeNotificationLook(statusBarTextView, R.string.mk_status_connected,
+                        R.color.mk_status_connected)
                 handlerStatus!!.postDelayed(runnableStatus, 1000)
             }
             Utils.ConnectionStatus.disconnected -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_disconnected)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_disconnected))
+                changeNotificationLook(statusBarTextView, R.string.mk_status_disconnected,
+                        R.color.mk_status_disconnected)
             }
             Utils.ConnectionStatus.connecting -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connecting)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
+                changeNotificationLook(statusBarTextView, R.string.mk_status_connecting,
+                        R.color.mk_status_connecting)
             }
             Utils.ConnectionStatus.syncing -> {
-                if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_syncing)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
+                changeNotificationLook(statusBarTextView, R.string.mk_status_syncing,
+                        R.color.mk_status_connecting)
             }
         }
 
