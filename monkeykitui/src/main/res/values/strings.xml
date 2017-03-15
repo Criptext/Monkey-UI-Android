@@ -18,9 +18,9 @@
     <string name="mk_empty_group_text">Write to this group</string>
 
     <string name="mk_status_disconnected">Disconnected</string>
-    <string name="mk_status_connecting">Connecting</string>
+    <string name="mk_status_connecting">Connecting…</string>
     <string name="mk_status_connected">Connected</string>
-    <string name="mk_status_no_network">Waiting for network</string>
+    <string name="mk_status_syncing">Syncing…</string>
 
     <string name="mk_delete_conversation">Delete conversation</string>
     <string name="mk_exit_group">Leave group</string>
