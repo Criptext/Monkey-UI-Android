@@ -223,6 +223,6 @@ class Utils {
         }
     }
     enum class ConnectionStatus {
-        disconnected, connected, connecting, waiting_for_network;
+        disconnected, connected, connecting, syncing;
     }
 }

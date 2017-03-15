@@ -5,6 +5,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
@@ -93,7 +94,7 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
             Utils.ConnectionStatus.connected->{
                 if(viewStatusCont is TextView)
                     (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connected)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connected))
+                changeColorAnimated(viewStatus!!, lastColor!!, ContextCompat.getColor(activity, R.color.mk_status_connected))
                 handlerStatus!!.postDelayed(runnableStatus, 1000)
             }
             Utils.ConnectionStatus.disconnected -> {
@@ -106,10 +107,10 @@ open class MonkeyStatusBar(var activity: AppCompatActivity){
                     (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_connecting)
                 changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
             }
-            Utils.ConnectionStatus.waiting_for_network -> {
+            Utils.ConnectionStatus.syncing -> {
                 if(viewStatusCont is TextView)
-                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_no_network)
-                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_no_network))
+                    (viewStatusCont as TextView).text = activity.getString(R.string.mk_status_syncing)
+                changeColorAnimated(viewStatus!!, lastColor!!, activity.resources.getColor(R.color.mk_status_connecting))
             }
         }
 
