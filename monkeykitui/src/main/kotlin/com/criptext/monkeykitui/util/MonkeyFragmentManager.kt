@@ -19,59 +19,18 @@ import java.util.*
  * Created by gesuwall on 8/15/16.
  */
 
-class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle: String, val mkFragmentStack: Stack<FragmentTypes>){
+class MonkeyFragmentManager(activity: AppCompatActivity, conversationsTitle: String,
+    mkFragmentStack: Stack<FragmentTypes>): ToolbarFragmentManager<MonkeyFragmentManager.FragmentTypes>(activity, mkFragmentStack){
     /**
      * the title to be used when the conversations fragment is displayed.
      */
-    var conversationsTitle: String = ""
+    override var mainTitle: String = ""
     set(value) {
         val currentFragment = if (mkFragmentStack.isNotEmpty()) mkFragmentStack.peek() else FragmentTypes.chat
         if (currentFragment == FragmentTypes.conversations) //update toolbar
             monkeyToolbar?.setConversationsToolbar(value, alwaysShowBackButton)
         field = value
     }
-    /**
-     * resource id of the xml layout to use in the Activity that will display the chat fragments
-     */
-    var fragmentContainerLayout: Int
-    /**
-     * resource if of the ViewGroup that will contain the chat fragments
-     */
-    var fragmentContainerId: Int
-
-    /**
-     * resource id of the animation to use when the chat fragment enters the activity, replacing
-     * the conversations fragment
-     */
-    var chatFragmentInAnimation: Int
-
-    /**
-     * resource id of the animation to use when the chat fragment leaves the activity, replaced
-     * the returning conversations fragment
-     */
-    var chatFragmentOutAnimation: Int
-
-    /**
-     * resource id of the animation to use when the conversations fragment leaves the activity,
-     * replaced by the chat fragment
-     */
-    var conversationsFragmentOutAnimation: Int
-
-    /**
-     * class to handle title, subtitle and avatar in the toolbar
-     */
-    var monkeyToolbar: MonkeyToolbar?
-
-    /**
-     * class to show connectivity status to the user.
-     */
-    var monkeyStatusBar: MonkeyStatusBar?
-
-    /**
-     * resource id of the animation to use when the conversations fragment reenters the activity,
-     * replacing the chat fragment
-     */
-    var conversationsFragmentInAnimation: Int
 
     /**
      * if true, every fragment will display the back button in the toolbar. default is false
@@ -79,14 +38,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
     var alwaysShowBackButton = false
 
     init{
-        fragmentContainerLayout = R.layout.mk_fragment_activity
-        fragmentContainerId = R.id.fragment_container
-        chatFragmentInAnimation = R.anim.mk_fragment_slide_right_in
-        conversationsFragmentOutAnimation = R.anim.mk_fragment_slide_left_out
-        chatFragmentOutAnimation = R.anim.mk_fragment_slide_right_out
-        conversationsFragmentInAnimation = R.anim.mk_fragment_slide_left_in
-        monkeyStatusBar = MonkeyStatusBar(activity)
-        this.conversationsTitle = conversationsTitle
+        this.mainTitle = conversationsTitle
         monkeyToolbar = null
 
         activity.supportFragmentManager.addOnBackStackChangedListener {
@@ -99,7 +51,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
                 val currentFragment = mkFragmentStack.peek()
                 when (currentFragment) {
                     FragmentTypes.conversations ->
-                        monkeyToolbar?.setConversationsToolbar(this.conversationsTitle, alwaysShowBackButton)
+                        monkeyToolbar?.setConversationsToolbar(this.mainTitle, alwaysShowBackButton)
                 }
             }
         }
@@ -109,7 +61,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
     fun restoreToolbar(activeConversation: MonkeyConversation?) {
         when (mkFragmentStack.peek()) {
             FragmentTypes.conversations -> monkeyToolbar?.setConversationsToolbar(
-                    conversationsTitle, alwaysShowBackButton)
+                    mainTitle, alwaysShowBackButton)
             FragmentTypes.chat, FragmentTypes.info -> {
                 if (activeConversation != null)
                     monkeyToolbar?.setChatToolbar(chatTitle = activeConversation.getName(),
@@ -131,7 +83,7 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.add(fragmentContainerId, convFragment)
         ft.commit()
-        monkeyToolbar?.setConversationsToolbar(conversationsTitle, alwaysShowBackButton)
+        monkeyToolbar?.setConversationsToolbar(mainTitle, alwaysShowBackButton)
     }
     /**
      * Set a layout with a FrameLayout as fragment container in the activity. this fragment
@@ -148,11 +100,6 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
         if(savedInstanceState == null && setConversations) //don't set conversations fragment if the activity is being recreated
             setConversationsFragment();
         monkeyStatusBar?.initStatusBar()
-
-    }
-
-    fun setToolbarOnClickListener(listener: View.OnClickListener) {
-        monkeyToolbar!!.setOnClickListener(listener)
 
     }
 
@@ -219,14 +166,6 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
 
     }
 
-    fun showStatusNotification(status: Utils.ConnectionStatus) {
-        monkeyStatusBar?.showStatusNotification(status)
-    }
-
-    fun setSubtitle(subtitle: String){
-        monkeyToolbar?.setSubtitle(subtitle)
-    }
-
     enum class FragmentTypes {
         conversations, chat, info
     }
@@ -239,17 +178,5 @@ class MonkeyFragmentManager(val activity: AppCompatActivity, conversationsTitle:
         val INFO_FRAGMENT_TAG: String = "INFO_TAG"
     }
 
-    fun popStack(times : Int){
-        val fragmentManager = activity.supportFragmentManager as android.support.v4.app.FragmentManager
-        var timess = times as Int
-        while(timess > 0){
-            if(fragmentManager.backStackEntryCount >= timess){
-                fragmentManager.popBackStack()
-                timess--
-            }else{
-                timess = 0
-            }
-        }
-    }
 
 }

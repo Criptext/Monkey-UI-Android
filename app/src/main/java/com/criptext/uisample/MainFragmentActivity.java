@@ -69,13 +69,13 @@ public class MainFragmentActivity extends BaseChatActivity implements Conversati
         if (restored) //if this is a restored instance, we must restore the toolbar as well
         fragmentManager.restoreToolbar(stateFragment.activeConversation);
 
-        fragmentManager.showStatusNotification(Utils.ConnectionStatus.connecting);
+        fragmentManager.showConnectionStatusNotification(Utils.ConnectionStatus.connecting);
         //Simulating connectivity status
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                fragmentManager.showStatusNotification(Utils.ConnectionStatus.connected);
+                fragmentManager.showConnectionStatusNotification(Utils.ConnectionStatus.connected);
             }
         }, 2000);
     }
