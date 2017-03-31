@@ -41,14 +41,15 @@
                 style="@style/ToolbarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/mt_toolbar_height"
+                app:contentInsetStartWithNavigation="0dp"
                 >
 
                 <com.criptext.monkeykitui.toolbar.HeaderView
                     android:id="@+id/custom_toolbar"
+                    android:clipChildren="false"
                     layout="@layout/custom_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
 
             </android.support.v7.widget.Toolbar>
 

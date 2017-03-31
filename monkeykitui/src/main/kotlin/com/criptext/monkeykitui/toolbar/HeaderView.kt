@@ -14,7 +14,7 @@ import de.hdodenhof.circleimageview.CircleImageView
  */
 class HeaderView(context: Context, attrs: AttributeSet? = null) : RelativeLayout(context, attrs){
 
-    var firstContainer : LinearLayout
+    //var firstContainer : LinearLayout
     var secondContainer : LinearLayout
     var imageView : CircleImageView
     var title : TextView
@@ -22,7 +22,7 @@ class HeaderView(context: Context, attrs: AttributeSet? = null) : RelativeLayout
 
     init{
         View.inflate(context, R.layout.custom_toolbar, this)
-        firstContainer = findViewById(R.id.back_button) as LinearLayout
+        //firstContainer = findViewById(R.id.back_button) as LinearLayout
         secondContainer = findViewById(R.id.layoutNameStatus) as LinearLayout
         imageView = findViewById(R.id.imageViewAvatar) as CircleImageView
         title = findViewById(R.id.textViewTitle) as TextView
