@@ -2,7 +2,6 @@ package com.criptext.monkeykitui.util
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -222,6 +221,7 @@ class Utils {
                     })
         }
     }
+
     enum class ConnectionStatus {
         disconnected, connected, connecting, syncing;
     }
